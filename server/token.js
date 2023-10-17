@@ -8,7 +8,8 @@ import fs from "fs";
 
 // Replace with the code you received from Google
 const code =
-   "4/0AfJohXmqTlZ5E9sEox1QQTYyQAr9UIiStYPxR41ouK7QkrAxY-wzBVhv5zkwMjPRAHlo6A";
+  "4/0AfJohXmqTlZ5E9sEox1QQTYyQAr9UIiStYPxR41ouK7QkrAxY-wzBVhv5zkwMjPRAHlo6A";
+
 const { client_secret, client_id, redirect_uris } = credentials.web;
 const oAuth2Client = new google.auth.OAuth2(
    client_id,

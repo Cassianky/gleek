@@ -88,10 +88,18 @@ const bookingSchema = new mongoose.Schema({
       "CONFIRMED",
       "REJECTED",
       "CANCELLED",
-      "PENDING PAYMENT",
+      "PENDING_PAYMENT",
       "PAID",
     ],
     default: "PENDING_CONFIRMATION",
+  },
+  isSurveySubmitted: {
+    type: Boolean,
+    default: false,
+  },
+  adminSurveyResponse: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AdminSurveyResponse",
   },
   creationDateTime: {
     type: Date,

@@ -5,7 +5,13 @@ import { Chip, IconButton, Typography, alpha, useTheme } from "@mui/material";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-const PendingBookingsTable = ({ allBookings }) => {
+
+const PendingBookingsTable = ({
+  allBookings,
+  approveBooking,
+  rejectBooking,
+  openSnackbar,
+}) => {
   const [bookings, setBookings] = useState([]);
   const theme = useTheme();
   useEffect(() => {
@@ -47,6 +53,24 @@ const PendingBookingsTable = ({ allBookings }) => {
       })
       .toUpperCase();
     return formattedTime;
+  };
+
+  const handleApproveButton = async (bookingId) => {
+    try {
+      const message = await approveBooking(bookingId);
+      openSnackbar(message);
+    } catch (error) {
+      openSnackbar(error, "error");
+    }
+  };
+
+  const handleRejectButton = async (bookingId) => {
+    try {
+      const message = await rejectBooking(bookingId);
+      openSnackbar(message);
+    } catch (error) {
+      openSnackbar(error, "error");
+    }
   };
 
   const columns = [
@@ -237,6 +261,7 @@ const PendingBookingsTable = ({ allBookings }) => {
                 height: "38px",
                 width: "38px",
               }}
+              onClick={async () => await handleApproveButton(params.row._id)}
             >
               <DoneIcon fontSize="small" />
             </IconButton>
@@ -250,6 +275,7 @@ const PendingBookingsTable = ({ allBookings }) => {
                 height: "38px",
                 width: "38px",
               }}
+              onClick={async () => await handleRejectButton(params.row._id)}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
@@ -330,6 +356,9 @@ const PendingBookingsTable = ({ allBookings }) => {
 
 PendingBookingsTable.propTypes = {
   allBookings: PropTypes.array.isRequired,
+  approveBooking: PropTypes.func.isRequired,
+  rejectBooking: PropTypes.func.isRequired,
+  openSnackbar: PropTypes.func.isRequired,
 };
 
 export default PendingBookingsTable;

@@ -1,10 +1,10 @@
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import CloseIcon from "@mui/icons-material/Close";
+import DoneIcon from "@mui/icons-material/Done";
 import { Chip, IconButton, Typography, alpha, useTheme } from "@mui/material";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import DoneIcon from "@mui/icons-material/Done";
-import CloseIcon from "@mui/icons-material/Close";
 const PendingBookingsTable = ({ allBookings }) => {
   const [bookings, setBookings] = useState([]);
   const theme = useTheme();
@@ -204,9 +204,18 @@ const PendingBookingsTable = ({ allBookings }) => {
     },
     {
       field: "approve",
-      headerName: "Approve?",
       type: "actions",
       flex: 1,
+      renderHeader: (params) => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.secondary.main }}
+          >
+            Approve?
+          </Typography>
+        );
+      },
       renderCell: (params) => {
         return (
           <div

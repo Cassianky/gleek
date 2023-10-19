@@ -17,17 +17,17 @@ import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import DoneIcon from "@mui/icons-material/Done";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import {
-  Box,
   FormControl,
   Grid,
   IconButton,
   MenuItem,
   Select,
   Typography,
-  useTheme,
+  useTheme
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { alpha, styled } from "@mui/material/styles";
+import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
 const PREFIX = "Demo";
@@ -234,29 +234,33 @@ const BookingsMonthView = ({ allBookings }) => {
             </Typography>
           </Grid>
           <Grid item xs={4}>
-            <IconButton
-              sx={{
-                backgroundColor: theme.palette.success.pastel,
-                color: "white",
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.success.pastel, 0.5),
-                },
-                marginRight: 1,
-              }}
-            >
-              <DoneIcon />
-            </IconButton>
-            <IconButton
-              sx={{
-                backgroundColor: theme.palette.error.main,
-                color: "white",
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.error.main, 0.5),
-                },
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
+            {appointmentData.status === "PENDING_CONFIRMATION" && (
+              <IconButton
+                sx={{
+                  backgroundColor: theme.palette.success.pastel,
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: alpha(theme.palette.success.pastel, 0.5),
+                  },
+                  marginRight: 1,
+                }}
+              >
+                <DoneIcon />
+              </IconButton>
+            )}
+            {appointmentData.status === "PENDING_CONFIRMATION" && (
+              <IconButton
+                sx={{
+                  backgroundColor: theme.palette.error.main,
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: alpha(theme.palette.error.main, 0.5),
+                  },
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            )}
             {children}
           </Grid>
         </Grid>
@@ -334,32 +338,36 @@ const BookingsMonthView = ({ allBookings }) => {
   }, [allBookings]);
 
   return (
-      <Paper
-        sx={{
-          borderRadius: "10px",
-          boxShadow: "4px 4px 0px 0px rgb(159 145 204 / 40%)",
-        }}
-      >
-        <Scheduler locale="en-SG" data={bookings}>
-          <EditingState />
-          <ViewState defaultCurrentDate={Date().toLocaleString()} />
+    <Paper
+      sx={{
+        borderRadius: "10px",
+        boxShadow: "4px 4px 0px 0px rgb(159 145 204 / 40%)",
+      }}
+    >
+      <Scheduler locale="en-SG" data={bookings}>
+        <EditingState />
+        <ViewState defaultCurrentDate={Date().toLocaleString()} />
 
-          <MonthView />
-          <WeekView startDayHour={7} endDayHour={23} />
-          <Appointments appointmentComponent={Appointment} />
-          <Toolbar flexibleSpaceComponent={FlexibleSpace} />
-          <ViewSwitcher />
-          <DateNavigator />
-          <EditRecurrenceMenu />
-          <AppointmentTooltip
-            headerComponent={ToolTipHeader}
-            contentComponent={ToolTipContent}
-            showCloseButton
-          />
-          <AppointmentForm />
-        </Scheduler>
-      </Paper>
+        <MonthView />
+        <WeekView startDayHour={7} endDayHour={23} />
+        <Appointments appointmentComponent={Appointment} />
+        <Toolbar flexibleSpaceComponent={FlexibleSpace} />
+        <ViewSwitcher />
+        <DateNavigator />
+        <EditRecurrenceMenu />
+        <AppointmentTooltip
+          headerComponent={ToolTipHeader}
+          contentComponent={ToolTipContent}
+          showCloseButton
+        />
+        <AppointmentForm />
+      </Scheduler>
+    </Paper>
   );
+};
+
+BookingsMonthView.propTypes = {
+  allBookings: PropTypes.array.isRequired,
 };
 
 export default BookingsMonthView;

@@ -334,7 +334,6 @@ const BookingsMonthView = ({ allBookings }) => {
   }, [allBookings]);
 
   return (
-    <Box sx={{ paddingLeft: 2, paddingRight: 2 }}>
       <Paper
         sx={{
           borderRadius: "10px",
@@ -360,7 +359,6 @@ const BookingsMonthView = ({ allBookings }) => {
           <AppointmentForm />
         </Scheduler>
       </Paper>
-    </Box>
   );
 };
 

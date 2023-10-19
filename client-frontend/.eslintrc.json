@@ -22,5 +22,6 @@
     "react/no-unescaped-entities": "warn",
     "no-unsafe-optional-chaining": "warn",
     "no-const-assign": "warn",
+    "no-undef": "error"
   }
 }

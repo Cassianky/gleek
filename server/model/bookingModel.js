@@ -13,6 +13,11 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     ref: "Client",
   },
+  vendorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "Vendor",
+  },
   // BOOKING INFORMATION (can be used for invoice generation)
   startDateTime: {
     type: Date,

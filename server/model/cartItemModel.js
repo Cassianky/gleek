@@ -12,6 +12,10 @@ const cartItemSchema = new mongoose.Schema({
     required: true,
     ref: "Client",
   },
+  vendorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Vendor",
+  },
   // CART ITEM INFORMATION
   startDateTime: {
     type: Date,

@@ -2,22 +2,16 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import {
-  Button,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   IconButton,
-  TextField,
   Typography,
   alpha,
-  useTheme,
+  useTheme
 } from "@mui/material";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import BookingRejectModal from "./BookingRejectModal.jsx";
 
 const PendingBookingsTable = ({
   allBookings,
@@ -90,9 +84,9 @@ const PendingBookingsTable = ({
     }
   };
 
-  const handleOpenRejectModal = (activity) => {
+  const handleOpenRejectModal = (booking) => {
     setRejectModalOpen(true);
-    setBookingToReject(activity);
+    setBookingToReject(booking);
   };
 
   const handleCloseRejectModal = () => {
@@ -309,64 +303,14 @@ const PendingBookingsTable = ({
             >
               <CloseIcon fontSize="small" />
             </IconButton>
-            <Dialog
+            <BookingRejectModal
               open={rejectModalOpen}
               onClose={handleCloseRejectModal}
-              sx={{
-                "& .MuiDialog-paper": {
-                  border: "3px solid #D32F2F",
-                  borderRadius: "10px",
-                  boxShadow: "none",
-                },
-              }}
-            >
-              <DialogTitle sx={{ paddingBottom: 0 }}>
-                <div style={{ display: "flex" }}>
-                  <Typography fontSize={"1.25rem"}>
-                    Rejecting booking for&nbsp;
-                  </Typography>
-                  <Typography color="#9F91CC" fontSize={"1.25rem"}>
-                    {bookingToReject?.activityTitle}
-                  </Typography>
-                </div>
-              </DialogTitle>
-              <DialogTitle sx={{ paddingTop: 0 }}>
-                <div style={{ display: "flex" }}>
-                  <Typography fontSize={"1rem"}>
-                    Booking made by&nbsp;
-                  </Typography>
-                  <Typography color="#9F91CC" fontSize={"1rem"}>
-                    {bookingToReject?.clientId?.name}
-                  </Typography>
-                </div>
-              </DialogTitle>
-
-              <DialogContent>
-                <DialogContentText>
-                  Provide a reason for rejecting booking request!
-                </DialogContentText>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="reject"
-                  label="Reject Reason"
-                  fullWidth
-                  variant="standard"
-                  onChange={handleRejectReasonChange}
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => handleCloseRejectModal()}>Cancel</Button>
-                <Button
-                  onClick={async () => await handleRejectButton(params.row._id)}
-                  variant="contained"
-                  color="error"
-                  disabled={!rejectionReason || rejectionReason === ""}
-                >
-                  REJECT
-                </Button>
-              </DialogActions>
-            </Dialog>
+              bookingToReject={bookingToReject}
+              handleRejectReasonChange={handleRejectReasonChange}
+              handleRejectButton={handleRejectButton}
+              rejectionReason={rejectionReason}
+            />
           </div>
         );
       },
@@ -397,47 +341,7 @@ const PendingBookingsTable = ({
             cursor: "pointer",
           },
         }}
-        // onRowClick={(params) => handleRowClick(params.row)}
       />
-      {/* <Dialog
-        fullScreen
-        open={openViewModal}
-        onClose={handleCloseViewModal}
-        TransitionComponent={Transition}
-        sx={{
-          "& .MuiDialog-paper": {
-            backgroundColor: "#FAFAFA",
-          },
-        }}
-      >
-        <AppBar sx={{ position: "sticky", backgroundColor: "#9f91cc" }}>
-          <Toolbar sx={{ justifyContent: "space-between" }}>
-            <div style={{ display: "flex" }}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                onClick={handleCloseViewModal}
-                aria-label="close"
-              >
-                <CloseIcon sx={{ color: "white" }} />
-              </IconButton>
-              <Typography sx={{ alignSelf: "center" }} color="white">
-                {selectedTab === "publishedTab" && "View Published Activity"}
-                {selectedTab === "readyToPublishTab" &&
-                  "View Ready to Publish Activity"}
-                {selectedTab === "pendingApprovalTab" &&
-                  "View Pending Approval Activity"}
-                {selectedTab === "rejectedTab" && "View Rejected Activity"}
-              </Typography>
-            </div>
-          </Toolbar>
-        </AppBar>
-        <ActivityDetailsQuickView
-          activity={selectedActivity}
-          imgs={imgs}
-          vendorProfile={vendorProfile}
-        />
-      </Dialog> */}
     </div>
   );
 };

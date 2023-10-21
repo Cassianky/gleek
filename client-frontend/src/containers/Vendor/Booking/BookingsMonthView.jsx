@@ -17,18 +17,29 @@ import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import DoneIcon from "@mui/icons-material/Done";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import {
+  Button,
   FormControl,
   Grid,
   IconButton,
   MenuItem,
   Select,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { alpha, styled } from "@mui/material/styles";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateField } from "@mui/x-date-pickers/DateField";
+import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import {
+  ToolTipHeaderPropTypes,
+  appointmentDataShape
+} from "../../../utils/ComponentPropTypes";
+import BookingRejectModal from "./BookingRejectModal";
 
 const PREFIX = "Demo";
 
@@ -60,6 +71,9 @@ const BookingsMonthView = ({
 
   const [bookings, setBookings] = useState([]);
   const [currentStatus, setCurrentStatus] = useState("all");
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [bookingToReject, setBookingToReject] = useState();
+  const [rejectionReason, setRejectionReason] = useState();
 
   const StyledToolbarFlexibleSpace = styled(Toolbar.FlexibleSpace)(() => ({
     [`&.${classes.flexibleSpace}`]: {
@@ -82,6 +96,8 @@ const BookingsMonthView = ({
         endDate: booking.endDateTime,
         clientId: booking.clientId,
         status: booking.status,
+        additionalComments: booking.additionalComments,
+        totalPax: booking.totalPax,
       }))
       .filter((booking) =>
         filterCriteria[newStatus].value === "ALL"
@@ -121,6 +137,19 @@ const BookingsMonthView = ({
         </Select>
       </FormControl>
     );
+  };
+
+  const handleOpenRejectModal = (booking) => {
+    setRejectModalOpen(true);
+    setBookingToReject(booking);
+  };
+
+  const handleCloseRejectModal = () => {
+    setRejectModalOpen(false);
+  };
+
+  const handleRejectReasonChange = (event) => {
+    setRejectionReason(event.target.value);
   };
 
   const FlexibleSpace = ({ ...restProps }) => (
@@ -176,6 +205,93 @@ const BookingsMonthView = ({
     return formattedTime;
   };
 
+  const CustomAppointmentForm = ({ appointmentData }) => {
+    return (
+      <Grid
+        container
+        alignItems="left"
+        justifyContent="left"
+        style={{
+          display: "flex",
+          paddingLeft: 16,
+          paddingRight: 16,
+          paddingTop: 2,
+          paddingBottom: 6,
+        }}
+      >
+        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
+          <Typography fontSize={"1.5rem"} color={theme.palette.primary.main}>
+            Booking Details
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
+          <TextField
+            value={appointmentData.title}
+            fullWidth
+            label="Activity"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateField
+              label="Date"
+              value={dayjs(appointmentData.startDate)}
+              format="LL"
+              readOnly
+            />
+          </LocalizationProvider>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          sx={{ display: "flex", alignItems: "center", paddingBottom: 2 }}
+        >
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <TimePicker
+              label="Start Time"
+              defaultValue={dayjs(appointmentData.startDate)}
+              readOnly
+            />
+            <div style={{ paddingLeft: 10, paddingRight: 10 }}>-</div>
+            <TimePicker
+              label="End Time"
+              defaultValue={dayjs(appointmentData.endDate)}
+              readOnly
+            />
+          </LocalizationProvider>
+        </Grid>
+        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
+          <Typography fontSize={"1.5rem"} color={theme.palette.primary.main}>
+            More Information
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
+          <TextField
+            value={appointmentData.additionalComments}
+            fullWidth
+            label="Additional Comments"
+            multiline
+            rows={4}
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+        </Grid>
+        <Grid item xs={6} sx={{ paddingBottom: 2 }}>
+          <TextField
+            value={appointmentData.totalPax}
+            label="Number of participants"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+        </Grid>
+      </Grid>
+    );
+  };
   const ToolTipContent = ({ appointmentData }) => {
     return (
       <Grid
@@ -206,18 +322,27 @@ const BookingsMonthView = ({
             </Typography>
           </div>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
           <Typography>
             Booked by&nbsp;
             <span style={{ color: theme.palette.primary.main }}>
-              {appointmentData.clientId.name}
+              {appointmentData.clientId?.name}
             </span>
           </Typography>
         </Grid>
       </Grid>
     );
   };
-  const ToolTipHeader = ({ children, appointmentData, ...restProps }) => {
+  const ToolTipHeader = ({
+    children,
+    appointmentData,
+    onOpenButtonClick,
+    onHide,
+    ...restProps
+  }) => {
+    const handleChildClick = () => {
+      onHide();
+    };
     return (
       <AppointmentTooltip.Header {...restProps}>
         <Grid
@@ -231,15 +356,32 @@ const BookingsMonthView = ({
             paddingBottom: 4,
           }}
         >
-          <Grid item xs={8}>
-            <Typography fontSize={"1.5rem"} color={theme.palette.primary.dark}>
-              {appointmentData.status === "PENDING_CONFIRMATION"
-                ? "New Booking!"
-                : "Confirmed Booking"}
-            </Typography>
+          <Grid item xs={appointmentData.status === "CONFIRMED" ? 10 : 6}>
+            <Button
+              onClick={() => {
+                onOpenButtonClick();
+                onHide();
+              }}
+              sx={{
+                paddingTop: 0,
+                paddingBottom: 0,
+                display: "flex",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Typography
+                fontSize={"1.5rem"}
+                color={theme.palette.primary.dark}
+                sx={{ textDecoration: "underline" }}
+              >
+                {appointmentData.status === "PENDING_CONFIRMATION"
+                  ? "New Booking!"
+                  : "Confirmed Booking"}
+              </Typography>
+            </Button>
           </Grid>
-          <Grid item xs={4}>
-            {appointmentData.status === "PENDING_CONFIRMATION" && (
+          {appointmentData.status === "PENDING_CONFIRMATION" && (
+            <Grid item xs={4}>
               <IconButton
                 sx={{
                   backgroundColor: theme.palette.success.pastel,
@@ -255,8 +397,6 @@ const BookingsMonthView = ({
               >
                 <DoneIcon />
               </IconButton>
-            )}
-            {appointmentData.status === "PENDING_CONFIRMATION" && (
               <IconButton
                 sx={{
                   backgroundColor: theme.palette.error.main,
@@ -265,14 +405,28 @@ const BookingsMonthView = ({
                     backgroundColor: alpha(theme.palette.error.main, 0.5),
                   },
                 }}
-                onClick={async () =>
-                  await handleRejectButton(appointmentData.id)
-                }
+                onClick={async () => {
+                  handleChildClick();
+                  handleOpenRejectModal(appointmentData);
+                }}
               >
                 <CloseIcon />
               </IconButton>
-            )}
-            {children}
+              {children}
+            </Grid>
+          )}
+          <Grid
+            item
+            xs={2}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <IconButton
+              onClick={() => {
+                handleChildClick();
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
           </Grid>
         </Grid>
       </AppointmentTooltip.Header>
@@ -288,6 +442,8 @@ const BookingsMonthView = ({
         endDate: booking.endDateTime,
         clientId: booking.clientId,
         status: booking.status,
+        additionalComments: booking.additionalComments,
+        totalPax: booking.totalPax,
       }))
       .filter((booking) =>
         filterCriteria[currentStatus].value === "ALL"
@@ -366,6 +522,14 @@ const BookingsMonthView = ({
     setBookings(formattedBookings);
   }, [allBookings]);
 
+  ToolTipHeader.propTypes = ToolTipHeaderPropTypes;
+  CustomAppointmentForm.propTypes = {
+    appointmentData: appointmentDataShape,
+  };
+  ToolTipContent.propTypes = {
+    appointmentData: appointmentDataShape,
+  };
+
   return (
     <Paper
       sx={{
@@ -387,10 +551,20 @@ const BookingsMonthView = ({
         <AppointmentTooltip
           headerComponent={ToolTipHeader}
           contentComponent={ToolTipContent}
-          showCloseButton
         />
-        <AppointmentForm />
+        <AppointmentForm
+          readOnly
+          basicLayoutComponent={CustomAppointmentForm}
+        />
       </Scheduler>
+      <BookingRejectModal
+        open={rejectModalOpen}
+        onClose={handleCloseRejectModal}
+        bookingToReject={bookingToReject}
+        handleRejectReasonChange={handleRejectReasonChange}
+        handleRejectButton={handleRejectButton}
+        rejectionReason={rejectionReason}
+      />
     </Paper>
   );
 };

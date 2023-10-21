@@ -23,22 +23,18 @@ import {
   IconButton,
   MenuItem,
   Select,
-  TextField,
   Typography,
-  useTheme,
+  useTheme
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { alpha, styled } from "@mui/material/styles";
-import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateField } from "@mui/x-date-pickers/DateField";
-import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import {
   ToolTipHeaderPropTypes,
-  appointmentDataShape
+  appointmentDataShape,
 } from "../../../utils/ComponentPropTypes";
+import BookingDetailsForm from "./BookingDetailsForm";
 import BookingRejectModal from "./BookingRejectModal";
 
 const PREFIX = "Demo";
@@ -89,16 +85,15 @@ const BookingsMonthView = ({
     setCurrentStatus(event.target.value);
     const newStatus = event.target.value;
     const newBookings = allBookings
-      .map((booking) => ({
-        id: booking._id,
-        title: booking.activityTitle,
-        startDate: booking.startDateTime,
-        endDate: booking.endDateTime,
-        clientId: booking.clientId,
-        status: booking.status,
-        additionalComments: booking.additionalComments,
-        totalPax: booking.totalPax,
-      }))
+      .map(
+        ({ _id, activityTitle, endDateTime, startDateTime, ...restProps }) => ({
+          id: _id,
+          title: activityTitle,
+          startDate: startDateTime,
+          endDate: endDateTime,
+          ...restProps,
+        })
+      )
       .filter((booking) =>
         filterCriteria[newStatus].value === "ALL"
           ? booking.status === filterCriteria.pending.value ||
@@ -205,93 +200,6 @@ const BookingsMonthView = ({
     return formattedTime;
   };
 
-  const CustomAppointmentForm = ({ appointmentData }) => {
-    return (
-      <Grid
-        container
-        alignItems="left"
-        justifyContent="left"
-        style={{
-          display: "flex",
-          paddingLeft: 16,
-          paddingRight: 16,
-          paddingTop: 2,
-          paddingBottom: 6,
-        }}
-      >
-        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
-          <Typography fontSize={"1.5rem"} color={theme.palette.primary.main}>
-            Booking Details
-          </Typography>
-        </Grid>
-        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
-          <TextField
-            value={appointmentData.title}
-            fullWidth
-            label="Activity"
-            InputProps={{
-              readOnly: true,
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateField
-              label="Date"
-              value={dayjs(appointmentData.startDate)}
-              format="LL"
-              readOnly
-            />
-          </LocalizationProvider>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sx={{ display: "flex", alignItems: "center", paddingBottom: 2 }}
-        >
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <TimePicker
-              label="Start Time"
-              defaultValue={dayjs(appointmentData.startDate)}
-              readOnly
-            />
-            <div style={{ paddingLeft: 10, paddingRight: 10 }}>-</div>
-            <TimePicker
-              label="End Time"
-              defaultValue={dayjs(appointmentData.endDate)}
-              readOnly
-            />
-          </LocalizationProvider>
-        </Grid>
-        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
-          <Typography fontSize={"1.5rem"} color={theme.palette.primary.main}>
-            More Information
-          </Typography>
-        </Grid>
-        <Grid item xs={12} sx={{ paddingBottom: 2 }}>
-          <TextField
-            value={appointmentData.additionalComments}
-            fullWidth
-            label="Additional Comments"
-            multiline
-            rows={4}
-            InputProps={{
-              readOnly: true,
-            }}
-          />
-        </Grid>
-        <Grid item xs={6} sx={{ paddingBottom: 2 }}>
-          <TextField
-            value={appointmentData.totalPax}
-            label="Number of participants"
-            InputProps={{
-              readOnly: true,
-            }}
-          />
-        </Grid>
-      </Grid>
-    );
-  };
   const ToolTipContent = ({ appointmentData }) => {
     return (
       <Grid
@@ -435,16 +343,15 @@ const BookingsMonthView = ({
 
   const setBookingFormat = (bookings) => {
     return bookings
-      .map((booking) => ({
-        id: booking._id,
-        title: booking.activityTitle,
-        startDate: booking.startDateTime,
-        endDate: booking.endDateTime,
-        clientId: booking.clientId,
-        status: booking.status,
-        additionalComments: booking.additionalComments,
-        totalPax: booking.totalPax,
-      }))
+      .map(
+        ({ _id, activityTitle, endDateTime, startDateTime, ...restProps }) => ({
+          id: _id,
+          title: activityTitle,
+          startDate: startDateTime,
+          endDate: endDateTime,
+          ...restProps,
+        })
+      )
       .filter((booking) =>
         filterCriteria[currentStatus].value === "ALL"
           ? booking.status === filterCriteria.pending.value ||
@@ -523,9 +430,6 @@ const BookingsMonthView = ({
   }, [allBookings]);
 
   ToolTipHeader.propTypes = ToolTipHeaderPropTypes;
-  CustomAppointmentForm.propTypes = {
-    appointmentData: appointmentDataShape,
-  };
   ToolTipContent.propTypes = {
     appointmentData: appointmentDataShape,
   };
@@ -552,10 +456,7 @@ const BookingsMonthView = ({
           headerComponent={ToolTipHeader}
           contentComponent={ToolTipContent}
         />
-        <AppointmentForm
-          readOnly
-          basicLayoutComponent={CustomAppointmentForm}
-        />
+        <AppointmentForm readOnly basicLayoutComponent={BookingDetailsForm} />
       </Scheduler>
       <BookingRejectModal
         open={rejectModalOpen}

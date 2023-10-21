@@ -1,14 +1,15 @@
 import PropTypes from "prop-types";
 
 export const appointmentDataShape = PropTypes.shape({
-  id: PropTypes.string.isRequired,
+  _id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  startDate: PropTypes.instanceOf(Date).isRequired,
-  endDate: PropTypes.instanceOf(Date).isRequired,
+  startDateTime: PropTypes.instanceOf(Date).isRequired,
+  endDateTime: PropTypes.instanceOf(Date).isRequired,
   clientId: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
   additionalComments: PropTypes.string,
   totalPax: PropTypes.number,
+  eventLocationType: PropTypes.string,
 }).isRequired;
 
 export const ToolTipHeaderPropTypes = {
@@ -17,4 +18,3 @@ export const ToolTipHeaderPropTypes = {
   onOpenButtonClick: PropTypes.func.isRequired,
   onHide: PropTypes.func.isRequired,
 };
-

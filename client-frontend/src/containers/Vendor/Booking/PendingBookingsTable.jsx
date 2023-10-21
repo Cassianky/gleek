@@ -2,16 +2,19 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import {
+  Box,
   Chip,
+  Drawer,
   IconButton,
   Typography,
   alpha,
-  useTheme
+  useTheme,
 } from "@mui/material";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import BookingRejectModal from "./BookingRejectModal.jsx";
+import BookingDetailsForm from "./BookingDetailsForm.jsx";
 
 const PendingBookingsTable = ({
   allBookings,
@@ -24,6 +27,8 @@ const PendingBookingsTable = ({
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [bookingToReject, setBookingToReject] = useState();
   const [rejectionReason, setRejectionReason] = useState();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState();
 
   useEffect(() => {
     const formattedBookings = allBookings.filter(
@@ -95,6 +100,30 @@ const PendingBookingsTable = ({
 
   const handleRejectReasonChange = (event) => {
     setRejectionReason(event.target.value);
+  };
+
+  const handleRowClick = ({
+    _id,
+    activityTitle,
+    endDateTime,
+    startDateTime,
+    ...restProps
+  }) => {
+    const newBooking = {
+      id: _id,
+      title: activityTitle,
+      startDate: startDateTime,
+      endDate: endDateTime,
+      ...restProps,
+    };
+
+    setSelectedBooking(newBooking);
+    setIsDrawerOpen(true);
+  };
+
+  const handleCloseBookingDetails = () => {
+    setSelectedBooking();
+    setIsDrawerOpen(false);
   };
 
   const columns = [
@@ -341,7 +370,17 @@ const PendingBookingsTable = ({
             cursor: "pointer",
           },
         }}
+        onRowClick={(params) => handleRowClick(params.row)}
       />
+      <Drawer
+        anchor="left"
+        open={isDrawerOpen}
+        onClose={handleCloseBookingDetails}
+      >
+        <Box sx={{ width: "650px" }}>
+          <BookingDetailsForm appointmentData={selectedBooking} />
+        </Box>
+      </Drawer>
     </div>
   );
 };

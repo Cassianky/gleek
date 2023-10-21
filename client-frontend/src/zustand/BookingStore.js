@@ -31,11 +31,12 @@ const useBookingStore = create((set) => ({
       throw new Error("Unexpected Server Error!");
     }
   },
-  rejectBooking: async (bookingId) => {
+  rejectBooking: async (bookingId, rejectionReason) => {
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.patch(
-        `/gleekVendor/booking/rejectBooking/${bookingId}`
+        `/gleekVendor/booking/rejectBooking/${bookingId}`,
+        { rejectionReason: rejectionReason }
       );
       set({ bookings: response.data.bookings });
       set({ isLoading: false });

@@ -5,7 +5,7 @@ import BlockedTimeslotModel from "../model/blockedTimeslotModel.js";
 import { validationResult } from "express-validator";
 import { isCartItemStillAvailable } from "./cartItemController.js";
 import mongoose from "mongoose";
-import { getAllBookingsForVendor } from "../service/bookingService.js";
+import { getAllPendingAndConfirmedBookingsForVendor } from "../service/bookingService.js";
 
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
@@ -16,7 +16,7 @@ export const getAllBookings = async (req, res) => {
     // }
     res.status(200).json({ bookings });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       message: "Server Error! Unable to get bookings.",
       error: error.message,
@@ -432,13 +432,14 @@ export const confirmBooking = async (req, res) => {
       { status: "CONFIRMED" },
       { new: true }
     );
-    const updatedBookings = await getAllBookingsForVendor(vendorId);
+    const updatedBookings =
+      await getAllPendingAndConfirmedBookingsForVendor(vendorId);
     res.status(200).json({
       bookings: updatedBookings,
       message: `Booking for ${newBooking.activityTitle} confirmed successfully!`,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       message: "Server Error! Unable to confirm booking.",
       error: error.message,
@@ -451,18 +452,20 @@ export const rejectBooking = async (req, res) => {
   try {
     const bookingId = req.params.id;
     const vendorId = req.user;
+    const { rejectionReason } = req.body;
     const newBooking = await BookingModel.findByIdAndUpdate(
       bookingId,
-      { status: "REJECTED" },
+      { status: "REJECTED", rejectionReason: rejectionReason },
       { new: true }
     );
-    const updatedBookings = await getAllBookingsForVendor(vendorId);
+    const updatedBookings =
+      await getAllPendingAndConfirmedBookingsForVendor(vendorId);
     res.status(200).json({
       bookings: updatedBookings,
       message: `Booking for ${newBooking.activityTitle} rejected successfully!`,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       message: "Server Error! Unable to reject booking.",
       error: error.message,
@@ -522,7 +525,7 @@ export const getAllBookingsByClientId = async (req, res) => {
 export const getAllBookingsByVendorId = async (req, res) => {
   try {
     const vendorId = req.user;
-    const bookings = await getAllBookingsForVendor(vendorId);
+    const bookings = await getAllPendingAndConfirmedBookingsForVendor(vendorId);
     res.status(200).json({
       bookings: bookings,
     });

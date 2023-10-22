@@ -6,6 +6,7 @@ import BookingsMonthView from "./BookingsMonthView";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import PendingBookingsTable from "./PendingBookingsTable";
+import useSnackbarStore from "../../../zustand/SnackbarStore";
 
 const StyledPage = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.grey[50],
@@ -25,7 +26,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const BookingsPage = () => {
   const theme = useTheme();
   const [currentTab, setCurrentTab] = useState();
-  const { getBookingsForVendor, bookings } = useBookingStore();
+  const { getBookingsForVendor, bookings, approveBooking, rejectBooking } =
+    useBookingStore();
+  const { openSnackbar } = useSnackbarStore();
 
   const pendingBookingBadgeNumber = bookings.filter(
     (booking) => booking.status === "PENDING_CONFIRMATION"
@@ -77,10 +80,20 @@ const BookingsPage = () => {
       </Box>
       <Box sx={{ paddingLeft: 2, paddingRight: 2 }}>
         {currentTab === "calendar" && (
-          <BookingsMonthView allBookings={bookings} />
+          <BookingsMonthView
+            allBookings={bookings}
+            approveBooking={approveBooking}
+            rejectBooking={rejectBooking}
+            openSnackbar={openSnackbar}
+          />
         )}
         {currentTab === "bookingsList" && (
-          <PendingBookingsTable allBookings={bookings} />
+          <PendingBookingsTable
+            allBookings={bookings}
+            approveBooking={approveBooking}
+            rejectBooking={rejectBooking}
+            openSnackbar={openSnackbar}
+          />
         )}
       </Box>
     </StyledPage>

@@ -23,7 +23,7 @@ import {
   MenuItem,
   Select,
   Typography,
-  useTheme
+  useTheme,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { alpha, styled } from "@mui/material/styles";
@@ -37,7 +37,12 @@ const classes = {
   flexContainer: `${PREFIX}-flexContainer`,
 };
 
-const BookingsMonthView = ({ allBookings }) => {
+const BookingsMonthView = ({
+  allBookings,
+  approveBooking,
+  rejectBooking,
+  openSnackbar,
+}) => {
   const theme = useTheme();
   const filterCriteria = {
     all: { value: "ALL", text: "All" },
@@ -244,6 +249,9 @@ const BookingsMonthView = ({ allBookings }) => {
                   },
                   marginRight: 1,
                 }}
+                onClick={async () =>
+                  await handleApproveButton(appointmentData.id)
+                }
               >
                 <DoneIcon />
               </IconButton>
@@ -257,6 +265,9 @@ const BookingsMonthView = ({ allBookings }) => {
                     backgroundColor: alpha(theme.palette.error.main, 0.5),
                   },
                 }}
+                onClick={async () =>
+                  await handleRejectButton(appointmentData.id)
+                }
               >
                 <CloseIcon />
               </IconButton>
@@ -332,6 +343,24 @@ const BookingsMonthView = ({ allBookings }) => {
     </Appointments.Appointment>
   );
 
+  const handleApproveButton = async (bookingId) => {
+    try {
+      const message = await approveBooking(bookingId);
+      openSnackbar(message);
+    } catch (error) {
+      openSnackbar(error, "error");
+    }
+  };
+
+  const handleRejectButton = async (bookingId) => {
+    try {
+      const message = await rejectBooking(bookingId);
+      openSnackbar(message);
+    } catch (error) {
+      openSnackbar(error, "error");
+    }
+  };
+
   useEffect(() => {
     const formattedBookings = setBookingFormat(allBookings);
     setBookings(formattedBookings);
@@ -368,6 +397,9 @@ const BookingsMonthView = ({ allBookings }) => {
 
 BookingsMonthView.propTypes = {
   allBookings: PropTypes.array.isRequired,
+  approveBooking: PropTypes.func.isRequired,
+  rejectBooking: PropTypes.func.isRequired,
+  openSnackbar: PropTypes.func.isRequired,
 };
 
 export default BookingsMonthView;

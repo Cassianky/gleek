@@ -1,13 +1,36 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
-import { Chip, IconButton, Typography, alpha, useTheme } from "@mui/material";
+import {
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  TextField,
+  Typography,
+  alpha,
+  useTheme,
+} from "@mui/material";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-const PendingBookingsTable = ({ allBookings }) => {
+
+const PendingBookingsTable = ({
+  allBookings,
+  approveBooking,
+  rejectBooking,
+  openSnackbar,
+}) => {
   const [bookings, setBookings] = useState([]);
   const theme = useTheme();
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [bookingToReject, setBookingToReject] = useState();
+  const [rejectionReason, setRejectionReason] = useState();
+
   useEffect(() => {
     const formattedBookings = allBookings.filter(
       (booking) => booking.status === "PENDING_CONFIRMATION"
@@ -47,6 +70,37 @@ const PendingBookingsTable = ({ allBookings }) => {
       })
       .toUpperCase();
     return formattedTime;
+  };
+
+  const handleApproveButton = async (bookingId) => {
+    try {
+      const message = await approveBooking(bookingId);
+      openSnackbar(message);
+    } catch (error) {
+      openSnackbar(error, "error");
+    }
+  };
+
+  const handleRejectButton = async (bookingId) => {
+    try {
+      const message = await rejectBooking(bookingId, rejectionReason);
+      openSnackbar(message);
+    } catch (error) {
+      openSnackbar(error, "error");
+    }
+  };
+
+  const handleOpenRejectModal = (activity) => {
+    setRejectModalOpen(true);
+    setBookingToReject(activity);
+  };
+
+  const handleCloseRejectModal = () => {
+    setRejectModalOpen(false);
+  };
+
+  const handleRejectReasonChange = (event) => {
+    setRejectionReason(event.target.value);
   };
 
   const columns = [
@@ -237,6 +291,7 @@ const PendingBookingsTable = ({ allBookings }) => {
                 height: "38px",
                 width: "38px",
               }}
+              onClick={async () => await handleApproveButton(params.row._id)}
             >
               <DoneIcon fontSize="small" />
             </IconButton>
@@ -250,9 +305,68 @@ const PendingBookingsTable = ({ allBookings }) => {
                 height: "38px",
                 width: "38px",
               }}
+              onClick={() => handleOpenRejectModal(params.row)}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
+            <Dialog
+              open={rejectModalOpen}
+              onClose={handleCloseRejectModal}
+              sx={{
+                "& .MuiDialog-paper": {
+                  border: "3px solid #D32F2F",
+                  borderRadius: "10px",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              <DialogTitle sx={{ paddingBottom: 0 }}>
+                <div style={{ display: "flex" }}>
+                  <Typography fontSize={"1.25rem"}>
+                    Rejecting booking for&nbsp;
+                  </Typography>
+                  <Typography color="#9F91CC" fontSize={"1.25rem"}>
+                    {bookingToReject?.activityTitle}
+                  </Typography>
+                </div>
+              </DialogTitle>
+              <DialogTitle sx={{ paddingTop: 0 }}>
+                <div style={{ display: "flex" }}>
+                  <Typography fontSize={"1rem"}>
+                    Booking made by&nbsp;
+                  </Typography>
+                  <Typography color="#9F91CC" fontSize={"1rem"}>
+                    {bookingToReject?.clientId?.name}
+                  </Typography>
+                </div>
+              </DialogTitle>
+
+              <DialogContent>
+                <DialogContentText>
+                  Provide a reason for rejecting booking request!
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="reject"
+                  label="Reject Reason"
+                  fullWidth
+                  variant="standard"
+                  onChange={handleRejectReasonChange}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => handleCloseRejectModal()}>Cancel</Button>
+                <Button
+                  onClick={async () => await handleRejectButton(params.row._id)}
+                  variant="contained"
+                  color="error"
+                  disabled={!rejectionReason || rejectionReason === ""}
+                >
+                  REJECT
+                </Button>
+              </DialogActions>
+            </Dialog>
           </div>
         );
       },
@@ -330,6 +444,9 @@ const PendingBookingsTable = ({ allBookings }) => {
 
 PendingBookingsTable.propTypes = {
   allBookings: PropTypes.array.isRequired,
+  approveBooking: PropTypes.func.isRequired,
+  rejectBooking: PropTypes.func.isRequired,
+  openSnackbar: PropTypes.func.isRequired,
 };
 
 export default PendingBookingsTable;

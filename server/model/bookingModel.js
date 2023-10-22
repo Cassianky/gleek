@@ -98,6 +98,7 @@ const bookingSchema = new mongoose.Schema({
     ],
     default: "PENDING_CONFIRMATION",
   },
+  rejectionReason: { type: String },
   creationDateTime: {
     type: Date,
     required: true,

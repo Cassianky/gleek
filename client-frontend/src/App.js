@@ -38,6 +38,7 @@ import BlockoutMultipleActivities from "./containers/Vendor/Blockout/BlockoutMul
 import CreateActivityPage from "./containers/Vendor/Activity/CreateActivityPage";
 import EditActivityDraftPage from "./containers/Vendor/Activity/EditActivityDraftPage";
 import BlockoutSingleActivity from "./containers/Vendor/Blockout/BlockoutSingleActivity";
+import FillSurvey from "./containers/Client/Survey/FillSurvey";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -153,6 +154,16 @@ function App() {
             element={
               <ClientProtectedRoute>
                 <CheckoutPage />
+              </ClientProtectedRoute>
+            }
+          />
+
+          <Route
+            exact
+            path="/booking/:bookingId/survey/edit"
+            element={
+              <ClientProtectedRoute>
+                <FillSurvey />
               </ClientProtectedRoute>
             }
           />

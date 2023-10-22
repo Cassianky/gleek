@@ -13,7 +13,7 @@ export const addCartItem = async (req, res) => {
   const errors = validationResult(req);
 
   const client = req.user;
-  console.log("Client", client);
+  //console.log("Client", client);
 
   if (!errors.isEmpty()) {
     // 422 status due to validation errors
@@ -92,7 +92,7 @@ export const getCartItemsByClientId = async (req, res) => {
   const errors = validationResult(req);
 
   const client = req.user;
-  console.log("Client", client);
+  //console.log("Client", client);
 
   if (!errors.isEmpty()) {
     // 422 status due to validation errors
@@ -131,7 +131,7 @@ export const deleteCartItem = async (req, res) => {
   const errors = validationResult(req);
 
   const client = req.user;
-  console.log("Client", client);
+  //console.log("Client", client);
 
   if (!errors.isEmpty()) {
     // 422 status due to validation errors

@@ -15,7 +15,7 @@ const adminSurveyResponseSchema = new mongoose.Schema({
   },
   feedbackRating: { type: Number, required: false },
   recommendationScore: { type: Number, required: false },
-  potentialNextActivityDate: { type: Date, required: false },
+  potentialNextActivityDate: { type: String, required: false },
   repeatActivityScore: { type: Number, required: false },
   repeatActivityDifferentVendorScore: { type: Number, required: false },
   differentActivityScore: { type: Number, required: false },

@@ -134,9 +134,9 @@ export function generateAllTimeslots(
     };
   });
 
-  console.log("Existing bookings on selected day", bookings);
-  console.log("Blocked timeslots on selected day: ", blockedTimeslots);
-  console.log("All timeslots: ", allTimeslots);
+  // console.log("Existing bookings on selected day", bookings);
+  // console.log("Blocked timeslots on selected day: ", blockedTimeslots);
+  // console.log("All timeslots: ", allTimeslots);
 
   return allTimeslots;
 }

@@ -16,7 +16,7 @@ const useCartStore = create((set) => ({
         ...item.cartItem,
         isItemStillAvailable: item.isItemStillAvailable,
       }));
-      console.log(combinedDataArray);
+      //console.log(combinedDataArray);
       set({ cartItems: combinedDataArray });
     } catch (error) {
       console.error(error);

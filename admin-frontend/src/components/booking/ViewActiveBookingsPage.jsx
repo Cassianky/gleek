@@ -14,15 +14,15 @@ import CancelField from "./CancelField";
 import PaidField from "./PaidField";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
-    "& .MuiBadge-badge": {
-      right: -3,
-      top: 13,
-      border: `2px solid ${theme.palette.background.paper}`,
-      padding: "0 4px",
-      color: "white",
-      backgroundColor: theme.palette.light_purple.main,
-    },
-  }));
+  "& .MuiBadge-badge": {
+    right: -3,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: "0 4px",
+    color: "white",
+    backgroundColor: theme.palette.light_purple.main,
+  },
+}));
 
 const ViewActiveBookings = () => {
   const theme = useTheme();
@@ -32,16 +32,16 @@ const ViewActiveBookings = () => {
   const { openSnackbar } = useSnackbarStore();
 
   const pendingBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "PENDING_CONFIRMATION"
+    (booking) => booking.status === "PENDING_CONFIRMATION",
   ).length;
 
   const confirmedBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "CONFIRMED"
-    ).length;
+    (booking) => booking.status === "CONFIRMED",
+  ).length;
 
-    const pendingPaymentBookingBadgeNumber = bookings.filter(
-        (booking) => booking.status === "PENDING_PAYMENT"
-        ).length;
+  const pendingPaymentBookingBadgeNumber = bookings.filter(
+    (booking) => booking.status === "PENDING_PAYMENT",
+  ).length;
 
   const pendingConfirmationAdditionalColumns = [
     {
@@ -75,43 +75,36 @@ const ViewActiveBookings = () => {
 
   const confirmedAdditionalColumns = [
     {
-        field: "details",
-        headerName: "Confirmation Details",
-        flex: 2,
-        sortable: false,
-        renderCell: (params) => {
-            return (
-                <Typography>Confirmed by xx on xx</Typography>
-            )
-    }
-},
-    {
-        field: "cancelAction",
-        headerName: "Cancel?",
-        flex: 1,
-        sortable: false,
-        renderCell: (params) => {
-            return (
-                <CancelField/>
-            )
-        }
+      field: "details",
+      headerName: "Confirmation Details",
+      flex: 2,
+      sortable: false,
+      renderCell: (params) => {
+        return <Typography>Confirmed by xx on xx</Typography>;
+      },
     },
-  ]
+    {
+      field: "cancelAction",
+      headerName: "Cancel?",
+      flex: 1,
+      sortable: false,
+      renderCell: (params) => {
+        return <CancelField />;
+      },
+    },
+  ];
 
   const pendingPaymentAdditionalColumns = [
     {
-        field: "paidAction",
-        headerName: "Paid?",
-        flex: 1,
-        sortable: false,
-        renderCell: (params) => {
-            return (
-                <PaidField/>
-            )
-        }
-    }
-  ]
-
+      field: "paidAction",
+      headerName: "Paid?",
+      flex: 1,
+      sortable: false,
+      renderCell: (params) => {
+        return <PaidField params={params} />;
+      },
+    },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -151,17 +144,21 @@ const ViewActiveBookings = () => {
           value="pendingConfirmation"
           label="Pending Confirmation"
         />
-        <Tab icon={
+        <Tab
+          icon={
             <StyledBadge badgeContent={confirmedBookingBadgeNumber}>
-        <ThumbUpAltIcon />
-        </StyledBadge>
-        } value="confirmed" label="Confirmed" />
+              <ThumbUpAltIcon />
+            </StyledBadge>
+          }
+          value="confirmed"
+          label="Confirmed"
+        />
         <Tab
           icon={
             <StyledBadge badgeContent={pendingPaymentBookingBadgeNumber}>
-          <PaidIcon />
-          </StyledBadge>
-        }
+              <PaidIcon />
+            </StyledBadge>
+          }
           value="pendingPayment"
           label="Pending Payment"
         />
@@ -190,7 +187,8 @@ const ViewActiveBookings = () => {
               bookings={bookings}
               status="PENDING_PAYMENT"
               additionalColumns={pendingPaymentAdditionalColumns}
-            />)}
+            />
+          )}
         </>
       )}
     </MainBodyContainer>

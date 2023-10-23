@@ -81,8 +81,7 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
             paginationModel: { page: 0, pageSize: 25 },
           },
         }}
-        slots={{ toolbar: GridToolbarFilterButton}}
-
+        slots={{ toolbar: GridToolbarFilterButton }}
       />
     </div>
   );

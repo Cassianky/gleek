@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useBookingStore, useSnackbarStore } from "../../zustand/GlobalStore";
 import MainBodyContainer from "../common/MainBodyContainer";
 import BookingsTable from "./BookingsTable";
-import ConfirmField from "./ConfirmField";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -18,49 +17,39 @@ const ViewPastBookings = () => {
 
   const completedAndPaidAdditionalColumns = [
     {
-        field: "details",
-        headerName: "Payment Update Details",
-        flex: 2,
-        sortable: false,
-        renderCell: (params) => {
-          return (
-            <Typography>Updated by admin xx on xx</Typography>
-          );
-        },
-
-    }
+      field: "details",
+      headerName: "Payment Update Details",
+      flex: 2,
+      sortable: false,
+      renderCell: (params) => {
+        return <Typography>Updated by admin xx on xx</Typography>;
+      },
+    },
   ];
 
   const rejectedAdditionalColumns = [
     {
-        field: "details",
-        headerName: "Rejection Details",
-        flex: 2,
-        sortable: false,
-        renderCell: (params) => {
-          return (
-            <Typography>Rejected by admin xx on xx</Typography>
-          );
-        },
-
-    }
-  ]
+      field: "details",
+      headerName: "Rejection Details",
+      flex: 2,
+      sortable: false,
+      renderCell: (params) => {
+        return <Typography>Rejected by admin xx on xx</Typography>;
+      },
+    },
+  ];
 
   const cancelledAdditionalColumns = [
     {
-        field: "details",
-        headerName: "Cancellation Details",
-        flex: 2,
-        sortable: false,
-        renderCell: (params) => {
-          return (
-            <Typography>Cancelled by admin xx on xx</Typography>
-          );
-        },
-
-    }
-  ]
-
+      field: "details",
+      headerName: "Cancellation Details",
+      flex: 2,
+      sortable: false,
+      renderCell: (params) => {
+        return <Typography>Cancelled by admin xx on xx</Typography>;
+      },
+    },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,7 +79,7 @@ const ViewPastBookings = () => {
         View Past Bookings
       </Typography>
       <Tabs value={currentTab} onChange={handleChange} centered>
-      <Tab
+        <Tab
           icon={<EventAvailableIcon />}
           value="completedAndPaid"
           label="Completed and Paid"
@@ -121,7 +110,8 @@ const ViewPastBookings = () => {
               bookings={bookings}
               status="CANCELLED"
               additionalColumns={cancelledAdditionalColumns}
-            />)}
+            />
+          )}
         </>
       )}
     </MainBodyContainer>

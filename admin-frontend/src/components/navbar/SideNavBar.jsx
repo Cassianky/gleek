@@ -21,7 +21,10 @@ const userManagementList = [
   { Clients: "/viewAllClients" },
   { "Vendor Partners": "/viewAllVendors" },
 ];
-const bookingManagementList = [{ "View Active Bookings": "/viewActiveBookings" }, {"View Past Bookings": "/viewPastBookings"}];
+const bookingManagementList = [
+  { "View Active Bookings": "/viewActiveBookings" },
+  { "View Past Bookings": "/viewPastBookings" },
+];
 
 const StyledLink = styled(Link)`
   text-decoration: none;

@@ -469,6 +469,58 @@ export const useClientStore = create((set) => ({
   },
 }));
 
+export const useBookingStore = create((set) => ({
+  bookings: [],
+  pendingBookings: [],
+  isLoading: false,
+  getAllBookings: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/booking/getAllBookings");
+      set({
+        bookings: response.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
+  approveBooking: async (bookingId) => {
+    try {
+      set({ isLoading: true });
+      // const response = await AxiosConnect.patch(
+      //   `/gleekVendor/booking/confirmBooking/${bookingId}`
+      // );
+      console.log("Approve booking");
+      // set({ bookings: response.data.bookings });
+      set({ isLoading: false });
+      // return response.data.message;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error("Unexpected Server Error!");
+    }
+  },
+  rejectBooking: async (bookingId, rejectionReason) => {
+    try {
+      set({ isLoading: true });
+      // const response = await AxiosConnect.patch(
+      //   `/gleekVendor/booking/rejectBooking/${bookingId}`,
+      //   { rejectionReason: rejectionReason }
+      // );
+      // set({ bookings: response.data.bookings });
+      console.log("Reject booking");
+      set({ isLoading: false });
+      // return response.data.message;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error("Unexpected Server Error!");
+    }
+  },
+}));
+
 export const useImageUploadTestStore = create((set) => ({
   testActivities: [],
   setTestActivities: (newActivityList) => {

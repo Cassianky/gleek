@@ -10,7 +10,13 @@ import { getAllPendingAndConfirmedBookingsForVendor } from "../service/bookingSe
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
   try {
-    const bookings = await BookingModel.find();
+    const bookings = await BookingModel.find()
+      .populate({
+        path: "clientId",
+        select: "-password",
+      })
+      .populate("activityId");
+
     // if (bookings.length === 0) {
     //   return res.status(404).json({ message: "No bookings found!" });
     // }

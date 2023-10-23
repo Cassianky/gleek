@@ -16,8 +16,8 @@ export const getSurveyForBooking = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
-    console.log("client", client._id )
-    console.log("booking",booking.clientId)
+    // console.log("client", client._id);
+    // console.log("booking", booking.clientId);
 
     if (!client._id.equals(booking.clientId)) {
       return res.status(403).json({ message: "Unauthorised." });
@@ -26,65 +26,69 @@ export const getSurveyForBooking = async (req, res) => {
     const survey = await SurveyResponse.findOne({ booking: bookingId });
     const review = await Review.findOne({ booking: bookingId });
 
+    console.log("review", review)
+
     if (!survey) {
       // return empty survey object
       return res.status(200).send({});
     }
 
-    return res.status(200).json({ survey, review });
+ 
+
+    return res.status(200).json({ survey: survey, review: review });
   } catch (err) {
     console.error(err);
     return res.status(500).send({ message: "Server error" });
   }
 };
 
-export const updateSurveyDraftForBooking = async (req, res) => {
-  try {
-    const bookingId = req.params.bookingId;
+// export const updateSurveyDraftForBooking = async (req, res) => {
+//   try {
+//     const bookingId = req.params.bookingId;
 
-    const {
-      feedbackRating,
-      recommendationScore,
-      potentialNextActivityDate,
-      repeatActivityScore,
-      repeatActivityDifferentVendorScore,
-      differentActivityScore,
-      generalFeedback,
-      activityLiked,
-      activityImprovements,
-      testimonial,
-      displayName,
-      potentialReferrals,
-    } = req.body;
+//     const {
+//       feedbackRating,
+//       recommendationScore,
+//       potentialNextActivityDate,
+//       repeatActivityScore,
+//       repeatActivityDifferentVendorScore,
+//       differentActivityScore,
+//       generalFeedback,
+//       activityLiked,
+//       activityImprovements,
+//       testimonial,
+//       displayName,
+//       potentialReferrals,
+//     } = req.body;
 
-    const updateFields = {
-      feedbackRating,
-      recommendationScore,
-      potentialNextActivityDate,
-      repeatActivityScore,
-      repeatActivityDifferentVendorScore,
-      differentActivityScore,
-      generalFeedback,
-      activityLiked,
-      activityImprovements,
-      testimonial,
-      displayName,
-      potentialReferrals,
-      status: "DRAFT",
-    };
+//     const updateFields = {
+//       feedbackRating,
+//       recommendationScore,
+//       potentialNextActivityDate,
+//       repeatActivityScore,
+//       repeatActivityDifferentVendorScore,
+//       differentActivityScore,
+//       generalFeedback,
+//       activityLiked,
+//       activityImprovements,
+//       testimonial,
+//       displayName,
+//       potentialReferrals,
+//       status: "DRAFT",
+//     };
 
-    const survey = await SurveyResponse.findOneAndUpdate(
-      { booking: bookingId },
-      updateFields,
-      { new: true },
-    );
+//     const survey = await SurveyResponse.findOneAndUpdate(
+//       { booking: bookingId },
+//       updateFields,
+//       { new: true },
+//     );
 
-    return res.status(200).json(survey);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error" });
-  }
-};
+//     return res.status(200).json(survey);
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 export const submitSurveyForBooking = async (req, res) => {
   try {
@@ -93,7 +97,7 @@ export const submitSurveyForBooking = async (req, res) => {
     const bookingId = req.params.bookingId;
     const booking = await Booking.findById(bookingId);
 
-    const { rating, comment } = req.body.review;
+    const wantsToLeaveReview = req.body.wantsToLeaveReview;
 
     const {
       feedbackRating,
@@ -128,14 +132,6 @@ export const submitSurveyForBooking = async (req, res) => {
       status: "SUBMITTED",
     };
 
-    const reviewUpdateFields = {
-      rating,
-      comment,
-      booking: bookingId,
-      activity: booking.activityId,
-      client: client._id,
-    };
-
     let survey = await SurveyResponse.findOneAndUpdate(
       // in case we want draft surveys
       { booking: bookingId },
@@ -143,11 +139,23 @@ export const submitSurveyForBooking = async (req, res) => {
       { new: true, upsert: true },
     );
 
-    let review = await Review.findOneAndUpdate(
-      { booking: bookingId },
-      reviewUpdateFields,
-      { new: true, upsert: true },
-    );
+    let review;
+
+    if (wantsToLeaveReview) {
+      const { rating, comment } = req.body.review;
+      const reviewUpdateFields = {
+        rating,
+        comment,
+        booking: bookingId,
+        activity: booking.activityId,
+        client: client._id,
+      };
+      review = await Review.findOneAndUpdate(
+        { booking: bookingId },
+        reviewUpdateFields,
+        { new: true, upsert: true },
+      );
+    }
 
     await Booking.findByIdAndUpdate(
       bookingId,
@@ -246,6 +254,9 @@ export const getSurveysForClient = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// Using surveyId
 
 export const updateSurvey = async (req, res) => {
   try {

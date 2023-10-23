@@ -6,7 +6,6 @@ import {
   submitSurvey,
   submitSurveyForBooking,
   updateSurvey,
-  updateSurveyDraftForBooking,
 } from "../../controller/surveyController.js";
 import { verifyToken } from "../../middleware/clientAuth.js";
 
@@ -24,11 +23,11 @@ router.get("/pending", verifyToken, getSurveysForClient);
  */
 router.post("/booking/:bookingId/submit", verifyToken, submitSurveyForBooking);
 
-/*
- * POST /gleek/survey/booking/bookingId/draft
- * Submit survey for booking with bookingId
- */
-router.post("/booking/:bookingId/draft", updateSurveyDraftForBooking);
+// /*
+//  * POST /gleek/survey/booking/bookingId/draft
+//  * Submit survey for booking with bookingId
+//  */
+// router.post("/booking/:bookingId/draft", updateSurveyDraftForBooking);
 
 /*
  * GET /gleek/survey/surveyId

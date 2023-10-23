@@ -1,23 +1,18 @@
 import styled from "@emotion/styled";
 import {
   Box,
-  Button,
-  Checkbox,
   CircularProgress,
-  Divider,
-  FormControlLabel,
   Grid,
   Paper,
   Rating,
-  Stack,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
-import { useParams, Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import MainBodyContainer from "../../../components/Common/MainBodyContainer";
 import useAdminSurveyResponseStore from "../../../zustand/AdminSurveyResponseStore";
 import useSnackbarStore from "../../../zustand/SnackbarStore";
-import MainBodyContainer from "../../../components/Common/MainBodyContainer";
 
 const StyledPaper = styled(Paper)`
   padding: 20px;
@@ -30,12 +25,8 @@ const StyledPaper = styled(Paper)`
 function FillSurvey() {
   const { bookingId } = useParams();
 
-  const {
-    submitSurveyForBooking,
-    getSurveyForBooking,
-    isLoadingSurvey,
-    isSurveyAvailable,
-  } = useAdminSurveyResponseStore();
+  const { getSurveyForBooking, isLoadingSurvey, isSurveyAvailable } =
+    useAdminSurveyResponseStore();
 
   const { openSnackbar } = useSnackbarStore();
 
@@ -57,10 +48,8 @@ function FillSurvey() {
     potentialReferrals: "",
   });
 
-  const [reviewData, setReviewData] = useState({
-    rating: 0,
-    comment: "",
-  });
+  const [reviewData, setReviewData] = useState(null);
+  const [hasReview, setHasReview] = useState(false);
 
   useEffect(() => {
     const getSurvey = async () => {
@@ -69,7 +58,9 @@ function FillSurvey() {
 
         setSurveyData(data.survey);
         setReviewData(data.review);
-        
+        if (data.review != null) {
+          setHasReview(true);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -83,32 +74,6 @@ function FillSurvey() {
       ...surveyData,
       [field]: value,
     });
-  };
-
-  const [wantsToLeaveReview, setWantsToLeaveReview] = useState(false);
-
-  const handleToggleReview = () => {
-    setWantsToLeaveReview(!wantsToLeaveReview);
-  };
-  const handleReviewFieldChange = (field, value) => {
-    setReviewData({
-      ...reviewData,
-      [field]: value,
-    });
-  };
-
-  const handleSubmit = () => {
-    try {
-      submitSurveyForBooking(
-        bookingId,
-        surveyData,
-        reviewData,
-        wantsToLeaveReview,
-      );
-      openSnackbar("Submitted!", "success");
-    } catch (err) {
-      openSnackbar("There was an error.", "error");
-    }
   };
 
   if (isLoadingSurvey)
@@ -145,7 +110,7 @@ function FillSurvey() {
       hasBackButton={true}
       breadcrumbNames={["View Booking"]}
       breadcrumbLinks={[`/booking/${bookingId}`]}
-      currentBreadcrumbName={`Respond to survey`}
+      currentBreadcrumbName={`View submitted survey`}
     >
       <Box
         display="flex"
@@ -156,36 +121,17 @@ function FillSurvey() {
         width={"100%"}
       >
         <Typography color="secondary" variant="h3">
-          Post-Activity Survey
+          Post-Activity Survey Response
         </Typography>
 
-        <Typography variant="body2">
-          Thank you for choosing one of our activities! Your response will help
-          us improve to meet your needs better.
-        </Typography>
 
         <form>
           <Grid container spacing={2} p={7}>
-            {/* Checkbox to toggle review section */}
-
-            <Grid item xs={12}>
-              <FormControlLabel
-                checked={wantsToLeaveReview}
-                onChange={handleToggleReview}
-                color="primary"
-                control={<Checkbox defaultChecked />}
-                label="Do you want to leave a review on this activity?"
-              />
-            </Grid>
-
-            {wantsToLeaveReview && (
+            {hasReview && (
               <>
                 <Grid item xs={12}>
                   <Typography color="primary" variant="h4">
                     Activity Review
-                  </Typography>
-                  <Typography variant="h7" color="secondary">
-                    This will be a publicly posted review on the activity.
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -194,12 +140,10 @@ function FillSurvey() {
                       What would you rate this activity experience overall?
                     </Typography>
                     <Rating
+                      disabled
                       max={5}
                       name="rating"
                       value={reviewData?.rating}
-                      onChange={(event, newValue) =>
-                        handleReviewFieldChange("rating", newValue)
-                      }
                     />
                   </StyledPaper>
                 </Grid>
@@ -209,15 +153,26 @@ function FillSurvey() {
                       What were your thoughts about the activity?
                     </Typography>
                     <TextField
+                      disabled
                       variant="standard"
                       fullWidth
                       name="comment"
                       value={reviewData?.comment}
-                      onChange={(e) =>
-                        handleReviewFieldChange("comment", e.target.value)
-                      }
                     />
                   </StyledPaper>
+                </Grid>
+              </>
+            )}
+
+            {!hasReview && (
+              <>
+                <Grid item xs={12}>
+                  <Typography color="primary" variant="h4">
+                    Activity Review
+                  </Typography>
+                  <Typography variant="h7" color="secondary">
+                    You didn't leave a review for this activity and booking.
+                  </Typography>
                 </Grid>
               </>
             )}
@@ -226,60 +181,8 @@ function FillSurvey() {
               <Typography color="primary" variant="h4" paddingTop={5}>
                 Feedback for Urban Origins
               </Typography>
-              <Typography variant="h7" color="secondary">
-                This data is shared with Urban Origins and will not be shown
-                publicly. Thank you for booking on Gleek!
-              </Typography>
             </Grid>
-            {/* <Grid item xs={12}>
-            <StyledPaper>
-              <Typography paddingTop={1}>Email</Typography>
-              <TextField
-                label="Email"
-                variant="standard"
-                fullWidth
-                required
-                value={surveyData?.email}
-                onChange={(e) => handleFieldChange("email", e.target.value)}
-              />
-            </StyledPaper>
-          </Grid>
-          <Grid item xs={12}>
-            <StyledPaper>
-              <TextField
-                label="Name"
-                variant="standard"
-                fullWidth
-                required
-                value={surveyData?.name}
-                onChange={(e) => handleFieldChange("name", e.target.value)}
-              />
-            </StyledPaper>
-          </Grid>
-          <Grid item xs={12}>
-            <StyledPaper>
-              <TextField
-                label="Company"
-                variant="standard"
-                fullWidth
-                required
-                value={surveyData?.company}
-                onChange={(e) => handleFieldChange("company", e.target.value)}
-              />
-            </StyledPaper>
-          </Grid>
 
-          <Grid item xs={12}>
-            <StyledPaper>
-              <TextField
-                label="Date of activity"
-                variant="standard"
-                fullWidth
-                value={surveyData?.date}
-                onChange={(e) => handleFieldChange("date", e.target.value)}
-              />
-            </StyledPaper>
-          </Grid> */}
             <Grid item xs={12}>
               <StyledPaper>
                 <Typography paddingY={1} variant="h6">
@@ -287,6 +190,7 @@ function FillSurvey() {
                   friend or colleague?
                 </Typography>
                 <Rating
+                  disabled
                   max={10}
                   name="recommendationScore"
                   value={surveyData?.recommendationScore}
@@ -302,6 +206,7 @@ function FillSurvey() {
                   When do you intend to organize your next activity?
                 </Typography>
                 <TextField
+                  disabled
                   variant="standard"
                   fullWidth
                   value={surveyData?.potentialNextActivityDate}
@@ -325,6 +230,7 @@ function FillSurvey() {
                   future events or batches of participants
                 </Typography>
                 <Rating
+                  disabled
                   name="repeatActivityScore"
                   value={surveyData?.repeatActivityScore}
                   onChange={(event, newValue) =>
@@ -346,6 +252,7 @@ function FillSurvey() {
                 </Typography>
 
                 <Rating
+                  disabled
                   name="repeatActivityDifferentVendorScore"
                   value={surveyData?.repeatActivityDifferentVendorScore}
                   onChange={(event, newValue) =>
@@ -364,6 +271,7 @@ function FillSurvey() {
                   from our catalogue for your next event?
                 </Typography>
                 <Rating
+                  disabled
                   name="differentActivityScore"
                   value={surveyData?.differentActivityScore}
                   onChange={(event, newValue) =>
@@ -378,6 +286,7 @@ function FillSurvey() {
                   What did you like about the activity?
                 </Typography>
                 <TextField
+                  disabled
                   label="Your thoughts"
                   variant="standard"
                   fullWidth
@@ -397,6 +306,7 @@ function FillSurvey() {
                   What do you think could be improved about the activity?
                 </Typography>
                 <TextField
+                  disabled
                   label="Your thoughts"
                   variant="standard"
                   fullWidth
@@ -418,6 +328,7 @@ function FillSurvey() {
                   platforms.
                 </Typography>
                 <TextField
+                  disabled
                   label="Testimonial"
                   variant="standard"
                   fullWidth
@@ -437,6 +348,7 @@ function FillSurvey() {
                   can use with the testimonial.
                 </Typography>
                 <TextField
+                  disabled
                   label="Display name"
                   variant="standard"
                   fullWidth
@@ -454,6 +366,7 @@ function FillSurvey() {
                   elsewhere, who might benefit from our activities?
                 </Typography>
                 <TextField
+                  disabled
                   label="Referrals"
                   variant="standard"
                   fullWidth
@@ -465,18 +378,6 @@ function FillSurvey() {
                   }
                 />
               </StyledPaper>
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-                size="large"
-                disabled={surveyData?.status && surveyData?.status === "SUBMITTED"}
-                fullWidth
-              >
-                Submit
-              </Button>
             </Grid>
           </Grid>
         </form>

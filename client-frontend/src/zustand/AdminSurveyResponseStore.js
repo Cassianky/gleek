@@ -27,7 +27,7 @@ const useAdminSurveyResponseStore = create((set) => ({
         `/gleek/survey/booking/${bookingId}`,
       );
       console.log(response.data);
-      if (response.data ) {
+      if (response.data) {
         set({
           survey: response.data.survey,
           isLoadingSurvey: false,
@@ -44,11 +44,16 @@ const useAdminSurveyResponseStore = create((set) => ({
   },
 
   // Submit survey
-  submitSurveyForBooking: async (bookingId, survey, review) => {
+  submitSurveyForBooking: async (
+    bookingId,
+    survey,
+    review,
+    wantsToLeaveReview,
+  ) => {
     try {
       const response = await AxiosConnect.post(
         `/gleek/survey/booking/${bookingId}/submit`,
-        {survey, review},
+        { survey, review, wantsToLeaveReview },
       );
       console.log(response.data);
       set({ survey: response.data, isLoadingSurvey: false });

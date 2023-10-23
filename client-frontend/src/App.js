@@ -39,6 +39,7 @@ import CreateActivityPage from "./containers/Vendor/Activity/CreateActivityPage"
 import EditActivityDraftPage from "./containers/Vendor/Activity/EditActivityDraftPage";
 import BlockoutSingleActivity from "./containers/Vendor/Blockout/BlockoutSingleActivity";
 import FillSurvey from "./containers/Client/Survey/FillSurvey";
+import ViewSurvey from "./containers/Client/Survey/ViewSurvey";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -164,6 +165,16 @@ function App() {
             element={
               <ClientProtectedRoute>
                 <FillSurvey />
+              </ClientProtectedRoute>
+            }
+          />
+
+          <Route
+            exact
+            path="/booking/:bookingId/survey/view"
+            element={
+              <ClientProtectedRoute>
+                <ViewSurvey />
               </ClientProtectedRoute>
             }
           />

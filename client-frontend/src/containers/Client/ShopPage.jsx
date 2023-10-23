@@ -230,8 +230,10 @@ const ShopPage = (props) => {
   };
 
   useEffect(() => {
-    getFilteredActivities(filter, searchValueOnClicked);
-  }, [filter]);
+    if (!priceFilterLoading) {
+      getFilteredActivities(filter, searchValueOnClicked);
+    }
+  }, [filter, priceFilterLoading]);
 
   useEffect(() => {
     const locations = Object.entries(locationState)

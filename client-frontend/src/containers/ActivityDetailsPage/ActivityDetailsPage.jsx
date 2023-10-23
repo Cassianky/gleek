@@ -86,7 +86,13 @@ const ActivityDetailsPage = () => {
 
    const handlePaxChange = (event) => {
       const { value } = event.target;
-      setPax(value);
+      if (value < currentActivity.minParticipants) {
+         setPax(currentActivity.minParticipants);
+      } else if (value > currentActivity.maxParticipants) {
+         setPax(currentActivity.maxParticipants);
+      } else {
+         setPax(value);
+      }
    };
 
    const handleDateChange = (date) => {
@@ -834,8 +840,11 @@ const ActivityDetailsPage = () => {
                         Pricing:
                      </Typography>
                      <Grid container spacing={2}>
-                        {currentActivity?.activityPricingRules.map(
-                           (activityPricingRule, index) => (
+                        {[...currentActivity?.activityPricingRules]
+                           .sort((a, b) => {
+                              return b.clientPrice - a.clientPrice;
+                           })
+                           .map((activityPricingRule, index) => (
                               <Grid item key={index}>
                                  <Box
                                     display="flex"
@@ -856,13 +865,20 @@ const ActivityDetailsPage = () => {
                                        1 ? (
                                        <Box display="flex" flexDirection="row">
                                           <DiscountIcon color="accent" />
-                                          <Typography
-                                             mb={2}
-                                             ml={1}
-                                             color={accent}
-                                             fontWeight={700}>
-                                             Most For Value Price
-                                          </Typography>
+                                          <Box>
+                                             <Typography
+                                                ml={1}
+                                                color={accent}
+                                                fontWeight={700}>
+                                                Most For Value Price
+                                             </Typography>
+                                             <Typography
+                                                mb={2}
+                                                ml={1}
+                                                color={accent}>
+                                                (Recommended)
+                                             </Typography>
+                                          </Box>
                                        </Box>
                                     ) : null}
                                     <Box
@@ -894,8 +910,7 @@ const ActivityDetailsPage = () => {
                                     </Typography>
                                  </Box>
                               </Grid>
-                           )
-                        )}
+                           ))}
                      </Grid>
                      {(currentActivity?.offlinePricing?.isDiscount ||
                         currentActivity?.onlinePricing?.isDiscount ||

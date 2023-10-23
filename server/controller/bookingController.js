@@ -5,6 +5,7 @@ import BlockedTimeslotModel from "../model/blockedTimeslotModel.js";
 import { validationResult } from "express-validator";
 import { isCartItemStillAvailable } from "./cartItemController.js";
 import mongoose from "mongoose";
+import { getAllPendingAndConfirmedBookingsForVendor } from "../service/bookingService.js";
 
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
@@ -15,7 +16,7 @@ export const getAllBookings = async (req, res) => {
     // }
     res.status(200).json({ bookings });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       message: "Server Error! Unable to get bookings.",
       error: error.message,
@@ -60,7 +61,7 @@ function getTimeslotCapacities(
   capacity,
   bookings,
   blockedTimeslots,
-  duration,
+  duration
 ) {
   // Create a hashmap to store capacities for each starttime slot
   const capacities = new Map(startTimes.map((slot) => [slot, capacity]));
@@ -110,12 +111,12 @@ export function generateAllTimeslots(
   capacity,
   bookings,
   blockedTimeslots,
-  duration,
+  duration
 ) {
   const startTimes = generateStartTimes(
     earliestStartTime,
     latestStartTime,
-    interval,
+    interval
   );
 
   const timeslotCapacities = getTimeslotCapacities(
@@ -123,7 +124,7 @@ export function generateAllTimeslots(
     capacity,
     bookings,
     blockedTimeslots,
-    duration,
+    duration
   );
 
   const allTimeslots = startTimes.map((startTime, index) => {
@@ -199,7 +200,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
     const minDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() + daysInAdvance,
+      today.getDate() + daysInAdvance
     );
     if (dateParam < minDate) {
       return res.status(400).json({
@@ -218,24 +219,24 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.startTime.getHours(),
       activity.startTime.getMinutes(),
       0,
-      0,
+      0
     );
     const latestStartTime = new Date(dateParam);
     latestStartTime.setHours(
       activity.endTime.getHours(),
       activity.endTime.getMinutes(),
       0,
-      0,
+      0
     );
     console.log(
       "EARLIEST START TIME: ",
       earliestStartTime.toLocaleDateString(),
-      earliestStartTime.toLocaleTimeString(),
+      earliestStartTime.toLocaleTimeString()
     );
     console.log(
       "LATEST START TIME: ",
       latestStartTime.toLocaleDateString(),
-      latestStartTime.toLocaleTimeString(),
+      latestStartTime.toLocaleTimeString()
     );
 
     const interval = 30; // 30 minutes
@@ -271,7 +272,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.capacity,
       bookings,
       blockedTimeslots,
-      activity.duration,
+      activity.duration
     );
 
     res.status(200).json({
@@ -289,13 +290,13 @@ export const getAvailableBookingTimeslots = async (req, res) => {
 export function getTimeslotAvailability(
   allTimeslots,
   selectedStartDateTime,
-  selectedEndDateTime,
+  selectedEndDateTime
 ) {
   const timeslot = allTimeslots.find(
     (timeslot) =>
       timeslot.startTime.getTime() === selectedStartDateTime.getTime() &&
       timeslot.endTime.getTime() === selectedEndDateTime.getTime() &&
-      timeslot.isAvailable,
+      timeslot.isAvailable
   );
 
   return timeslot !== undefined;
@@ -424,8 +425,21 @@ export const deleteBooking = async (req, res) => {
 // PATCH /booking/confirmBooking/:id
 export const confirmBooking = async (req, res) => {
   try {
+    const bookingId = req.params.id;
+    const vendorId = req.user;
+    const newBooking = await BookingModel.findByIdAndUpdate(
+      bookingId,
+      { status: "CONFIRMED" },
+      { new: true }
+    );
+    const updatedBookings =
+      await getAllPendingAndConfirmedBookingsForVendor(vendorId);
+    res.status(200).json({
+      bookings: updatedBookings,
+      message: `Booking for ${newBooking.activityTitle} confirmed successfully!`,
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       message: "Server Error! Unable to confirm booking.",
       error: error.message,
@@ -436,8 +450,22 @@ export const confirmBooking = async (req, res) => {
 // PATCH /booking/rejectBooking/:id
 export const rejectBooking = async (req, res) => {
   try {
+    const bookingId = req.params.id;
+    const vendorId = req.user;
+    const { rejectionReason } = req.body;
+    const newBooking = await BookingModel.findByIdAndUpdate(
+      bookingId,
+      { status: "REJECTED", rejectionReason: rejectionReason },
+      { new: true }
+    );
+    const updatedBookings =
+      await getAllPendingAndConfirmedBookingsForVendor(vendorId);
+    res.status(200).json({
+      bookings: updatedBookings,
+      message: `Booking for ${newBooking.activityTitle} rejected successfully!`,
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       message: "Server Error! Unable to reject booking.",
       error: error.message,
@@ -496,6 +524,11 @@ export const getAllBookingsByClientId = async (req, res) => {
 // GET /booking/getAllBookingsByVendorId/:id
 export const getAllBookingsByVendorId = async (req, res) => {
   try {
+    const vendorId = req.user;
+    const bookings = await getAllPendingAndConfirmedBookingsForVendor(vendorId);
+    res.status(200).json({
+      bookings: bookings,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({

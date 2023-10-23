@@ -383,7 +383,7 @@ export const useVendorStore = create((set) => ({
   updateVendor: async (id, payload) => {
     try {
       set(() => ({ isLoading: true }));
-      await AxiosConnect.patch("vendor/updateVendor", id, payload);
+      await AxiosConnect.patch("/vendor/updateVendor", id, payload);
       const response = await AxiosConnect.get("/vendor/viewAllVendors");
       set({ vendors: response.data });
       set(() => ({ isLoading: false }));
@@ -446,7 +446,7 @@ export const useClientStore = create((set) => ({
   updateClient: async (id, payload) => {
     try {
       set(() => ({ isLoading: true }));
-      await AxiosConnect.patch("client/update", id, payload);
+      await AxiosConnect.patch("/client/update", id, payload);
       const response = await AxiosConnect.get("/client/getAllClients");
       set({ clients: response.data });
       set(() => ({ isLoading: false }));
@@ -479,45 +479,22 @@ export const useImageUploadTestStore = create((set) => ({
 export const useNotificationStore = create((set) => ({
   notifications: [],
   unreadNotificationsCount: 0,
-  setReceivedNotifications: (allNotifications) => {
-    set({ notifications: allNotifications });
-    let unreadCount = 0;
-    allNotifications.map((notification) => {
-      notification.read === false ? unreadCount++ : unreadCount;
-    });
-    set({ unreadNotificationsCount: unreadCount });
+  loading: true,
+  retrieveAndSetAllNotifications: (adminCredentials) => {
+    set({ loading: true }),
+      AxiosConnect.getWithParams("/notification/adminAllNotifications", {
+        adminId: adminCredentials._id,
+        adminRole: adminCredentials.role,
+      }).then((body) => {
+        console.log(body.data.data);
+        const allNotifications = body.data.data;
+        set({ notifications: allNotifications });
+        let unreadCount = 0;
+        allNotifications.map((notification) => {
+          notification.read === false ? unreadCount++ : unreadCount;
+        });
+        set({ unreadNotificationsCount: unreadCount });
+        set({ loading: false });
+      });
   },
-  // setNotificationRead: (notificationId) => {
-  // //To set in backend instead
-  //   set((state) => ({
-  //         notifications: state.notifications.map((notification) =>
-  //             notification._id === notificationId
-  //                 ? { ...notification, read: true }
-  //                 : notification),
-  //       })
-  //   )
-  // },
-  // setAllNotificationsRead: () => {
-  //   //To set in backend instead
-  //   set((state) => ({
-  //     notifications: state.notifications.map((notification) =>
-  //             notification.read === false
-  //                 ? {...notification, read: true}
-  //                 : notification),
-  //       })
-  //   )
-  // },
-
-  // adminGetAllNotifications: (id, role) => {
-  //   const params = {
-  //     adminId: id,
-  //     adminRole: role,
-  //   };
-  //   const {setReceivedNotifications} = useNotificationStore();
-  //   console.log("params for notification:", params);
-  //   AxiosConnect.getWithParams("/notification/adminAllNotifications", params).then((body) => {
-  //     console.log(body);
-  //     setReceivedNotifications(body);
-  //   });
-  //   },
 }));

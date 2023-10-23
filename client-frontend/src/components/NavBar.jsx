@@ -447,7 +447,15 @@ function NavBar(props) {
                   }}
                 >
                   My Activities
-                </MenuItem>{" "}
+                </MenuItem>
+                <MenuItem
+                  sx={{ px: "32px" }}
+                  onClick={() => {
+                    navigate("/vendor/bookings");
+                  }}
+                >
+                  Bookings
+                </MenuItem>
                 <MenuItem
                   sx={{ px: "32px" }}
                   onClick={() => {

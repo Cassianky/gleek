@@ -779,8 +779,11 @@ const ActivityDetailsPage = () => {
                 Pricing:
               </Typography>
               <Grid container spacing={2}>
-                {currentActivity?.activityPricingRules.map(
-                  (activityPricingRule, index) => (
+                {[...currentActivity?.activityPricingRules]
+                  .sort((a, b) => {
+                    return b.clientPrice - a.clientPrice;
+                  })
+                  .map((activityPricingRule, index) => (
                     <Grid item key={index}>
                       <Box
                         display="flex"
@@ -798,14 +801,18 @@ const ActivityDetailsPage = () => {
                         currentActivity?.activityPricingRules.length - 1 ? (
                           <Box display="flex" flexDirection="row">
                             <DiscountIcon color="accent" />
-                            <Typography
-                              mb={2}
-                              ml={1}
-                              color={accent}
-                              fontWeight={700}
-                            >
-                              Most For Value Price
-                            </Typography>
+                            <Box>
+                              <Typography
+                                ml={1}
+                                color={accent}
+                                fontWeight={700}
+                              >
+                                Most For Value Price
+                              </Typography>
+                              <Typography mb={2} ml={1} color={accent}>
+                                (Recommended)
+                              </Typography>
+                            </Box>
                           </Box>
                         ) : null}
                         <Box display="flex" flexDirection="row" mb={2}>
@@ -829,8 +836,7 @@ const ActivityDetailsPage = () => {
                         </Typography>
                       </Box>
                     </Grid>
-                  ),
-                )}
+                  ))}
               </Grid>
               {(currentActivity?.offlinePricing?.isDiscount ||
                 currentActivity?.onlinePricing?.isDiscount ||

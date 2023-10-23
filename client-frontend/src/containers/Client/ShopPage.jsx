@@ -28,10 +28,7 @@ const ShopPage = (props) => {
     setCurrentPage,
     sortBy,
     setSortBy,
-    currentActivity,
-    setCurrentActivity,
     themes,
-    searchValue,
     getThemes,
     filter,
     setFilter,
@@ -45,6 +42,7 @@ const ShopPage = (props) => {
     setSearchValueOnClicked,
     setParentChecked,
     setChildChecked,
+    priceFilterLoading,
   } = useShopStore();
   const theme = useTheme();
 
@@ -59,13 +57,6 @@ const ShopPage = (props) => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
   const displayedActivities = activities.slice(startIndex, endIndex);
-
-  useEffect(() => {
-    const sortedActivities = activities.sort(
-      (a, b) => b.createdDate - a.createdDate,
-    );
-    setActivities(sortedActivities);
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,14 +74,16 @@ const ShopPage = (props) => {
     setSortBy(event.target.value);
     let sortedActivities = [...activities];
     if (event.target.value === "Newest First") {
-      sortedActivities = sortedActivities.sort((a, b) => b.date - a.date);
+      sortedActivities = sortedActivities.sort(
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+      );
     } else if (event.target.value === "Price High to Low") {
       sortedActivities = sortedActivities.sort(
-        (a, b) => b.minimumPricePerPax - a.minimumPricePerPax,
+        (a, b) => b.minimumPricePerPax - a.minimumPricePerPax
       );
     } else if (event.target.value === "Price Low to High") {
       sortedActivities = sortedActivities.sort(
-        (a, b) => a.minimumPricePerPax - b.minimumPricePerPax,
+        (a, b) => a.minimumPricePerPax - b.minimumPricePerPax
       );
     }
 
@@ -119,7 +112,7 @@ const ShopPage = (props) => {
   };
 
   const initialLocationState = Object.fromEntries(
-    Object.entries(Locations).map(([key, value]) => [value, false]),
+    Object.entries(Locations).map(([key, value]) => [value, false])
   );
 
   const [locationState, setLocationState] =
@@ -160,7 +153,7 @@ const ShopPage = (props) => {
     Object.entries(SustainableDevelopmentGoals).map(([key, value]) => [
       value,
       false,
-    ]),
+    ])
   );
 
   const [sgState, setSGState] = React.useState(initialSGState);
@@ -181,11 +174,11 @@ const ShopPage = (props) => {
     Object.entries(ActivityDayAvailability).map(([key, value]) => [
       value,
       false,
-    ]),
+    ])
   );
 
   const [daysAvailabilityState, setDaysAvailabilityState] = React.useState(
-    initialDaysAvailabilityState,
+    initialDaysAvailabilityState
   );
   const handleDaysAvailabilityChange = (event) => {
     setDaysAvailabilityState({
@@ -203,11 +196,11 @@ const ShopPage = (props) => {
   };
 
   const initialActivityTypeState = Object.fromEntries(
-    Object.entries(TYPE).map(([key, value]) => [value, false]),
+    Object.entries(TYPE).map(([key, value]) => [value, false])
   );
 
   const [activityTypeState, setActivityTypeState] = React.useState(
-    initialActivityTypeState,
+    initialActivityTypeState
   );
   const handleActivityTypeChange = (event) => {
     setActivityTypeState({
@@ -224,7 +217,7 @@ const ShopPage = (props) => {
   };
 
   const initialDurationState = Object.fromEntries(
-    Object.entries(durations).map(([key, value]) => [value, false]),
+    Object.entries(durations).map(([key, value]) => [value, false])
   );
 
   const [durationState, setDurationState] =
@@ -412,7 +405,7 @@ const ShopPage = (props) => {
                   onClick={(event) => {
                     event.preventDefault();
                     const clickedActivity = activities.find(
-                      (item) => item._id.toString() === activity._id.toString(),
+                      (item) => item._id.toString() === activity._id.toString()
                     );
                     navigate(`/shop/activity/${activity._id.toString()}`);
                   }}

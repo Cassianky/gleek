@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
-import { Chip, Typography } from "@mui/material";
+import { Chip, Typography, Stack } from "@mui/material";
 import PropTypes from "prop-types";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
@@ -71,16 +71,18 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
   const columns = [...standardColumns, ...additionalColumns];
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
+    <div style={{ height: "100%", width: "99%" }}>
       <DataGrid
         rows={filteredBookings}
         columns={columns}
+        autoHeight={true}
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 25 },
           },
         }}
-        slots={{ toolbar: GridToolbarFilterButton }}
+        slots={{ toolbar: GridToolbarFilterButton}}
+
       />
     </div>
   );

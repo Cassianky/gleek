@@ -1,15 +1,28 @@
+import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import { CircularProgress, Tabs, Tab, Typography } from "@mui/material";
+import { Badge, CircularProgress, Tabs, Tab, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useBookingStore, useSnackbarStore } from "../../zustand/GlobalStore";
 import MainBodyContainer from "../common/MainBodyContainer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import NewReleaseIcon from "@mui/icons-material/NewReleases";
+import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import PaidIcon from "@mui/icons-material/Paid";
 import BookingsTable from "./BookingsTable";
 import ConfirmField from "./ConfirmField";
-import InfoIcon from "@mui/icons-material/Info";
+import CancelField from "./CancelField";
+import PaidField from "./PaidField";
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+    "& .MuiBadge-badge": {
+      right: -3,
+      top: 13,
+      border: `2px solid ${theme.palette.background.paper}`,
+      padding: "0 4px",
+      color: "white",
+      backgroundColor: theme.palette.light_purple.main,
+    },
+  }));
 
 const ViewActiveBookings = () => {
   const theme = useTheme();
@@ -17,6 +30,18 @@ const ViewActiveBookings = () => {
   const { isLoading, bookings, getAllBookings, approveBooking, rejectBooking } =
     useBookingStore();
   const { openSnackbar } = useSnackbarStore();
+
+  const pendingBookingBadgeNumber = bookings.filter(
+    (booking) => booking.status === "PENDING_CONFIRMATION"
+  ).length;
+
+  const confirmedBookingBadgeNumber = bookings.filter(
+    (booking) => booking.status === "CONFIRMED"
+    ).length;
+
+    const pendingPaymentBookingBadgeNumber = bookings.filter(
+        (booking) => booking.status === "PENDING_PAYMENT"
+        ).length;
 
   const pendingConfirmationAdditionalColumns = [
     {
@@ -48,6 +73,46 @@ const ViewActiveBookings = () => {
     },
   ];
 
+  const confirmedAdditionalColumns = [
+    {
+        field: "details",
+        headerName: "Confirmation Details",
+        flex: 2,
+        sortable: false,
+        renderCell: (params) => {
+            return (
+                <Typography>Confirmed by xx on xx</Typography>
+            )
+    }
+},
+    {
+        field: "cancelAction",
+        headerName: "Cancel?",
+        flex: 1,
+        sortable: false,
+        renderCell: (params) => {
+            return (
+                <CancelField/>
+            )
+        }
+    },
+  ]
+
+  const pendingPaymentAdditionalColumns = [
+    {
+        field: "paidAction",
+        headerName: "Paid?",
+        flex: 1,
+        sortable: false,
+        renderCell: (params) => {
+            return (
+                <PaidField/>
+            )
+        }
+    }
+  ]
+
+
   useEffect(() => {
     const fetchData = async () => {
       await getAllBookings();
@@ -78,13 +143,25 @@ const ViewActiveBookings = () => {
       <Tabs value={currentTab} onChange={handleChange} centered>
         <Tab icon={<CalendarMonthIcon />} value="calendar" label="Calendar" />
         <Tab
-          icon={<NewReleaseIcon />}
+          icon={
+            <StyledBadge badgeContent={pendingBookingBadgeNumber}>
+              <NewReleasesIcon />
+            </StyledBadge>
+          }
           value="pendingConfirmation"
           label="Pending Confirmation"
         />
-        <Tab icon={<ThumbUpAltIcon />} value="confirmed" label="Confirmed" />
+        <Tab icon={
+            <StyledBadge badgeContent={confirmedBookingBadgeNumber}>
+        <ThumbUpAltIcon />
+        </StyledBadge>
+        } value="confirmed" label="Confirmed" />
         <Tab
-          icon={<PaidIcon />}
+          icon={
+            <StyledBadge badgeContent={pendingPaymentBookingBadgeNumber}>
+          <PaidIcon />
+          </StyledBadge>
+        }
           value="pendingPayment"
           label="Pending Payment"
         />
@@ -101,8 +178,19 @@ const ViewActiveBookings = () => {
               additionalColumns={pendingConfirmationAdditionalColumns}
             />
           )}
-          {currentTab === "confirmed" && <div>Conf</div>}
-          {currentTab === "pendingPayment" && <div>Pending payment</div>}
+          {currentTab === "confirmed" && (
+            <BookingsTable
+              bookings={bookings}
+              status="CONFIRMED"
+              additionalColumns={confirmedAdditionalColumns}
+            />
+          )}
+          {currentTab === "pendingPayment" && (
+            <BookingsTable
+              bookings={bookings}
+              status="PENDING_PAYMENT"
+              additionalColumns={pendingPaymentAdditionalColumns}
+            />)}
         </>
       )}
     </MainBodyContainer>

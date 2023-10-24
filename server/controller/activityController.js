@@ -16,10 +16,11 @@ import {
    NotificationEvent,
 } from "../util/notificationRelatedEnum.js";
 import { createNotification } from "./notificationController.js";
-import { InvoiceTemplate } from "../assets/templates/InvoiceTemplate.js";
+import { QuotationTemplate } from "../assets/templates/QuotationTemplate.js";
 import pdf from "html-pdf";
 import fs from "fs";
 import path from "path";
+import Client from "../model/clientModel.js";
 
 // yt: this endpoint retrieves and returns PUBLISHED & PENDING APPROVAL activities only
 export const getAllActivities = async (req, res) => {
@@ -1118,7 +1119,8 @@ export const getActivityTitle = async (req, res) => {
 
 export const getQuotationPdfUrl = async (req, res) => {
    const data = req.body;
-   const pdfContent = InvoiceTemplate(data);
+
+   const pdfContent = QuotationTemplate(data);
    const filename = "quotation" + Date.now() + ".pdf";
    const pdfFilePath = path.join(process.cwd(), "temp", filename);
    pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {

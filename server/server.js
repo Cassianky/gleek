@@ -12,8 +12,6 @@ import bookingRoutes from "./routes/gleekAdmin/bookingRoute.js";
 import client from "./routes/gleekAdmin/client.js";
 import activityTestController from "./controller/activityTestController.js";
 import notificationRoutes from "./routes/notificationRoute.js";
-import pdf from "html-pdf";
-import { InvoiceTemplate } from "./assets/templates/InvoiceTemplate.js";
 
 const app = express();
 

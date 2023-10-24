@@ -44,6 +44,7 @@ import ActivityBookmarkButton from "../../components/Bookmark/ActivityBookmarkBu
 import VendorProfileItem from "../../components/Vendor/VendorProfileItem";
 import "./styles.css";
 import Holidays from "date-holidays";
+import useClientStore from "../../zustand/ClientStore";
 
 const ActivityDetailsPage = () => {
    const {
@@ -71,6 +72,7 @@ const ActivityDetailsPage = () => {
    const [comments, setComments] = useState("");
    const { openSnackbar } = useSnackbarStore();
    const [fileUrl, setFileUrl] = useState(null);
+   const { client } = useClientStore();
 
    const handleTimeChange = (event) => {
       setTime(event.target.value);
@@ -281,6 +283,19 @@ const ActivityDetailsPage = () => {
 
    const handleDownloadQuotation = async (event) => {
       try {
+         const weekendAddOn = calculateWeekendAddOn(
+            selectedDate,
+            currentActivity.weekendPricing
+         );
+         const onlineAddOn = calculateOnlineAddOn(
+            location,
+            currentActivity.offlinePricing
+         );
+         const offlineAddOn = calculateOfflineAddOn(
+            location,
+            currentActivity.onlinePricing
+         );
+
          const bookingData = {
             title: currentActivity.title,
             selectedDate,
@@ -288,6 +303,15 @@ const ActivityDetailsPage = () => {
             location,
             time,
             totalCost: totalPrice(),
+            theme: currentActivity.theme,
+            subtheme: currentActivity.subtheme,
+            activityType: currentActivity.activityType,
+            client: client,
+            comments: comments,
+            weekendAddOnCost: weekendAddOn,
+            onlineAddOnCost: onlineAddOn,
+            offlineAddOnCost: offlineAddOn,
+            basePrice: calculateBasePrice(pax),
          };
          const url = await getQuotationPdf(bookingData);
       } catch (err) {

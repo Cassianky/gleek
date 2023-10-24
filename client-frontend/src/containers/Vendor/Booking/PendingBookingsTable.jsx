@@ -33,7 +33,7 @@ const PendingBookingsTable = ({
 
   useEffect(() => {
     const formattedBookings = allBookings.filter(
-      (booking) => booking.status === "PENDING_CONFIRMATION"
+      (booking) => booking.status === "PENDING_CONFIRMATION",
     );
     setBookings(formattedBookings);
   }, [allBookings]);

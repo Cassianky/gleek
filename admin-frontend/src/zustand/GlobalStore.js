@@ -10,7 +10,7 @@ export const updateCurrentActivity = (selectedActivity) => {
   }));
   console.log(
     "activity store current activity updated::",
-    useActivityStore.getState(),
+    useActivityStore.getState()
   );
 };
 
@@ -21,7 +21,7 @@ export const updateAllActivity = (newAllActivities) => {
   }));
   console.log(
     "activity store all activity updated::",
-    useActivityStore.getState(),
+    useActivityStore.getState()
   );
 };
 
@@ -135,7 +135,7 @@ export const useAdminStore = create((set) => ({
     try {
       const response = await AxiosConnect.post(
         "/gleekAdmin/register",
-        newAdmin,
+        newAdmin
       );
       const data = response.data;
       console.log(data);
@@ -187,7 +187,7 @@ export const useAdminStore = create((set) => ({
         `/gleekAdmin/resendVerificationEmail/`,
         {
           email: email,
-        },
+        }
       );
       return response;
     } catch (error) {
@@ -234,7 +234,7 @@ export const useActivityStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        `/activity/myActivities/${adminId}`,
+        `/activity/myActivities/${adminId}`
       );
       set({ activities: response.data.data });
       set({ isLoading: false });
@@ -246,7 +246,7 @@ export const useActivityStore = create((set) => ({
     try {
       const response = await AxiosConnect.postMultiPart(
         "/activity/addActivity",
-        newActivityData,
+        newActivityData
       );
       set({ newActivity: response.data.activity });
     } catch (error) {
@@ -258,7 +258,7 @@ export const useActivityStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        `/activity/viewActivity/${activityId}`,
+        `/activity/viewActivity/${activityId}`
       );
       set({ activityDetails: response.data.data });
       set({ isLoading: false });
@@ -270,7 +270,7 @@ export const useActivityStore = create((set) => ({
     try {
       const response = await AxiosConnect.postMultiPart(
         "/activity/saveActivity",
-        activityDraftData,
+        activityDraftData
       );
       set({ newActivity: response.data.activity });
     } catch (error) {
@@ -280,7 +280,7 @@ export const useActivityStore = create((set) => ({
   deleteActivity: async (activityId) => {
     try {
       const updatedActivities = await AxiosConnect.delete(
-        `/activity/deleteDraft/${activityId}`,
+        `/activity/deleteDraft/${activityId}`
       );
       set({ activities: updatedActivities.data.activity });
       set({ selectedTab: "draftTab" });
@@ -293,7 +293,7 @@ export const useActivityStore = create((set) => ({
     try {
       const updatedActivities = await AxiosConnect.delete(
         "/activity/bulkDelete",
-        activityIds,
+        activityIds
       );
       set({
         activities: updatedActivities.data.activity,
@@ -309,7 +309,7 @@ export const useActivityStore = create((set) => ({
       const updatedActivities = await AxiosConnect.patch(
         "/activity/approveActivity",
         activityId,
-        { adminId: adminId, markup: markup },
+        { adminId: adminId, markup: markup }
       );
       set({
         selectedActivityTab: "pendingApprovalTab",
@@ -325,7 +325,7 @@ export const useActivityStore = create((set) => ({
       const updatedActivities = await AxiosConnect.patch(
         "/activity/rejectActivity",
         activityId,
-        { rejectionReason: rejectionReason, adminId: adminId },
+        { rejectionReason: rejectionReason, adminId: adminId }
       );
       set({
         selectedActivityTab: "pendingApprovalTab",
@@ -408,7 +408,7 @@ export const useVendorStore = create((set) => ({
   vendorTypesFetcher: async () => {
     try {
       const response = await AxiosConnect.get(
-        "/gleek/vendor/getAllVendorTypes",
+        "/gleek/vendor/getAllVendorTypes"
       );
       const data = response.data;
       set({ vendorTypes: data.VendorTypeEnum });
@@ -459,7 +459,7 @@ export const useClientStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        `/client/getClientDetails/${clientId}`,
+        `/client/getClientDetails/${clientId}`
       );
       set({ clientDetails: response.data });
       set({ isLoading: false });
@@ -491,32 +491,97 @@ export const useBookingStore = create((set) => ({
   approveBooking: async (bookingId) => {
     try {
       set({ isLoading: true });
-      // const response = await AxiosConnect.patch(
-      //   `/gleekVendor/booking/confirmBooking/${bookingId}`
-      // );
-      console.log("Approve booking");
-      // set({ bookings: response.data.bookings });
+      const approveResponse = await AxiosConnect.patch(
+        "/booking/confirmBooking",
+        bookingId
+      );
+      const bookingsResponse = await AxiosConnect.get(
+        "/booking/getAllBookings"
+      );
+      set({
+        bookings: bookingsResponse.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
       set({ isLoading: false });
-      // return response.data.message;
+      return approveResponse.data.message;
     } catch (error) {
+      set({ isLoading: false });
       console.error(error.message);
-      throw new Error("Unexpected Server Error!");
+      throw new Error(error.message);
     }
   },
   rejectBooking: async (bookingId, rejectionReason) => {
     try {
       set({ isLoading: true });
-      // const response = await AxiosConnect.patch(
-      //   `/gleekVendor/booking/rejectBooking/${bookingId}`,
-      //   { rejectionReason: rejectionReason }
-      // );
-      // set({ bookings: response.data.bookings });
-      console.log("Reject booking");
+      const rejectResponse = await AxiosConnect.patch(
+        "/booking/rejectBooking",
+        bookingId,
+        { rejectionReason: rejectionReason }
+      );
+      const bookingsResponse = await AxiosConnect.get(
+        "/booking/getAllBookings"
+      );
+      set({
+        bookings: bookingsResponse.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
       set({ isLoading: false });
-      // return response.data.message;
+      return rejectResponse.data.message;
     } catch (error) {
       console.error(error.message);
-      throw new Error("Unexpected Server Error!");
+      throw new Error(error.message);
+    }
+  },
+  cancelBooking: async (bookingId, cancellationReason) => {
+    try {
+      set({ isLoading: true });
+      const cancelResponse = await AxiosConnect.patch(
+        "/booking/cancelBooking",
+        bookingId,
+        { cancellationReason: cancellationReason }
+      );
+      const bookingsResponse = await AxiosConnect.get(
+        "/booking/getAllBookings"
+      );
+      set({
+        bookings: bookingsResponse.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return cancelResponse.data.message;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  updateBookingToPaid: async (bookingId) => {
+    try {
+      set({ isLoading: true });
+      const updateResponse = await AxiosConnect.patch(
+        "/booking/updateToPaid",
+        bookingId
+      );
+      const bookingsResponse = await AxiosConnect.get(
+        "/booking/getAllBookings"
+      );
+      set({
+        bookings: bookingsResponse.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return updateResponse.data.message;
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
     }
   },
 }));

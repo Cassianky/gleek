@@ -32,7 +32,7 @@ const ConfirmField = ({
       const message = await approveBooking(bookingId);
       openSnackbar(message);
     } catch (error) {
-      openSnackbar(error, "error");
+      openSnackbar(error.message, "error");
     }
   };
 
@@ -41,7 +41,7 @@ const ConfirmField = ({
       const message = await rejectBooking(bookingId, rejectionReason);
       openSnackbar(message);
     } catch (error) {
-      openSnackbar(error, "error");
+      openSnackbar(error.message, "error");
     }
   };
 
@@ -61,7 +61,7 @@ const ConfirmField = ({
   if (isLoading) {
     return <Typography>Loading...</Typography>;
   } else {
-    console.log(params.row.activityId);
+    // console.log(params.row.activityId);
     if (params.row.activityId.adminCreated) {
       return (
         <div

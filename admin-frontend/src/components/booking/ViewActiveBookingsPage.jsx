@@ -4,7 +4,6 @@ import { Badge, CircularProgress, Tabs, Tab, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useBookingStore, useSnackbarStore } from "../../zustand/GlobalStore";
 import MainBodyContainer from "../common/MainBodyContainer";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -12,6 +11,8 @@ import BookingsTable from "./BookingsTable";
 import ConfirmField from "./ConfirmField";
 import CancelField from "./CancelField";
 import PaidField from "./PaidField";
+import InvoiceDownloadButton from "./InvoiceDownloadButton";
+import DetailsField from "./DetailsField";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -26,8 +27,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const ViewActiveBookings = () => {
   const theme = useTheme();
-  const [currentTab, setCurrentTab] = useState("calendar");
-  const { isLoading, bookings, getAllBookings, approveBooking, rejectBooking } =
+  const [currentTab, setCurrentTab] = useState("pendingConfirmation");
+  const { isLoading, bookings, getAllBookings, approveBooking, rejectBooking, cancelBooking, updateBookingToPaid } =
     useBookingStore();
   const { openSnackbar } = useSnackbarStore();
 
@@ -80,7 +81,16 @@ const ViewActiveBookings = () => {
       flex: 2,
       sortable: false,
       renderCell: (params) => {
-        return <Typography>Confirmed by xx on xx</Typography>;
+        return <DetailsField params={params} isLoading = {isLoading} />;
+      },
+    },
+    {
+      field: "downloadInvoice",
+      headerName: "",
+      flex: 1.5,
+      sortable: false,
+      renderCell: (params) => {
+        return <InvoiceDownloadButton />;
       },
     },
     {
@@ -89,7 +99,7 @@ const ViewActiveBookings = () => {
       flex: 1,
       sortable: false,
       renderCell: (params) => {
-        return <CancelField />;
+        return <CancelField params = {params} cancelBooking = {cancelBooking} openSnackbar={openSnackbar}/>;
       },
     },
   ];
@@ -101,7 +111,7 @@ const ViewActiveBookings = () => {
       flex: 1,
       sortable: false,
       renderCell: (params) => {
-        return <PaidField params={params} />;
+        return <PaidField params={params} openSnackbar={openSnackbar} updateBookingToPaid={updateBookingToPaid}/>;
       },
     },
   ];
@@ -134,7 +144,6 @@ const ViewActiveBookings = () => {
         View Active Bookings
       </Typography>
       <Tabs value={currentTab} onChange={handleChange} centered>
-        <Tab icon={<CalendarMonthIcon />} value="calendar" label="Calendar" />
         <Tab
           icon={
             <StyledBadge badgeContent={pendingBookingBadgeNumber}>

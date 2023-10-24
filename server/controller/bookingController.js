@@ -491,6 +491,117 @@ export const cancelBooking = async (req, res) => {
   }
 };
 
+// ADMIN CONFIRM/REJECT/CANCEL
+// PATCH /booking/updateBookingStatus/:id
+// Takes request body of:
+// {
+//   "newStatus" : "REJECTED",
+//   "userType": "ADMIN",
+//   "remarks" : "rejection or cancellation reason" (optional if new status is CONFIRMED)
+// }
+
+export const updateBookingStatus = async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const user = req.user;
+    const { newStatus, remarks, userType } = req.body;
+    const userName = userType === "VENDOR" ? user.companyName : user.name;
+    const updatedBooking = await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        status: newStatus,
+        $push: {
+          actionHistory: {
+            newStatus: newStatus,
+            actionByUserType: userType,
+            actionByAdmin: userName,
+            actionRemarks: remarks,
+          },
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json({
+      booking: updatedBooking,
+      message: `Booking status for ${updatedBooking.activityTitle} updated to ${newStatus} successfully!`,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server Error! Unable to update booking.",
+      error: error.message,
+    });
+  }
+};
+
+// PATCH /booking/rejectBooking/:id
+export const adminRejectBooking = async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const adminId = req.user;
+    const { rejectionReason } = req.body;
+    const updatedBooking = await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        status: "REJECTED",
+        $push: {
+          actionHistory: {
+            actionType: "REJECT",
+            actionByUserType: "ADMIN",
+            actionByAdmin: adminId,
+            actionRemarks: rejectionReason,
+          },
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json({
+      bookings: updatedBooking,
+      message: `Booking for ${updatedBooking.activityTitle} rejected successfully!`,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server Error! Unable to reject booking.",
+      error: error.message,
+    });
+  }
+};
+
+// PATCH /booking/cancelBooking/:id
+export const adminCancelBooking = async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const adminId = req.user;
+    const { cancellationReason } = req.body;
+    const updatedBooking = await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        status: "CANCELLED",
+        $push: {
+          actionHistory: {
+            actionType: "CANCEL",
+            actionByUserType: "ADMIN",
+            actionByAdmin: adminId,
+            actionRemarks: cancellationReason,
+          },
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json({
+      bookings: updatedBooking,
+      message: `Booking for ${updatedBooking.activityTitle} cancelled successfully!`,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Server Error! Unable to cancel booking.",
+      error: error.message,
+    });
+  }
+};
+
 // PATCH /booking/updateBooking/:id
 export const updateBooking = async (req, res) => {
   try {
@@ -506,6 +617,26 @@ export const updateBooking = async (req, res) => {
 // PATCH /booking/updateToPaid/:id
 export const updateToPaid = async (req, res) => {
   try {
+    const bookingId = req.params.id;
+    const adminId = req.user;
+    const updatedBooking = await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        status: "PAID",
+        $push: {
+          actionHistory: {
+            actionType: "UPDATE_PAID",
+            actionByUserType: "ADMIN",
+            actionByAdmin: adminId,
+          },
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json({
+      booking: updatedBooking,
+      message: `Booking for ${updatedBooking.activityTitle} updated to PAID successfully!`,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({

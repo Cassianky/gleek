@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useTheme } from "@emotion/react";
+
 import {
   Dialog,
   DialogTitle,
@@ -7,9 +9,11 @@ import {
   DialogActions,
   Button,
   TextField,
+  Typography,
 } from "@mui/material";
 
-const CancelField = () => {
+const CancelField = ({ params, cancelBooking, openSnackbar }) => {
+  const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [reason, setReason] = useState("");
 
@@ -21,12 +25,35 @@ const CancelField = () => {
     setDialogOpen(false);
   };
 
-  const handleConfirm = () => {
-    // Handle your confirmation logic here, e.g., send API request
-    console.log("Reason:", reason);
-    // Close the dialog
-    handleDialogClose();
+  const handleConfirmCancel = async (bookingId) => {
+    try {
+      const message = await cancelBooking(bookingId, reason);
+      openSnackbar(message);
+      setDialogOpen(false);
+    } catch (error) {
+      openSnackbar(error.message, "error");
+    }
   };
+
+  const confirmationDisplayDetails = [
+    { label: "Client Company", value: params.row.clientId.companyName },
+    { label: "Vendor", value: params.row.vendorName},
+    { label: "Activity", value: params.row.activityTitle },
+    {
+      label: "Date",
+      value: new Date(params.row.startDateTime).toLocaleDateString(),
+    },
+    {
+      label: "Timeslot",
+      value: `${new Date(
+        params.row.startDateTime,
+      ).toLocaleTimeString()} - ${new Date(
+        params.row.endDateTime,
+      ).toLocaleTimeString()}`,
+    },
+    { label: "Total Cost", value: `$${params.row.totalCost}` },
+  ];
+
 
   return (
     <div>
@@ -34,10 +61,25 @@ const CancelField = () => {
         Cancel
       </Button>
 
-      <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>Confirmation</DialogTitle>
+      <Dialog fullWidth open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>Confirm Cancellation</DialogTitle>
         <DialogContent>
-          <DialogContentText>Please provide a reason:</DialogContentText>
+        {confirmationDisplayDetails.map((detail, index) => (
+            <div key={index}>
+              <Typography>
+                <span
+                  style={{
+                    fontWeight: "bold",
+                    color: theme.palette.dark_purple.main,
+                  }}
+                >
+                  {detail.label}:{" "}
+                </span>
+                {detail.value}
+              </Typography>
+            </div>
+          ))}
+          <DialogContentText sx={{ pt: 2 }}>Please provide a reason for cancelling this booking:</DialogContentText>
           <TextField
             autoFocus
             margin="dense"
@@ -54,7 +96,7 @@ const CancelField = () => {
             Back
           </Button>
           <Button
-            onClick={handleConfirm}
+            onClick={async () => await handleConfirmCancel(params.row.id)}
             color="primary"
             disabled={!reason.trim()}
           >

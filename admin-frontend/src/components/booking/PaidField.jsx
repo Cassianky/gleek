@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const PaidField = ({ params }) => {
+const PaidField = ({ params, openSnackbar, updateBookingToPaid }) => {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -22,11 +22,14 @@ const PaidField = ({ params }) => {
     setDialogOpen(false);
   };
 
-  const handleConfirm = () => {
-    // Handle your confirmation logic here
-    console.log("Paid confirmed!");
-    // Close the dialog
-    handleDialogClose();
+  const handleConfirm = async (bookingId) => {
+    try {
+      const message = await updateBookingToPaid(bookingId);
+      openSnackbar(message);
+      handleDialogClose();
+    } catch (error) {
+      openSnackbar(error.message, "error");
+    }
   };
 
   const confirmationDisplayDetails = [
@@ -81,7 +84,7 @@ const PaidField = ({ params }) => {
           <Button onClick={handleDialogClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleConfirm} color="primary">
+          <Button onClick={async () => await handleConfirm(params.row.id)} color="primary">
             Confirm
           </Button>
         </DialogActions>

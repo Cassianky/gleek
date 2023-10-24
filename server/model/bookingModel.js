@@ -104,20 +104,53 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     default: Date.now(),
   },
-  reviewedByAdminId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Admin",
-  },
-  reviewedDateTime: {
-    type: Date,
-  },
-  lastEditedByAdminId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Admin",
-  },
-  lastEditedDateTime: {
-    type: Date,
-  },
+  // reviewedByAdminId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Admin",
+  // },
+  // reviewedDateTime: {
+  //   type: Date,
+  // },
+  // lastEditedByAdminId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Admin",
+  // },
+  // lastEditedDateTime: {
+  //   type: Date,
+  // },
+  actionHistory: [
+    {
+      newStatus: {
+        type: String,
+        enum: ["CONFIRMED", "REJECTED", "CANCELLED", "PAID"], // Enum for action types
+        required: true,
+      },
+      actionByUserType: {
+        type: String, // Store user type (admin or vendor or client)
+        enum: ["ADMIN", "VENDOR", "CLIENT"],
+        required: true,
+      },
+      actionByClient: {
+        type: mongoose.Schema.Types.ObjectId, // If user type is Client, store client id
+        ref: "Client",
+      },
+      actionByVendor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vendor",
+      },
+      actionByAdmin: {
+        type: String,
+      },
+      actionTimestamp: {
+        type: Date,
+        required: true,
+        default: Date.now,
+      },
+      actionRemarks: {
+        type: String, // Store cancellation or rejection reasons if action type is REJECT or CANCEL
+      },
+    },
+  ],
 });
 
 const BookingModel = mongoose.model("Booking", bookingSchema, "bookings");

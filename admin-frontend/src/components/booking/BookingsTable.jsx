@@ -42,10 +42,18 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
       flex: 2,
       sortable: false,
       renderCell: (params) => {
-        const startTime = new Date(
-          params.row.startDateTime,
-        ).toLocaleTimeString();
-        const endTime = new Date(params.row.endDateTime).toLocaleTimeString();
+        const timeOptions = {
+          hour: "2-digit",
+          minute: "2-digit",
+        };
+        const startTime = new Date(params.row.startDateTime).toLocaleTimeString(
+          undefined,
+          timeOptions,
+        );
+        const endTime = new Date(params.row.endDateTime).toLocaleTimeString(
+          undefined,
+          timeOptions,
+        );
         return (
           <div style={{ display: "flex", width: "100%" }}>
             <Chip

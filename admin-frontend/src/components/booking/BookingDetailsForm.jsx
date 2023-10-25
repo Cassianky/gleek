@@ -66,11 +66,25 @@ const BookingDetailsForm = ({ appointmentData }) => {
     },
   ];
 
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  const formattedDate = new Date(appointmentData?.startDateTime).toLocaleDateString(
+  const dateOptions = { year: "numeric", month: "long", day: "numeric" };
+  const formattedDate = new Date(
+    appointmentData?.startDateTime,
+  ).toLocaleDateString(undefined, dateOptions);
+
+  const timeOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+  const startTime = new Date(appointmentData?.startDateTime).toLocaleTimeString(
     undefined,
-    options,
+    timeOptions,
   );
+  console.log(startTime);
+  const endTime = new Date(appointmentData?.endDateTime).toLocaleTimeString(
+    undefined,
+    timeOptions,
+  );
+  const timeslot = `${startTime} - ${endTime}`;
 
   const eventDisplayDetails = [
     { label: "Activity", value: appointmentData?.activityTitle },
@@ -81,11 +95,7 @@ const BookingDetailsForm = ({ appointmentData }) => {
     { label: "Location", value: appointmentData?.eventLocationType },
     {
       label: "Timeslot",
-      value: `${new Date(
-        appointmentData?.startDateTime,
-      ).toLocaleTimeString()} - ${new Date(
-        appointmentData?.endDateTime,
-      ).toLocaleTimeString()}`,
+      value: timeslot,
     },
     { label: "Total Pax", value: appointmentData?.totalPax },
     { label: "Total Cost", value: `$${appointmentData?.totalCost}` },
@@ -262,7 +272,12 @@ const BookingDetailsForm = ({ appointmentData }) => {
               marginBottom: 3,
             }}
           >
-            <Typography fontWeight={"bold"} fontSize={"1.5rem"} color="primary" sx={{ marginBottom: 2 }}>
+            <Typography
+              fontWeight={"bold"}
+              fontSize={"1.5rem"}
+              color="primary"
+              sx={{ marginBottom: 2 }}
+            >
               Cancel Booking?
             </Typography>
             <CancelField bookingData={appointmentData} />
@@ -279,11 +294,21 @@ const BookingDetailsForm = ({ appointmentData }) => {
               marginBottom: 3,
             }}
           >
-            <Typography fontWeight={"bold"} fontSize={"1.5rem"} color="primary" sx={{ marginBottom: 2 }}>
+            <Typography
+              fontWeight={"bold"}
+              fontSize={"1.5rem"}
+              color="primary"
+              sx={{ marginBottom: 2 }}
+            >
               Download Invoice
             </Typography>
             <InvoiceDownloadButton />
-            <Typography fontWeight={"bold"} fontSize={"1.5rem"} color="primary" sx={{ margin: 2 }}>
+            <Typography
+              fontWeight={"bold"}
+              fontSize={"1.5rem"}
+              color="primary"
+              sx={{ margin: 2 }}
+            >
               Update Booking Status to Paid?
             </Typography>
             <PaidField bookingData={appointmentData} />

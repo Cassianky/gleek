@@ -17,7 +17,6 @@ const DetailsField = ({ params, isLoading }) => {
       PAID: "Updated to Paid",
     };
     const action = statusActions[details.newStatus];
-    console.log(details);
     return (
       <div style={{ display: "flex" }}>
         <Typography>

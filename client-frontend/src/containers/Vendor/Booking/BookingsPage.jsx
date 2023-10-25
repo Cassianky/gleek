@@ -31,7 +31,7 @@ const BookingsPage = () => {
   const { openSnackbar } = useSnackbarStore();
 
   const pendingBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "PENDING_CONFIRMATION"
+    (booking) => booking.status === "PENDING_CONFIRMATION",
   ).length;
 
   useEffect(() => {

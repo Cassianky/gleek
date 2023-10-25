@@ -76,7 +76,7 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
         rows={filteredBookings}
         columns={columns}
         autoHeight
-        getRowHeight={() => 'auto'}
+        getRowHeight={() => "auto"}
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 25 },

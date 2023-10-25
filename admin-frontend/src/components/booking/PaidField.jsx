@@ -34,7 +34,7 @@ const PaidField = ({ params, openSnackbar, updateBookingToPaid }) => {
 
   const confirmationDisplayDetails = [
     { label: "Client Company", value: params.row.clientId.companyName },
-    { label: "Vendor", value: params.row.vendorName},
+    { label: "Vendor", value: params.row.vendorName },
     { label: "Activity", value: params.row.activityTitle },
     {
       label: "Date",
@@ -84,7 +84,10 @@ const PaidField = ({ params, openSnackbar, updateBookingToPaid }) => {
           <Button onClick={handleDialogClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={async () => await handleConfirm(params.row.id)} color="primary">
+          <Button
+            onClick={async () => await handleConfirm(params.row.id)}
+            color="primary"
+          >
             Confirm
           </Button>
         </DialogActions>

@@ -37,7 +37,7 @@ const CancelField = ({ params, cancelBooking, openSnackbar }) => {
 
   const confirmationDisplayDetails = [
     { label: "Client Company", value: params.row.clientId.companyName },
-    { label: "Vendor", value: params.row.vendorName},
+    { label: "Vendor", value: params.row.vendorName },
     { label: "Activity", value: params.row.activityTitle },
     {
       label: "Date",
@@ -54,7 +54,6 @@ const CancelField = ({ params, cancelBooking, openSnackbar }) => {
     { label: "Total Cost", value: `$${params.row.totalCost}` },
   ];
 
-
   return (
     <div>
       <Button variant="contained" color="error" onClick={handleDialogOpen}>
@@ -64,7 +63,7 @@ const CancelField = ({ params, cancelBooking, openSnackbar }) => {
       <Dialog fullWidth open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>Confirm Cancellation</DialogTitle>
         <DialogContent>
-        {confirmationDisplayDetails.map((detail, index) => (
+          {confirmationDisplayDetails.map((detail, index) => (
             <div key={index}>
               <Typography>
                 <span
@@ -79,7 +78,9 @@ const CancelField = ({ params, cancelBooking, openSnackbar }) => {
               </Typography>
             </div>
           ))}
-          <DialogContentText sx={{ pt: 2 }}>Please provide a reason for cancelling this booking:</DialogContentText>
+          <DialogContentText sx={{ pt: 2 }}>
+            Please provide a reason for cancelling this booking:
+          </DialogContentText>
           <TextField
             autoFocus
             margin="dense"

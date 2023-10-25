@@ -23,7 +23,7 @@ const ViewPastBookings = () => {
       flex: 2,
       sortable: false,
       renderCell: (params) => {
-        return <DetailsField params={params} isLoading = {isLoading} />;
+        return <DetailsField params={params} isLoading={isLoading} />;
       },
     },
   ];
@@ -35,7 +35,7 @@ const ViewPastBookings = () => {
       flex: 2,
       sortable: false,
       renderCell: (params) => {
-        return <DetailsField params={params} isLoading = {isLoading} />;
+        return <DetailsField params={params} isLoading={isLoading} />;
       },
     },
   ];
@@ -47,7 +47,7 @@ const ViewPastBookings = () => {
       flex: 2,
       sortable: false,
       renderCell: (params) => {
-        return <DetailsField params={params} isLoading = {isLoading} />;
+        return <DetailsField params={params} isLoading={isLoading} />;
       },
     },
   ];

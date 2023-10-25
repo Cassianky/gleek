@@ -49,9 +49,10 @@ export const addCartItem = async (req, res) => {
       });
     }
 
-    // Get activity title and vendor name
+    // Get activity title, vendor name and vendorId
     const activityTitle = activity.title;
     const vendorName = activity.linkedVendor.companyName;
+    const vendorId = activity.linkedVendor;
 
     // Calculate total cost
     const totalCost =
@@ -71,6 +72,7 @@ export const addCartItem = async (req, res) => {
       totalCost,
       activityTitle,
       vendorName,
+      vendorId,
       ...restBody,
     });
 

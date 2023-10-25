@@ -3,11 +3,20 @@ import { Role } from "../util/roleEnum.js";
 
 const chatMessageSchema = mongoose.Schema({
   //Only require to identify sender to determine alignment of message
-  sender: { type: mongoose.Schema.Types.ObjectId },
   senderRole: {
     type: String,
     enum: Object.values(Role),
     required: true,
+  },
+  client: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Client",
+    default: null,
+  },
+  vendor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Vendor",
+    default: null,
   },
   messageContent: { type: String, trim: true },
   //Required to identify the Chatroom which message belongs to
@@ -16,12 +25,13 @@ const chatMessageSchema = mongoose.Schema({
   messageDate: {
     type: Date,
     required: true,
+    default: Date.now(),
   },
 });
 
 const ChatMessageModel = mongoose.model(
   "Message",
   chatMessageSchema,
-  "chat_messages",
+  "chatMessages",
 );
 export default ChatMessageModel;

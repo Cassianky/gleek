@@ -1,7 +1,4 @@
 import ChatroomModel from "../model/chatRoomModel.js";
-import ClientModel from "../model/clientModel.js";
-import VendorModel from "../model/vendorModel.js";
-import AdminModel from "../model/adminModel.js";
 import { Role } from "../util/roleEnum.js";
 
 //Fetch all chats for a user

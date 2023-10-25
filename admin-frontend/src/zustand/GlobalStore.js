@@ -492,8 +492,12 @@ export const useBookingStore = create((set) => ({
     try {
       set({ isLoading: true });
       const approveResponse = await AxiosConnect.patch(
-        "/booking/confirmBooking",
-        bookingId
+        "/booking/updateBookingStatus",
+        bookingId,
+        {
+          newStatus: "CONFIRMED",
+          actionByUserType: "ADMIN",
+        }
       );
       const bookingsResponse = await AxiosConnect.get(
         "/booking/getAllBookings"
@@ -516,9 +520,13 @@ export const useBookingStore = create((set) => ({
     try {
       set({ isLoading: true });
       const rejectResponse = await AxiosConnect.patch(
-        "/booking/rejectBooking",
+        "/booking/updateBookingStatus",
         bookingId,
-        { rejectionReason: rejectionReason }
+        {
+          newStatus: "REJECTED",
+          actionByUserType: "ADMIN",
+          actionRemarks: rejectionReason,
+        }
       );
       const bookingsResponse = await AxiosConnect.get(
         "/booking/getAllBookings"
@@ -540,9 +548,13 @@ export const useBookingStore = create((set) => ({
     try {
       set({ isLoading: true });
       const cancelResponse = await AxiosConnect.patch(
-        "/booking/cancelBooking",
+        "/booking/updateBookingStatus",
         bookingId,
-        { cancellationReason: cancellationReason }
+        {
+          newStatus: "CANCELLED",
+          actionByUserType: "ADMIN",
+          actionRemarks: cancellationReason,
+        }
       );
       const bookingsResponse = await AxiosConnect.get(
         "/booking/getAllBookings"
@@ -564,8 +576,12 @@ export const useBookingStore = create((set) => ({
     try {
       set({ isLoading: true });
       const updateResponse = await AxiosConnect.patch(
-        "/booking/updateToPaid",
-        bookingId
+        "/booking/updateBookingStatus",
+        bookingId,
+        {
+          newStatus: "PAID",
+          actionByUserType: "ADMIN",
+        }
       );
       const bookingsResponse = await AxiosConnect.get(
         "/booking/getAllBookings"

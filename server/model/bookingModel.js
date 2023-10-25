@@ -130,16 +130,9 @@ const bookingSchema = new mongoose.Schema({
         enum: ["ADMIN", "VENDOR", "CLIENT"],
         required: true,
       },
-      actionByClient: {
-        type: mongoose.Schema.Types.ObjectId, // If user type is Client, store client id
-        ref: "Client",
-      },
-      actionByVendor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Vendor",
-      },
-      actionByAdmin: {
+      actionByUserName: {
         type: String,
+        required: true,
       },
       actionTimestamp: {
         type: Date,

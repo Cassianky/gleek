@@ -7,6 +7,7 @@ import BookingsTable from "./BookingsTable";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
 import CancelIcon from "@mui/icons-material/Cancel";
+import DetailsField from "./DetailsField";
 
 const ViewPastBookings = () => {
   const theme = useTheme();
@@ -22,7 +23,7 @@ const ViewPastBookings = () => {
       flex: 2,
       sortable: false,
       renderCell: (params) => {
-        return <Typography>Updated by admin xx on xx</Typography>;
+        return <DetailsField params={params} isLoading = {isLoading} />;
       },
     },
   ];
@@ -34,7 +35,7 @@ const ViewPastBookings = () => {
       flex: 2,
       sortable: false,
       renderCell: (params) => {
-        return <Typography>Rejected by admin xx on xx</Typography>;
+        return <DetailsField params={params} isLoading = {isLoading} />;
       },
     },
   ];
@@ -46,7 +47,7 @@ const ViewPastBookings = () => {
       flex: 2,
       sortable: false,
       renderCell: (params) => {
-        return <Typography>Cancelled by admin xx on xx</Typography>;
+        return <DetailsField params={params} isLoading = {isLoading} />;
       },
     },
   ];

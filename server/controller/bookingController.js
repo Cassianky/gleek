@@ -491,21 +491,21 @@ export const cancelBooking = async (req, res) => {
   }
 };
 
-// ADMIN CONFIRM/REJECT/CANCEL
 // PATCH /booking/updateBookingStatus/:id
 // Takes request body of:
 // {
 //   "newStatus" : "REJECTED",
-//   "userType": "ADMIN",
-//   "remarks" : "rejection or cancellation reason" (optional if new status is CONFIRMED)
+//   "actionByUserType": "ADMIN",
+//   "actionRemarks" : "rejection or cancellation reason" (optional if new status is CONFIRMED)
 // }
 
 export const updateBookingStatus = async (req, res) => {
   try {
     const bookingId = req.params.id;
     const user = req.user;
-    const { newStatus, remarks, userType } = req.body;
-    const userName = userType === "VENDOR" ? user.companyName : user.name;
+    const { newStatus, actionRemarks, actionByUserType } = req.body;
+    const userName =
+      actionByUserType === "VENDOR" ? user.companyName : user.name;
     const updatedBooking = await BookingModel.findByIdAndUpdate(
       bookingId,
       {
@@ -513,9 +513,9 @@ export const updateBookingStatus = async (req, res) => {
         $push: {
           actionHistory: {
             newStatus: newStatus,
-            actionByUserType: userType,
-            actionByAdmin: userName,
-            actionRemarks: remarks,
+            actionByUserType: actionByUserType,
+            actionByUserName: userName,
+            actionRemarks: actionRemarks,
           },
         },
       },

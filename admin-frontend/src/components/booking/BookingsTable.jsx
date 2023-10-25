@@ -75,7 +75,8 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
       <DataGrid
         rows={filteredBookings}
         columns={columns}
-        autoHeight={true}
+        autoHeight
+        getRowHeight={() => 'auto'}
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 25 },

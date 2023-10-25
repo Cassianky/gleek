@@ -21,7 +21,7 @@ import ViewActivityDrafts from "./components/activity/ViewActivityDrafts";
 import EditActivityDraftPage from "./components/activity/EditActivityDraftPage";
 import AdminNotificationPage from "./components/notification/AdminNotificationPage";
 import VerifyEmailPage from "./components/VerifyEmailPage";
-import ActivityThemesPage from "./components/activitythemes/activityThemesPage";
+import ActivityThemesPage from "./components/activitythemes/ActivityThemesPage";
 import ViewActiveBookingsPage from "./components/booking/ViewActiveBookingsPage";
 import ViewPastBookingsPage from "./components/booking/ViewPastBookingsPage";
 

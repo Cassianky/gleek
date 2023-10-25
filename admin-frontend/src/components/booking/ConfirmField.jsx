@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
+import { useBookingStore, useSnackbarStore } from "../../zustand/GlobalStore";
 import {
   IconButton,
   Dialog,
@@ -15,17 +16,13 @@ import {
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 
-const ConfirmField = ({
-  params,
-  approveBooking,
-  rejectBooking,
-  openSnackbar,
-  isLoading,
-}) => {
+const ConfirmField = ({ bookingData }) => {
   const theme = useTheme();
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [bookingToReject, setBookingToReject] = useState();
   const [rejectionReason, setRejectionReason] = useState("");
+  const { isLoading, approveBooking, rejectBooking } = useBookingStore();
+  const { openSnackbar } = useSnackbarStore();
 
   const handleApproveButton = async (bookingId) => {
     try {
@@ -45,7 +42,8 @@ const ConfirmField = ({
     }
   };
 
-  const handleOpenRejectModal = (activity) => {
+  const handleOpenRejectModal = (event, activity) => {
+    event.stopPropagation();
     setRejectModalOpen(true);
     setBookingToReject(activity);
   };
@@ -58,11 +56,30 @@ const ConfirmField = ({
     setRejectionReason(event.target.value);
   };
 
+  const confirmationDisplayDetails = [
+    { label: "Client Company", value: bookingData.clientId.companyName },
+    { label: "Vendor", value: bookingData.vendorName },
+    { label: "Activity", value: bookingData.activityTitle },
+    {
+      label: "Date",
+      value: new Date(bookingData.startDateTime).toLocaleDateString(),
+    },
+    {
+      label: "Timeslot",
+      value: `${new Date(
+        bookingData.startDateTime,
+      ).toLocaleTimeString()} - ${new Date(
+        bookingData.endDateTime,
+      ).toLocaleTimeString()}`,
+    },
+    { label: "Total Cost", value: `$${bookingData.totalCost}` },
+  ];
+
   if (isLoading) {
     return <Typography>Loading...</Typography>;
   } else {
-    // console.log(params.row.activityId);
-    if (params.row.activityId.adminCreated) {
+    // console.log(bookingData.activityId);
+    if (bookingData.activityId.adminCreated) {
       return (
         <div
           style={{
@@ -83,7 +100,7 @@ const ConfirmField = ({
               height: "38px",
               width: "38px",
             }}
-            onClick={async () => await handleApproveButton(params.row.id)}
+            onClick={async () => await handleApproveButton(bookingData.id)}
           >
             <DoneIcon fontSize="small" />
           </IconButton>
@@ -97,43 +114,39 @@ const ConfirmField = ({
               height: "38px",
               width: "38px",
             }}
-            onClick={() => handleOpenRejectModal(params.row)}
+            onClick={(e) => handleOpenRejectModal(e, bookingData)}
           >
             <CloseIcon fontSize="small" />
           </IconButton>
           <Dialog
+            fullWidth
             open={rejectModalOpen}
             onClose={handleCloseRejectModal}
-            sx={{
-              "& .MuiDialog-paper": {
-                border: "3px solid #D32F2F",
-                borderRadius: "10px",
-                boxShadow: "none",
-              },
-            }}
           >
-            <DialogTitle sx={{ paddingBottom: 0 }}>
-              <div style={{ display: "flex" }}>
-                <Typography fontSize={"1.25rem"}>
-                  Rejecting booking for&nbsp;
-                </Typography>
-                <Typography color="#9F91CC" fontSize={"1.25rem"}>
-                  {bookingToReject?.activityTitle}
-                </Typography>
-              </div>
+            <DialogTitle>
+              <Typography fontSize={"1.25rem"}>
+                Confirm Rejection of Booking
+              </Typography>
             </DialogTitle>
-            <DialogTitle sx={{ paddingTop: 0 }}>
-              <div style={{ display: "flex" }}>
-                <Typography fontSize={"1rem"}>Booking made by&nbsp;</Typography>
-                <Typography color="#9F91CC" fontSize={"1rem"}>
-                  {bookingToReject?.clientId?.name}
-                </Typography>
-              </div>
-            </DialogTitle>
-
             <DialogContent>
-              <DialogContentText>
-                Provide a reason for rejecting booking request!
+              {confirmationDisplayDetails.map((detail, index) => (
+                <div key={index}>
+                  <Typography>
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        color: theme.palette.dark_purple.main,
+                      }}
+                    >
+                      {detail.label}:{" "}
+                    </span>
+                    {detail.value}
+                  </Typography>
+                </div>
+              ))}
+
+              <DialogContentText sx={{ pt: 2 }}>
+                Please provide a reason for rejecting this booking request:
               </DialogContentText>
               <TextField
                 autoFocus
@@ -148,7 +161,7 @@ const ConfirmField = ({
             <DialogActions>
               <Button onClick={() => handleCloseRejectModal()}>Cancel</Button>
               <Button
-                onClick={async () => await handleRejectButton(params.row.id)}
+                onClick={async () => await handleRejectButton(bookingData.id)}
                 variant="contained"
                 color="error"
                 disabled={!rejectionReason || rejectionReason === ""}

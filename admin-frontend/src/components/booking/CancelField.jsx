@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
+import { useBookingStore, useSnackbarStore } from "../../zustand/GlobalStore";
 
 import {
   Dialog,
@@ -12,12 +13,15 @@ import {
   Typography,
 } from "@mui/material";
 
-const CancelField = ({ params, cancelBooking, openSnackbar }) => {
+const CancelField = ({ bookingData }) => {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [reason, setReason] = useState("");
+  const { openSnackbar } = useSnackbarStore();
+  const { cancelBooking } = useBookingStore();
 
-  const handleDialogOpen = () => {
+  const handleDialogOpen = (event) => {
+    event.stopPropagation();
     setDialogOpen(true);
   };
 
@@ -36,22 +40,22 @@ const CancelField = ({ params, cancelBooking, openSnackbar }) => {
   };
 
   const confirmationDisplayDetails = [
-    { label: "Client Company", value: params.row.clientId.companyName },
-    { label: "Vendor", value: params.row.vendorName },
-    { label: "Activity", value: params.row.activityTitle },
+    { label: "Client Company", value: bookingData.clientId.companyName },
+    { label: "Vendor", value: bookingData.vendorName },
+    { label: "Activity", value: bookingData.activityTitle },
     {
       label: "Date",
-      value: new Date(params.row.startDateTime).toLocaleDateString(),
+      value: new Date(bookingData.startDateTime).toLocaleDateString(),
     },
     {
       label: "Timeslot",
       value: `${new Date(
-        params.row.startDateTime,
+        bookingData.startDateTime,
       ).toLocaleTimeString()} - ${new Date(
-        params.row.endDateTime,
+        bookingData.endDateTime,
       ).toLocaleTimeString()}`,
     },
-    { label: "Total Cost", value: `$${params.row.totalCost}` },
+    { label: "Total Cost", value: `$${bookingData.totalCost}` },
   ];
 
   return (
@@ -97,7 +101,7 @@ const CancelField = ({ params, cancelBooking, openSnackbar }) => {
             Back
           </Button>
           <Button
-            onClick={async () => await handleConfirmCancel(params.row.id)}
+            onClick={async () => await handleConfirmCancel(bookingData.id)}
             color="primary"
             disabled={!reason.trim()}
           >

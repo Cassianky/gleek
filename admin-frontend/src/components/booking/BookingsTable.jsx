@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import BookingDetailsForm from "./BookingDetailsForm.jsx";
 
-
 const BookingsTable = ({ bookings, status, additionalColumns }) => {
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -92,7 +91,7 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
     setSelectedBooking(newBooking);
     setIsDrawerOpen(true);
   };
-  
+
   const handleCloseBookingDetails = () => {
     setSelectedBooking();
     setIsDrawerOpen(false);
@@ -118,7 +117,7 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
         open={isDrawerOpen}
         onClose={handleCloseBookingDetails}
       >
-        <Box sx={{ width: "650px", paddingTop: "75px" }}>
+        <Box sx={{ width: "600px", paddingTop: "75px" }}>
           <BookingDetailsForm appointmentData={selectedBooking} />
         </Box>
       </Drawer>

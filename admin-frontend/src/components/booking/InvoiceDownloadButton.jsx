@@ -3,7 +3,8 @@ import DownloadIcon from "@mui/icons-material/Download";
 
 import { Button } from "@mui/material";
 
-const handleDownload = () => {
+const handleDownload = (event) => {
+  event.stopPropagation();
   console.log("Download Invoice!");
 };
 

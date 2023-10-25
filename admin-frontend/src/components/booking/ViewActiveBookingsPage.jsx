@@ -28,15 +28,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const ViewActiveBookings = () => {
   const theme = useTheme();
   const [currentTab, setCurrentTab] = useState("pendingConfirmation");
-  const {
-    isLoading,
-    bookings,
-    getAllBookings,
-    approveBooking,
-    rejectBooking,
-    cancelBooking,
-    updateBookingToPaid,
-  } = useBookingStore();
+  const { isLoading, bookings, getAllBookings, updateBookingToPaid } =
+    useBookingStore();
   const { openSnackbar } = useSnackbarStore();
 
   const pendingBookingBadgeNumber = bookings.filter(
@@ -68,15 +61,7 @@ const ViewActiveBookings = () => {
       flex: 1,
       sortable: false,
       renderCell: (params) => {
-        return (
-          <ConfirmField
-            params={params}
-            approveBooking={approveBooking}
-            rejectBooking={rejectBooking}
-            openSnackbar={openSnackbar}
-            isLoading={isLoading}
-          />
-        );
+        return <ConfirmField bookingData={params.row} />;
       },
     },
   ];
@@ -97,13 +82,7 @@ const ViewActiveBookings = () => {
       flex: 1,
       sortable: false,
       renderCell: (params) => {
-        return (
-          <CancelField
-            params={params}
-            cancelBooking={cancelBooking}
-            openSnackbar={openSnackbar}
-          />
-        );
+        return <CancelField bookingData={params.row} />;
       },
     },
   ];
@@ -124,13 +103,7 @@ const ViewActiveBookings = () => {
       flex: 1,
       sortable: false,
       renderCell: (params) => {
-        return (
-          <PaidField
-            params={params}
-            openSnackbar={openSnackbar}
-            updateBookingToPaid={updateBookingToPaid}
-          />
-        );
+        return <PaidField bookingData={params.row} />;
       },
     },
   ];

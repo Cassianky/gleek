@@ -216,24 +216,12 @@ const ActivityDetailsPage = () => {
          selectedDate,
          currentActivity.weekendPricing
       );
-      const weekendAddOn = calculateWeekendAddOn(
-         selectedDate,
-         currentActivity.weekendPricing
-      );
 
       const onlineAddOn = calculateOnlineAddOn(
          location,
          currentActivity.offlinePricing
       );
-      const onlineAddOn = calculateOnlineAddOn(
-         location,
-         currentActivity.offlinePricing
-      );
 
-      const offlineAddOn = calculateOfflineAddOn(
-         location,
-         currentActivity.onlinePricing
-      );
       const offlineAddOn = calculateOfflineAddOn(
          location,
          currentActivity.onlinePricing

@@ -7,6 +7,7 @@ import { isCartItemStillAvailable } from "./cartItemController.js";
 import mongoose from "mongoose";
 import { getAllPendingAndConfirmedBookingsForVendor } from "../service/bookingService.js";
 import { BookingSummaryClient } from "../assets/templates/BookingSummaryClient.js";
+import { BookingSummaryVendor } from "../assets/templates/BookingSummaryVendor.js";
 import sendMail from "../util/sendMail.js";
 import fs from "fs";
 import path from "path";
@@ -377,7 +378,6 @@ export const createBookings = async (req, res) => {
             ...cartItemPlainObject,
          });
       }
-      console.log(bookings);
       let createdBookings = [];
       // Start transaction to create bookings
       const session = await mongoose.startSession();
@@ -386,11 +386,13 @@ export const createBookings = async (req, res) => {
          // Create booking
          const booking = new BookingModel(bookingDetails);
          await booking.save();
-         await booking.populate("vendorId");
-         await booking.populate({
-            path: "activityId",
-            populate: [{ path: "theme" }, { path: "subtheme" }],
-         });
+         await booking.populate([
+            {
+               path: "activityId",
+               populate: [{ path: "theme" }, { path: "subtheme" }],
+            },
+            { path: "vendorId" },
+         ]);
          createdBookings.push(booking);
       }
 
@@ -399,7 +401,8 @@ export const createBookings = async (req, res) => {
 
       await session.commitTransaction();
       session.endSession();
-      await sendBookingSummaryEmail(createdBookings, billingEmail);
+      await sendBookingSummaryEmailClient(createdBookings, billingEmail);
+      await sendBookingSummaryEmailVendor(createdBookings);
       res.status(200).json({
          message: "Successfully created bookings!",
          bookings: createdBookings,
@@ -607,8 +610,8 @@ export const updateCompletedBookings = async (req, res) => {
    }
 };
 
-//Generate the PDF for the Client
-export const sendBookingSummaryEmail = async (data, email) => {
+//Generate the PDF for the Client And Send Email
+export const sendBookingSummaryEmailClient = async (data, email) => {
    const pdfContent = BookingSummaryClient(data);
    const filename = "bookingSummary" + Date.now() + ".pdf";
    const pdfFilePath = path.join(process.cwd(), "temp", filename);
@@ -645,6 +648,55 @@ export const sendBookingSummaryEmail = async (data, email) => {
                   }
                });
             }
+         });
+      });
+   });
+};
+
+//Generate the PDF for the vendor And send Email
+export const sendBookingSummaryEmailVendor = async (data) => {
+   data.forEach((booking) => {
+      const pdfContent = BookingSummaryVendor(booking);
+      const filename =
+         "bookingSummary" + booking.vendorId.companyName + Date.now() + ".pdf";
+      const pdfFilePath = path.join(process.cwd(), "temp", filename);
+
+      pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {
+         if (err) {
+            // Handle errors appropriately
+            console.error(err);
+            res.status(500).send("Error generating PDF");
+         }
+         const options = {
+            to: booking.vendorId.companyEmail,
+            subject: "You have a New Booking!",
+            text: "You have a New Booking!",
+            attachments: [
+               {
+                  filename: "BookingSummary.pdf",
+                  path: pdfFilePath,
+                  contentType: "application/pdf",
+               },
+            ],
+         };
+
+         sendMail(options).then(() => {
+            fs.access(pdfFilePath, fs.constants.F_OK, (err) => {
+               if (err) {
+                  console.error(
+                     "File does not exist or cannot be accessed:",
+                     err
+                  );
+               } else {
+                  fs.unlink(pdfFilePath, (deleteError) => {
+                     if (deleteError) {
+                        console.error("Error deleting the file:", deleteError);
+                     } else {
+                        console.log("File deleted successfully.");
+                     }
+                  });
+               }
+            });
          });
       });
    });

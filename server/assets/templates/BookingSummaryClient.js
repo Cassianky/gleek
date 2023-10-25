@@ -21,7 +21,6 @@ export const BookingSummaryClient = (data) => {
    };
    let grandTotal = 0;
    const getBookings = (data) => {
-      // console.log(data);
       let htmlString = "";
 
       data.forEach((booking) => {
@@ -74,7 +73,6 @@ export const BookingSummaryClient = (data) => {
                `;
          grandTotal += booking.totalCost;
       });
-      console.log(htmlString);
       return htmlString;
    };
 

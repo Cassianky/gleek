@@ -92,15 +92,6 @@ const ViewActiveBookings = () => {
       },
     },
     {
-      field: "downloadInvoice",
-      headerName: "",
-      flex: 1.5,
-      sortable: false,
-      renderCell: (params) => {
-        return <InvoiceDownloadButton />;
-      },
-    },
-    {
       field: "cancelAction",
       headerName: "Cancel?",
       flex: 1,
@@ -118,6 +109,15 @@ const ViewActiveBookings = () => {
   ];
 
   const pendingPaymentAdditionalColumns = [
+    {
+      field: "downloadInvoice",
+      headerName: "Invoice",
+      flex: 1,
+      sortable: false,
+      renderCell: (params) => {
+        return <InvoiceDownloadButton />;
+      },
+    },
     {
       field: "paidAction",
       headerName: "Paid?",

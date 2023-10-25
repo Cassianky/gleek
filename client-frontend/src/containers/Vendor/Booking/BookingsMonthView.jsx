@@ -24,7 +24,7 @@ import {
   MenuItem,
   Select,
   Typography,
-  useTheme
+  useTheme,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { alpha, styled } from "@mui/material/styles";
@@ -92,7 +92,7 @@ const BookingsMonthView = ({
           startDate: startDateTime,
           endDate: endDateTime,
           ...restProps,
-        })
+        }),
       )
       .filter((booking) =>
         filterCriteria[newStatus].value === "ALL"
@@ -350,7 +350,7 @@ const BookingsMonthView = ({
           startDate: startDateTime,
           endDate: endDateTime,
           ...restProps,
-        })
+        }),
       )
       .filter((booking) =>
         filterCriteria[currentStatus].value === "ALL"

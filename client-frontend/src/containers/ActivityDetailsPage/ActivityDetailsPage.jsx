@@ -84,7 +84,13 @@ const ActivityDetailsPage = () => {
 
   const handlePaxChange = (event) => {
     const { value } = event.target;
-    setPax(value);
+    if (value < currentActivity.minParticipants) {
+      setPax(currentActivity.minParticipants);
+    } else if (value > currentActivity.maxParticipants) {
+      setPax(currentActivity.maxParticipants);
+    } else {
+      setPax(value);
+    }
   };
 
   const handleDateChange = (date) => {
@@ -192,17 +198,17 @@ const ActivityDetailsPage = () => {
 
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
-      currentActivity.weekendPricing,
+      currentActivity.weekendPricing
     );
 
     const onlineAddOn = calculateOnlineAddOn(
       location,
-      currentActivity.offlinePricing,
+      currentActivity.offlinePricing
     );
 
     const offlineAddOn = calculateOfflineAddOn(
       location,
-      currentActivity.onlinePricing,
+      currentActivity.onlinePricing
     );
 
     totalPriceCalculated =
@@ -221,15 +227,15 @@ const ActivityDetailsPage = () => {
   const handleAddToCart = async (event) => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
-      currentActivity.weekendPricing,
+      currentActivity.weekendPricing
     );
     const onlineAddOn = calculateOnlineAddOn(
       location,
-      currentActivity.offlinePricing,
+      currentActivity.offlinePricing
     );
     const offlineAddOn = calculateOfflineAddOn(
       location,
-      currentActivity.onlinePricing,
+      currentActivity.onlinePricing
     );
     const timeParts = time.split(",");
     const cartItem = {
@@ -416,7 +422,7 @@ const ActivityDetailsPage = () => {
                           format="DD/MM/YYYY"
                           minDate={dayjs().add(
                             currentActivity?.bookingNotice,
-                            "days",
+                            "days"
                           )}
                           shouldDisableDate={shouldDisableDate}
                           sx={{ marginRight: "12px" }}
@@ -575,7 +581,7 @@ const ActivityDetailsPage = () => {
                                   : ""}
                                 $
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                               </Typography>
                             </Box>
@@ -597,7 +603,7 @@ const ActivityDetailsPage = () => {
                                   : ""}
                                 {""}$
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                               </Typography>
                             </Box>
@@ -618,7 +624,7 @@ const ActivityDetailsPage = () => {
                                   : ""}
                                 {""}$
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                               </Typography>
                             </Box>
@@ -779,8 +785,11 @@ const ActivityDetailsPage = () => {
                 Pricing:
               </Typography>
               <Grid container spacing={2}>
-                {currentActivity?.activityPricingRules.map(
-                  (activityPricingRule, index) => (
+                {[...currentActivity?.activityPricingRules]
+                  .sort((a, b) => {
+                    return b.clientPrice - a.clientPrice;
+                  })
+                  .map((activityPricingRule, index) => (
                     <Grid item key={index}>
                       <Box
                         display="flex"
@@ -798,14 +807,18 @@ const ActivityDetailsPage = () => {
                         currentActivity?.activityPricingRules.length - 1 ? (
                           <Box display="flex" flexDirection="row">
                             <DiscountIcon color="accent" />
-                            <Typography
-                              mb={2}
-                              ml={1}
-                              color={accent}
-                              fontWeight={700}
-                            >
-                              Most For Value Price
-                            </Typography>
+                            <Box>
+                              <Typography
+                                ml={1}
+                                color={accent}
+                                fontWeight={700}
+                              >
+                                Most For Value Price
+                              </Typography>
+                              <Typography mb={2} ml={1} color={accent}>
+                                (Recommended)
+                              </Typography>
+                            </Box>
                           </Box>
                         ) : null}
                         <Box display="flex" flexDirection="row" mb={2}>
@@ -829,8 +842,7 @@ const ActivityDetailsPage = () => {
                         </Typography>
                       </Box>
                     </Grid>
-                  ),
-                )}
+                  ))}
               </Grid>
               {(currentActivity?.offlinePricing?.isDiscount ||
                 currentActivity?.onlinePricing?.isDiscount ||

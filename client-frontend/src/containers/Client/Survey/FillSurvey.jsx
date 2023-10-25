@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import useAdminSurveyResponseStore from "../../../zustand/AdminSurveyResponseStore";
 import useSnackbarStore from "../../../zustand/SnackbarStore";
@@ -38,6 +38,7 @@ function FillSurvey() {
   } = useAdminSurveyResponseStore();
 
   const { openSnackbar } = useSnackbarStore();
+  const navigate = useNavigate();
 
   const [surveyData, setSurveyData] = useState({
     email: "",
@@ -67,9 +68,13 @@ function FillSurvey() {
       try {
         const data = await getSurveyForBooking(bookingId);
 
-        setSurveyData(data.survey);
-        setReviewData(data.review);
-        
+        if (data.survey) {
+          setSurveyData(data.survey);
+        }
+
+        if (data.review) {
+          setReviewData(data.review);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -99,6 +104,8 @@ function FillSurvey() {
 
   const handleSubmit = () => {
     try {
+      console.log(surveyData);
+      console.log(reviewData);
       submitSurveyForBooking(
         bookingId,
         surveyData,
@@ -106,7 +113,9 @@ function FillSurvey() {
         wantsToLeaveReview,
       );
       openSnackbar("Submitted!", "success");
+      navigate(`/booking/${bookingId}`);
     } catch (err) {
+      console.log(err);
       openSnackbar("There was an error.", "error");
     }
   };
@@ -143,8 +152,8 @@ function FillSurvey() {
   return (
     <MainBodyContainer
       hasBackButton={true}
-      breadcrumbNames={["View Booking"]}
-      breadcrumbLinks={[`/booking/${bookingId}`]}
+      breadcrumbNames={[]}
+      breadcrumbLinks={[]}
       currentBreadcrumbName={`Respond to survey`}
     >
       <Box
@@ -166,14 +175,12 @@ function FillSurvey() {
 
         <form>
           <Grid container spacing={2} p={7}>
-            {/* Checkbox to toggle review section */}
-
             <Grid item xs={12}>
               <FormControlLabel
                 checked={wantsToLeaveReview}
                 onChange={handleToggleReview}
                 color="primary"
-                control={<Checkbox defaultChecked />}
+                control={<Checkbox />}
                 label="Do you want to leave a review on this activity?"
               />
             </Grid>
@@ -472,7 +479,9 @@ function FillSurvey() {
                 color="primary"
                 onClick={handleSubmit}
                 size="large"
-                disabled={surveyData?.status && surveyData?.status === "SUBMITTED"}
+                disabled={
+                  surveyData?.status && surveyData?.status === "SUBMITTED"
+                }
                 fullWidth
               >
                 Submit

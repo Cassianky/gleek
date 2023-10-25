@@ -26,7 +26,7 @@ export const getSurveyForBooking = async (req, res) => {
     const survey = await SurveyResponse.findOne({ booking: bookingId });
     const review = await Review.findOne({ booking: bookingId });
 
-    console.log("review", review)
+    // console.log("review", review)
 
     if (!survey) {
       // return empty survey object

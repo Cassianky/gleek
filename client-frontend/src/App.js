@@ -41,6 +41,7 @@ import VendorRegisterPage from "./containers/Vendor/VendorRegisterPage";
 import VerifyEmailVendor from "./containers/Vendor/VerifyEmailVendor";
 import useClientStore from "./zustand/ClientStore";
 import useVendorStore from "./zustand/VendorStore";
+import PendingSurveys from "./containers/Client/Survey/PendingSurveys";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -176,6 +177,16 @@ function App() {
             element={
               <ClientProtectedRoute>
                 <ViewSurvey />
+              </ClientProtectedRoute>
+            }
+          />
+
+          <Route
+            exact
+            path="/surveys"
+            element={
+              <ClientProtectedRoute>
+                <PendingSurveys />
               </ClientProtectedRoute>
             }
           />

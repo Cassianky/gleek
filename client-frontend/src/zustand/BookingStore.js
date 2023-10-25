@@ -17,6 +17,18 @@ const useBookingStore = create((set) => ({
       console.error(error.message);
     }
   },
+  getBookingsWithPendingSurvey: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/gleek/booking/pendingSurvey");
+  
+      set({ bookings: response.data.bookings });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error.message);
+      throw error;
+    }
+  },
   approveBooking: async (bookingId) => {
     try {
       set({ isLoading: true });

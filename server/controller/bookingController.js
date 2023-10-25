@@ -552,3 +552,46 @@ export const getAllBookingsByActivityId = async (req, res) => {
     });
   }
 };
+
+// POST /booking/updateCompletedBookings
+export const updateCompletedBookings = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    //Find bookings of "confirmed" status and date passed current date
+    const confirmedBookingsToUpdate = await BookingModel.find({
+      status: "CONFIRMED",
+      endDateTime: { $lt: currentDate },
+    });
+
+    if (confirmedBookingsToUpdate.length > 0) {
+      console.log("In condition to update bookings");
+      // Update the status of each booking to "PENDING_PAYMENT"
+      confirmedBookingsToUpdate.map(async (booking) => {
+        const newActionHistory = {
+          newStatus: "PENDING_PAYMENT",
+          actionByUserType: "ADMIN",
+          actionByUserName: "SCHEDULED UPDATE",
+          actionTimestamp: new Date(),
+        };
+        booking.status = "PENDING_PAYMENT";
+        booking.actionHistory.push(newActionHistory);
+        await booking.save();
+      });
+
+      console.log(confirmedBookingsToUpdate);
+
+      res.status(200).json({
+        message: "Bookings updated.",
+        data: confirmedBookingsToUpdate,
+      });
+    } else {
+      console.log("No bookings to update.");
+      res.status(200).json({
+        message: "No bookings to update.",
+      });
+    }
+  } catch (error) {
+    console.error("Error updating bookings:", error);
+    res.status(500).json({ error: "Server error", message: error.message });
+  }
+};

@@ -589,6 +589,7 @@ export const updateCompletedBookings = async (req, res) => {
           actionByUserType: "ADMIN",
           actionByUserName: "SCHEDULED UPDATE",
           actionTimestamp: new Date(),
+          actionRemarks: "SCHEDULED UPDATE OF COMPLETED CONFIRMED BOOKINGS"
         };
         booking.status = "PENDING_PAYMENT";
         booking.actionHistory.push(newActionHistory);

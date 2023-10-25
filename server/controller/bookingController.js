@@ -10,7 +10,17 @@ import { getAllPendingAndConfirmedBookingsForVendor } from "../service/bookingSe
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
   try {
-    const bookings = await BookingModel.find();
+    const bookings = await BookingModel.find()
+      .populate({
+        path: "clientId",
+        select: "-password",
+      })
+      .populate({
+        path: "vendorId",
+        select: "-password",
+      })
+      .populate("activityId");
+
     // if (bookings.length === 0) {
     //   return res.status(404).json({ message: "No bookings found!" });
     // }
@@ -473,37 +483,44 @@ export const rejectBooking = async (req, res) => {
   }
 };
 
-// PATCH /booking/cancelBooking/:id
-export const cancelBooking = async (req, res) => {
-  try {
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "Server Error! Unable to cancel booking.",
-      error: error.message,
-    });
-  }
-};
+// PATCH /booking/updateBookingStatus/:id
+// Takes request body of:
+// {
+//   "newStatus" : "REJECTED",
+//   "actionByUserType": "ADMIN",
+//   "actionRemarks" : "rejection or cancellation reason" (optional, no need if new status is CONFIRMED)
+// }
 
-// PATCH /booking/updateBooking/:id
-export const updateBooking = async (req, res) => {
+export const updateBookingStatus = async (req, res) => {
   try {
+    const bookingId = req.params.id;
+    const user = req.user;
+    const { newStatus, actionRemarks, actionByUserType } = req.body;
+    const userName =
+      actionByUserType === "VENDOR" ? user.companyName : user.name;
+    const updatedBooking = await BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        status: newStatus,
+        $push: {
+          actionHistory: {
+            newStatus: newStatus,
+            actionByUserType: actionByUserType,
+            actionByUserName: userName,
+            actionRemarks: actionRemarks,
+          },
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json({
+      booking: updatedBooking,
+      message: `Booking status for ${updatedBooking.activityTitle} updated to ${newStatus} successfully!`,
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       message: "Server Error! Unable to update booking.",
-      error: error.message,
-    });
-  }
-};
-
-// PATCH /booking/updateToPaid/:id
-export const updateToPaid = async (req, res) => {
-  try {
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "Server Error! Unable to update booking to PAID.",
       error: error.message,
     });
   }
@@ -550,5 +567,48 @@ export const getAllBookingsByActivityId = async (req, res) => {
       message: "Server Error! Unable to get bookings by activity ID.",
       error: error.message,
     });
+  }
+};
+
+// POST /booking/updateCompletedBookings
+export const updateCompletedBookings = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    //Find bookings of "confirmed" status and date passed current date
+    const confirmedBookingsToUpdate = await BookingModel.find({
+      status: "CONFIRMED",
+      endDateTime: { $lt: currentDate },
+    });
+
+    if (confirmedBookingsToUpdate.length > 0) {
+      console.log("In condition to update bookings");
+      // Update the status of each booking to "PENDING_PAYMENT"
+      confirmedBookingsToUpdate.map(async (booking) => {
+        const newActionHistory = {
+          newStatus: "PENDING_PAYMENT",
+          actionByUserType: "ADMIN",
+          actionByUserName: "SCHEDULED UPDATE",
+          actionTimestamp: new Date(),
+        };
+        booking.status = "PENDING_PAYMENT";
+        booking.actionHistory.push(newActionHistory);
+        await booking.save();
+      });
+
+      console.log(confirmedBookingsToUpdate);
+
+      res.status(200).json({
+        message: "Bookings updated.",
+        data: confirmedBookingsToUpdate,
+      });
+    } else {
+      console.log("No bookings to update.");
+      res.status(200).json({
+        message: "No bookings to update.",
+      });
+    }
+  } catch (error) {
+    console.error("Error updating bookings:", error);
+    res.status(500).json({ error: "Server error", message: error.message });
   }
 };

@@ -15,6 +15,10 @@ export const getAllBookings = async (req, res) => {
         path: "clientId",
         select: "-password",
       })
+      .populate({
+        path: "vendorId",
+        select: "-password",
+      })
       .populate("activityId");
 
     // if (bookings.length === 0) {

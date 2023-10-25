@@ -104,20 +104,6 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     default: Date.now(),
   },
-  // reviewedByAdminId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "Admin",
-  // },
-  // reviewedDateTime: {
-  //   type: Date,
-  // },
-  // lastEditedByAdminId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "Admin",
-  // },
-  // lastEditedDateTime: {
-  //   type: Date,
-  // },
   actionHistory: [
     {
       newStatus: {

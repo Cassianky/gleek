@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
-import { Chip, Typography, Stack } from "@mui/material";
+import { Chip, Typography, Drawer, Box } from "@mui/material";
 import PropTypes from "prop-types";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import BookingDetailsForm from "./BookingDetailsForm.jsx";
+
 
 const BookingsTable = ({ bookings, status, additionalColumns }) => {
   const [filteredBookings, setFilteredBookings] = useState([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState();
 
   useEffect(() => {
     setFilteredBookings(
@@ -70,6 +74,30 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
 
   const columns = [...standardColumns, ...additionalColumns];
 
+  const handleRowClick = ({
+    _id,
+    activityTitle,
+    endDateTime,
+    startDateTime,
+    ...restProps
+  }) => {
+    const newBooking = {
+      id: _id,
+      title: activityTitle,
+      startDate: startDateTime,
+      endDate: endDateTime,
+      ...restProps,
+    };
+
+    setSelectedBooking(newBooking);
+    setIsDrawerOpen(true);
+  };
+  
+  const handleCloseBookingDetails = () => {
+    setSelectedBooking();
+    setIsDrawerOpen(false);
+  };
+
   return (
     <div style={{ height: "100%", width: "99%" }}>
       <DataGrid
@@ -83,12 +111,22 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
           },
         }}
         slots={{ toolbar: GridToolbarFilterButton }}
+        onRowClick={(params) => handleRowClick(params.row)}
       />
+      <Drawer
+        anchor="left"
+        open={isDrawerOpen}
+        onClose={handleCloseBookingDetails}
+      >
+        <Box sx={{ width: "650px", paddingTop: "75px" }}>
+          <BookingDetailsForm appointmentData={selectedBooking} />
+        </Box>
+      </Drawer>
     </div>
   );
 };
 
-BookingsTable.PropTypes = {
+BookingsTable.propTypes = {
   bookings: PropTypes.array.isRequired,
   status: PropTypes.string.isRequired,
   additionalColumns: PropTypes.array.isRequired,

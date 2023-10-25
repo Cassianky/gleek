@@ -5,7 +5,10 @@ import BlockedTimeslotModel from "../model/blockedTimeslotModel.js";
 import { validationResult } from "express-validator";
 import { isCartItemStillAvailable } from "./cartItemController.js";
 import mongoose from "mongoose";
-import { getAllPendingAndConfirmedBookingsForVendor } from "../service/bookingService.js";
+import {
+  getAllPendingAndConfirmedBookingsForVendor,
+  getAllPendingAndConfirmedBookingsForClientService,
+} from "../service/bookingService.js";
 
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
@@ -512,11 +515,32 @@ export const updateToPaid = async (req, res) => {
 // GET /booking/getAllBookingsByClientId/:id
 export const getAllBookingsByClientId = async (req, res) => {
   try {
+    const client = req.user;
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: "Server Error! Unable to get bookings by client ID.",
-      error: error.message,
+      status: "error",
+      msg: "Server Error! Unable to get bookings by client ID.",
+    });
+  }
+};
+
+// GET /booking/getAllPendingAndConfirmedBookingsForClient/:
+export const getAllPendingAndConfirmedBookingsForClient = async (req, res) => {
+  try {
+    const client = req.user;
+    console.log(client);
+    const bookings = await getAllPendingAndConfirmedBookingsForClientService(
+      client._id
+    );
+    res.status(200).json({
+      bookings: bookings,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: "error",
+      msg: "Server Error! Unable to get bookings by client ID.",
     });
   }
 };

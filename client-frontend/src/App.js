@@ -39,6 +39,7 @@ import VendorRegisterPage from "./containers/Vendor/VendorRegisterPage";
 import VerifyEmailVendor from "./containers/Vendor/VerifyEmailVendor";
 import useClientStore from "./zustand/ClientStore";
 import useVendorStore from "./zustand/VendorStore";
+import MyBookings from "./containers/Client/Booking/MyBookings";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -154,6 +155,15 @@ function App() {
             element={
               <ClientProtectedRoute>
                 <CheckoutPage />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/bookings"
+            element={
+              <ClientProtectedRoute>
+                <MyBookings />
               </ClientProtectedRoute>
             }
           />

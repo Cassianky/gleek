@@ -46,6 +46,19 @@ const useBookingStore = create((set) => ({
       throw new Error("Unexpected Server Error!");
     }
   },
+  getPendingAndConfirmedBookingsForClient: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get(
+        "/gleek/booking/getAllPendingAndConfirmedBookingsForClient"
+      );
+      set({ bookings: response.data.bookings });
+      console.log(response.data.bookings);
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
 }));
 
 export default useBookingStore;

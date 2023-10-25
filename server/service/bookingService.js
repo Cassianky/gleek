@@ -11,3 +11,12 @@ export const getAllPendingAndConfirmedBookingsForVendor = async (vendorId) => {
       select: "-password",
     });
 };
+
+export const getAllPendingAndConfirmedBookingsForClientService = async (
+  clientId
+) => {
+  return await BookingModel.find({
+    clientId: clientId,
+    status: { $in: ["CONFIRMED", "PENDING_CONFIRMATION"] },
+  }).select("-rejectionReason");
+};

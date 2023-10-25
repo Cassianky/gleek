@@ -61,7 +61,7 @@ function getTimeslotCapacities(
   capacity,
   bookings,
   blockedTimeslots,
-  duration
+  duration,
 ) {
   // Create a hashmap to store capacities for each starttime slot
   const capacities = new Map(startTimes.map((slot) => [slot, capacity]));
@@ -111,12 +111,12 @@ export function generateAllTimeslots(
   capacity,
   bookings,
   blockedTimeslots,
-  duration
+  duration,
 ) {
   const startTimes = generateStartTimes(
     earliestStartTime,
     latestStartTime,
-    interval
+    interval,
   );
 
   const timeslotCapacities = getTimeslotCapacities(
@@ -124,7 +124,7 @@ export function generateAllTimeslots(
     capacity,
     bookings,
     blockedTimeslots,
-    duration
+    duration,
   );
 
   const allTimeslots = startTimes.map((startTime, index) => {
@@ -200,7 +200,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
     const minDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() + daysInAdvance
+      today.getDate() + daysInAdvance,
     );
     if (dateParam < minDate) {
       return res.status(400).json({
@@ -219,24 +219,24 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.startTime.getHours(),
       activity.startTime.getMinutes(),
       0,
-      0
+      0,
     );
     const latestStartTime = new Date(dateParam);
     latestStartTime.setHours(
       activity.endTime.getHours(),
       activity.endTime.getMinutes(),
       0,
-      0
+      0,
     );
     console.log(
       "EARLIEST START TIME: ",
       earliestStartTime.toLocaleDateString(),
-      earliestStartTime.toLocaleTimeString()
+      earliestStartTime.toLocaleTimeString(),
     );
     console.log(
       "LATEST START TIME: ",
       latestStartTime.toLocaleDateString(),
-      latestStartTime.toLocaleTimeString()
+      latestStartTime.toLocaleTimeString(),
     );
 
     const interval = 30; // 30 minutes
@@ -272,7 +272,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.capacity,
       bookings,
       blockedTimeslots,
-      activity.duration
+      activity.duration,
     );
 
     res.status(200).json({
@@ -290,13 +290,13 @@ export const getAvailableBookingTimeslots = async (req, res) => {
 export function getTimeslotAvailability(
   allTimeslots,
   selectedStartDateTime,
-  selectedEndDateTime
+  selectedEndDateTime,
 ) {
   const timeslot = allTimeslots.find(
     (timeslot) =>
       timeslot.startTime.getTime() === selectedStartDateTime.getTime() &&
       timeslot.endTime.getTime() === selectedEndDateTime.getTime() &&
-      timeslot.isAvailable
+      timeslot.isAvailable,
   );
 
   return timeslot !== undefined;
@@ -430,7 +430,7 @@ export const confirmBooking = async (req, res) => {
     const newBooking = await BookingModel.findByIdAndUpdate(
       bookingId,
       { status: "CONFIRMED" },
-      { new: true }
+      { new: true },
     );
     const updatedBookings =
       await getAllPendingAndConfirmedBookingsForVendor(vendorId);
@@ -456,7 +456,7 @@ export const rejectBooking = async (req, res) => {
     const newBooking = await BookingModel.findByIdAndUpdate(
       bookingId,
       { status: "REJECTED", rejectionReason: rejectionReason },
-      { new: true }
+      { new: true },
     );
     const updatedBookings =
       await getAllPendingAndConfirmedBookingsForVendor(vendorId);
@@ -550,5 +550,48 @@ export const getAllBookingsByActivityId = async (req, res) => {
       message: "Server Error! Unable to get bookings by activity ID.",
       error: error.message,
     });
+  }
+};
+
+// POST /booking/updateCompletedBookings
+export const updateCompletedBookings = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    //Find bookings of "confirmed" status and date passed current date
+    const confirmedBookingsToUpdate = await BookingModel.find({
+      status: "CONFIRMED",
+      endDateTime: { $lt: currentDate },
+    });
+
+    if (confirmedBookingsToUpdate.length > 0) {
+      console.log("In condition to update bookings");
+      // Update the status of each booking to "PENDING_PAYMENT"
+      confirmedBookingsToUpdate.map(async (booking) => {
+        const newActionHistory = {
+          newStatus: "PENDING_PAYMENT",
+          actionByUserType: "ADMIN",
+          actionByUserName: "SCHEDULED UPDATE",
+          actionTimestamp: new Date(),
+        };
+        booking.status = "PENDING_PAYMENT";
+        booking.actionHistory.push(newActionHistory);
+        await booking.save();
+      });
+
+      console.log(confirmedBookingsToUpdate);
+
+      res.status(200).json({
+        message: "Bookings updated.",
+        data: confirmedBookingsToUpdate,
+      });
+    } else {
+      console.log("No bookings to update.");
+      res.status(200).json({
+        message: "No bookings to update.",
+      });
+    }
+  } catch (error) {
+    console.error("Error updating bookings:", error);
+    res.status(500).json({ error: "Server error", message: error.message });
   }
 };

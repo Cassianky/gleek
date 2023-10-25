@@ -93,7 +93,7 @@ const bookingSchema = new mongoose.Schema({
       "CONFIRMED",
       "REJECTED",
       "CANCELLED",
-      "PENDING PAYMENT",
+      "PENDING_PAYMENT",
       "PAID",
     ],
     default: "PENDING_CONFIRMATION",
@@ -108,7 +108,7 @@ const bookingSchema = new mongoose.Schema({
     {
       newStatus: {
         type: String,
-        enum: ["CONFIRMED", "REJECTED", "CANCELLED", "PAID"], // Enum for action types
+        enum: ["CONFIRMED", "REJECTED", "CANCELLED", "PAID", "PENDING_PAYMENT"], // Enum for action types
         required: true,
       },
       actionByUserType: {

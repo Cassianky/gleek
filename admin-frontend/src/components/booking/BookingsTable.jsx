@@ -73,22 +73,8 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
 
   const columns = [...standardColumns, ...additionalColumns];
 
-  const handleRowClick = ({
-    _id,
-    activityTitle,
-    endDateTime,
-    startDateTime,
-    ...restProps
-  }) => {
-    const newBooking = {
-      id: _id,
-      title: activityTitle,
-      startDate: startDateTime,
-      endDate: endDateTime,
-      ...restProps,
-    };
-
-    setSelectedBooking(newBooking);
+  const handleRowClick = (bookingData) => {
+    setSelectedBooking(bookingData);
     setIsDrawerOpen(true);
   };
 

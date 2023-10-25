@@ -8,23 +8,18 @@ import {
   ListItemText,
   ListItemIcon,
 } from "@mui/material";
-import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateField } from "@mui/x-date-pickers/DateField";
-import dayjs from "dayjs";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import StoreIcon from "@mui/icons-material/Store";
 import EventNoteIcon from "@mui/icons-material/EventNote";
-import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import PaidIcon from "@mui/icons-material/Paid";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
 import CancelIcon from "@mui/icons-material/Cancel";
-import PropTypes from "prop-types";
 import ConfirmField from "./ConfirmField";
 import CancelField from "./CancelField";
 import PaidField from "./PaidField";
+import InvoiceDownloadButton from "./InvoiceDownloadButton";
 
 const BookingDetailsForm = ({ appointmentData }) => {
   const theme = useTheme();
@@ -72,13 +67,13 @@ const BookingDetailsForm = ({ appointmentData }) => {
   ];
 
   const options = { year: "numeric", month: "long", day: "numeric" };
-  const formattedDate = new Date(appointmentData?.startDate).toLocaleDateString(
+  const formattedDate = new Date(appointmentData?.startDateTime).toLocaleDateString(
     undefined,
     options,
   );
 
   const eventDisplayDetails = [
-    { label: "Activity", value: appointmentData?.title },
+    { label: "Activity", value: appointmentData?.activityTitle },
     {
       label: "Date",
       value: formattedDate,
@@ -87,9 +82,9 @@ const BookingDetailsForm = ({ appointmentData }) => {
     {
       label: "Timeslot",
       value: `${new Date(
-        appointmentData?.startDate,
+        appointmentData?.startDateTime,
       ).toLocaleTimeString()} - ${new Date(
-        appointmentData?.endDate,
+        appointmentData?.endDateTime,
       ).toLocaleTimeString()}`,
     },
     { label: "Total Pax", value: appointmentData?.totalPax },
@@ -249,6 +244,7 @@ const BookingDetailsForm = ({ appointmentData }) => {
                 fontWeight={"bold"}
                 fontSize={"1.5rem"}
                 color="primary"
+                sx={{ marginBottom: 2 }}
               >
                 Confirm Booking?
               </Typography>
@@ -266,7 +262,7 @@ const BookingDetailsForm = ({ appointmentData }) => {
               marginBottom: 3,
             }}
           >
-            <Typography fontWeight={"bold"} fontSize={"1.5rem"} color="primary">
+            <Typography fontWeight={"bold"} fontSize={"1.5rem"} color="primary" sx={{ marginBottom: 2 }}>
               Cancel Booking?
             </Typography>
             <CancelField bookingData={appointmentData} />
@@ -283,7 +279,11 @@ const BookingDetailsForm = ({ appointmentData }) => {
               marginBottom: 3,
             }}
           >
-            <Typography fontWeight={"bold"} fontSize={"1.5rem"} color="primary">
+            <Typography fontWeight={"bold"} fontSize={"1.5rem"} color="primary" sx={{ marginBottom: 2 }}>
+              Download Invoice
+            </Typography>
+            <InvoiceDownloadButton />
+            <Typography fontWeight={"bold"} fontSize={"1.5rem"} color="primary" sx={{ margin: 2 }}>
               Update Booking Status to Paid?
             </Typography>
             <PaidField bookingData={appointmentData} />
@@ -292,18 +292,6 @@ const BookingDetailsForm = ({ appointmentData }) => {
       </Grid>
     </Grid>
   );
-};
-
-BookingDetailsForm.propTypes = {
-  _id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  startDateTime: PropTypes.instanceOf(Date).isRequired,
-  endDateTime: PropTypes.instanceOf(Date).isRequired,
-  clientId: PropTypes.string.isRequired,
-  status: PropTypes.string.isRequired,
-  additionalComments: PropTypes.string,
-  totalPax: PropTypes.number,
-  eventLocationType: PropTypes.string,
 };
 
 export default BookingDetailsForm;

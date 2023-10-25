@@ -469,6 +469,139 @@ export const useClientStore = create((set) => ({
   },
 }));
 
+export const useBookingStore = create((set) => ({
+  bookings: [],
+  pendingBookings: [],
+  isLoading: false,
+  getAllBookings: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/booking/getAllBookings");
+      set({
+        bookings: response.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
+  approveBooking: async (bookingId) => {
+    try {
+      set({ isLoading: true });
+      const approveResponse = await AxiosConnect.patch(
+        "/booking/updateBookingStatus",
+        bookingId,
+        {
+          newStatus: "CONFIRMED",
+          actionByUserType: "ADMIN",
+        },
+      );
+      const bookingsResponse = await AxiosConnect.get(
+        "/booking/getAllBookings",
+      );
+      set({
+        bookings: bookingsResponse.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return approveResponse.data.message;
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  rejectBooking: async (bookingId, rejectionReason) => {
+    try {
+      set({ isLoading: true });
+      const rejectResponse = await AxiosConnect.patch(
+        "/booking/updateBookingStatus",
+        bookingId,
+        {
+          newStatus: "REJECTED",
+          actionByUserType: "ADMIN",
+          actionRemarks: rejectionReason,
+        },
+      );
+      const bookingsResponse = await AxiosConnect.get(
+        "/booking/getAllBookings",
+      );
+      set({
+        bookings: bookingsResponse.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return rejectResponse.data.message;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  cancelBooking: async (bookingId, cancellationReason) => {
+    try {
+      set({ isLoading: true });
+      const cancelResponse = await AxiosConnect.patch(
+        "/booking/updateBookingStatus",
+        bookingId,
+        {
+          newStatus: "CANCELLED",
+          actionByUserType: "ADMIN",
+          actionRemarks: cancellationReason,
+        },
+      );
+      const bookingsResponse = await AxiosConnect.get(
+        "/booking/getAllBookings",
+      );
+      set({
+        bookings: bookingsResponse.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return cancelResponse.data.message;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  updateBookingToPaid: async (bookingId) => {
+    try {
+      set({ isLoading: true });
+      const updateResponse = await AxiosConnect.patch(
+        "/booking/updateBookingStatus",
+        bookingId,
+        {
+          newStatus: "PAID",
+          actionByUserType: "ADMIN",
+        },
+      );
+      const bookingsResponse = await AxiosConnect.get(
+        "/booking/getAllBookings",
+      );
+      set({
+        bookings: bookingsResponse.data.bookings.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return updateResponse.data.message;
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+}));
+
 export const useImageUploadTestStore = create((set) => ({
   testActivities: [],
   setTestActivities: (newActivityList) => {

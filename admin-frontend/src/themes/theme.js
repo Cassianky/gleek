@@ -27,6 +27,11 @@ const theme = createTheme({
     unselected: {
       main: "#919191",
     },
+    success: {
+      main: "#2e7d32",
+      light: "#80af82",
+      pastel: "#81c784",
+    },
   },
   typography: {
     fontFamily: "Fredoka",

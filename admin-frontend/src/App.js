@@ -23,6 +23,8 @@ import ViewActivityDrafts from "./components/activity/ViewActivityDrafts";
 import EditActivityDraftPage from "./components/activity/EditActivityDraftPage";
 import AdminNotificationPage from "./components/notification/AdminNotificationPage";
 import VerifyEmailPage from "./components/VerifyEmailPage";
+import ViewActiveBookingsPage from "./components/booking/ViewActiveBookingsPage";
+import ViewPastBookingsPage from "./components/booking/ViewPastBookingsPage";
 
 function App() {
   return (
@@ -145,6 +147,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <ViewAllClients />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/viewActiveBookings"
+            element={
+              <ProtectedRoute>
+                <ViewActiveBookingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/viewPastBookings"
+            element={
+              <ProtectedRoute>
+                <ViewPastBookingsPage />
               </ProtectedRoute>
             }
           />

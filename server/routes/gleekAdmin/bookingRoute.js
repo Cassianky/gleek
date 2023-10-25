@@ -5,6 +5,7 @@ import {
   deleteBooking,
   getAllBookingsByActivityId,
   updateBookingStatus,
+  updateCompletedBookings,
 } from "../../controller/bookingController.js";
 import adminAuth from "../../middleware/adminAuth.js";
 
@@ -19,4 +20,6 @@ router.get(
 );
 router.delete("/deleteBooking/:id", adminAuth, deleteBooking);
 router.patch("/updateBookingStatus/:id", adminAuth, updateBookingStatus);
+router.post("/updateCompletedBookings", adminAuth, updateCompletedBookings);
+
 export default router;

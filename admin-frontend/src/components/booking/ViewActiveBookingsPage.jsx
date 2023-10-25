@@ -28,9 +28,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const ViewActiveBookings = () => {
   const theme = useTheme();
   const [currentTab, setCurrentTab] = useState("pendingConfirmation");
-  const { isLoading, bookings, getAllBookings, updateBookingToPaid } =
+  const { isLoading, bookings, getAllBookings } =
     useBookingStore();
-  const { openSnackbar } = useSnackbarStore();
 
   const pendingBookingBadgeNumber = bookings.filter(
     (booking) => booking.status === "PENDING_CONFIRMATION",

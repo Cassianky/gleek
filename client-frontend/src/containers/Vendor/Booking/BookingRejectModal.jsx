@@ -28,6 +28,9 @@ const BookingRejectModal = ({
           borderRadius: "10px",
           boxShadow: "none",
         },
+        "& .MuiBackdrop-root": {
+          backgroundColor: "rgb(0 0 0 / 0.2)",
+        },
       }}
     >
       <DialogTitle sx={{ paddingBottom: 0 }}>
@@ -66,7 +69,7 @@ const BookingRejectModal = ({
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button
-          onClick={async () => handleRejectButton()}
+          onClick={async () => handleRejectButton(bookingToReject._id)}
           variant="contained"
           color="error"
           disabled={!rejectionReason || rejectionReason === ""}

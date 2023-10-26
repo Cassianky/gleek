@@ -147,6 +147,9 @@ const PendingSurveysTable = ({
           </div>
         );
       },
+      valueGetter: (params) => {
+        return params.row.startDateTime;
+      },
     },
     {
       field: "time",
@@ -177,6 +180,9 @@ const PendingSurveysTable = ({
             />
           </div>
         );
+      },
+      valueGetter: (params) => {
+        return params.row.startDateTime;
       },
     },
 
@@ -233,6 +239,7 @@ const PendingSurveysTable = ({
             paginationModel: { pageSize: 25, page: 0 },
           },
         }}
+        checkboxSelection={false}
         getRowId={(row) => row._id}
         rows={bookings}
         columns={columns}

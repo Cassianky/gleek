@@ -4,6 +4,11 @@ import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import BookingDetailsForm from "./BookingDetailsForm.jsx";
+import {
+  convertISOtoDate,
+  convertISOtoShortDate,
+  convertISOtoTime,
+} from "../../../utils/TimeFormatter.js";
 
 const BookingsTable = ({ allBookings, status, additionalColumns }) => {
   const [bookings, setBookings] = useState([]);
@@ -21,40 +26,6 @@ const BookingsTable = ({ allBookings, status, additionalColumns }) => {
       setIsLoading(false);
     }, 1000);
   }, [allBookings]);
-
-  const convertISOtoDate = (value) => {
-    const date = new Date(value);
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    const formattedDate = date.toLocaleDateString("en-SG", options);
-    return formattedDate;
-  };
-  const convertISOtoShortDate = (value) => {
-    const date = new Date(value);
-    const options = {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-    };
-    const formattedDate = date.toLocaleDateString("en-SG", options);
-    return formattedDate;
-  };
-
-  const convertISOtoTime = (value) => {
-    const date = new Date(value);
-    const formattedTime = date
-      .toLocaleTimeString("en-SG", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      })
-      .toUpperCase();
-    return formattedTime;
-  };
 
   const handleRowClick = ({
     _id,
@@ -129,7 +100,7 @@ const BookingsTable = ({ allBookings, status, additionalColumns }) => {
             fontSize={"1rem"}
             sx={{ color: theme.palette.secondary.main }}
           >
-            Date
+            Event Date
           </Typography>
         );
       },

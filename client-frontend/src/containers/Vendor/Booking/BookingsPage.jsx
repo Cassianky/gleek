@@ -4,20 +4,16 @@ import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
-import {
-  Badge,
-  Box,
-  Tab,
-  Tabs,
-  Typography,
-  useTheme
-} from "@mui/material";
+import ConfirmField from "./ConfirmField";
+import CancelField from "./CancelField";
+import { Badge, Box, Tab, Tabs, Typography, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import useBookingStore from "../../../zustand/BookingStore";
 import useSnackbarStore from "../../../zustand/SnackbarStore";
 import BookingsMonthView from "./BookingsMonthView";
 import BookingsTable from "./BookingsTable";
-import ConfirmField from "./ConfirmField";
+import DetailsField from "./DetailsField";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 
 const StyledPage = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.grey[50],
@@ -36,12 +32,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const BookingsPage = () => {
   const theme = useTheme();
   const [currentTab, setCurrentTab] = useState();
-  const {
-    getBookingsForVendor,
-    bookings,
-    approveBooking,
-    rejectBooking,
-  } = useBookingStore();
+  const { getBookingsForVendor, bookings, approveBooking, rejectBooking } =
+    useBookingStore();
   const { openSnackbar } = useSnackbarStore();
 
   const pendingBookingBadgeNumber = bookings.filter(
@@ -50,6 +42,10 @@ const BookingsPage = () => {
 
   const completedAndPaidBadgeNumber = bookings.filter((booking) =>
     ["PAID", "PENDING_PAYMENT"].includes(booking.status)
+  ).length;
+
+  const confirmedBadgeNumber = bookings.filter(
+    (booking) => booking.status === "CONFIRMED"
   ).length;
 
   useEffect(() => {
@@ -100,6 +96,43 @@ const BookingsPage = () => {
       },
       renderCell: (params) => {
         return params.row.status === "PAID" ? <DoneIcon /> : <CloseIcon />;
+      },
+    },
+  ];
+  const confirmedAdditionalColumns = [
+    {
+      field: "details",
+      flex: 1,
+      renderHeader: () => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.secondary.main }}
+          >
+            Confirmation Details
+          </Typography>
+        );
+      },
+      sortable: false,
+      renderCell: (params) => {
+        return <DetailsField params={params.row} />;
+      },
+    },
+    {
+      field: "cancelAction",
+      align: "center",
+      renderHeader: () => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.secondary.main }}
+          ></Typography>
+        );
+      },
+      flex: 1,
+      sortable: false,
+      renderCell: (params) => {
+        return <CancelField bookingData={params.row} />;
       },
     },
   ];
@@ -154,6 +187,20 @@ const BookingsPage = () => {
             value="completedAndPaid"
             label="Completed"
           />
+          <Tab
+            icon={
+              <StyledBadge
+                color={
+                  currentTab === "confirmed" ? "pale_purple" : "unselected"
+                }
+                badgeContent={confirmedBadgeNumber}
+              >
+                <ThumbUpAltIcon />
+              </StyledBadge>
+            }
+            value="confirmed"
+            label="Confirmed"
+          />
         </Tabs>
       </Box>
       <Box sx={{ paddingLeft: 2, paddingRight: 2 }}>
@@ -169,9 +216,6 @@ const BookingsPage = () => {
           <BookingsTable
             allBookings={bookings}
             status={["PENDING_CONFIRMATION"]}
-            approveBooking={approveBooking}
-            rejectBooking={rejectBooking}
-            openSnackbar={openSnackbar}
             additionalColumns={pendingConfirmationAdditionalColumns}
           />
         )}
@@ -180,6 +224,13 @@ const BookingsPage = () => {
             allBookings={bookings}
             status={["PAID", "PENDING_PAYMENT"]}
             additionalColumns={completedAndPaidAdditionalColumns}
+          />
+        )}
+        {currentTab === "confirmed" && (
+          <BookingsTable
+            allBookings={bookings}
+            status={["CONFIRMED"]}
+            additionalColumns={confirmedAdditionalColumns}
           />
         )}
       </Box>

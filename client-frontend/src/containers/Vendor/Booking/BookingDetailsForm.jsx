@@ -18,6 +18,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import dayjs from "dayjs";
 import { appointmentDataShape } from "../../../utils/ComponentPropTypes";
+import {
+  convertISOtoShortDate,
+  convertISOtoTime,
+} from "../../../utils/TimeFormatter";
 
 const BookingDetailsForm = ({ appointmentData }) => {
   const theme = useTheme();
@@ -151,12 +155,13 @@ const BookingDetailsForm = ({ appointmentData }) => {
                     <span
                       style={{
                         fontWeight: "bold",
-                        color: theme.palette.dark_purple.main,
+                        color: theme.palette.primary.main,
                       }}
                     >
                       {details.actionByUserType} {details.actionByUserName}
                     </span>{" "}
-                    on {new Date(details.actionTimestamp).toLocaleString()}
+                    on {convertISOtoShortDate(details.actionTimestamp)} at{" "}
+                    {convertISOtoTime(details.actionTimestamp)}
                   </>
                 }
                 secondary={

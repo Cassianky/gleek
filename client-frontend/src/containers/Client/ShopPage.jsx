@@ -28,10 +28,7 @@ const ShopPage = (props) => {
     setCurrentPage,
     sortBy,
     setSortBy,
-    currentActivity,
-    setCurrentActivity,
     themes,
-    searchValue,
     getThemes,
     filter,
     setFilter,
@@ -45,6 +42,7 @@ const ShopPage = (props) => {
     setSearchValueOnClicked,
     setParentChecked,
     setChildChecked,
+    priceFilterLoading,
   } = useShopStore();
   const theme = useTheme();
 
@@ -59,13 +57,6 @@ const ShopPage = (props) => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
   const displayedActivities = activities.slice(startIndex, endIndex);
-
-  useEffect(() => {
-    const sortedActivities = activities.sort(
-      (a, b) => b.createdDate - a.createdDate,
-    );
-    setActivities(sortedActivities);
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +74,9 @@ const ShopPage = (props) => {
     setSortBy(event.target.value);
     let sortedActivities = [...activities];
     if (event.target.value === "Newest First") {
-      sortedActivities = sortedActivities.sort((a, b) => b.date - a.date);
+      sortedActivities = sortedActivities.sort(
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate),
+      );
     } else if (event.target.value === "Price High to Low") {
       sortedActivities = sortedActivities.sort(
         (a, b) => b.minimumPricePerPax - a.minimumPricePerPax,
@@ -237,8 +230,10 @@ const ShopPage = (props) => {
   };
 
   useEffect(() => {
-    getFilteredActivities(filter, searchValueOnClicked);
-  }, [filter]);
+    if (!priceFilterLoading) {
+      getFilteredActivities(filter, searchValueOnClicked);
+    }
+  }, [filter, priceFilterLoading]);
 
   useEffect(() => {
     const locations = Object.entries(locationState)

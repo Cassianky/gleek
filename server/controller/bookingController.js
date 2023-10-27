@@ -7,7 +7,7 @@ import { isCartItemStillAvailable } from "./cartItemController.js";
 import mongoose from "mongoose";
 import {
   getAllPendingAndConfirmedBookingsForVendor,
-  getAllPendingAndConfirmedBookingsForClientService,
+  getAllBookingsForClientService,
 } from "../service/bookingService.js";
 
 // GET /booking/getAllBookings
@@ -525,14 +525,12 @@ export const getAllBookingsByClientId = async (req, res) => {
   }
 };
 
-// GET /booking/getAllPendingAndConfirmedBookingsForClient/:
-export const getAllPendingAndConfirmedBookingsForClient = async (req, res) => {
+// GET /booking/getAllBookingsForClient/
+export const getAllBookingsForClient = async (req, res) => {
   try {
     const client = req.user;
     console.log(client);
-    const bookings = await getAllPendingAndConfirmedBookingsForClientService(
-      client._id
-    );
+    const bookings = await getAllBookingsForClientService(client._id);
     res.status(200).json({
       bookings: bookings,
     });

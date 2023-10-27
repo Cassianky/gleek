@@ -16,6 +16,8 @@ import ShopPage from "./containers/Client/ShopPage";
 import HomePage from "./containers/HomePage";
 import LoginPage from "./containers/LoginPage";
 import SocketConnection from "./utils/SocketConnection";
+import MyBookings from "./containers/Client/Booking/MyBookings";
+import BookingsDetails from "./containers/Client/Booking/BookingsDetails";
 
 import VendorProtectedRoute from "./components/Routes/VendorProtectedRoute";
 import VendorDetails from "./containers/Client/Activity/VendorDetails";
@@ -39,7 +41,6 @@ import VendorRegisterPage from "./containers/Vendor/VendorRegisterPage";
 import VerifyEmailVendor from "./containers/Vendor/VerifyEmailVendor";
 import useClientStore from "./zustand/ClientStore";
 import useVendorStore from "./zustand/VendorStore";
-import MyBookings from "./containers/Client/Booking/MyBookings";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -164,6 +165,15 @@ function App() {
             element={
               <ClientProtectedRoute>
                 <MyBookings />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/booking/:bookingId"
+            element={
+              <ClientProtectedRoute>
+                <BookingsDetails />
               </ClientProtectedRoute>
             }
           />

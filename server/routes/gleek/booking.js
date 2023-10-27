@@ -2,7 +2,7 @@ import express from "express";
 import {
   getAvailableBookingTimeslots,
   createBookings,
-  getAllPendingAndConfirmedBookingsForClient,
+  getAllBookingsForClient,
 } from "../../controller/bookingController.js";
 import { verifyToken } from "../../middleware/clientAuth.js";
 
@@ -18,11 +18,6 @@ router.get(
 // /gleek/booking/createBookings
 router.post("/createBookings", verifyToken, createBookings);
 
-// /gleek/booking/getAllPendingAndConfirmedBookingsForClient
-router.get(
-  "/getAllPendingAndConfirmedBookingsForClient",
-  verifyToken,
-  getAllPendingAndConfirmedBookingsForClient
-);
-
+// /gleek/booking/getAllBookingsForClient
+router.get("/getAllBookingsForClient", verifyToken, getAllBookingsForClient);
 export default router;

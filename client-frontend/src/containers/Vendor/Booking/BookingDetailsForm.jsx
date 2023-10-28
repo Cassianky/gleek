@@ -1,12 +1,44 @@
-import { Grid, TextField, Typography, useTheme } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import EventBusyIcon from "@mui/icons-material/EventBusy";
+import PaidIcon from "@mui/icons-material/Paid";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import {
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import dayjs from "dayjs";
 import { appointmentDataShape } from "../../../utils/ComponentPropTypes";
+import {
+  convertISOtoShortDate,
+  convertISOtoTime,
+} from "../../../utils/TimeFormatter";
 
 const BookingDetailsForm = ({ appointmentData }) => {
   const theme = useTheme();
+  const statusIcons = {
+    CONFIRMED: <ThumbUpAltIcon color="primary" />,
+    REJECTED: <CancelIcon color="primary" />,
+    CANCELLED: <EventBusyIcon color="primary" />,
+    PENDING_PAYMENT: <PaidIcon color="primary" />,
+    PAID: <EventAvailableIcon color="primary" />,
+  };
+  const statusActions = {
+    CONFIRMED: "Confirmed",
+    REJECTED: "Rejected",
+    CANCELLED: "Cancelled",
+    PENDING_PAYMENT: "Updated to Pending Payment",
+    PAID: "Updated to Paid",
+  };
   return (
     <Grid
       container
@@ -100,6 +132,45 @@ const BookingDetailsForm = ({ appointmentData }) => {
           }}
           fullWidth
         />
+      </Grid>
+      <Grid item xs={12}>
+        <Typography fontSize={"1.5rem"} color={theme.palette.primary.main}>
+          Status Changelog
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <List>
+          {appointmentData?.actionHistory.length === 0 && (
+            <ListItem>
+              <ListItemText>No status changes</ListItemText>
+            </ListItem>
+          )}
+          {appointmentData?.actionHistory.map((details, index) => (
+            <ListItem key={index}>
+              <ListItemIcon>{statusIcons[details.newStatus]}</ListItemIcon>
+              <ListItemText
+                primary={
+                  <>
+                    {statusActions[details.newStatus]} by{" "}
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        color: theme.palette.primary.main,
+                      }}
+                    >
+                      {details.actionByUserType} {details.actionByUserName}
+                    </span>{" "}
+                    on {convertISOtoShortDate(details.actionTimestamp)} at{" "}
+                    {convertISOtoTime(details.actionTimestamp)}
+                  </>
+                }
+                secondary={
+                  details.actionRemarks && "Reason: " + details.actionRemarks
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
       </Grid>
     </Grid>
   );

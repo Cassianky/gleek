@@ -25,6 +25,8 @@ import AdminNotificationPage from "./components/notification/AdminNotificationPa
 import VerifyEmailPage from "./components/VerifyEmailPage";
 import ViewActiveBookingsPage from "./components/booking/ViewActiveBookingsPage";
 import ViewPastBookingsPage from "./components/booking/ViewPastBookingsPage";
+import SubmittedSurvey from "./components/survey/SubmittedSurvey";
+import SubmittedSurveys from "./components/survey/SubmittedSurveys";
 
 function App() {
   return (
@@ -183,6 +185,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <AdminNotificationPage />
+              </ProtectedRoute>
+            }
+          />
+            <Route
+            exact
+            path="/surveys"
+            element={
+              <ProtectedRoute>
+                <SubmittedSurveys />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/surveys/:surveyId"
+            element={
+              <ProtectedRoute>
+                <SubmittedSurvey />
               </ProtectedRoute>
             }
           />

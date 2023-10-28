@@ -1,3 +1,4 @@
+import AdminSurveyResponseModel from "../model/AdminSurveyResponseModel.js";
 import SurveyResponse from "../model/AdminSurveyResponseModel.js";
 import Booking from "../model/bookingModel.js";
 import Review from "../model/reviewModel.js";
@@ -33,8 +34,6 @@ export const getSurveyForBooking = async (req, res) => {
       return res.status(200).send({});
     }
 
- 
-
     return res.status(200).json({ survey: survey, review: review });
   } catch (err) {
     console.error(err);
@@ -42,53 +41,33 @@ export const getSurveyForBooking = async (req, res) => {
   }
 };
 
-// export const updateSurveyDraftForBooking = async (req, res) => {
-//   try {
-//     const bookingId = req.params.bookingId;
+export const getAllSubmittedSurveys = async (req, res) => {
+  try {
+    const surveys = await SurveyResponse.find({
+      status: { $in: ["SUBMITTED"] },
+    })
+    .populate({
+      path: "activity",
+      populate: {
+        path: "linkedVendor",
+        select: "companyName companyEmail",
+      },
+    })
+    .populate({
+      path: "booking",
+      populate: {
+        path: "clientId",
+        select: "email name",
+      },
+    });
 
-//     const {
-//       feedbackRating,
-//       recommendationScore,
-//       potentialNextActivityDate,
-//       repeatActivityScore,
-//       repeatActivityDifferentVendorScore,
-//       differentActivityScore,
-//       generalFeedback,
-//       activityLiked,
-//       activityImprovements,
-//       testimonial,
-//       displayName,
-//       potentialReferrals,
-//     } = req.body;
 
-//     const updateFields = {
-//       feedbackRating,
-//       recommendationScore,
-//       potentialNextActivityDate,
-//       repeatActivityScore,
-//       repeatActivityDifferentVendorScore,
-//       differentActivityScore,
-//       generalFeedback,
-//       activityLiked,
-//       activityImprovements,
-//       testimonial,
-//       displayName,
-//       potentialReferrals,
-//       status: "DRAFT",
-//     };
-
-//     const survey = await SurveyResponse.findOneAndUpdate(
-//       { booking: bookingId },
-//       updateFields,
-//       { new: true },
-//     );
-
-//     return res.status(200).json(survey);
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).json({ message: "Server error" });
-//   }
-// };
+    return res.status(200).json(surveys);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ message: "Server error" });
+  }
+};
 
 export const submitSurveyForBooking = async (req, res) => {
   try {
@@ -170,48 +149,6 @@ export const submitSurveyForBooking = async (req, res) => {
   }
 };
 
-// /*
-//  * Get the survey for a booking.
-//  * If no survey exists for the booking that has already finished, then create one.
-//  */
-
-// export const getOrCreateSurveyForBooking = async (req, res) => {
-//   try {
-//     const bookingId = req.params.bookingId;
-
-//     const booking = await Booking.findById(bookingId);
-
-//     if (!booking) {
-//       return res.status(404).json({ message: "Booking not found" });
-//     }
-
-//     const survey = await SurveyResponse.findOne({ booking: bookingId });
-
-//     // Create if no survey found and survey is needed
-//     if (
-//       !survey &&
-//       (booking.status === "PENDING_PAYMENT" || booking.status === "PAID")
-//     ) {
-//       const newSurvey = new SurveyResponse({
-//         booking: bookingId,
-//         activity: booking.activityId,
-//       });
-
-//       await newSurvey.save();
-
-//       booking.adminSurveyResponse = newSurvey._id;
-//       await booking.save();
-
-//       return res.status(200).json(newSurvey);
-//     }
-
-//     return res.status(200).json(survey);
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).send({ message: "Server error" });
-//   }
-// };
-
 export const getSurveysForClient = async (req, res) => {
   try {
     const client = req.user;
@@ -254,7 +191,6 @@ export const getSurveysForClient = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // Using surveyId
 
@@ -361,7 +297,21 @@ export const submitSurvey = async (req, res) => {
 export const getSurveyWithSurveyId = async (req, res) => {
   try {
     const surveyId = req.params.surveyId;
-    const survey = await SurveyResponse.findById(surveyId);
+    const survey = await SurveyResponse.findById(surveyId)
+      .populate({
+        path: "activity",
+        populate: {
+          path: "linkedVendor",
+          select: "companyName companyEmail",
+        },
+      })
+      .populate({
+        path: "booking",
+        populate: {
+          path: "clientId",
+          select: "email name",
+        },
+      });
 
     if (!survey) {
       return res.status(404).json({ message: "Survey not found" });

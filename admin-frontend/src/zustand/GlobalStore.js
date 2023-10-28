@@ -602,6 +602,32 @@ export const useBookingStore = create((set) => ({
   },
 }));
 
+export const useAdminSurveyResponseStore = create((set) => ({
+  survey: null,
+  surveys: [],
+  isLoading: true,
+  getSubmittedSurveys: async () => {
+    try {
+      const response = await AxiosConnect.get("/survey/submitted");
+      console.log("getSubmittedSurveys", response.data)
+      set({ surveys: response.data,isLoading: false });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }, 
+  getSurveyDetails: async (surveyId) => {
+    try {
+      const response = await AxiosConnect.get(`/survey/${surveyId}`);
+      console.log("getSurveyDetails", response.data)
+      set({ survey: response.data, isLoading: false });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+}));
+
 export const useImageUploadTestStore = create((set) => ({
   testActivities: [],
   setTestActivities: (newActivityList) => {

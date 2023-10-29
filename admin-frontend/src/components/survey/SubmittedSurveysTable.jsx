@@ -95,7 +95,7 @@ const SubmittedSurveysTable = ({ allSurveys, openSnackbar }) => {
             fontSize={"1rem"}
             sx={{ color: theme.palette.primary.main }}
           >
-            ActivityTitle
+            Activity Title
           </Typography>
         );
       },

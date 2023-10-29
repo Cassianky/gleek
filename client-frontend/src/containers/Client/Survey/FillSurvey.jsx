@@ -41,11 +41,6 @@ function FillSurvey() {
   const navigate = useNavigate();
 
   const [surveyData, setSurveyData] = useState({
-    email: "",
-    name: "",
-    company: "",
-    activity: "",
-    date: "",
     recommendationScore: 0,
     potentialNextActivityDate: "",
     repeatActivityScore: 0,
@@ -61,6 +56,19 @@ function FillSurvey() {
   const [reviewData, setReviewData] = useState({
     rating: 0,
     comment: "",
+  });
+
+  const [surveyErrorData, setErrorData] = useState({
+    recommendationScore: "",
+    potentialNextActivityDate: "",
+    repeatActivityScore: "",
+    repeatActivityDifferentVendorScore: "",
+    differentActivityScore: "",
+    activityLiked: "",
+    activityImprovements: "",
+    testimonial: "",
+    displayName: "",
+    potentialReferrals: "",
   });
 
   useEffect(() => {
@@ -83,11 +91,39 @@ function FillSurvey() {
     getSurvey();
   }, []);
 
-  const handleFieldChange = (field, value) => {
-    setSurveyData({
-      ...surveyData,
-      [field]: value,
-    });
+  // const handleFieldChange = (field, value) => {
+  //   setSurveyData({
+  //     ...surveyData,
+  //     [field]: value,
+  //   });
+  // };
+
+  const handleFieldChange = (name, value) => {
+    setSurveyData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+
+    const validateIsRequired = (data, errors, fieldName) => {
+      if (data === "") {
+        errors[fieldName] = `This field is required`;
+      } else {
+        errors[fieldName] = "";
+      }
+      return errors;
+    };
+    console.log(name);
+
+    if (name === "activityImprovements" || name === "activityLiked") {
+      console.log("here");
+      const newErrors = validateIsRequired(value, surveyErrorData, name);
+      console.log(newErrors);
+
+      setErrorData((prevData) => ({
+        ...prevData,
+        [name]: newErrors[name] || "",
+      }));
+    }
   };
 
   const [wantsToLeaveReview, setWantsToLeaveReview] = useState(false);
@@ -100,6 +136,18 @@ function FillSurvey() {
       ...reviewData,
       [field]: value,
     });
+  };
+
+  const disableButton = () => {
+    for (const field in surveyErrorData) {
+      if (
+        Object.hasOwnProperty.call(surveyErrorData, field) &&
+        surveyErrorData[field] !== ""
+      ) {
+        return true;
+      }
+    }
+    return false;
   };
 
   const handleSubmit = () => {
@@ -238,55 +286,6 @@ function FillSurvey() {
                 publicly. Thank you for booking on Gleek!
               </Typography>
             </Grid>
-            {/* <Grid item xs={12}>
-            <StyledPaper>
-              <Typography paddingTop={1}>Email</Typography>
-              <TextField
-                label="Email"
-                variant="standard"
-                fullWidth
-                required
-                value={surveyData?.email}
-                onChange={(e) => handleFieldChange("email", e.target.value)}
-              />
-            </StyledPaper>
-          </Grid>
-          <Grid item xs={12}>
-            <StyledPaper>
-              <TextField
-                label="Name"
-                variant="standard"
-                fullWidth
-                required
-                value={surveyData?.name}
-                onChange={(e) => handleFieldChange("name", e.target.value)}
-              />
-            </StyledPaper>
-          </Grid>
-          <Grid item xs={12}>
-            <StyledPaper>
-              <TextField
-                label="Company"
-                variant="standard"
-                fullWidth
-                required
-                value={surveyData?.company}
-                onChange={(e) => handleFieldChange("company", e.target.value)}
-              />
-            </StyledPaper>
-          </Grid>
-
-          <Grid item xs={12}>
-            <StyledPaper>
-              <TextField
-                label="Date of activity"
-                variant="standard"
-                fullWidth
-                value={surveyData?.date}
-                onChange={(e) => handleFieldChange("date", e.target.value)}
-              />
-            </StyledPaper>
-          </Grid> */}
             <Grid item xs={12}>
               <StyledPaper>
                 <Typography paddingY={1} variant="h6">
@@ -295,6 +294,7 @@ function FillSurvey() {
                 </Typography>
                 <Rating
                   max={10}
+                  required
                   name="recommendationScore"
                   value={surveyData?.recommendationScore}
                   onChange={(event, newValue) =>
@@ -332,6 +332,7 @@ function FillSurvey() {
                   future events or batches of participants
                 </Typography>
                 <Rating
+                  required
                   name="repeatActivityScore"
                   value={surveyData?.repeatActivityScore}
                   onChange={(event, newValue) =>
@@ -353,6 +354,7 @@ function FillSurvey() {
                 </Typography>
 
                 <Rating
+                  required
                   name="repeatActivityDifferentVendorScore"
                   value={surveyData?.repeatActivityDifferentVendorScore}
                   onChange={(event, newValue) =>
@@ -371,6 +373,7 @@ function FillSurvey() {
                   from our catalogue for your next event?
                 </Typography>
                 <Rating
+                  required
                   name="differentActivityScore"
                   value={surveyData?.differentActivityScore}
                   onChange={(event, newValue) =>
@@ -395,6 +398,8 @@ function FillSurvey() {
                   onChange={(e) =>
                     handleFieldChange("activityLiked", e.target.value)
                   }
+                  helperText={surveyErrorData.activityLiked}
+                  error={!!surveyErrorData.activityLiked}
                 />
               </StyledPaper>
             </Grid>
@@ -414,6 +419,8 @@ function FillSurvey() {
                   onChange={(e) =>
                     handleFieldChange("activityImprovements", e.target.value)
                   }
+                  helperText={surveyErrorData.activityImprovements}
+                  error={!!surveyErrorData.activityImprovements}
                 />
               </StyledPaper>
             </Grid>
@@ -479,12 +486,15 @@ function FillSurvey() {
                 color="primary"
                 onClick={handleSubmit}
                 size="large"
-                disabled={
-                  surveyData?.status && surveyData?.status === "SUBMITTED"
-                }
                 fullWidth
+                disabled={
+                  (surveyData?.status && surveyData?.status === "SUBMITTED") ||
+                  disableButton()
+                }
               >
-                Submit
+                {surveyData?.status === "SUBMITTED"
+                  ? "You have submitted this survey"
+                  : "Submit"}
               </Button>
             </Grid>
           </Grid>

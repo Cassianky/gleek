@@ -3,10 +3,22 @@ import BookingModel from "../model/bookingModel.js";
 export const getAllBookingsForVendor = async (vendorId) => {
   return await BookingModel.find({
     vendorId: vendorId,
-  }).populate({
-    path: "clientId",
-    select: "-password",
-  });
+  })
+    .select(
+      "-weekendAddOnCost -onlineAddOnCost -offlineAddOnCost -basePricePerPax -totalCost"
+    )
+    .populate({
+      path: "clientId",
+      select: "-password",
+    })
+    .populate({
+      path: "activityPricingRule",
+      select: "-clientPrice",
+    })
+    .populate({
+      path: "activityId",
+      select: "weekendPricing onlinePricing offlinePricing",
+    });
 };
 export const updateBookingStatusActionHistory = async (
   bookingId,

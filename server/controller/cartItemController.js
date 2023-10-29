@@ -89,7 +89,7 @@ export const addCartItem = async (req, res) => {
       vendorWeekendAddOnCost +
       vendorOnlineAddOnCost +
       vendorOfflineAddOnCost;
-      
+
     const newCartItem = new CartItemModel({
       clientId: client.id,
       activityId,
@@ -137,7 +137,9 @@ export const getCartItemsByClientId = async (req, res) => {
   try {
     const cartItems = await CartItemModel.find({
       clientId: client._id,
-    });
+    }).select(
+      "-vendorWeekendAddOnCost -vendorOnlineAddOnCost -vendorOfflineAddOnCost -totalVendorAmount"
+    );
     // for each cartItem, check if the activity is still available
     for (const cartItem of cartItems) {
       const activity = await ActivityModel.findById(cartItem.activityId);

@@ -608,6 +608,7 @@ const ActivityDetailsPage = () => {
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
                                   2
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>
@@ -652,6 +653,7 @@ const ActivityDetailsPage = () => {
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
                                   2
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>

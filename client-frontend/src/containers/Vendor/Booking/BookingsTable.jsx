@@ -1,106 +1,31 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
-import {
-  Box,
-  Chip,
-  Drawer,
-  IconButton,
-  Typography,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import { Box, Chip, Drawer, Typography, useTheme } from "@mui/material";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import BookingRejectModal from "./BookingRejectModal.jsx";
 import BookingDetailsForm from "./BookingDetailsForm.jsx";
+import {
+  convertISOtoDate,
+  convertISOtoShortDate,
+  convertISOtoTime,
+} from "../../../utils/TimeFormatter.js";
 
-const PendingBookingsTable = ({
-  allBookings,
-  approveBooking,
-  rejectBooking,
-  openSnackbar,
-}) => {
+const BookingsTable = ({ allBookings, status, additionalColumns }) => {
   const [bookings, setBookings] = useState([]);
   const theme = useTheme();
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [bookingToReject, setBookingToReject] = useState();
-  const [rejectionReason, setRejectionReason] = useState();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const formattedBookings = allBookings.filter(
-      (booking) => booking.status === "PENDING_CONFIRMATION",
-    );
-    setBookings(formattedBookings);
+    setTimeout(() => {
+      const formattedBookings = allBookings.filter((booking) =>
+        status.includes(booking.status)
+      );
+      setBookings(formattedBookings);
+      setIsLoading(false);
+    }, 1000);
   }, [allBookings]);
-
-  const convertISOtoDate = (value) => {
-    const date = new Date(value);
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    const formattedDate = date.toLocaleDateString("en-SG", options);
-    return formattedDate;
-  };
-  const convertISOtoShortDate = (value) => {
-    const date = new Date(value);
-    const options = {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-    };
-    const formattedDate = date.toLocaleDateString("en-SG", options);
-    return formattedDate;
-  };
-
-  const convertISOtoTime = (value) => {
-    const date = new Date(value);
-    const formattedTime = date
-      .toLocaleTimeString("en-SG", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      })
-      .toUpperCase();
-    return formattedTime;
-  };
-
-  const handleApproveButton = async (bookingId) => {
-    try {
-      const message = await approveBooking(bookingId);
-      openSnackbar(message);
-    } catch (error) {
-      openSnackbar(error, "error");
-    }
-  };
-
-  const handleRejectButton = async (bookingId) => {
-    try {
-      const message = await rejectBooking(bookingId, rejectionReason);
-      openSnackbar(message);
-    } catch (error) {
-      openSnackbar(error, "error");
-    }
-  };
-
-  const handleOpenRejectModal = (booking) => {
-    setRejectModalOpen(true);
-    setBookingToReject(booking);
-  };
-
-  const handleCloseRejectModal = () => {
-    setRejectModalOpen(false);
-  };
-
-  const handleRejectReasonChange = (event) => {
-    setRejectionReason(event.target.value);
-  };
 
   const handleRowClick = ({
     _id,
@@ -126,7 +51,7 @@ const PendingBookingsTable = ({
     setIsDrawerOpen(false);
   };
 
-  const columns = [
+  const commonColumns = [
     {
       field: "activityTitle",
       flex: 1,
@@ -175,7 +100,7 @@ const PendingBookingsTable = ({
             fontSize={"1rem"}
             sx={{ color: theme.palette.secondary.main }}
           >
-            Date
+            Event Date
           </Typography>
         );
       },
@@ -230,7 +155,7 @@ const PendingBookingsTable = ({
             fontSize={"1rem"}
             sx={{ color: theme.palette.secondary.main }}
           >
-            Submitted
+            Booked
           </Typography>
         );
       },
@@ -242,7 +167,7 @@ const PendingBookingsTable = ({
               fontSize={"0.875rem"}
               sx={{ color: theme.palette.primary.main }}
             >
-              Submitted on&nbsp;
+              Booked on&nbsp;
               <span style={{ color: "rgb(0 0 0 /0.87)" }}>
                 {convertISOtoShortDate(date)} at {convertISOtoTime(date)}
               </span>
@@ -279,76 +204,13 @@ const PendingBookingsTable = ({
         );
       },
     },
-    {
-      field: "approve",
-      type: "actions",
-      flex: 1,
-      renderHeader: (params) => {
-        return (
-          <Typography
-            fontSize={"1rem"}
-            sx={{ color: theme.palette.secondary.main }}
-          >
-            Approve?
-          </Typography>
-        );
-      },
-      renderCell: (params) => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              paddingTop: 3,
-              paddingBottom: 3,
-              alignItems: "center",
-            }}
-          >
-            <IconButton
-              sx={{
-                backgroundColor: theme.palette.success.pastel,
-                color: "white",
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.success.pastel, 0.5),
-                },
-                marginRight: 1,
-                height: "38px",
-                width: "38px",
-              }}
-              onClick={async () => await handleApproveButton(params.row._id)}
-            >
-              <DoneIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              sx={{
-                backgroundColor: theme.palette.error.main,
-                color: "white",
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.error.main, 0.5),
-                },
-                height: "38px",
-                width: "38px",
-              }}
-              onClick={() => handleOpenRejectModal(params.row)}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-            <BookingRejectModal
-              open={rejectModalOpen}
-              onClose={handleCloseRejectModal}
-              bookingToReject={bookingToReject}
-              handleRejectReasonChange={handleRejectReasonChange}
-              handleRejectButton={handleRejectButton}
-              rejectionReason={rejectionReason}
-            />
-          </div>
-        );
-      },
-    },
   ];
+  const columns = [...commonColumns, ...additionalColumns];
 
   return (
     <div style={{ height: 500, width: "99%" }}>
       <DataGrid
+        loading={isLoading}
         initialState={{
           pagination: {
             paginationModel: { pageSize: 25, page: 0 },
@@ -377,7 +239,7 @@ const PendingBookingsTable = ({
         open={isDrawerOpen}
         onClose={handleCloseBookingDetails}
       >
-        <Box sx={{ width: "650px" }}>
+        <Box sx={{ width: "650px", paddingTop: "30px" }}>
           <BookingDetailsForm appointmentData={selectedBooking} />
         </Box>
       </Drawer>
@@ -385,11 +247,10 @@ const PendingBookingsTable = ({
   );
 };
 
-PendingBookingsTable.propTypes = {
+BookingsTable.propTypes = {
   allBookings: PropTypes.array.isRequired,
-  approveBooking: PropTypes.func.isRequired,
-  rejectBooking: PropTypes.func.isRequired,
-  openSnackbar: PropTypes.func.isRequired,
+  status: PropTypes.array.isRequired,
+  additionalColumns: PropTypes.array.isRequired,
 };
 
-export default PendingBookingsTable;
+export default BookingsTable;

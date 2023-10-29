@@ -15,6 +15,7 @@ const drawerWidth = 240;
 const activityManagementList = [
   { "Activity Approvals": "/viewPublishedActivities" },
   { "View My Activities": "/viewActivityDrafts" },
+  { "Activity Themes": "/activityThemes" },
 ];
 const userManagementList = [
   { "Admin Team": "/adminTeam" },

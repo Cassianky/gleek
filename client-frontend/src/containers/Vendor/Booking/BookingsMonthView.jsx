@@ -36,6 +36,10 @@ import {
 } from "../../../utils/ComponentPropTypes";
 import BookingDetailsForm from "./BookingDetailsForm";
 import BookingRejectModal from "./BookingRejectModal";
+import {
+  convertISOtoDate,
+  convertISOtoTime,
+} from "../../../utils/TimeFormatter";
 
 const PREFIX = "Demo";
 
@@ -92,13 +96,13 @@ const BookingsMonthView = ({
           startDate: startDateTime,
           endDate: endDateTime,
           ...restProps,
-        }),
+        })
       )
       .filter((booking) =>
         filterCriteria[newStatus].value === "ALL"
           ? booking.status === filterCriteria.pending.value ||
             booking.status === filterCriteria.confirmed.value
-          : booking.status === filterCriteria[newStatus].value,
+          : booking.status === filterCriteria[newStatus].value
       );
     setBookings(newBookings);
   };
@@ -175,30 +179,6 @@ const BookingsMonthView = ({
       </div>
     </StyledToolbarFlexibleSpace>
   );
-
-  const convertISOtoDate = (value) => {
-    const date = new Date(value);
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    const formattedDate = date.toLocaleDateString("en-SG", options);
-    return formattedDate;
-  };
-
-  const convertISOtoTime = (value) => {
-    const date = new Date(value);
-    const formattedTime = date
-      .toLocaleTimeString("en-SG", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      })
-      .toUpperCase();
-    return formattedTime;
-  };
 
   const ToolTipContent = ({ appointmentData }) => {
     return (
@@ -350,13 +330,13 @@ const BookingsMonthView = ({
           startDate: startDateTime,
           endDate: endDateTime,
           ...restProps,
-        }),
+        })
       )
       .filter((booking) =>
         filterCriteria[currentStatus].value === "ALL"
           ? booking.status === filterCriteria.pending.value ||
             booking.status === filterCriteria.confirmed.value
-          : booking.status === filterCriteria[currentStatus].value,
+          : booking.status === filterCriteria[currentStatus].value
       );
   };
 

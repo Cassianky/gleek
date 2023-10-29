@@ -52,6 +52,21 @@ const useBookingStore = create((set) => ({
       throw new Error("Unexpected Server Error!");
     }
   },
+  cancelBooking: async (bookingId, cancelReason) => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.patch(
+        `/gleekVendor/booking/cancelBooking/${bookingId}`,
+        { cancelReason: cancelReason }
+      );
+      set({ bookings: response.data.bookings });
+      set({ isLoading: false });
+      return response.data.message;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
   getAllBookingsForClient: async () => {
     try {
       set({ isLoading: true });

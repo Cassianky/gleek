@@ -1,16 +1,49 @@
 import BookingModel from "../model/bookingModel.js";
 import { s3GetImages } from "./s3ImageServices.js";
 
-export const getAllPendingAndConfirmedBookingsForVendor = async (vendorId) => {
+export const getAllBookingsForVendor = async (vendorId) => {
   return await BookingModel.find({
     vendorId: vendorId,
-    status: { $in: ["CONFIRMED", "PENDING_CONFIRMATION"] },
   })
-    .select("-rejectionReason")
+    .select(
+      "-weekendAddOnCost -onlineAddOnCost -offlineAddOnCost -basePricePerPax -totalCost"
+    )
     .populate({
       path: "clientId",
       select: "-password",
+    })
+    .populate({
+      path: "activityPricingRule",
+      select: "-clientPrice",
+    })
+    .populate({
+      path: "activityId",
+      select: "weekendPricing onlinePricing offlinePricing",
     });
+};
+export const updateBookingStatusActionHistory = async (
+  bookingId,
+  newStatus,
+  actionByUserType,
+  userName,
+  actionRemarks
+) => {
+  const updatedBooking = await BookingModel.findByIdAndUpdate(
+    bookingId,
+    {
+      status: newStatus,
+      $push: {
+        actionHistory: {
+          newStatus: newStatus,
+          actionByUserType: actionByUserType,
+          actionByUserName: userName,
+          actionRemarks: actionRemarks,
+        },
+      },
+    },
+    { new: true }
+  );
+  return updatedBooking;
 };
 
 export const getAllBookingsForClientService = async (clientId) => {

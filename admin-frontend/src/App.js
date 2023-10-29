@@ -10,14 +10,12 @@ import ViewAllVendors from "./components/vendor/ViewAllVendors";
 import ViewAllClients from "./components/client/ViewAllClients";
 import ClientDetails from "./components/client/ClientDetails";
 import CreateActivityPage from "./components/activity/CreateActivityPage";
-import ImageAndFileUpload from "./components/activityCreation/ImageAndFileUpload";
 import CreateVendorPage from "./components/vendor/CreateVendorPage";
 import SocketConnection from "./utils/SocketConnection";
 import ForgotPassword from "./components/ForgotPassword";
 import AccountDetails from "./components/profile/AccountDetails";
 import AddAdminPage from "./components/admin/AddAdminPage";
 import ViewAllAdmins from "./components/admin/ViewAllAdmins";
-import VendorDetails from "./components/vendor/VendorDetails";
 import ActivityDetails from "./components/activity/ActivityDetails";
 import ViewActivityDrafts from "./components/activity/ViewActivityDrafts";
 import EditActivityDraftPage from "./components/activity/EditActivityDraftPage";
@@ -25,6 +23,7 @@ import AdminNotificationPage from "./components/notification/AdminNotificationPa
 import VerifyEmailPage from "./components/VerifyEmailPage";
 import ViewActiveBookingsPage from "./components/booking/ViewActiveBookingsPage";
 import ViewPastBookingsPage from "./components/booking/ViewPastBookingsPage";
+import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
 
 function App() {
   return (
@@ -75,6 +74,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <EditActivityDraftPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/activityThemes"
+            element={
+              <ProtectedRoute>
+                <ActivityThemesPage />
               </ProtectedRoute>
             }
           />
@@ -193,13 +201,6 @@ function App() {
           />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
-          {/*for testing image upload component*/}
-          <Route
-            path="/uploadTest"
-            element={
-              <ImageAndFileUpload limit={5} name="test" size={2000000} />
-            }
-          />
         </Routes>
       </Layout>
     </div>

@@ -175,7 +175,7 @@ const ActivityDetailsPage = () => {
     return 0;
   };
 
-  const calculateOnlineAddOn = (location, onlinePricing, totalBasePrice) => {
+  const calculateOfflineAddOn = (location, onlinePricing, totalBasePrice) => {
     if (
       onlinePricing.amount !== null &&
       (location.toLowerCase().includes("off-site") ||
@@ -190,7 +190,7 @@ const ActivityDetailsPage = () => {
     return 0;
   };
 
-  const calculateOfflineAddOn = (location, offlinePricing, totalBasePrice) => {
+  const calculateOnlineAddOn = (location, offlinePricing, totalBasePrice) => {
     if (
       offlinePricing.amount !== null &&
       location.toLowerCase().includes("virtual")
@@ -213,12 +213,12 @@ const ActivityDetailsPage = () => {
       currentActivity.weekendPricing
     );
 
-    const onlineAddOn = calculateOnlineAddOn(
+    const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing
     );
 
-    const offlineAddOn = calculateOfflineAddOn(
+    const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing
     );
@@ -242,14 +242,20 @@ const ActivityDetailsPage = () => {
       selectedDate,
       currentActivity.weekendPricing
     );
-    const onlineAddOn = calculateOnlineAddOn(
+    const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing
     );
-    const offlineAddOn = calculateOfflineAddOn(
+    const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing
     );
+    let activityPricingRule;
+    for (const pricingRule of currentActivity?.activityPricingRules) {
+      if (pax >= pricingRule.start && pax <= pricingRule.end) {
+        activityPricingRule = pricingRule;
+      }
+    }
     const timeParts = time.split(",");
     const cartItem = {
       activityId: currentActivity._id,
@@ -262,6 +268,7 @@ const ActivityDetailsPage = () => {
       offlineAddOnCost: offlineAddOn,
       startDateTime: timeParts[0],
       endDateTime: timeParts[1],
+      activityPricingRule: activityPricingRule._id,
     };
     if (
       cartItem.activityId !== null &&
@@ -595,6 +602,7 @@ const ActivityDetailsPage = () => {
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
                                   2
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>
@@ -638,6 +646,7 @@ const ActivityDetailsPage = () => {
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
                                   2
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>

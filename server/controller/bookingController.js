@@ -6,6 +6,11 @@ import { validationResult } from "express-validator";
 import { isCartItemStillAvailable } from "./cartItemController.js";
 import mongoose from "mongoose";
 import {
+  getAllBookingsForVendor,
+  updateBookingStatusActionHistory,
+} from "../service/bookingService.js";
+import VendorModel from "../model/vendorModel.js";
+import {
   getAllPendingAndConfirmedBookingsForVendor,
   getAllBookingsForClientService,
 } from "../service/bookingService.js";
@@ -455,13 +460,15 @@ export const confirmBooking = async (req, res) => {
   try {
     const bookingId = req.params.id;
     const vendorId = req.user;
-    const newBooking = await BookingModel.findByIdAndUpdate(
+    const vendor = await VendorModel.findById(vendorId);
+    const newBooking = await updateBookingStatusActionHistory(
       bookingId,
-      { status: "CONFIRMED" },
-      { new: true }
+      "CONFIRMED",
+      "VENDOR",
+      vendor?.companyName,
+      null
     );
-    const updatedBookings =
-      await getAllPendingAndConfirmedBookingsForVendor(vendorId);
+    const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
       bookings: updatedBookings,
       message: `Booking for ${newBooking.activityTitle} confirmed successfully!`,
@@ -481,16 +488,45 @@ export const rejectBooking = async (req, res) => {
     const bookingId = req.params.id;
     const vendorId = req.user;
     const { rejectionReason } = req.body;
-    const newBooking = await BookingModel.findByIdAndUpdate(
+    const vendorName = await VendorModel.findById(vendorId);
+    const newBooking = await updateBookingStatusActionHistory(
       bookingId,
-      { status: "REJECTED", rejectionReason: rejectionReason },
-      { new: true }
+      "REJECTED",
+      "VENDOR",
+      vendorName?.companyName,
+      rejectionReason
     );
-    const updatedBookings =
-      await getAllPendingAndConfirmedBookingsForVendor(vendorId);
+    const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
       bookings: updatedBookings,
       message: `Booking for ${newBooking.activityTitle} rejected successfully!`,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server Error! Unable to reject booking.",
+      error: error.message,
+    });
+  }
+};
+
+export const cancelBooking = async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const vendorId = req.user;
+    const { cancelReason } = req.body;
+    const vendorName = await VendorModel.findById(vendorId);
+    const newBooking = await updateBookingStatusActionHistory(
+      bookingId,
+      "CANCELLED",
+      "VENDOR",
+      vendorName?.companyName,
+      cancelReason
+    );
+    const updatedBookings = await getAllBookingsForVendor(vendorId);
+    res.status(200).json({
+      bookings: updatedBookings,
+      message: `Booking for ${newBooking.activityTitle} cancelled successfully!`,
     });
   } catch (error) {
     console.error(error);
@@ -566,7 +602,7 @@ export const getAllBookingsForClient = async (req, res) => {
 export const getAllBookingsByVendorId = async (req, res) => {
   try {
     const vendorId = req.user;
-    const bookings = await getAllPendingAndConfirmedBookingsForVendor(vendorId);
+    const bookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
       bookings: bookings,
     });

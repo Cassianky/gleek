@@ -31,6 +31,10 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  totalVendorAmount: {
+    type: Number,
+    required: true,
+  },
   totalPax: {
     type: Number,
     required: true,
@@ -50,6 +54,15 @@ const bookingSchema = new mongoose.Schema({
   offlineAddOnCost: {
     type: Number,
     required: true,
+  },
+  vendorWeekendAddOnCost: {
+    type: Number,
+  },
+  vendorOnlineAddOnCost: {
+    type: Number,
+  },
+  vendorOfflineAddOnCost: {
+    type: Number,
   },
   activityTitle: {
     type: String,
@@ -130,6 +143,11 @@ const bookingSchema = new mongoose.Schema({
       },
     },
   ],
+  activityPricingRule: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "ActivityPricingRules",
+  },
 });
 
 const BookingModel = mongoose.model("Booking", bookingSchema, "bookings");

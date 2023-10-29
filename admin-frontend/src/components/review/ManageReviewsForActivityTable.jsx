@@ -1,31 +1,26 @@
-import { Button, Rating, Typography, Stack, Switch } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  Rating,
+  Stack,
+  Switch,
+  Typography,
+} from "@mui/material";
 
-import ReviewsIcon from "@mui/icons-material/Reviews";
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import {
-  useActivityStore,
-  useAdminStore,
-  useSnackbarStore,
-} from "../../zustand/GlobalStore";
-
-const WrappedTextCell = (params) => {
-  return <div style={{ whiteSpace: "normal" }}>{params.value}</div>;
-};
 
 const ManageReviewsForActivityTable = ({ reviews, handleToggle }) => {
   const [currentTabRows, setCurrentTabRows] = useState(reviews);
+  const [selectedReview, setSelectedReview] = useState(null);
 
   useEffect(() => {
     setCurrentTabRows(reviews);
   }, [reviews]);
 
-  const columns = [];
-
-  columns.push(
+  const columns = [
     {
       field: "rating",
       headerName: "Rating",
@@ -36,8 +31,8 @@ const ManageReviewsForActivityTable = ({ reviews, handleToggle }) => {
           <Stack
             direction="row"
             spacing={1}
-            justifyContent={"center"}
-            alignItems={"center"}
+            justifyContent="center"
+            alignItems="center"
           >
             <Rating name="read-only" value={ratingValue} readOnly />
             <div>{ratingValue}</div>
@@ -50,7 +45,14 @@ const ManageReviewsForActivityTable = ({ reviews, handleToggle }) => {
       headerName: "Client Comment",
       flex: 1,
     },
-
+    {
+      field: "client",
+      headerName: "By Client",
+      flex: 1,
+      renderCell: (params) => {
+        return params.row.client.name;
+      },
+    },
     {
       field: "date",
       headerName: "Date Submitted",
@@ -104,7 +106,15 @@ const ManageReviewsForActivityTable = ({ reviews, handleToggle }) => {
         );
       },
     },
-  );
+  ];
+
+  const handleRowClick = (params) => {
+    setSelectedReview(params.row);
+  };
+
+  const handleClose = () => {
+    setSelectedReview(null);
+  };
 
   return (
     <Box>
@@ -121,8 +131,9 @@ const ManageReviewsForActivityTable = ({ reviews, handleToggle }) => {
           slots={{
             toolbar: GridToolbarFilterButton,
           }}
+          disableRowSelectionOnClick
           getRowHeight={() => "auto"}
-          // onRowClick={(params) => handleRowClick(params.row)}
+          onRowClick={handleRowClick}
           sx={{
             borderRadius: "10px",
             boxShadow: "4px 4px 0px 0px rgb(159 145 204 / 40%)",
@@ -134,10 +145,26 @@ const ManageReviewsForActivityTable = ({ reviews, handleToggle }) => {
           }}
         />
       </div>
+      <Dialog open={selectedReview !== null} onClose={handleClose} fullWidth>
+        <DialogContent>
+          {selectedReview && (
+            <div>
+              <Typography variant="h6">Rating:</Typography>
+              <Rating name="read-only" value={selectedReview.rating} readOnly />
+              <Typography variant="h6">Comment:</Typography>
+              <Typography>{selectedReview.comment}</Typography>
+              <Typography variant="h6">By:</Typography>
+              <Typography>{selectedReview.client.name}</Typography>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
+
 ManageReviewsForActivityTable.propTypes = {
   reviews: PropTypes.array.isRequired,
 };
+
 export default ManageReviewsForActivityTable;

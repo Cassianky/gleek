@@ -157,6 +157,7 @@ const ReviewActivityTable = ({ activities }) => {
           }}
           getRowHeight={() => "auto"}
           // onRowClick={(params) => handleRowClick(params.row)}
+          disableRowSelectionOnClick
           sx={{
             borderRadius: "10px",
             boxShadow: "4px 4px 0px 0px rgb(159 145 204 / 40%)",

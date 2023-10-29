@@ -8,6 +8,7 @@ import {
   getTimeslotAvailability,
   generateAllTimeslots,
 } from "./bookingController.js";
+import ActivityPricingRulesModel from "../model/activityPricingRules.js";
 
 export const addCartItem = async (req, res) => {
   const errors = validationResult(req);
@@ -49,6 +50,10 @@ export const addCartItem = async (req, res) => {
       });
     }
 
+    const activityPricingRule = await ActivityPricingRulesModel.findById(
+      restBody.activityPricingRule
+    );
+
     // Get activity title, vendor name and vendorId
     const activityTitle = activity.title;
     const vendorName = activity.linkedVendor.companyName;
@@ -60,6 +65,30 @@ export const addCartItem = async (req, res) => {
       weekendAddOnCost +
       onlineAddOnCost +
       offlineAddOnCost;
+
+    const vendorCost = activityPricingRule.pricePerPax * totalPax;
+
+    const vendorWeekendAddOnCost =
+      weekendAddOnCost != 0
+        ? ((vendorCost * activity.weekendPricing.amount) / 100) *
+          (activity.weekendPricing.isDiscount ? -1 : 1)
+        : 0;
+
+    const vendorOnlineAddOnCost =
+      onlineAddOnCost != 0
+        ? ((vendorCost * activity.onlinePricing.amount) / 100) *
+          (activity.onlinePricing.isDiscount ? -1 : 1)
+        : 0;
+    const vendorOfflineAddOnCost =
+      offlineAddOnCost != 0
+        ? ((vendorCost * activity.offlinePricing.amount) / 100) *
+          (activity.offlinePricing.isDiscount ? -1 : 1)
+        : 0;
+    const totalVendorAmount =
+      vendorCost +
+      vendorWeekendAddOnCost +
+      vendorOnlineAddOnCost +
+      vendorOfflineAddOnCost;
 
     const newCartItem = new CartItemModel({
       clientId: client.id,
@@ -73,6 +102,10 @@ export const addCartItem = async (req, res) => {
       activityTitle,
       vendorName,
       vendorId,
+      totalVendorAmount,
+      vendorOfflineAddOnCost,
+      vendorOnlineAddOnCost,
+      vendorWeekendAddOnCost,
       ...restBody,
     });
 
@@ -104,7 +137,9 @@ export const getCartItemsByClientId = async (req, res) => {
   try {
     const cartItems = await CartItemModel.find({
       clientId: client._id,
-    });
+    }).select(
+      "-vendorWeekendAddOnCost -vendorOnlineAddOnCost -vendorOfflineAddOnCost -totalVendorAmount"
+    );
     // for each cartItem, check if the activity is still available
     for (const cartItem of cartItems) {
       const activity = await ActivityModel.findById(cartItem.activityId);
@@ -113,10 +148,10 @@ export const getCartItemsByClientId = async (req, res) => {
     const updatedCartItems = await Promise.all(
       cartItems.map(async (cartItem) => {
         const isTimeslotAvailable = await isCartItemStillAvailable(
-          cartItem._id,
+          cartItem._id
         );
         return { cartItem, isItemStillAvailable: isTimeslotAvailable }; // Add the 'isAvailable' field to the updated cart items
-      }),
+      })
     );
 
     res.status(200).json(updatedCartItems);
@@ -175,14 +210,14 @@ export async function isCartItemStillAvailable(cartItemId) {
     activity.startTime.getHours(),
     activity.startTime.getMinutes(),
     0,
-    0,
+    0
   );
   const latestStartTime = new Date(cartItem.startDateTime);
   latestStartTime.setHours(
     activity.endTime.getHours(),
     activity.endTime.getMinutes(),
     0,
-    0,
+    0
   );
 
   const interval = 30; // 30 minutes
@@ -218,14 +253,14 @@ export async function isCartItemStillAvailable(cartItemId) {
     activity.capacity,
     bookings,
     blockedTimeslots,
-    activity.duration,
+    activity.duration
   );
 
   // use isTimeslotAvailable
   const isTimeslotAvailable = await getTimeslotAvailability(
     allTimeslots,
     cartItem.startDateTime,
-    cartItem.endDateTime,
+    cartItem.endDateTime
   );
   return isTimeslotAvailable;
 }

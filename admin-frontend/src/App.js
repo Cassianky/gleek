@@ -25,7 +25,7 @@ import ViewActiveBookingsPage from "./components/booking/ViewActiveBookingsPage"
 import ViewPastBookingsPage from "./components/booking/ViewPastBookingsPage";
 import SubmittedSurvey from "./components/survey/SubmittedSurvey";
 import SubmittedSurveys from "./components/survey/SubmittedSurveys";
-import ActivityThemesPage from "./components/activitythemes/ActivityThemesPage";
+import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
 
 function App() {
   return (

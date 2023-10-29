@@ -49,9 +49,15 @@ export const getBookingsWithPendingSurvey = async (req, res) => {
         { status: { $in: ["PENDING_PAYMENT", "PAID"] } },
         { isSurveySubmitted: false },
       ],
-    }).populate("activityId");
+    }).populate({
+      path: "activityId",
+      populate: {
+        path: "linkedVendor",
+        select: "companyName companyEmail",
+      },
+    });
 
-    console.log("getBookingsWithPendingSurvey", bookings.length)
+    console.log("getBookingsWithPendingSurvey", bookings.length);
 
     res.status(200).json({ bookings });
   } catch (error) {
@@ -472,7 +478,7 @@ export const confirmBooking = async (req, res) => {
       "CONFIRMED",
       "VENDOR",
       vendor?.companyName,
-      null
+      null,
     );
     const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
@@ -500,7 +506,7 @@ export const rejectBooking = async (req, res) => {
       "REJECTED",
       "VENDOR",
       vendorName?.companyName,
-      rejectionReason
+      rejectionReason,
     );
     const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
@@ -527,7 +533,7 @@ export const cancelBooking = async (req, res) => {
       "CANCELLED",
       "VENDOR",
       vendorName?.companyName,
-      cancelReason
+      cancelReason,
     );
     const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({

@@ -103,6 +103,26 @@ const PendingSurveysTable = ({
       },
     },
     {
+      field: "vendor",
+      flex: 1,
+      renderHeader: (params) => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.secondary.main }}
+          >
+            Vendor
+          </Typography>
+        );
+      },
+      renderCell: (params) => {
+        return params.row.activityId.linkedVendor.companyName;
+      },
+      valueGetter: (params) => {
+        return params.row.activityId.linkedVendor.companyName;
+      },
+    },
+    {
       field: "status",
       flex: 1,
       renderHeader: (params) => {

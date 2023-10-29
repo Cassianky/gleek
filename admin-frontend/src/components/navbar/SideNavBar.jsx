@@ -28,7 +28,7 @@ const bookingManagementList = [
 ];
 const surveyManagementList = [
   { "View Submitted Surveys": "/surveys" },
-  // { "Manage Reviews": "/surveys" },
+  { "Manage Reviews": "/reviews" },
 ];
 
 const StyledLink = styled(Link)`

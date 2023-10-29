@@ -26,6 +26,8 @@ import ViewPastBookingsPage from "./components/booking/ViewPastBookingsPage";
 import SubmittedSurvey from "./components/survey/SubmittedSurvey";
 import SubmittedSurveys from "./components/survey/SubmittedSurveys";
 import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
+import ActivityReviews from "./components/review/ActivityReviews";
+import ManageReviewsForActivity from "./components/review/ManageReviewsForActivity";
 
 function App() {
   return (
@@ -196,7 +198,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-            <Route
+          <Route
             exact
             path="/surveys"
             element={
@@ -211,6 +213,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <SubmittedSurvey />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/reviews"
+            element={
+              <ProtectedRoute>
+                <ActivityReviews />
+              </ProtectedRoute>
+            }
+          />
+            <Route
+            exact
+            path="/reviews/activity/:activityId"
+            element={
+              <ProtectedRoute>
+                <ManageReviewsForActivity />
               </ProtectedRoute>
             }
           />

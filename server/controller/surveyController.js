@@ -11,7 +11,13 @@ export const getSurveyForBooking = async (req, res) => {
     const client = req.user;
 
     const bookingId = req.params.bookingId;
-    const booking = await Booking.findById(bookingId);
+    const booking = await Booking.findById(bookingId).populate({
+      path: "booking",
+      populate: {
+        path: "activityId",
+        select: "title",
+      },
+    });
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
@@ -34,7 +40,7 @@ export const getSurveyForBooking = async (req, res) => {
       return res.status(200).send({});
     }
 
-    return res.status(200).json({ survey: survey, review: review });
+    return res.status(200).json({ survey: survey, review: review, booking: booking });
   } catch (err) {
     console.error(err);
     return res.status(500).send({ message: "Server error" });
@@ -46,21 +52,20 @@ export const getAllSubmittedSurveys = async (req, res) => {
     const surveys = await SurveyResponse.find({
       status: { $in: ["SUBMITTED"] },
     })
-    .populate({
-      path: "activity",
-      populate: {
-        path: "linkedVendor",
-        select: "companyName companyEmail",
-      },
-    })
-    .populate({
-      path: "booking",
-      populate: {
-        path: "clientId",
-        select: "email name",
-      },
-    });
-
+      .populate({
+        path: "activity",
+        populate: {
+          path: "linkedVendor",
+          select: "companyName companyEmail",
+        },
+      })
+      .populate({
+        path: "booking",
+        populate: {
+          path: "clientId",
+          select: "email name",
+        },
+      });
 
     return res.status(200).json(surveys);
   } catch (err) {
@@ -149,48 +154,48 @@ export const submitSurveyForBooking = async (req, res) => {
   }
 };
 
-export const getSurveysForClient = async (req, res) => {
-  try {
-    const client = req.user;
-    const bookings = await Booking.find({
-      clientId: client._id,
-      status: { $in: ["PENDING_PAYMENT", "PAID"] },
-    });
+// export const getSurveysForClient = async (req, res) => {
+//   try {
+//     const client = req.user;
+//     const bookings = await Booking.find({
+//       clientId: client._id,
+//       status: { $in: ["PENDING_PAYMENT", "PAID"] },
+//     });
 
-    const surveyResponses = [];
+//     const surveyResponses = [];
 
-    for (const booking of bookings) {
-      let survey = await SurveyResponse.findOne({ booking: booking._id })
-        .populate("activity")
-        .populate("booking");
+//     for (const booking of bookings) {
+//       let survey = await SurveyResponse.findOne({ booking: booking._id })
+//         .populate("activity")
+//         .populate("booking");
 
-      if (!survey) {
-        const newSurvey = new SurveyResponse({
-          booking: booking._id,
-          activity: booking.activityId,
-        });
+//       if (!survey) {
+//         const newSurvey = new SurveyResponse({
+//           booking: booking._id,
+//           activity: booking.activityId,
+//         });
 
-        await newSurvey.save();
+//         await newSurvey.save();
 
-        booking.adminSurveyResponse = newSurvey._id;
-        await booking.save();
+//         booking.adminSurveyResponse = newSurvey._id;
+//         await booking.save();
 
-        survey = await SurveyResponse.findById(newSurvey._id)
-          .populate("activity")
-          .populate("booking");
+//         survey = await SurveyResponse.findById(newSurvey._id)
+//           .populate("activity")
+//           .populate("booking");
 
-        surveyResponses.push(survey);
-      } else {
-        surveyResponses.push(survey);
-      }
-    }
+//         surveyResponses.push(survey);
+//       } else {
+//         surveyResponses.push(survey);
+//       }
+//     }
 
-    return res.status(200).json(surveyResponses);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error" });
-  }
-};
+//     return res.status(200).json(surveyResponses);
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({ message: "Server error" });
+//   }
+//}
 
 // Using surveyId
 

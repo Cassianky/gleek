@@ -2,7 +2,6 @@ import express from "express";
 import {
   getSurveyForBooking,
   getSurveyWithSurveyId,
-  getSurveysForClient,
   submitSurvey,
   submitSurveyForBooking,
   updateSurvey,
@@ -16,18 +15,12 @@ const router = express.Router();
  * Get survey by booking id
  */
 router.get("/booking/:bookingId", verifyToken, getSurveyForBooking);
-router.get("/pending", verifyToken, getSurveysForClient);
+// router.get("/pending", verifyToken, getSurveysForClient);
 /*
  * POST /gleek/survey/booking/bookingId/submit
  * Submit survey for booking with bookingId
  */
 router.post("/booking/:bookingId/submit", verifyToken, submitSurveyForBooking);
-
-// /*
-//  * POST /gleek/survey/booking/bookingId/draft
-//  * Submit survey for booking with bookingId
-//  */
-// router.post("/booking/:bookingId/draft", updateSurveyDraftForBooking);
 
 /*
  * GET /gleek/survey/surveyId

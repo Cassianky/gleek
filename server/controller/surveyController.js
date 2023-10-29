@@ -11,13 +11,7 @@ export const getSurveyForBooking = async (req, res) => {
     const client = req.user;
 
     const bookingId = req.params.bookingId;
-    const booking = await Booking.findById(bookingId).populate({
-      path: "booking",
-      populate: {
-        path: "activityId",
-        select: "title",
-      },
-    });
+    const booking = await Booking.findById(bookingId);
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
@@ -40,7 +34,9 @@ export const getSurveyForBooking = async (req, res) => {
       return res.status(200).send({});
     }
 
-    return res.status(200).json({ survey: survey, review: review, booking: booking });
+    return res
+      .status(200)
+      .json({ survey: survey, review: review, booking: booking });
   } catch (err) {
     console.error(err);
     return res.status(500).send({ message: "Server error" });

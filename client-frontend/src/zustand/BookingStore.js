@@ -93,7 +93,7 @@ const useBookingStore = create((set) => ({
       console.error(error.message);
     }
   },
-  cancelBooking: async (bookingId, cancellationReason) => {
+  cancelBookingForClient: async (bookingId, cancellationReason) => {
     try {
       set({ isLoading: true });
       const cancelResponse = await AxiosConnect.patch(

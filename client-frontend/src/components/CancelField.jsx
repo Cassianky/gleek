@@ -18,7 +18,7 @@ const CancelField = ({ bookingData }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [reason, setReason] = useState("");
   const { openSnackbar } = useSnackbarStore();
-  const { cancelBooking, getAllBookingsForClient } = useBookingStore();
+  const { cancelBookingForClient, getAllBookingsForClient } = useBookingStore();
 
   const handleDialogOpen = (event) => {
     event.stopPropagation();
@@ -31,7 +31,7 @@ const CancelField = ({ bookingData }) => {
 
   const handleConfirmCancel = async (bookingId) => {
     try {
-      const message = await cancelBooking(bookingId, reason);
+      const message = await cancelBookingForClient(bookingId, reason);
       getAllBookingsForClient();
       openSnackbar(message);
       setDialogOpen(false);

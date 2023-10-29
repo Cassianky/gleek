@@ -160,7 +160,7 @@ const ActivityDetailsPage = () => {
   const calculateWeekendAddOn = (
     selectedDate,
     weekendPricing,
-    totalBasePrice,
+    totalBasePrice
   ) => {
     if (
       weekendPricing.amount !== null &&
@@ -210,17 +210,17 @@ const ActivityDetailsPage = () => {
 
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
-      currentActivity.weekendPricing,
+      currentActivity.weekendPricing
     );
 
     const onlineAddOn = calculateOnlineAddOn(
       location,
-      currentActivity.offlinePricing,
+      currentActivity.offlinePricing
     );
 
     const offlineAddOn = calculateOfflineAddOn(
       location,
-      currentActivity.onlinePricing,
+      currentActivity.onlinePricing
     );
 
     const totalPriceCalculated =
@@ -240,15 +240,15 @@ const ActivityDetailsPage = () => {
     let totalBasePrice = calculateBasePrice(pax);
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
-      currentActivity.weekendPricing,
+      currentActivity.weekendPricing
     );
     const onlineAddOn = calculateOnlineAddOn(
       location,
-      currentActivity.offlinePricing,
+      currentActivity.offlinePricing
     );
     const offlineAddOn = calculateOfflineAddOn(
       location,
-      currentActivity.onlinePricing,
+      currentActivity.onlinePricing
     );
     const timeParts = time.split(",");
     const cartItem = {
@@ -435,7 +435,7 @@ const ActivityDetailsPage = () => {
                           format="DD/MM/YYYY"
                           minDate={dayjs().add(
                             currentActivity?.bookingNotice,
-                            "days",
+                            "days"
                           )}
                           shouldDisableDate={shouldDisableDate}
                           sx={{ marginRight: "12px" }}
@@ -593,7 +593,7 @@ const ActivityDetailsPage = () => {
                                   ? "-"
                                   : ""}
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                               </Typography>
                             </Box>
@@ -615,7 +615,7 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                               </Typography>
                             </Box>
@@ -636,7 +636,7 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                               </Typography>
                             </Box>

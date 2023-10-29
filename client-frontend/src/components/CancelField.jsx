@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
-
+import useSnackbarStore from "../zustand/SnackbarStore";
+import useBookingStore from "../zustand/BookingStore";
 import {
   Dialog,
   DialogTitle,
@@ -16,8 +17,8 @@ const CancelField = ({ bookingData }) => {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [reason, setReason] = useState("");
-  //   const { openSnackbar } = useSnackbarStore();
-  //   const { cancelBooking } = useBookingStore();
+  const { openSnackbar } = useSnackbarStore();
+  const { cancelBooking, getAllBookingsForClient } = useBookingStore();
 
   const handleDialogOpen = (event) => {
     event.stopPropagation();
@@ -29,13 +30,14 @@ const CancelField = ({ bookingData }) => {
   };
 
   const handleConfirmCancel = async (bookingId) => {
-    //   try {
-    //     const message = await cancelBooking(bookingId, reason);
-    //     openSnackbar(message);
-    //     setDialogOpen(false);
-    //   } catch (error) {
-    //     openSnackbar(error.message, "error");
-    //   }
+    try {
+      const message = await cancelBooking(bookingId, reason);
+      getAllBookingsForClient();
+      openSnackbar(message);
+      setDialogOpen(false);
+    } catch (error) {
+      openSnackbar(error.message, "error");
+    }
   };
 
   const confirmationDisplayDetails = [
@@ -100,7 +102,7 @@ const CancelField = ({ bookingData }) => {
             Back
           </Button>
           <Button
-            onClick={async () => await handleConfirmCancel(bookingData.id)}
+            onClick={async () => await handleConfirmCancel(bookingData._id)}
             color="primary"
             disabled={!reason.trim()}
           >

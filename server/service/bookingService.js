@@ -21,6 +21,10 @@ export const getAllBookingsForClientService = async (clientId) => {
     .populate({
       path: "activityId",
       select: "images preSignedImages",
+    })
+    .populate({
+      path: "clientId",
+      select: "companyName",
     });
 
   for (const booking of bookings) {

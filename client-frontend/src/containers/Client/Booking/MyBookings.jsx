@@ -77,6 +77,39 @@ const MyBookings = () => {
     return filteredBookings;
   };
 
+  const completedBookingsFilter = (bookings) => {
+    const filteredBookings = bookings.filter(
+      (booking) =>
+        booking.status === "PENDING PAYMENT" ||
+        booking.status === "PAID" ||
+        (booking.status === "CONFIRMED" &&
+          new Date(booking.startDateTime) < new Date())
+    );
+    return filteredBookings;
+  };
+
+  const rejectedOrCancelledBookingsFilter = (bookings) => {
+    const filteredBookings = bookings.filter(
+      (booking) =>
+        booking.status === "REJECTED" || booking.status === "CANCELLED"
+    );
+    return filteredBookings;
+  };
+
+  const pendingPaymentBookingsFilter = (bookings) => {
+    const filteredBookings = bookings.filter(
+      (booking) => booking.status === "PENDING PAYMENT"
+    );
+    return filteredBookings;
+  };
+
+  const paidBookingsFilter = (bookings) => {
+    const filteredBookings = bookings.filter(
+      (booking) => booking.status === "PAID"
+    );
+    return filteredBookings;
+  };
+
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
 
@@ -172,12 +205,42 @@ const MyBookings = () => {
           <CancelBookingsTable
             allBookings={bookings}
             filter={pendingBookingsFilter}
+            hasCancel={true}
           />
         )}
         {selectedTab === "upcoming" && (
           <CancelBookingsTable
             allBookings={bookings}
             filter={upcomingBookingsFilter}
+            hasCancel={true}
+          />
+        )}
+        {selectedTab === "completed" && (
+          <CancelBookingsTable
+            allBookings={bookings}
+            filter={completedBookingsFilter}
+            hasCancel={false}
+          />
+        )}
+        {selectedTab === "cancelled/rejected" && (
+          <CancelBookingsTable
+            allBookings={bookings}
+            filter={rejectedOrCancelledBookingsFilter}
+            hasCancel={false}
+          />
+        )}
+        {selectedTab === "pending payment" && (
+          <CancelBookingsTable
+            allBookings={bookings}
+            filter={pendingPaymentBookingsFilter}
+            hasCancel={false}
+          />
+        )}
+        {selectedTab === "paid" && (
+          <CancelBookingsTable
+            allBookings={bookings}
+            filter={paidBookingsFilter}
+            hasCancel={false}
           />
         )}
       </Box>

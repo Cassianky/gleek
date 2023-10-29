@@ -1,39 +1,17 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
 import notFound from "../../../assets/not_found.png";
-import {
-  Box,
-  Chip,
-  Drawer,
-  IconButton,
-  Button,
-  Typography,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import { Box, Chip, Typography, useTheme, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import CancelField from "../../../components/CancelField";
 
-const CancelBookingsTable = ({
-  allBookings,
-  filter,
-  approveBooking,
-  rejectBooking,
-  openSnackbar,
-}) => {
+const CancelBookingsTable = ({ allBookings, filter, hasCancel }) => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const theme = useTheme();
   const secondary = theme.palette.secondary.main;
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [bookingToReject, setBookingToReject] = useState();
-  const [rejectionReason, setRejectionReason] = useState();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState();
 
   let containerStyle = {
     minHeight: "10rem", // Default for extra-large screens
@@ -83,44 +61,8 @@ const CancelBookingsTable = ({
     return formattedTime;
   };
 
-  const handleApproveButton = async (bookingId) => {
-    try {
-      const message = await approveBooking(bookingId);
-      openSnackbar(message);
-    } catch (error) {
-      openSnackbar(error, "error");
-    }
-  };
-
-  const handleRejectButton = async (bookingId) => {
-    try {
-      const message = await rejectBooking(bookingId, rejectionReason);
-      openSnackbar(message);
-    } catch (error) {
-      openSnackbar(error, "error");
-    }
-  };
-
-  const handleOpenRejectModal = (booking) => {
-    setRejectModalOpen(true);
-    setBookingToReject(booking);
-  };
-
-  const handleCloseRejectModal = () => {
-    setRejectModalOpen(false);
-  };
-
-  const handleRejectReasonChange = (event) => {
-    setRejectionReason(event.target.value);
-  };
-
   const handleRowClick = ({ _id }) => {
     navigate(`/booking/${_id.toString()}`);
-  };
-
-  const handleCloseBookingDetails = () => {
-    setSelectedBooking();
-    setIsDrawerOpen(false);
   };
 
   const columns = [
@@ -352,47 +294,58 @@ const CancelBookingsTable = ({
         );
       },
     },
-    {
-      field: "actions",
-      type: "actions",
-      flex: 1,
-      renderHeader: (params) => {
-        return (
-          <Typography
-            fontSize={"1rem"}
-            sx={{ color: theme.palette.secondary.main }}
-          >
-            Actions
-          </Typography>
-        );
-      },
-      renderCell: (params) => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              paddingTop: 3,
-              paddingBottom: 3,
-              alignItems: "center",
-            }}
-          >
-            <CancelField bookingData={params.row} />
-            {/* <BookingRejectModal
-              open={rejectModalOpen}
-              onClose={handleCloseRejectModal}
-              bookingToReject={bookingToReject}
-              handleRejectReasonChange={handleRejectReasonChange}
-              handleRejectButton={handleRejectButton}
-              rejectionReason={rejectionReason}
-            /> */}
-          </div>
-        );
-      },
-    },
+    hasCancel
+      ? {
+          field: "actions",
+          type: "actions",
+          flex: 1,
+          renderHeader: (params) => {
+            return (
+              <Typography
+                fontSize={"1rem"}
+                sx={{ color: theme.palette.secondary.main }}
+              >
+                Actions
+              </Typography>
+            );
+          },
+          renderCell: (params) => {
+            const startTime = new Date(params.row.startDateTime); // Convert the startDateTime to a Date object
+            const today = new Date(); // Get the current date
+
+            // Calculate the difference in milliseconds between startTime and today
+            const timeDifference = startTime.getTime() - today.getTime();
+
+            // Calculate the number of days
+            const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+            return daysDifference >= 14 ? (
+              <div
+                style={{
+                  display: "flex",
+                  paddingTop: 3,
+                  paddingBottom: 3,
+                  alignItems: "center",
+                }}
+              >
+                <CancelField bookingData={params.row} />
+              </div>
+            ) : null;
+          },
+        }
+      : {},
   ];
 
   return (
     <div style={{ height: "80vh", width: "99%" }}>
+      {hasCancel && (
+        <Box mt={2} mb={2} boxShadow={1}>
+          <Alert severity="info">
+            Cancellation is only enabled for activities with start date time at
+            least 14 days after
+          </Alert>
+        </Box>
+      )}
       <DataGrid
         initialState={{
           pagination: {
@@ -417,15 +370,6 @@ const CancelBookingsTable = ({
         }}
         onRowClick={(params) => handleRowClick(params.row)}
       />
-      {/* <Drawer
-        anchor="left"
-        open={isDrawerOpen}
-        onClose={handleCloseBookingDetails}
-      >
-        <Box sx={{ width: "650px" }}>
-          <BookingDetailsForm appointmentData={selectedBooking} />
-        </Box>
-      </Drawer> */}
     </div>
   );
 };

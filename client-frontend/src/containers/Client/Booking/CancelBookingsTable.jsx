@@ -1,39 +1,29 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
-import {
-  Box,
-  Chip,
-  Drawer,
-  IconButton,
-  Typography,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import notFound from "../../../assets/not_found.png";
+import { Box, Chip, Typography, useTheme, Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import BookingRejectModal from "./BookingRejectModal.jsx";
-import BookingDetailsForm from "./BookingDetailsForm.jsx";
+import CancelField from "../../../components/CancelField";
 
-const PendingBookingsTable = ({
-  allBookings,
-  approveBooking,
-  rejectBooking,
-  openSnackbar,
-}) => {
+const CancelBookingsTable = ({ allBookings, filter, hasCancel }) => {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const theme = useTheme();
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [bookingToReject, setBookingToReject] = useState();
-  const [rejectionReason, setRejectionReason] = useState();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState();
+  const secondary = theme.palette.secondary.main;
 
+  let containerStyle = {
+    minHeight: "10rem", // Default for extra-large screens
+    width: "100%",
+    objectFit: "cover",
+    borderTopLeftRadius: "4px",
+    borderTopRightRadius: "4px",
+    borderBottomRightRadius: "4px",
+    borderBottomLeftRadius: "4px",
+  };
   useEffect(() => {
-    const formattedBookings = allBookings.filter(
-      (booking) => booking.status === "PENDING_CONFIRMATION",
-    );
+    const formattedBookings = filter(allBookings);
     setBookings(formattedBookings);
   }, [allBookings]);
 
@@ -71,59 +61,8 @@ const PendingBookingsTable = ({
     return formattedTime;
   };
 
-  const handleApproveButton = async (bookingId) => {
-    try {
-      const message = await approveBooking(bookingId);
-      openSnackbar(message);
-    } catch (error) {
-      openSnackbar(error, "error");
-    }
-  };
-
-  const handleRejectButton = async (bookingId) => {
-    try {
-      const message = await rejectBooking(bookingId, rejectionReason);
-      openSnackbar(message);
-    } catch (error) {
-      openSnackbar(error, "error");
-    }
-  };
-
-  const handleOpenRejectModal = (booking) => {
-    setRejectModalOpen(true);
-    setBookingToReject(booking);
-  };
-
-  const handleCloseRejectModal = () => {
-    setRejectModalOpen(false);
-  };
-
-  const handleRejectReasonChange = (event) => {
-    setRejectionReason(event.target.value);
-  };
-
-  const handleRowClick = ({
-    _id,
-    activityTitle,
-    endDateTime,
-    startDateTime,
-    ...restProps
-  }) => {
-    const newBooking = {
-      id: _id,
-      title: activityTitle,
-      startDate: startDateTime,
-      endDate: endDateTime,
-      ...restProps,
-    };
-
-    setSelectedBooking(newBooking);
-    setIsDrawerOpen(true);
-  };
-
-  const handleCloseBookingDetails = () => {
-    setSelectedBooking();
-    setIsDrawerOpen(false);
+  const handleRowClick = ({ _id }) => {
+    navigate(`/booking/${_id.toString()}`);
   };
 
   const columns = [
@@ -140,20 +79,47 @@ const PendingBookingsTable = ({
           </Typography>
         );
       },
+      renderCell: (params) => {
+        const title = params.value;
+        const preSignedImages = params.row.activityId.preSignedImages;
+        return (
+          <Box display="flex" flexDirection="column">
+            <Typography
+              fontSize={"0.875rem"}
+              color={secondary}
+              fontWeight={700}
+              textAlign="center"
+            >
+              {title}
+            </Typography>
+            <Box
+              display="flex"
+              justifyContent="center"
+              width={"100%"}
+              bgcolor={"grey.50"}
+            >
+              {/* Apply styling to the image */}
+              {preSignedImages && preSignedImages.length > 0 && (
+                <img
+                  src={preSignedImages[0]}
+                  alt={title}
+                  style={containerStyle}
+                />
+              )}
+              {!preSignedImages.length > 0 && (
+                <img src={notFound} alt={title} style={containerStyle} />
+              )}
+            </Box>
+          </Box>
+        );
+      },
     },
     {
-      field: "clientId",
+      field: "vendorName",
       flex: 1,
       renderCell: (params) => {
-        const clientName = params.value.name;
-        return (
-          <div style={{ display: "flex" }}>
-            <Typography color="#9F91CC" fontSize={"0.875rem"}>
-              Booked by&nbsp;
-            </Typography>
-            {clientName}
-          </div>
-        );
+        const vendorName = params.row.vendorName;
+        return <div style={{ display: "flex" }}>{vendorName}</div>;
       },
       renderHeader: (params) => {
         return (
@@ -161,7 +127,7 @@ const PendingBookingsTable = ({
             fontSize={"1rem"}
             sx={{ color: theme.palette.secondary.main }}
           >
-            Client
+            Vendor
           </Typography>
         );
       },
@@ -230,7 +196,7 @@ const PendingBookingsTable = ({
             fontSize={"1rem"}
             sx={{ color: theme.palette.secondary.main }}
           >
-            Submitted
+            Booked On
           </Typography>
         );
       },
@@ -242,10 +208,59 @@ const PendingBookingsTable = ({
               fontSize={"0.875rem"}
               sx={{ color: theme.palette.primary.main }}
             >
-              Submitted on&nbsp;
               <span style={{ color: "rgb(0 0 0 /0.87)" }}>
                 {convertISOtoShortDate(date)} at {convertISOtoTime(date)}
               </span>
+            </Typography>
+          </div>
+        );
+      },
+    },
+    {
+      field: "totalPax",
+      flex: 0.5,
+      renderHeader: (params) => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.secondary.main }}
+          >
+            Pax
+          </Typography>
+        );
+      },
+      renderCell: (params) => {
+        const totalCost = params.value;
+        return (
+          <div style={{ display: "flex" }}>
+            <Typography fontSize={"0.875rem"}>{totalCost}</Typography>
+          </div>
+        );
+      },
+    },
+    {
+      field: "totalCost",
+      flex: 0.5,
+      renderHeader: (params) => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.secondary.main }}
+          >
+            Total Cost
+          </Typography>
+        );
+      },
+      renderCell: (params) => {
+        const totalCost = params.value;
+        return (
+          <div style={{ display: "flex" }}>
+            <Typography
+              fontWeight={700}
+              color={secondary}
+              fontSize={"0.875rem"}
+            >
+              $ {totalCost.toFixed(2)}
             </Typography>
           </div>
         );
@@ -279,75 +294,58 @@ const PendingBookingsTable = ({
         );
       },
     },
-    {
-      field: "approve",
-      type: "actions",
-      flex: 1,
-      renderHeader: (params) => {
-        return (
-          <Typography
-            fontSize={"1rem"}
-            sx={{ color: theme.palette.secondary.main }}
-          >
-            Approve?
-          </Typography>
-        );
-      },
-      renderCell: (params) => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              paddingTop: 3,
-              paddingBottom: 3,
-              alignItems: "center",
-            }}
-          >
-            <IconButton
-              sx={{
-                backgroundColor: theme.palette.success.pastel,
-                color: "white",
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.success.pastel, 0.5),
-                },
-                marginRight: 1,
-                height: "38px",
-                width: "38px",
-              }}
-              onClick={async () => await handleApproveButton(params.row._id)}
-            >
-              <DoneIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              sx={{
-                backgroundColor: theme.palette.error.main,
-                color: "white",
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.error.main, 0.5),
-                },
-                height: "38px",
-                width: "38px",
-              }}
-              onClick={() => handleOpenRejectModal(params.row)}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-            <BookingRejectModal
-              open={rejectModalOpen}
-              onClose={handleCloseRejectModal}
-              bookingToReject={bookingToReject}
-              handleRejectReasonChange={handleRejectReasonChange}
-              handleRejectButton={handleRejectButton}
-              rejectionReason={rejectionReason}
-            />
-          </div>
-        );
-      },
-    },
+    hasCancel
+      ? {
+          field: "actions",
+          type: "actions",
+          flex: 1,
+          renderHeader: (params) => {
+            return (
+              <Typography
+                fontSize={"1rem"}
+                sx={{ color: theme.palette.secondary.main }}
+              >
+                Actions
+              </Typography>
+            );
+          },
+          renderCell: (params) => {
+            const startTime = new Date(params.row.startDateTime); // Convert the startDateTime to a Date object
+            const today = new Date(); // Get the current date
+
+            // Calculate the difference in milliseconds between startTime and today
+            const timeDifference = startTime.getTime() - today.getTime();
+
+            // Calculate the number of days
+            const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+            return daysDifference >= 14 ? (
+              <div
+                style={{
+                  display: "flex",
+                  paddingTop: 3,
+                  paddingBottom: 3,
+                  alignItems: "center",
+                }}
+              >
+                <CancelField bookingData={params.row} />
+              </div>
+            ) : null;
+          },
+        }
+      : {},
   ];
 
   return (
-    <div style={{ height: 500, width: "99%" }}>
+    <div style={{ height: "80vh", width: "99%" }}>
+      {hasCancel && (
+        <Box mt={2} mb={2} boxShadow={1}>
+          <Alert severity="info">
+            Cancellation is only enabled for activities with start date time at
+            least 14 days after
+          </Alert>
+        </Box>
+      )}
       <DataGrid
         initialState={{
           pagination: {
@@ -372,24 +370,13 @@ const PendingBookingsTable = ({
         }}
         onRowClick={(params) => handleRowClick(params.row)}
       />
-      <Drawer
-        anchor="left"
-        open={isDrawerOpen}
-        onClose={handleCloseBookingDetails}
-      >
-        <Box sx={{ width: "650px" }}>
-          <BookingDetailsForm appointmentData={selectedBooking} />
-        </Box>
-      </Drawer>
     </div>
   );
 };
 
-PendingBookingsTable.propTypes = {
+CancelBookingsTable.propTypes = {
   allBookings: PropTypes.array.isRequired,
-  approveBooking: PropTypes.func.isRequired,
-  rejectBooking: PropTypes.func.isRequired,
   openSnackbar: PropTypes.func.isRequired,
 };
 
-export default PendingBookingsTable;
+export default CancelBookingsTable;

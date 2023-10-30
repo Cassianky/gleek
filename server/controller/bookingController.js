@@ -5,7 +5,16 @@ import BlockedTimeslotModel from "../model/blockedTimeslotModel.js";
 import { validationResult } from "express-validator";
 import { isCartItemStillAvailable } from "./cartItemController.js";
 import mongoose from "mongoose";
-import { getAllPendingAndConfirmedBookingsForVendor } from "../service/bookingService.js";
+import {
+   getAllBookingsForVendor,
+   updateBookingStatusActionHistory,
+} from "../service/bookingService.js";
+import VendorModel from "../model/vendorModel.js";
+import {
+   getAllPendingAndConfirmedBookingsForVendor,
+   getAllBookingsForClientService,
+} from "../service/bookingService.js";
+import { s3GetImages } from "../service/s3ImageServices.js";
 import { BookingSummaryClient } from "../assets/templates/BookingSummaryClient.js";
 import { BookingSummaryVendor } from "../assets/templates/BookingSummaryVendor.js";
 import sendMail from "../util/sendMail.js";
@@ -16,7 +25,17 @@ import pdf from "html-pdf";
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
    try {
-      const bookings = await BookingModel.find();
+      const bookings = await BookingModel.find()
+         .populate({
+            path: "clientId",
+            select: "-password",
+         })
+         .populate({
+            path: "vendorId",
+            select: "-password",
+         })
+         .populate("activityId");
+
       // if (bookings.length === 0) {
       //   return res.status(404).json({ message: "No bookings found!" });
       // }
@@ -33,7 +52,21 @@ export const getAllBookings = async (req, res) => {
 // GET /booking/getBookingById/:id
 export const getBookingById = async (req, res) => {
    try {
-      const booking = await BookingModel.findById(req.params.id);
+      const booking = await BookingModel.findById(req.params.id)
+         .populate("vendorId")
+         .populate("activityId")
+         .populate("clientId");
+
+      if (booking.vendorId && booking.vendorId.companyLogo) {
+         let preSignedUrl = await s3GetImages(booking.vendorId.companyLogo);
+         booking.vendorId.preSignedPhoto = preSignedUrl;
+      }
+
+      if (booking.activityId && booking.activityId.images) {
+         let preSignedUrlArr = await s3GetImages(booking.activityId.images);
+         booking.activityId.preSignedImages = preSignedUrlArr;
+      }
+
       if (!booking) {
          return res
             .status(404)
@@ -440,13 +473,15 @@ export const confirmBooking = async (req, res) => {
    try {
       const bookingId = req.params.id;
       const vendorId = req.user;
-      const newBooking = await BookingModel.findByIdAndUpdate(
+      const vendor = await VendorModel.findById(vendorId);
+      const newBooking = await updateBookingStatusActionHistory(
          bookingId,
-         { status: "CONFIRMED" },
-         { new: true }
+         "CONFIRMED",
+         "VENDOR",
+         vendor?.companyName,
+         null
       );
-      const updatedBookings =
-         await getAllPendingAndConfirmedBookingsForVendor(vendorId);
+      const updatedBookings = await getAllBookingsForVendor(vendorId);
       res.status(200).json({
          bookings: updatedBookings,
          message: `Booking for ${newBooking.activityTitle} confirmed successfully!`,
@@ -466,13 +501,15 @@ export const rejectBooking = async (req, res) => {
       const bookingId = req.params.id;
       const vendorId = req.user;
       const { rejectionReason } = req.body;
-      const newBooking = await BookingModel.findByIdAndUpdate(
+      const vendorName = await VendorModel.findById(vendorId);
+      const newBooking = await updateBookingStatusActionHistory(
          bookingId,
-         { status: "REJECTED", rejectionReason: rejectionReason },
-         { new: true }
+         "REJECTED",
+         "VENDOR",
+         vendorName?.companyName,
+         rejectionReason
       );
-      const updatedBookings =
-         await getAllPendingAndConfirmedBookingsForVendor(vendorId);
+      const updatedBookings = await getAllBookingsForVendor(vendorId);
       res.status(200).json({
          bookings: updatedBookings,
          message: `Booking for ${newBooking.activityTitle} rejected successfully!`,
@@ -486,23 +523,69 @@ export const rejectBooking = async (req, res) => {
    }
 };
 
-// PATCH /booking/cancelBooking/:id
 export const cancelBooking = async (req, res) => {
    try {
+      const bookingId = req.params.id;
+      const vendorId = req.user;
+      const { cancelReason } = req.body;
+      const vendorName = await VendorModel.findById(vendorId);
+      const newBooking = await updateBookingStatusActionHistory(
+         bookingId,
+         "CANCELLED",
+         "VENDOR",
+         vendorName?.companyName,
+         cancelReason
+      );
+      const updatedBookings = await getAllBookingsForVendor(vendorId);
+      res.status(200).json({
+         bookings: updatedBookings,
+         message: `Booking for ${newBooking.activityTitle} cancelled successfully!`,
+      });
    } catch (error) {
-      console.log(error);
+      console.error(error);
       res.status(500).json({
-         message: "Server Error! Unable to cancel booking.",
+         message: "Server Error! Unable to reject booking.",
          error: error.message,
       });
    }
 };
 
-// PATCH /booking/updateBooking/:id
-export const updateBooking = async (req, res) => {
+// PATCH /booking/updateBookingStatus/:id
+// Takes request body of:
+// {
+//   "newStatus" : "REJECTED",
+//   "actionByUserType": "ADMIN",
+//   "actionRemarks" : "rejection or cancellation reason" (optional, no need if new status is CONFIRMED)
+// }
+
+export const updateBookingStatus = async (req, res) => {
    try {
+      const bookingId = req.params.id;
+      const user = req.user;
+      const { newStatus, actionRemarks, actionByUserType } = req.body;
+      const userName =
+         actionByUserType === "VENDOR" ? user.companyName : user.name;
+      const updatedBooking = await BookingModel.findByIdAndUpdate(
+         bookingId,
+         {
+            status: newStatus,
+            $push: {
+               actionHistory: {
+                  newStatus: newStatus,
+                  actionByUserType: actionByUserType,
+                  actionByUserName: userName,
+                  actionRemarks: actionRemarks,
+               },
+            },
+         },
+         { new: true }
+      );
+      res.status(200).json({
+         booking: updatedBooking,
+         message: `Booking status for ${updatedBooking.activityTitle} updated to ${newStatus} successfully!`,
+      });
    } catch (error) {
-      console.log(error);
+      console.error(error);
       res.status(500).json({
          message: "Server Error! Unable to update booking.",
          error: error.message,
@@ -510,26 +593,20 @@ export const updateBooking = async (req, res) => {
    }
 };
 
-// PATCH /booking/updateToPaid/:id
-export const updateToPaid = async (req, res) => {
+// GET /booking/getAllBookingsForClient/
+export const getAllBookingsForClient = async (req, res) => {
    try {
-   } catch (error) {
-      console.log(error);
-      res.status(500).json({
-         message: "Server Error! Unable to update booking to PAID.",
-         error: error.message,
+      const client = req.user;
+      console.log(client);
+      const bookings = await getAllBookingsForClientService(client._id);
+      res.status(200).json({
+         bookings: bookings,
       });
-   }
-};
-
-// GET /booking/getAllBookingsByClientId/:id
-export const getAllBookingsByClientId = async (req, res) => {
-   try {
    } catch (error) {
       console.log(error);
       res.status(500).json({
-         message: "Server Error! Unable to get bookings by client ID.",
-         error: error.message,
+         status: "error",
+         msg: "Server Error! Unable to get bookings by client ID.",
       });
    }
 };
@@ -538,8 +615,7 @@ export const getAllBookingsByClientId = async (req, res) => {
 export const getAllBookingsByVendorId = async (req, res) => {
    try {
       const vendorId = req.user;
-      const bookings =
-         await getAllPendingAndConfirmedBookingsForVendor(vendorId);
+      const bookings = await getAllBookingsForVendor(vendorId);
       res.status(200).json({
          bookings: bookings,
       });
@@ -586,6 +662,8 @@ export const updateCompletedBookings = async (req, res) => {
                actionByUserType: "ADMIN",
                actionByUserName: "SCHEDULED UPDATE",
                actionTimestamp: new Date(),
+               actionRemarks:
+                  "SCHEDULED UPDATE OF COMPLETED CONFIRMED BOOKINGS",
             };
             booking.status = "PENDING_PAYMENT";
             booking.actionHistory.push(newActionHistory);

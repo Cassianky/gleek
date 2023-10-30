@@ -246,14 +246,20 @@ const ActivityDetailsPage = () => {
          selectedDate,
          currentActivity.weekendPricing
       );
-      const onlineAddOn = calculateOnlineAddOn(
+      const offlineAddOn = calculateOfflineAddOn(
          location,
          currentActivity.offlinePricing
       );
-      const offlineAddOn = calculateOfflineAddOn(
+      const onlineAddOn = calculateOnlineAddOn(
          location,
          currentActivity.onlinePricing
       );
+      let activityPricingRule;
+      for (const pricingRule of currentActivity?.activityPricingRules) {
+         if (pax >= pricingRule.start && pax <= pricingRule.end) {
+            activityPricingRule = pricingRule;
+         }
+      }
       const timeParts = time.split(",");
       const cartItem = {
          activityId: currentActivity._id,
@@ -266,6 +272,7 @@ const ActivityDetailsPage = () => {
          offlineAddOnCost: offlineAddOn,
          startDateTime: timeParts[0],
          endDateTime: timeParts[1],
+         activityPricingRule: activityPricingRule._id,
       };
       if (
          cartItem.activityId !== null &&

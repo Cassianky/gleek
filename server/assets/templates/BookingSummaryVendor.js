@@ -101,7 +101,8 @@ export const BookingSummaryVendor = (booking) => {
                        booking.activityId.activityType
                     }</li>
                     <li>Theme: ${booking.activityId.theme.name}</li>
-                    <li> Sub-Theme: ${booking.activityId.subtheme[0].name}</li>
+                    <li>Sub-Theme: ${booking.activityId.subtheme[0].name}</li>
+                    <li>Booked By: ${booking.clientId.companyName}</li>
                   </ul>
                </th>
                <th class="ft113" style="width: 10%">${booking.totalPax}</th>

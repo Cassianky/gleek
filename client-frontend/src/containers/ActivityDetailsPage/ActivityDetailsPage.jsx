@@ -35,6 +35,7 @@ import DiscountIcon from "@mui/icons-material/Discount";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useSnackbarStore from "../../zustand/SnackbarStore";
 import useCartStore from "../../zustand/CartStore";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -84,7 +85,20 @@ const ActivityDetailsPage = () => {
 
   const handlePaxChange = (event) => {
     const { value } = event.target;
-    setPax(value);
+    if (value < currentActivity.minParticipants) {
+      setPax(currentActivity.minParticipants);
+    } else if (value > currentActivity.maxParticipants) {
+      setPax(currentActivity.maxParticipants);
+    } else {
+      setPax(value);
+    }
+    if (value < currentActivity.minParticipants) {
+      setPax(currentActivity.minParticipants);
+    } else if (value > currentActivity.maxParticipants) {
+      setPax(currentActivity.maxParticipants);
+    } else {
+      setPax(value);
+    }
   };
 
   const handleDateChange = (date) => {
@@ -143,44 +157,48 @@ const ActivityDetailsPage = () => {
     return pax * clientPriceCalculated(pax);
   };
 
-  const calculateWeekendAddOn = (selectedDate, weekendPricing) => {
+  const calculateWeekendAddOn = (
+    selectedDate,
+    weekendPricing,
+    totalBasePrice
+  ) => {
     if (
       weekendPricing.amount !== null &&
       (dayjs(selectedDate).day() === 0 || dayjs(selectedDate).day() === 6)
     ) {
       if (weekendPricing.isDiscount) {
-        return -weekendPricing.amount;
+        return -(weekendPricing.amount / 100) * totalBasePrice;
       } else {
-        return weekendPricing.amount;
+        return (weekendPricing.amount / 100) * totalBasePrice;
       }
     }
     return 0;
   };
 
-  const calculateOnlineAddOn = (location, onlinePricing) => {
+  const calculateOnlineAddOn = (location, onlinePricing, totalBasePrice) => {
     if (
       onlinePricing.amount !== null &&
       (location.toLowerCase().includes("off-site") ||
         location.toLowerCase().includes("on-site"))
     ) {
       if (onlinePricing.isDiscount) {
-        return -onlinePricing.amount;
+        return -(onlinePricing.amount / 100) * totalBasePrice;
       } else {
-        return onlinePricing.amount;
+        return (onlinePricing.amount / 100) * totalBasePrice;
       }
     }
     return 0;
   };
 
-  const calculateOfflineAddOn = (location, offlinePricing) => {
+  const calculateOfflineAddOn = (location, offlinePricing, totalBasePrice) => {
     if (
       offlinePricing.amount !== null &&
       location.toLowerCase().includes("virtual")
     ) {
       if (offlinePricing.isDiscount) {
-        return -offlinePricing.amount;
+        return -(offlinePricing.amount / 100) * totalBasePrice;
       } else {
-        return offlinePricing.amount;
+        return (offlinePricing.amount / 100) * totalBasePrice;
       }
     }
     return 0;
@@ -188,25 +206,28 @@ const ActivityDetailsPage = () => {
 
   // Combined function to calculate the total price
   const totalPrice = () => {
-    let totalPriceCalculated = calculateBasePrice(pax);
+    let totalBasePrice = calculateBasePrice(pax);
 
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-    );
-
-    const onlineAddOn = calculateOnlineAddOn(
-      location,
-      currentActivity.offlinePricing,
+      totalBasePrice
     );
 
     const offlineAddOn = calculateOfflineAddOn(
       location,
-      currentActivity.onlinePricing,
+      currentActivity.offlinePricing,
+      totalBasePrice
     );
 
-    totalPriceCalculated =
-      totalPriceCalculated + weekendAddOn + onlineAddOn + offlineAddOn;
+    const onlineAddOn = calculateOnlineAddOn(
+      location,
+      currentActivity.onlinePricing,
+      totalBasePrice
+    );
+
+    const totalPriceCalculated =
+      totalBasePrice + weekendAddOn + onlineAddOn + offlineAddOn;
     return totalPriceCalculated?.toFixed(2);
   };
 
@@ -219,18 +240,28 @@ const ActivityDetailsPage = () => {
   };
 
   const handleAddToCart = async (event) => {
+    let totalBasePrice = calculateBasePrice(pax);
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-    );
-    const onlineAddOn = calculateOnlineAddOn(
-      location,
-      currentActivity.offlinePricing,
+      totalBasePrice
     );
     const offlineAddOn = calculateOfflineAddOn(
       location,
-      currentActivity.onlinePricing,
+      currentActivity.offlinePricing,
+      totalBasePrice
     );
+    const onlineAddOn = calculateOnlineAddOn(
+      location,
+      currentActivity.onlinePricing,
+      totalBasePrice
+    );
+    let activityPricingRule;
+    for (const pricingRule of currentActivity?.activityPricingRules) {
+      if (pax >= pricingRule.start && pax <= pricingRule.end) {
+        activityPricingRule = pricingRule;
+      }
+    }
     const timeParts = time.split(",");
     const cartItem = {
       activityId: currentActivity._id,
@@ -243,6 +274,7 @@ const ActivityDetailsPage = () => {
       offlineAddOnCost: offlineAddOn,
       startDateTime: timeParts[0],
       endDateTime: timeParts[1],
+      activityPricingRule: activityPricingRule._id,
     };
     if (
       cartItem.activityId !== null &&
@@ -416,7 +448,7 @@ const ActivityDetailsPage = () => {
                           format="DD/MM/YYYY"
                           minDate={dayjs().add(
                             currentActivity?.bookingNotice,
-                            "days",
+                            "days"
                           )}
                           shouldDisableDate={shouldDisableDate}
                           sx={{ marginRight: "12px" }}
@@ -567,16 +599,16 @@ const ActivityDetailsPage = () => {
                               <Typography>
                                 {currentActivity?.weekendPricing?.isDiscount
                                   ? "-"
-                                  : ""}
+                                  : "+"}
                               </Typography>
                               <Typography>
                                 {currentActivity?.weekendPricing?.isDiscount
                                   ? "-"
                                   : ""}
-                                $
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>
@@ -594,10 +626,10 @@ const ActivityDetailsPage = () => {
                               <Typography>
                                 {currentActivity?.offlinePricing?.isDiscount
                                   ? "-"
-                                  : ""}
-                                {""}$
+                                  : "+"}
+                                {""}
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                               </Typography>
                             </Box>
@@ -615,11 +647,12 @@ const ActivityDetailsPage = () => {
                               <Typography>
                                 {currentActivity?.onlinePricing?.isDiscount
                                   ? "-"
-                                  : ""}
-                                {""}$
+                                  : "+"}
+                                {""}
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>
@@ -779,8 +812,11 @@ const ActivityDetailsPage = () => {
                 Pricing:
               </Typography>
               <Grid container spacing={2}>
-                {currentActivity?.activityPricingRules.map(
-                  (activityPricingRule, index) => (
+                {[...currentActivity?.activityPricingRules]
+                  .sort((a, b) => {
+                    return b.clientPrice - a.clientPrice;
+                  })
+                  .map((activityPricingRule, index) => (
                     <Grid item key={index}>
                       <Box
                         display="flex"
@@ -798,14 +834,18 @@ const ActivityDetailsPage = () => {
                         currentActivity?.activityPricingRules.length - 1 ? (
                           <Box display="flex" flexDirection="row">
                             <DiscountIcon color="accent" />
-                            <Typography
-                              mb={2}
-                              ml={1}
-                              color={accent}
-                              fontWeight={700}
-                            >
-                              Most For Value Price
-                            </Typography>
+                            <Box>
+                              <Typography
+                                ml={1}
+                                color={accent}
+                                fontWeight={700}
+                              >
+                                Most For Value Price
+                              </Typography>
+                              <Typography mb={2} ml={1} color={accent}>
+                                (Recommended)
+                              </Typography>
+                            </Box>
                           </Box>
                         ) : null}
                         <Box display="flex" flexDirection="row" mb={2}>
@@ -829,8 +869,7 @@ const ActivityDetailsPage = () => {
                         </Typography>
                       </Box>
                     </Grid>
-                  ),
-                )}
+                  ))}
               </Grid>
               {(currentActivity?.offlinePricing?.isDiscount ||
                 currentActivity?.onlinePricing?.isDiscount ||
@@ -846,37 +885,28 @@ const ActivityDetailsPage = () => {
               )}
               {currentActivity?.offlinePricing?.isDiscount ? (
                 <Box display="flex" flexDirection="row">
-                  <LocalOfferIcon color="primary" />
-                  <Typography ml={1} variant="caption" color={accent}>
-                    $
-                  </Typography>
+                  <LocalOfferIcon color="primary" sx={{ marginRight: "5px" }} />
                   <Typography>
-                    {currentActivity?.offlinePricing.amount.toFixed(2)} discount
-                    for Offline option
+                    {currentActivity?.offlinePricing.amount.toFixed(2)}% off for
+                    Offline option
                   </Typography>
                 </Box>
               ) : null}
               {currentActivity?.onlinePricing?.isDiscount ? (
                 <Box display="flex" flexDirection="row">
-                  <LocalOfferIcon color="primary" />
-                  <Typography ml={1} variant="caption" color={accent}>
-                    $
-                  </Typography>
+                  <LocalOfferIcon color="primary" sx={{ marginRight: "5px" }} />
                   <Typography>
-                    {currentActivity?.onlinePricing.amount.toFixed(2)} discount
-                    for Online option
+                    {currentActivity?.onlinePricing.amount.toFixed(2)}% off for
+                    Online option
                   </Typography>
                 </Box>
               ) : null}
               {currentActivity?.weekendPricing?.isDiscount ? (
                 <Box display="flex" flexDirection="row">
-                  <LocalOfferIcon color="primary" />
-                  <Typography ml={1} variant="caption" color={accent}>
-                    $
-                  </Typography>
+                  <LocalOfferIcon color="primary" sx={{ marginRight: "5px" }} />
                   <Typography>
-                    {currentActivity?.weekendPricing.amount.toFixed(2)} discount
-                    for Weekend option
+                    {currentActivity?.weekendPricing.amount.toFixed(2)}% off for
+                    Weekend option
                   </Typography>
                 </Box>
               ) : null}
@@ -888,6 +918,7 @@ const ActivityDetailsPage = () => {
                   currentActivity?.weekendPricing?.amount !== null)) && (
                 <Typography
                   mb={1}
+                  mt={2}
                   color="secondary"
                   variant="subtitle1"
                   fontWeight="700"
@@ -898,38 +929,38 @@ const ActivityDetailsPage = () => {
               {!currentActivity?.offlinePricing?.isDiscount &&
               currentActivity?.offlinePricing?.amount !== null ? (
                 <Box display="flex" flexDirection="row">
-                  <LocalOfferIcon color="primary" />
-                  <Typography ml={1} variant="caption" color={accent}>
-                    $
-                  </Typography>
+                  <MonetizationOnIcon
+                    color="primary"
+                    sx={{ marginRight: "5px" }}
+                  />
                   <Typography>
-                    {currentActivity?.offlinePricing.amount.toFixed(2)} discount
-                    for Offline option
+                    {currentActivity?.offlinePricing.amount.toFixed(2)}% added
+                    for for Offline option
                   </Typography>
                 </Box>
               ) : null}
               {!currentActivity?.onlinePricing?.isDiscount &&
               currentActivity?.onlinePricing?.amount !== null ? (
                 <Box display="flex" flexDirection="row">
-                  <LocalOfferIcon color="primary" />
-                  <Typography ml={1} variant="caption" color={accent}>
-                    $
-                  </Typography>
+                  <MonetizationOnIcon
+                    color="primary"
+                    sx={{ marginRight: "5px" }}
+                  />
                   <Typography>
-                    {currentActivity?.onlinePricing.amount.toFixed(2)} discount
-                    for Online option
+                    {currentActivity?.onlinePricing.amount.toFixed(2)}% added
+                    for for Online option
                   </Typography>
                 </Box>
               ) : null}
               {!currentActivity?.weekendPricing?.isDiscount &&
               currentActivity?.weekendPricing?.amount !== null ? (
                 <Box display="flex" flexDirection="row">
-                  <LocalOfferIcon color="primary" />
-                  <Typography ml={1} variant="caption" color={accent}>
-                    $
-                  </Typography>
+                  <MonetizationOnIcon
+                    color="primary"
+                    sx={{ marginRight: "5px" }}
+                  />
                   <Typography>
-                    {currentActivity?.weekendPricing.amount.toFixed(2)} discount
+                    {currentActivity?.weekendPricing.amount.toFixed(2)}% added
                     for Weekend option
                   </Typography>
                 </Box>

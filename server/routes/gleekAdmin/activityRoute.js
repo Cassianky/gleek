@@ -11,6 +11,7 @@ import {
   getPreSignedImgs,
   rejectActivity,
   saveActivity,
+  updateTheme,
 } from "../../controller/activityController.js";
 import { uploadS3ActivityImages } from "../../middleware/multer.js";
 import adminAuth from "../../middleware/adminAuth.js";
@@ -19,12 +20,13 @@ const router = express.Router();
 router.post(
   "/saveActivity",
   uploadS3ActivityImages.array("images", 5),
-  saveActivity,
+  saveActivity
 );
 router.get("/all", getAllActivities);
 router.get("/myActivities/:id", getAllActivitiesForAdmin);
 router.get("/viewActivity/:id", getActivity);
 router.post("/addThemes", bulkAddThemes);
+router.post("/updateTheme", updateTheme);
 router.get("/getThemes", getAllThemes);
 router.delete("/deleteDraft/:id", deleteActivityDraft);
 router.delete("/bulkDelete", bulkDeleteActivityDraft);

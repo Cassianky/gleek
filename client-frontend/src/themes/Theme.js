@@ -50,6 +50,14 @@ const theme = createTheme({
     },
     success: {
       main: "#2e7d32",
+      light: "#80af82",
+      pastel: "#81c784",
+    },
+    light_green: {
+      main: "#81c784",
+    },
+    pale_purple: {
+      main: "#c7bfe2",
     },
   },
   typography: {

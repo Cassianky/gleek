@@ -210,20 +210,17 @@ const ActivityDetailsPage = () => {
 
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
-      currentActivity.weekendPricing,
-      totalBasePrice
+      currentActivity.weekendPricing
     );
 
     const offlineAddOn = calculateOfflineAddOn(
       location,
-      currentActivity.offlinePricing,
-      totalBasePrice
+      currentActivity.offlinePricing
     );
 
     const onlineAddOn = calculateOnlineAddOn(
       location,
-      currentActivity.onlinePricing,
-      totalBasePrice
+      currentActivity.onlinePricing
     );
 
     const totalPriceCalculated =
@@ -243,18 +240,15 @@ const ActivityDetailsPage = () => {
     let totalBasePrice = calculateBasePrice(pax);
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
-      currentActivity.weekendPricing,
-      totalBasePrice
+      currentActivity.weekendPricing
     );
     const offlineAddOn = calculateOfflineAddOn(
       location,
-      currentActivity.offlinePricing,
-      totalBasePrice
+      currentActivity.offlinePricing
     );
     const onlineAddOn = calculateOnlineAddOn(
       location,
-      currentActivity.onlinePricing,
-      totalBasePrice
+      currentActivity.onlinePricing
     );
     let activityPricingRule;
     for (const pricingRule of currentActivity?.activityPricingRules) {
@@ -630,8 +624,7 @@ const ActivityDetailsPage = () => {
                                 {""}
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
                                   2
-                                )}{" "}
-                                %
+                                )}
                               </Typography>
                             </Box>
                           </Box>

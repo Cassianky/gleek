@@ -27,6 +27,7 @@ import useVendorStore from "../zustand/VendorStore.js";
 import useShopStore from "../zustand/ShopStore.js";
 import useSnackbarStore from "../zustand/SnackbarStore.js";
 import useCartStore from "../zustand/CartStore.js";
+import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import {
   BookmarkBorderOutlined,
   LogoutOutlined,
@@ -361,6 +362,17 @@ function NavBar(props) {
                     <BookmarkBorderOutlined />
                   </ListItemIcon>
                   <ListItemText>Bookmarks</ListItemText>
+                </MenuItem>
+                <MenuItem
+                  sx={{ px: "32px" }}
+                  onClick={() => {
+                    navigate("/bookings");
+                  }}
+                >
+                  <ListItemIcon>
+                    <EventOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText>My Bookings</ListItemText>
                 </MenuItem>
                 <MenuItem sx={{ px: "32px" }} onClick={logout}>
                   <ListItemIcon>

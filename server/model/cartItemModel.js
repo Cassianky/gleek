@@ -12,10 +12,6 @@ const cartItemSchema = new mongoose.Schema({
     required: true,
     ref: "Client",
   },
-  vendorId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Vendor",
-  },
   // CART ITEM INFORMATION
   startDateTime: {
     type: Date,
@@ -26,10 +22,6 @@ const cartItemSchema = new mongoose.Schema({
     required: true,
   },
   totalCost: {
-    type: Number,
-    required: true,
-  },
-  totalVendorAmount: {
     type: Number,
     required: true,
   },
@@ -53,15 +45,6 @@ const cartItemSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  vendorWeekendAddOnCost: {
-    type: Number,
-  },
-  vendorOnlineAddOnCost: {
-    type: Number,
-  },
-  vendorOfflineAddOnCost: {
-    type: Number,
-  },
   activityTitle: {
     type: String,
     required: true,
@@ -80,11 +63,6 @@ const cartItemSchema = new mongoose.Schema({
   },
   preSignedImages: {
     type: Array,
-  },
-  activityPricingRule: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "ActivityPricingRules",
   },
 });
 

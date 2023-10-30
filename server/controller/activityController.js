@@ -801,23 +801,30 @@ const retrieveActivities = async (adminId) => {
 
 export const bulkAddThemes = async (req, res) => {
   try {
-    const { themes, parentStatus } = req.body;
-    await processThemes(themes, parentStatus);
-    const updatedThemes = await findAllThemes();
-    res.status(201).json({
-      data: updatedThemes,
-      message: "Themes added successfully",
-    });
+    const { data } = req.body;
+    processThemes(data)
+      .then(() => {
+        console.log("Themes added successfully");
+        res.status(201).json({
+          message: "Themes added successfully",
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        res
+          .status(500)
+          .json({ err: "Themes cannot be added", message: err.message });
+      });
   } catch (error) {
     console.log(error);
     res
       .status(500)
-      .json({ error: `Error when adding themes: ${err.message} ` });
+      .json({ error: "Themes cannot be added", message: error.message });
   }
 };
 
-const processThemes = async (themes, parentStatus) => {
-  for (const { name, parent, status } of themes) {
+const processThemes = async (data) => {
+  for (const { name, parent } of data) {
     let parentTheme = null;
 
     if (parent) {
@@ -826,71 +833,42 @@ const processThemes = async (themes, parentStatus) => {
     }
 
     if (!parentTheme) {
-      if (parent) {
-        parentTheme = new ThemeModel({ name: parent, status: parentStatus });
-        await parentTheme.save();
-      }
+      parentTheme = new ThemeModel({ name: parent });
+      await parentTheme.save();
     }
 
-    const childTheme = new ThemeModel({ name, parent: parentTheme, status });
+    const childTheme = new ThemeModel({ name, parent: parentTheme });
     await childTheme.save();
   }
 };
 
-const findAllThemes = async () => {
-  const themes = await ThemeModel.find().populate("parent");
-
-  const parentThemesWithChildren = {};
-
-  themes.forEach((theme) => {
-    const parentId = theme.parent ? theme.parent._id.toString() : null;
-    if (!parentThemesWithChildren[parentId]) {
-      parentThemesWithChildren[parentId] = {
-        parent: theme.parent,
-        children: [],
-      };
-    }
-
-    parentThemesWithChildren[parentId].children.push(theme);
-  });
-  const parentThemes = Object.values(parentThemesWithChildren);
-  return parentThemes;
-};
-
 export const getAllThemes = async (req, res) => {
   try {
-    const parentThemes = await findAllThemes();
+    const themes = await ThemeModel.find().populate("parent");
+
+    const parentThemesWithChildren = {};
+
+    themes.forEach((theme) => {
+      const parentId = theme.parent ? theme.parent._id.toString() : null;
+
+      if (!parentThemesWithChildren[parentId]) {
+        parentThemesWithChildren[parentId] = {
+          parent: theme.parent,
+          children: [],
+        };
+      }
+
+      parentThemesWithChildren[parentId].children.push(theme);
+    });
+    const parentThemes = Object.values(parentThemesWithChildren);
     res.status(200).json({
       data: parentThemes,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: `Themes cannot be added: ${error.message}` });
-  }
-};
-
-export const updateTheme = async (req, res) => {
-  try {
-    const { theme } = req.body;
-    console.log(req.body);
-    const updatedTheme = await ThemeModel.findByIdAndUpdate(
-      theme._id,
-      {
-        name: theme.name,
-        status: theme.status,
-      },
-      { new: true }
-    );
-    const updatedThemes = await findAllThemes();
-    res.status(201).json({
-      data: updatedThemes,
-      message: "Theme updated successfully",
-    });
-  } catch (error) {
-    console.error(error);
     res
       .status(500)
-      .json({ error: `Error when updating theme: ${error.message} ` });
+      .json({ error: "Themes cannot be added", message: error.message });
   }
 };
 

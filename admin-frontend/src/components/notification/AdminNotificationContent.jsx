@@ -3,9 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useAdminStore, useNotificationStore } from "../../zustand/GlobalStore";
 import AdminNotificationPopper from "./AdminNotificationPopper";
-import AxiosConnect from "../../utils/AxiosConnect";
 
 const timeCalculator = (givenDate) => {
   // Parse the ISO date string into a Date object
@@ -38,19 +36,15 @@ const timeCalculator = (givenDate) => {
 };
 
 const AdminNotificationContent = ({ notification }) => {
-  const { retrieveAndSetAllNotifications } = useNotificationStore();
-  const adminCredentials = useAdminStore((state) => state.admin);
   let calculatedTime = timeCalculator(notification.createdDate);
   const [isPopperOpen, setPopperOpen] = useState(false);
   const [popperAnchorEl, setPopperAnchorEl] = useState(null);
 
-  const backgroundColorStyle = {
-    backgroundColor: notification.read ? "White" : "LightGrey",
-  };
-
   const handlePopperToggle = (event) => {
     setPopperOpen(!isPopperOpen);
     setPopperAnchorEl(event.currentTarget);
+    console.log(event.currentTarget);
+    console.log("Button clicked");
   };
 
   const handleClosePopper = () => {
@@ -59,23 +53,19 @@ const AdminNotificationContent = ({ notification }) => {
   };
 
   const handleMarkAsRead = () => {
-    AxiosConnect.patch(
-      "/notification/updateNotificationAsRead",
-      "",
-      notification,
-    );
-    retrieveAndSetAllNotifications(adminCredentials);
+    // Implement logic to mark the notification as read here
+    // You may want to call an API or update the state accordingly
     handleClosePopper();
   };
 
   const handleDelete = () => {
-    AxiosConnect.patch("/notification/deleteNotification", "", notification);
-    retrieveAndSetAllNotifications(adminCredentials);
+    // Implement logic to delete the notification here
+    // You may want to call an API or update the state accordingly
     handleClosePopper();
   };
 
   return (
-    <Card style={{ ...backgroundColorStyle, marginBottom: "4px" }}>
+    <Card>
       <CardContent
         style={{
           display: "flex",

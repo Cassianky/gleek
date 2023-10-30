@@ -1,4 +1,5 @@
 import { useAdminStore, useNotificationStore } from "../../zustand/GlobalStore";
+import AxiosConnect from "../../utils/AxiosConnect";
 import { useEffect, useState } from "react";
 import { Button, Typography, CircularProgress } from "@mui/material";
 import AdminNotificationList from "./AdminNotificationList";
@@ -7,15 +8,22 @@ import { useTheme } from "@emotion/react";
 
 const AdminNotificationPage = () => {
   const adminCredentials = useAdminStore((state) => state.admin);
-  const { notifications, loading, retrieveAndSetAllNotifications } =
+  const { notifications, unreadNotificationsCount, setReceivedNotifications } =
     useNotificationStore();
+  const [loading, setLoading] = useState(true); // Added loading state
 
   const theme = useTheme();
 
   useEffect(() => {
     // Fetch notifications when the component mounts
-    retrieveAndSetAllNotifications(adminCredentials);
-  }, []);
+    AxiosConnect.getWithParams("/notification/adminAllNotifications", {
+      adminId: adminCredentials._id,
+      adminRole: adminCredentials.role,
+    }).then((body) => {
+      setReceivedNotifications(body.data.data);
+      setLoading(false);
+    });
+  }, [setReceivedNotifications, adminCredentials]);
 
   return (
     <MainBodyContainer

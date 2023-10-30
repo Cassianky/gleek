@@ -57,11 +57,7 @@ const useShopStore = create((set) => ({
           searchValue: searchValue,
         },
       );
-      const sortedActivities = [...response.data.activities].sort(
-        (a, b) => new Date(b.createdDate) - new Date(a.createdDate),
-      );
-      set({ sortBy: "Newest First" });
-      set({ activities: sortedActivities });
+      set({ activities: response.data.activities });
       console.log(response.data.activities);
       setTimeout(() => {
         set({ getFilteredActivitiesLoading: false });
@@ -80,11 +76,7 @@ const useShopStore = create((set) => ({
           searchValue,
         },
       );
-      const sortedActivities = [...response.data.activities].sort(
-        (a, b) => new Date(b.createdDate) - new Date(a.createdDate),
-      );
-      set({ sortBy: "Newest First" });
-      set({ activities: sortedActivities });
+      set({ activities: response.data.activities });
       setTimeout(() => {
         set({ getFilteredActivitiesLoading: false });
       }, 200);

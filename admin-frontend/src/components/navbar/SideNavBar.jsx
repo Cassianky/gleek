@@ -15,17 +15,13 @@ const drawerWidth = 240;
 const activityManagementList = [
   { "Activity Approvals": "/viewPublishedActivities" },
   { "View My Activities": "/viewActivityDrafts" },
-  { "Activity Themes": "/activityThemes" },
 ];
 const userManagementList = [
   { "Admin Team": "/adminTeam" },
   { Clients: "/viewAllClients" },
   { "Vendor Partners": "/viewAllVendors" },
 ];
-const bookingManagementList = [
-  { "View Active Bookings": "/viewActiveBookings" },
-  { "View Past Bookings": "/viewPastBookings" },
-];
+const bookingManagementList = [{ "View Bookings": "/bookings" }];
 
 const StyledLink = styled(Link)`
   text-decoration: none;

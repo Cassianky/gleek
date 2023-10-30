@@ -22,12 +22,9 @@ const SearchBar = (props) => {
     getInitialSuggestions,
   } = useShopStore();
 
-  useEffect(() => {
-    getInitialSuggestions();
-  }, []);
-
   // Define your data source for suggestions here
   const getSuggestions = (value) => {
+    getInitialSuggestions();
     // maximum of 5 suggestions at a time
     const filteredSuggestions = initialSuggestions
       .filter((option) => option.toLowerCase().includes(value.toLowerCase()))

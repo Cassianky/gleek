@@ -16,8 +16,6 @@ import { useAdminStore, useNotificationStore } from "../../zustand/GlobalStore";
 import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
-import AxiosConnect from "../../utils/AxiosConnect";
 
 const HomePageNavBar = ({ toggleSidebar }) => {
   const theme = useTheme();
@@ -43,13 +41,6 @@ const HomePageNavBar = ({ toggleSidebar }) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
-  const handleManualCompleteBookingsUpdate = () => {
-    AxiosConnect.post("/booking/updateCompletedBookings").then((response) => {
-      console.log(response);
-    });
-  };
-
   const stringAvatar = () => {
     const initials = admin.name[0].toUpperCase();
     return {
@@ -83,7 +74,6 @@ const HomePageNavBar = ({ toggleSidebar }) => {
               aria-label="show 17 new notifications"
               color="inherit"
             >
-              <AccessAlarmIcon onClick={handleManualCompleteBookingsUpdate} />
               <Badge badgeContent={unreadNotificationsCount} color="error">
                 <NotificationsIcon onClick={handleNotificationClick} />
               </Badge>

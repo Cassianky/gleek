@@ -13,7 +13,7 @@ export const updateBookingStatusActionHistory = async (
   newStatus,
   actionByUserType,
   userName,
-  actionRemarks
+  actionRemarks,
 ) => {
   const updatedBooking = await BookingModel.findByIdAndUpdate(
     bookingId,
@@ -28,7 +28,7 @@ export const updateBookingStatusActionHistory = async (
         },
       },
     },
-    { new: true }
+    { new: true },
   );
   return updatedBooking;
 };

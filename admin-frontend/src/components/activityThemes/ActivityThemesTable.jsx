@@ -35,7 +35,7 @@ const ActivityThemesTable = ({ themes, updateTheme, openSnackbar }) => {
   };
 
   const [filteredThemes, setFilteredThemes] = useState(
-    themes?.data?.filter((t) => t?.parent !== null)
+    themes?.data?.filter((t) => t?.parent !== null),
   );
 
   const handleClose = () => {
@@ -100,7 +100,7 @@ const ActivityThemesTable = ({ themes, updateTheme, openSnackbar }) => {
                       sx={{
                         backgroundColor: alpha(
                           theme.palette.light_purple.main,
-                          0.12
+                          0.12,
                         ),
                       }}
                     >
@@ -175,7 +175,7 @@ const ActivityThemesTable = ({ themes, updateTheme, openSnackbar }) => {
         PropTypes.shape({
           name: PropTypes.string.isRequired,
           status: PropTypes.string.isRequired,
-        })
+        }),
       ),
     }).isRequired,
   };
@@ -254,9 +254,9 @@ ActivityThemesTable.propTypes = {
           PropTypes.shape({
             name: PropTypes.string.isRequired,
             status: PropTypes.string.isRequired,
-          })
+          }),
         ),
-      })
+      }),
     ),
   }),
   updateTheme: PropTypes.func.isRequired,

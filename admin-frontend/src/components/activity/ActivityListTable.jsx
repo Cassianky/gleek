@@ -1,8 +1,5 @@
 import styled from "@emotion/styled";
-import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
-import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import TaskIcon from "@mui/icons-material/Task";
+import AddIcon from "@mui/icons-material/Add";
 import {
   AppBar,
   Badge,
@@ -19,22 +16,45 @@ import {
   TextField,
   Toolbar,
   Typography,
+  alpha,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
-import AxiosConnect from "../../utils/AxiosConnect";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   useActivityStore,
   useAdminStore,
   useSnackbarStore,
 } from "../../zustand/GlobalStore";
+import TaskIcon from "@mui/icons-material/Task";
+import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
+import DoneIcon from "@mui/icons-material/Done";
+import CloseIcon from "@mui/icons-material/Close";
+import React from "react";
 import ActivityDetailsQuickView from "./ActivityDetailsQuickView.jsx";
+import AxiosConnect from "../../utils/AxiosConnect";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
+const StyledButton = styled(Button)`
+  padding-left: 6px;
+`;
+
+const StyledDiv = styled("div")(({ theme }) => ({
+  position: "relative",
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.light_purple.main, 0.15),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  marginTop: 16,
+  marginBottom: 16,
+}));
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -51,6 +71,7 @@ const WrappedTextCell = (params) => {
 };
 
 const ActivityListTable = ({ activities, pendingApprovalActivities }) => {
+  const navigate = useNavigate();
   const [currentTabRows, setCurrentTabRows] = useState(activities);
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [activityToReject, setActivityToReject] = useState();
@@ -89,6 +110,7 @@ const ActivityListTable = ({ activities, pendingApprovalActivities }) => {
   }, [activities, pendingApprovalActivities, selectedActivityTab]);
 
   const handleRowClick = async (activity) => {
+    // navigate(`/viewActivity/${activity._id}`);
     const res = await AxiosConnect.get(`/activity/getImages/${activity._id}`);
     setImgs(res.data.activityImages);
     setVendorProfile(res.data.vendorProfileImage);

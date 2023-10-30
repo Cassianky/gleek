@@ -134,7 +134,7 @@ const NestedCheckboxList = (props) => {
       )}
       {!isLoading && (
         <List>
-          {props.themes?.map((item, index) => (
+          {props.themes.map((item, index) => (
             <div key={index}>
               {/* Parent Checkbox */}
               <ListItemButton onClick={() => handleToggleParent(index)}>

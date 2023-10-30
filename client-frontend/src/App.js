@@ -1,46 +1,43 @@
-import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import CartPage from "./containers/Client/CartPage";
+import ShopPage from "./containers/Client/ShopPage";
+import HomePage from "./containers/HomePage";
 import Layout from "./components/Layout";
+import LoginPage from "./containers/LoginPage";
+import RegisterPage from "./containers/Client/RegisterPage";
 import ClientProtectedRoute from "./components/Routes/ClientProtectedRoute";
-import ActivityDetailsPage from "./containers/ActivityDetailsPage/ActivityDetailsPage";
+import SocketConnection from "./utils/SocketConnection";
 import AccountDetails from "./containers/Client/Account/AccountDetails";
-import PasswordChange from "./containers/Client/Account/PasswordChange";
 import Privacy from "./containers/Client/Account/Privacy";
+import PasswordChange from "./containers/Client/Account/PasswordChange";
 import ProfilePicture from "./containers/Client/Account/ProfilePicture";
 import VerifyEmail from "./containers/Client/Account/VerifyEmail";
 import MyBookmarks from "./containers/Client/Bookmark/MyBookmarks";
-import CartPage from "./containers/Client/CartPage";
+import ActivityDetailsPage from "./containers/ActivityDetailsPage/ActivityDetailsPage";
 import CheckoutPage from "./containers/Client/CheckoutPage";
-import RegisterPage from "./containers/Client/RegisterPage";
-import ShopPage from "./containers/Client/ShopPage";
-import HomePage from "./containers/HomePage";
-import LoginPage from "./containers/LoginPage";
-import SocketConnection from "./utils/SocketConnection";
-import MyBookings from "./containers/Client/Booking/MyBookings";
-import BookingsDetails from "./containers/Client/Booking/BookingsDetails";
 
-import VendorProtectedRoute from "./components/Routes/VendorProtectedRoute";
-import VendorDetails from "./containers/Client/Activity/VendorDetails";
-import ForgotPassword from "./containers/Client/Password/ClientForgotPassword";
-import ResetPassword from "./containers/Client/Password/ResetPassword";
+import useClientStore from "./zustand/ClientStore";
+import VendorRegisterPage from "./containers/Vendor/VendorRegisterPage";
 import ErrorPage from "./containers/ErrorPage";
-import AccountDetailsVendor from "./containers/Vendor/AccountDetailsVendor";
+import useVendorStore from "./zustand/VendorStore";
+import VendorProtectedRoute from "./components/Routes/VendorProtectedRoute";
 import ActivitiesPage from "./containers/Vendor/Activity/ActivitiesPage";
-import CreateActivityPage from "./containers/Vendor/Activity/CreateActivityPage";
-import EditActivityDraftPage from "./containers/Vendor/Activity/EditActivityDraftPage";
+import AccountDetailsVendor from "./containers/Vendor/AccountDetailsVendor";
+import ProfilePictureVendor from "./containers/Vendor/ProfilePictureVendor";
+import PasswordChangeVendor from "./containers/Vendor/PasswordChangeVendor";
+import ResetPassword from "./containers/Client/Password/ResetPassword";
+import ForgotPassword from "./containers/Client/Password/ClientForgotPassword";
+import VerifyEmailVendor from "./containers/Vendor/VerifyEmailVendor";
+import PrivacyVendor from "./containers/Vendor/PrivacyVendor";
+import VendorForgotPassword from "./containers/Vendor/Password/VendorForgotPassword";
+import VendorResetPassword from "./containers/Vendor/Password/ResetPassword";
+import VendorDetails from "./containers/Client/Activity/VendorDetails";
 import BlockoutDashboard from "./containers/Vendor/Blockout/BlockoutDashboard";
 import BlockoutMultipleActivities from "./containers/Vendor/Blockout/BlockoutMultipleActivities";
+import CreateActivityPage from "./containers/Vendor/Activity/CreateActivityPage";
+import EditActivityDraftPage from "./containers/Vendor/Activity/EditActivityDraftPage";
 import BlockoutSingleActivity from "./containers/Vendor/Blockout/BlockoutSingleActivity";
-import BookingsPage from "./containers/Vendor/Booking/BookingsPage";
-import VendorResetPassword from "./containers/Vendor/Password/ResetPassword";
-import VendorForgotPassword from "./containers/Vendor/Password/VendorForgotPassword";
-import PasswordChangeVendor from "./containers/Vendor/PasswordChangeVendor";
-import PrivacyVendor from "./containers/Vendor/PrivacyVendor";
-import ProfilePictureVendor from "./containers/Vendor/ProfilePictureVendor";
-import VendorRegisterPage from "./containers/Vendor/VendorRegisterPage";
-import VerifyEmailVendor from "./containers/Vendor/VerifyEmailVendor";
-import useClientStore from "./zustand/ClientStore";
-import useVendorStore from "./zustand/VendorStore";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -160,24 +157,6 @@ function App() {
             }
           />
           <Route
-            exact
-            path="/bookings"
-            element={
-              <ClientProtectedRoute>
-                <MyBookings />
-              </ClientProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/booking/:bookingId"
-            element={
-              <ClientProtectedRoute>
-                <BookingsDetails />
-              </ClientProtectedRoute>
-            }
-          />
-          <Route
             path="/login"
             element={
               <LoginPage
@@ -223,14 +202,6 @@ function App() {
             element={
               <VendorProtectedRoute>
                 <ActivitiesPage />
-              </VendorProtectedRoute>
-            }
-          />
-          <Route
-            path="/vendor/bookings"
-            element={
-              <VendorProtectedRoute>
-                <BookingsPage />
               </VendorProtectedRoute>
             }
           />

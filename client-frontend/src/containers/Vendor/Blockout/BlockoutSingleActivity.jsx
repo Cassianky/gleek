@@ -213,6 +213,7 @@ function BlockoutSingleActivity() {
                     maxDateTime={
                       blockedStartDateTime
                         ? dayjs(blockedStartDateTime)
+                          
                             .set("hour", 23)
                             .set("minute", 59)
                         : null

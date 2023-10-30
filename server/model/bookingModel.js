@@ -13,11 +13,6 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     ref: "Client",
   },
-  vendorId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "Vendor",
-  },
   // BOOKING INFORMATION (can be used for invoice generation)
   startDateTime: {
     type: Date,
@@ -28,10 +23,6 @@ const bookingSchema = new mongoose.Schema({
     required: true,
   },
   totalCost: {
-    type: Number,
-    required: true,
-  },
-  totalVendorAmount: {
     type: Number,
     required: true,
   },
@@ -54,15 +45,6 @@ const bookingSchema = new mongoose.Schema({
   offlineAddOnCost: {
     type: Number,
     required: true,
-  },
-  vendorWeekendAddOnCost: {
-    type: Number,
-  },
-  vendorOnlineAddOnCost: {
-    type: Number,
-  },
-  vendorOfflineAddOnCost: {
-    type: Number,
   },
   activityTitle: {
     type: String,
@@ -106,47 +88,29 @@ const bookingSchema = new mongoose.Schema({
       "CONFIRMED",
       "REJECTED",
       "CANCELLED",
-      "PENDING_PAYMENT",
+      "PENDING PAYMENT",
       "PAID",
     ],
     default: "PENDING_CONFIRMATION",
   },
-  rejectionReason: { type: String },
   creationDateTime: {
     type: Date,
     required: true,
     default: Date.now(),
   },
-  actionHistory: [
-    {
-      newStatus: {
-        type: String,
-        enum: ["CONFIRMED", "REJECTED", "CANCELLED", "PAID", "PENDING_PAYMENT"], // Enum for action types
-        required: true,
-      },
-      actionByUserType: {
-        type: String, // Store user type (admin or vendor or client)
-        enum: ["ADMIN", "VENDOR", "CLIENT"],
-        required: true,
-      },
-      actionByUserName: {
-        type: String,
-        required: true,
-      },
-      actionTimestamp: {
-        type: Date,
-        required: true,
-        default: Date.now,
-      },
-      actionRemarks: {
-        type: String, // Store cancellation or rejection reasons if action type is REJECT or CANCEL
-      },
-    },
-  ],
-  activityPricingRule: {
+  reviewedByAdminId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "ActivityPricingRules",
+    ref: "Admin",
+  },
+  reviewedDateTime: {
+    type: Date,
+  },
+  lastEditedByAdminId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Admin",
+  },
+  lastEditedDateTime: {
+    type: Date,
   },
 });
 

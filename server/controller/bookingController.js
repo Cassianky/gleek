@@ -10,10 +10,7 @@ import {
   updateBookingStatusActionHistory,
 } from "../service/bookingService.js";
 import VendorModel from "../model/vendorModel.js";
-import {
-  getAllPendingAndConfirmedBookingsForVendor,
-  getAllBookingsForClientService,
-} from "../service/bookingService.js";
+import { getAllBookingsForClientService } from "../service/bookingService.js";
 import { s3GetImages } from "../service/s3ImageServices.js";
 
 // GET /booking/getAllBookings

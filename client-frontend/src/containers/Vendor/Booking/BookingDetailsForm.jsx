@@ -5,10 +5,18 @@ import PaidIcon from "@mui/icons-material/Paid";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import {
   Grid,
+  InputAdornment,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
   Typography,
   useTheme,
@@ -38,6 +46,36 @@ const BookingDetailsForm = ({ appointmentData }) => {
     CANCELLED: "Cancelled",
     PENDING_PAYMENT: "Updated to Pending Payment",
     PAID: "Updated to Paid",
+  };
+  const totalPrice = () => {
+    return (
+      appointmentData?.totalPax *
+      appointmentData?.activityPricingRule?.pricePerPax
+    );
+  };
+
+  const addons = {
+    weekendPricing: {
+      name: "Weekend Pricing",
+      vendor: "vendorWeekendAddOnCost",
+    },
+    onlinePricing: { name: "Online Pricing", vendor: "vendorOnlineAddOnCost" },
+    offlinePricing: {
+      name: "Offline Pricing",
+      vendor: "vendorOfflineAddOnCost",
+    },
+  };
+
+  const addOnNaming = (addon) => {
+    return addons[addon]?.name;
+  };
+
+  const vendorNaming = (addon) => {
+    return addons[addon]?.vendor;
+  };
+
+  const calculateTotal = () => {
+    return;
   };
   return (
     <Grid
@@ -132,6 +170,100 @@ const BookingDetailsForm = ({ appointmentData }) => {
           }}
           fullWidth
         />
+      </Grid>
+      <Grid item xs={12} paddingTop={2}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            borderRadius: "10px",
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "rgba(159 145 204 / 0.12)" }}>
+                <TableCell width={"33%"} sx={{ fontSize: "1rem" }}>
+                  <span style={{ color: "#3D246C" }}>Num. pax</span>
+                </TableCell>
+                <TableCell width={"33%"} sx={{ fontSize: "1rem" }}>
+                  <span style={{ color: "#3D246C" }}>Price per Pax</span>
+                </TableCell>
+                <TableCell width={"33%"} sx={{ fontSize: "1rem" }}>
+                  <span style={{ color: "#3D246C" }}>Total Price</span>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell sx={{ fontSize: "0.875rem" }}>
+                  <span style={{ color: "#3D246C" }}>
+                    {appointmentData?.totalPax} pax
+                  </span>
+                </TableCell>
+                <TableCell sx={{ fontSize: "0.875rem" }}>
+                  <span style={{ color: "#3D246C" }}>
+                    ${appointmentData?.activityPricingRule?.pricePerPax}
+                  </span>
+                </TableCell>
+                <TableCell sx={{ fontSize: "0.875rem" }}>
+                  <span style={{ color: "#3D246C" }}>${totalPrice()}</span>
+                </TableCell>
+              </TableRow>
+
+              {appointmentData?.activityId &&
+                Object.keys(appointmentData?.activityId)?.map(
+                  (addon, index) => {
+                    return (
+                      appointmentData[vendorNaming(addon)] != 0 &&
+                      !isNaN(appointmentData[vendorNaming(addon)]) &&
+                      appointmentData?.activityId[addon].amount && (
+                        <TableRow key={index}>
+                          <TableCell />
+                          <TableCell sx={{ fontSize: "1rem" }}>
+                            <span style={{ color: "#3D246C" }}>
+                              {addOnNaming(addon)}
+                              {appointmentData?.activityId[addon].isDiscount
+                                ? " Discount"
+                                : " Add-on"}
+                            </span>
+                          </TableCell>
+                          <TableCell sx={{ fontSize: "0.875rem" }}>
+                            <span style={{ color: "#3D246C" }}>
+                              {appointmentData?.activityId[addon].isDiscount
+                                ? "-"
+                                : "+"}
+                              {appointmentData?.activityId[addon].amount}%{" "}
+                              <span
+                                style={{ color: theme.palette.primary.main }}
+                              >
+                                (
+                                {appointmentData?.activityId[addon].isDiscount
+                                  ? "-"
+                                  : "+"}{" "}
+                                $
+                                {Math.abs(appointmentData[vendorNaming(addon)])}
+                                )
+                              </span>
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    );
+                  }
+                )}
+              <TableRow>
+                <TableCell />
+                <TableCell sx={{ fontSize: "1rem" }}>
+                  <span style={{ color: "#3D246C" }}>Total Price</span>
+                </TableCell>
+                <TableCell sx={{ fontSize: "0.875rem" }}>
+                  <span style={{ color: "#3D246C" }}>
+                    ${appointmentData?.totalVendorAmount}
+                  </span>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Grid>
       <Grid item xs={12}>
         <Typography fontSize={"1.5rem"} color={theme.palette.primary.main}>

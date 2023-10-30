@@ -23,7 +23,7 @@ import AdminNotificationPage from "./components/notification/AdminNotificationPa
 import VerifyEmailPage from "./components/VerifyEmailPage";
 import ViewActiveBookingsPage from "./components/booking/ViewActiveBookingsPage";
 import ViewPastBookingsPage from "./components/booking/ViewPastBookingsPage";
-import ActivityThemesPage from "./components/activitythemes/ActivityThemesPage";
+import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
 
 function App() {
   return (

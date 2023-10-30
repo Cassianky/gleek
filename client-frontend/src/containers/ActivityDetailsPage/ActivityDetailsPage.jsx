@@ -160,7 +160,7 @@ const ActivityDetailsPage = () => {
   const calculateWeekendAddOn = (
     selectedDate,
     weekendPricing,
-    totalBasePrice,
+    totalBasePrice
   ) => {
     if (
       weekendPricing.amount !== null &&
@@ -211,16 +211,19 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-    );
-
-    const onlineAddOn = calculateOnlineAddOn(
-      location,
-      currentActivity.offlinePricing,
+      totalBasePrice
     );
 
     const offlineAddOn = calculateOfflineAddOn(
       location,
+      currentActivity.offlinePricing,
+      totalBasePrice
+    );
+
+    const onlineAddOn = calculateOnlineAddOn(
+      location,
       currentActivity.onlinePricing,
+      totalBasePrice
     );
 
     const totalPriceCalculated =
@@ -241,15 +244,24 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-    );
-    const onlineAddOn = calculateOnlineAddOn(
-      location,
-      currentActivity.offlinePricing,
+      totalBasePrice
     );
     const offlineAddOn = calculateOfflineAddOn(
       location,
-      currentActivity.onlinePricing,
+      currentActivity.offlinePricing,
+      totalBasePrice
     );
+    const onlineAddOn = calculateOnlineAddOn(
+      location,
+      currentActivity.onlinePricing,
+      totalBasePrice
+    );
+    let activityPricingRule;
+    for (const pricingRule of currentActivity?.activityPricingRules) {
+      if (pax >= pricingRule.start && pax <= pricingRule.end) {
+        activityPricingRule = pricingRule;
+      }
+    }
     const timeParts = time.split(",");
     const cartItem = {
       activityId: currentActivity._id,
@@ -262,6 +274,7 @@ const ActivityDetailsPage = () => {
       offlineAddOnCost: offlineAddOn,
       startDateTime: timeParts[0],
       endDateTime: timeParts[1],
+      activityPricingRule: activityPricingRule._id,
     };
     if (
       cartItem.activityId !== null &&
@@ -435,7 +448,7 @@ const ActivityDetailsPage = () => {
                           format="DD/MM/YYYY"
                           minDate={dayjs().add(
                             currentActivity?.bookingNotice,
-                            "days",
+                            "days"
                           )}
                           shouldDisableDate={shouldDisableDate}
                           sx={{ marginRight: "12px" }}
@@ -593,8 +606,9 @@ const ActivityDetailsPage = () => {
                                   ? "-"
                                   : ""}
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>
@@ -615,7 +629,7 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                               </Typography>
                             </Box>
@@ -636,8 +650,9 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>

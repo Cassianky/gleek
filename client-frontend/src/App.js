@@ -16,6 +16,8 @@ import ShopPage from "./containers/Client/ShopPage";
 import HomePage from "./containers/HomePage";
 import LoginPage from "./containers/LoginPage";
 import SocketConnection from "./utils/SocketConnection";
+import MyBookings from "./containers/Client/Booking/MyBookings";
+import BookingsDetails from "./containers/Client/Booking/BookingsDetails";
 
 import VendorProtectedRoute from "./components/Routes/VendorProtectedRoute";
 import VendorDetails from "./containers/Client/Activity/VendorDetails";
@@ -155,6 +157,24 @@ function App() {
             element={
               <ClientProtectedRoute>
                 <CheckoutPage />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/bookings"
+            element={
+              <ClientProtectedRoute>
+                <MyBookings />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/booking/:bookingId"
+            element={
+              <ClientProtectedRoute>
+                <BookingsDetails />
               </ClientProtectedRoute>
             }
           />

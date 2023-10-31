@@ -1,6 +1,10 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
+import CancelIcon from "@mui/icons-material/Cancel";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import EventBusyIcon from "@mui/icons-material/EventBusy";
+import PaidIcon from "@mui/icons-material/Paid";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import {
   Chip,
   IconButton,
@@ -11,17 +15,9 @@ import {
 } from "@mui/material";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import StoreIcon from "@mui/icons-material/Store";
-import EventNoteIcon from "@mui/icons-material/EventNote";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import PaidIcon from "@mui/icons-material/Paid";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import EventBusyIcon from "@mui/icons-material/EventBusy";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { convertISOtoDate, convertISOtoTime } from "../../../utils/TimeFormatter";
 
 const PendingSurveysTable = ({
   allBookings,
@@ -36,41 +32,6 @@ const PendingSurveysTable = ({
     setBookings(allBookings);
     console.log(bookings);
   }, [allBookings]);
-
-  const convertISOtoDate = (value) => {
-    const date = new Date(value);
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    const formattedDate = date.toLocaleDateString("en-SG", options);
-    return formattedDate;
-  };
-
-  const convertISOtoShortDate = (value) => {
-    const date = new Date(value);
-    const options = {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-    };
-    const formattedDate = date.toLocaleDateString("en-SG", options);
-    return formattedDate;
-  };
-
-  const convertISOtoTime = (value) => {
-    const date = new Date(value);
-    const formattedTime = date
-      .toLocaleTimeString("en-SG", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      })
-      .toUpperCase();
-    return formattedTime;
-  };
 
   const statusIcons = {
     CONFIRMED: { icon: <ThumbUpAltIcon color="primary" />, text: "Confirmed" },

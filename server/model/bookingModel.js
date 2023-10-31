@@ -33,7 +33,7 @@ const bookingSchema = new mongoose.Schema({
   },
   totalVendorAmount: {
     type: Number,
-    required: true,
+    required: false,
   },
   totalPax: {
     type: Number,

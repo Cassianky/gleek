@@ -31,13 +31,13 @@ const MyBookings = () => {
   const { getAllBookingsForClient, bookings } = useBookingStore();
 
   const pendingBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "PENDING_CONFIRMATION"
+    (booking) => booking.status === "PENDING_CONFIRMATION",
   ).length;
 
   const upcomingBookingBadgeNumber = bookings.filter(
     (booking) =>
       booking.status === "CONFIRMED" &&
-      new Date(booking.startDateTime) > new Date()
+      new Date(booking.startDateTime) > new Date(),
   ).length;
 
   const completedBookingBadgeNumber = bookings.filter(
@@ -45,24 +45,25 @@ const MyBookings = () => {
       booking.status === "PENDING PAYMENT" ||
       booking.status === "PAID" ||
       (booking.status === "CONFIRMED" &&
-        new Date(booking.startDateTime) < new Date())
+        new Date(booking.startDateTime) < new Date()),
   ).length;
 
   const rejectedOrCancelledBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "REJECTED" || booking.status === "CANCELLED"
+    (booking) =>
+      booking.status === "REJECTED" || booking.status === "CANCELLED",
   ).length;
 
   const pendingPaymentBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "PENDING PAYMENT"
+    (booking) => booking.status === "PENDING PAYMENT",
   ).length;
 
   const paidBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "PAID"
+    (booking) => booking.status === "PAID",
   ).length;
 
   const pendingBookingsFilter = (bookings) => {
     const filteredBookings = bookings.filter(
-      (booking) => booking.status === "PENDING_CONFIRMATION"
+      (booking) => booking.status === "PENDING_CONFIRMATION",
     );
 
     return filteredBookings;
@@ -72,7 +73,7 @@ const MyBookings = () => {
     const filteredBookings = bookings.filter(
       (booking) =>
         booking.status === "CONFIRMED" &&
-        new Date(booking.startDateTime) > new Date()
+        new Date(booking.startDateTime) > new Date(),
     );
     return filteredBookings;
   };
@@ -83,7 +84,7 @@ const MyBookings = () => {
         booking.status === "PENDING PAYMENT" ||
         booking.status === "PAID" ||
         (booking.status === "CONFIRMED" &&
-          new Date(booking.startDateTime) < new Date())
+          new Date(booking.startDateTime) < new Date()),
     );
     return filteredBookings;
   };
@@ -91,21 +92,21 @@ const MyBookings = () => {
   const rejectedOrCancelledBookingsFilter = (bookings) => {
     const filteredBookings = bookings.filter(
       (booking) =>
-        booking.status === "REJECTED" || booking.status === "CANCELLED"
+        booking.status === "REJECTED" || booking.status === "CANCELLED",
     );
     return filteredBookings;
   };
 
   const pendingPaymentBookingsFilter = (bookings) => {
     const filteredBookings = bookings.filter(
-      (booking) => booking.status === "PENDING PAYMENT"
+      (booking) => booking.status === "PENDING PAYMENT",
     );
     return filteredBookings;
   };
 
   const paidBookingsFilter = (bookings) => {
     const filteredBookings = bookings.filter(
-      (booking) => booking.status === "PAID"
+      (booking) => booking.status === "PAID",
     );
     return filteredBookings;
   };

@@ -6,7 +6,7 @@ export const getAllBookingsForVendor = async (vendorId) => {
     vendorId: vendorId,
   })
     .select(
-      "-weekendAddOnCost -onlineAddOnCost -offlineAddOnCost -basePricePerPax -totalCost"
+      "-weekendAddOnCost -onlineAddOnCost -offlineAddOnCost -basePricePerPax -totalCost",
     )
     .populate({
       path: "clientId",
@@ -62,7 +62,7 @@ export const getAllBookingsForClientService = async (clientId) => {
 
   for (const booking of bookings) {
     booking.activityId.preSignedImages = await s3GetImages(
-      booking.activityId.images
+      booking.activityId.images,
     );
   }
 

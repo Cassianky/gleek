@@ -50,14 +50,29 @@ const useChatStore = create((set) => ({
       recipientRole: recipientRole,
       recipientId: recipientId,
     };
-    AxiosConnect.getWithParams(
+    console.log("access chat params:", params);
+    AxiosConnect.post(
       role === "Client"
         ? "/chatroom/client/accessChat"
         : "/chatroom/vendor/accessChat",
       params,
-    ).then((response) => {
-      set({ selectedChat: response.data });
-    });
+    )
+      .then((response) => {
+        console.log(response);
+        set({ selectedChat: response.data });
+        AxiosConnect.get(
+          role === "Client"
+            ? `/chatMessage/client/allMessages/${response.data._id}`
+            : `/chatMessage/vendor/allMessages/${response.data._id}`,
+        ).then((response) => {
+          console.log(response.data);
+          set({ currentChatroomMessages: response.data });
+          set({ loadingMessage: false });
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   retrieveAndSetChatroomMessages: (role, chatroomId) => {
     set({ loadingMessage: true });

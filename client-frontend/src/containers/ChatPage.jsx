@@ -21,7 +21,7 @@ const Chatpage = () => {
         sx={{
           display: "flex",
           width: 1,
-          height: "100%",
+          height: "50rem",
           justifyContent: "space-between",
           padding: 3,
         }}

@@ -7,12 +7,7 @@ import useGlobalStore from "../../zustand/GlobalStore";
 import dayjs from "dayjs";
 
 const ChatList = ({ fetchAgain }) => {
-  const {
-    allChatrooms,
-    selectedChat,
-    setSelectedChat,
-    retrieveAndSetAllChatRooms,
-  } = useChatStore();
+  const { allChatrooms, selectedChat, setSelectedChat } = useChatStore();
   const { role } = useGlobalStore();
 
   const onSelectChatroom = (chatroom) => {
@@ -30,14 +25,14 @@ const ChatList = ({ fetchAgain }) => {
       padding={2}
       bgcolor="white"
       width={{ md: "30.5%" }}
+      height="100vh"
       borderRadius="8px"
       border="1px solid #000"
     >
       <Box
-        paddingBottom={3}
+        paddingBottom={1}
         paddingLeft={3}
         fontSize={{ xs: "28px", md: "30px" }}
-        fontFamily="Work Sans"
         display="flex"
         width="100%"
         justifyContent="space-between"
@@ -51,17 +46,12 @@ const ChatList = ({ fetchAgain }) => {
         padding={3}
         bgcolor="#F8F8F8"
         width={{ md: "100%" }}
-        height={{ md: "100%" }}
+        height="100vh"
+        overflow="scroll"
         borderRadius="8px"
-        overflowY="hidden"
       >
         {allChatrooms.length > 0 ? (
-          <Stack
-            overflowY="scroll"
-            spacing={2}
-            width={{ md: "100%" }}
-            height={{ md: "100%" }}
-          >
+          <Stack spacing={2} width={{ md: "100%" }}>
             {allChatrooms.map((chatroom) => (
               <Box
                 onClick={() => onSelectChatroom(chatroom)}

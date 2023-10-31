@@ -54,7 +54,7 @@ const ChatWindow = () => {
       padding={2}
       bgcolor="white"
       width={{ md: "68.5%" }}
-      height={{ md: "100%" }}
+      height="100vh"
       borderRadius="8px"
       border="1px solid #000"
     >
@@ -79,24 +79,27 @@ const ChatWindow = () => {
             padding={3}
             bgcolor="#E8E8E8"
             width={{ md: "100%" }}
-            height={{ md: "100%" }}
             borderRadius="8px"
-            overflowY="hidden"
+            marginTop={1}
           >
             {loadingMessage ? (
               <CircularProgress />
-            ) : (
+            ) : currentChatroomMessages.length > 0 ? (
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   scrollbarWidth: "none",
                   width: "100%",
-                  height: "100%",
+                  height: "75vh",
                 }}
               >
                 <ChatDisplay />
               </div>
+            ) : (
+              <Typography variant="h6">
+                Start chatting with {getSenderName(role, selectedChat)}!
+              </Typography>
             )}
             <Input
               style={{
@@ -120,7 +123,7 @@ const ChatWindow = () => {
           justifyContent="center"
           alignItems="center"
           padding={3}
-          height="100%"
+          height="75%"
         >
           <Typography variant="h4">
             Click on a user to start chatting

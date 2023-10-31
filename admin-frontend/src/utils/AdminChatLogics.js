@@ -1,9 +1,7 @@
-export const getSenderName = (userRole, chatroom) => {
-  if (userRole.toUpperCase() === "CLIENT") {
-    return chatroom.vendor === null ? "Admin" : chatroom.vendor.companyName;
-  } else {
-    return chatroom.client === null ? "Admin" : chatroom.client.name;
-  }
+export const getSenderName = (chatroom) => {
+  return chatroom.vendor === null
+    ? chatroom.client.name
+    : chatroom.vendor.companyName;
 };
 
 export const getSenderNameInChatWindow = (senderRole, message) => {

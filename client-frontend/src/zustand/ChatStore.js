@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import AxiosConnect from "../utils/AxiosConnect";
 import useGlobalStore from "./GlobalStore";
-import { getRecipientId, getRecipientRole } from "../utils/ChatLogics";
 
 const useChatStore = create((set) => ({
   user: {},
@@ -28,6 +27,15 @@ const useChatStore = create((set) => ({
       params,
     ).then((response) => {
       console.log("sent message::", response.data);
+      AxiosConnect.getWithParams(
+        role === "Client"
+          ? "/chatroom/client/fetchChats"
+          : "/chatroom/vendor/fetchChats",
+        params,
+      ).then((response) => {
+        console.log(response.data);
+        set({ allChatrooms: response.data });
+      });
     });
   },
   retrieveAndSetAllChatRooms: (role) => {

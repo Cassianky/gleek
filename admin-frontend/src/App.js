@@ -24,6 +24,7 @@ import VerifyEmailPage from "./components/VerifyEmailPage";
 import ViewActiveBookingsPage from "./components/booking/ViewActiveBookingsPage";
 import ViewPastBookingsPage from "./components/booking/ViewPastBookingsPage";
 import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
+import AdminChatpage from "./components/Chat/AdminChatPage";
 
 function App() {
   return (
@@ -191,6 +192,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <AdminNotificationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/chats"
+            element={
+              <ProtectedRoute>
+                <AdminChatpage />
               </ProtectedRoute>
             }
           />

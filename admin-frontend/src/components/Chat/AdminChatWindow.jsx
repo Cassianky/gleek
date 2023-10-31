@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import useChatStore from "../../zustand/ChatStore";
-import useGlobalStore from "../../zustand/GlobalStore";
+import { useChatStore } from "../../zustand/GlobalStore";
 import { Box, CircularProgress, Typography, Input } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { getSenderName } from "../../utils/ChatLogics";
-import ChatDisplay from "./ChatDisplay";
+import { getSenderName } from "../../utils/AdminChatLogics";
+import AdminChatDisplay from "./AdminChatDisplay";
 
-const ChatWindow = () => {
+const AdminChatWindow = () => {
   const {
     selectedChat,
     setSelectedChat,
@@ -15,12 +14,12 @@ const ChatWindow = () => {
     currentChatroomMessages,
     sendMessage,
   } = useChatStore();
-  const { role } = useGlobalStore();
   const [inputMessage, setInputMessage] = useState("");
 
   const fetchMessages = () => {
     if (!selectedChat) return;
-    retrieveAndSetChatroomMessages(role, selectedChat._id);
+    console.log(selectedChat._id);
+    retrieveAndSetChatroomMessages(selectedChat._id);
   };
 
   const handleMessageInputChange = (event) => {
@@ -29,7 +28,7 @@ const ChatWindow = () => {
 
   const handleSendMessage = () => {
     if (inputMessage.trim() !== "") {
-      sendMessage(inputMessage, role, selectedChat._id);
+      sendMessage(inputMessage, selectedChat._id);
       setInputMessage("");
     }
   };
@@ -53,10 +52,9 @@ const ChatWindow = () => {
       padding={2}
       bgcolor="white"
       width={{ md: "68.5%" }}
-      height="100vh"
+      height="75vh"
       borderRadius="8px"
       border="1px solid #000"
-      overflow="hidden"
     >
       {selectedChat ? (
         <>
@@ -69,7 +67,7 @@ const ChatWindow = () => {
                 },
               }}
             />
-            {getSenderName(role, selectedChat)}
+            {getSenderName(selectedChat)}
           </Typography>
           <Box
             display="flex"
@@ -78,9 +76,11 @@ const ChatWindow = () => {
             alignItems="center"
             padding={3}
             bgcolor="#E8E8E8"
-            width={{ md: "100%" }}
+            width={{ md: "95%" }}
             borderRadius="8px"
             marginTop={1}
+            height="65vh"
+            overflow="hidden"
           >
             {loadingMessage ? (
               <CircularProgress />
@@ -91,14 +91,14 @@ const ChatWindow = () => {
                   flexDirection: "column",
                   scrollbarWidth: "none",
                   width: "100%",
-                  height: "75vh",
+                  height: "63vh",
                 }}
               >
-                <ChatDisplay />
+                <AdminChatDisplay />
               </div>
             ) : (
               <Typography variant="h6">
-                Start chatting with {getSenderName(role, selectedChat)}!
+                Start chatting with {getSenderName(selectedChat)}!
               </Typography>
             )}
             <Input
@@ -134,4 +134,4 @@ const ChatWindow = () => {
   );
 };
 
-export default ChatWindow;
+export default AdminChatWindow;

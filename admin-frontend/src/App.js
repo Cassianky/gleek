@@ -28,6 +28,7 @@ import SubmittedSurveys from "./components/survey/SubmittedSurveys";
 import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
 import ActivityReviews from "./components/review/ActivityReviews";
 import ManageReviewsForActivity from "./components/review/ManageReviewsForActivity";
+import AdminChatpage from "./components/Chat/AdminChatPage";
 
 function App() {
   return (
@@ -195,6 +196,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <AdminNotificationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/chats"
+            element={
+              <ProtectedRoute>
+                <AdminChatpage />
               </ProtectedRoute>
             }
           />

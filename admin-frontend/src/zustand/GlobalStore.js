@@ -737,3 +737,49 @@ export const useNotificationStore = create((set) => ({
       });
   },
 }));
+
+export const useChatStore = create((set) => ({
+  user: {},
+  allChatrooms: [],
+  currentChatroomMessages: [],
+  selectedChat: null,
+  loadingMessage: false,
+  setUser: (currentUser) => {
+    set({ user: currentUser });
+  },
+  setSelectedChat: (chatSelected) => {
+    set({ selectedChat: chatSelected });
+  },
+  sendMessage: (messageContent, chatroomId) => {
+    const params = {
+      senderRole: "Admin",
+      content: messageContent,
+      chatroomId: chatroomId,
+    };
+    AxiosConnect.post("/chatMessage/admin/sendMessage", params).then(
+      (response) => {
+        console.log("sent message::", response.data);
+        AxiosConnect.get("/chatroom/admin/fetchChats").then((response) => {
+          console.log(response.data);
+          set({ allChatrooms: response.data });
+        });
+      },
+    );
+  },
+  retrieveAndSetAllChatRooms: () => {
+    AxiosConnect.get("/chatroom/admin/fetchChats").then((response) => {
+      console.log(response.data);
+      set({ allChatrooms: response.data });
+    });
+  },
+  retrieveAndSetChatroomMessages: (chatroomId) => {
+    set({ loadingMessage: true });
+    AxiosConnect.get(`/chatMessage/admin/allMessages/${chatroomId}`).then(
+      (response) => {
+        console.log(response.data);
+        set({ currentChatroomMessages: response.data });
+        set({ loadingMessage: false });
+      },
+    );
+  },
+}));

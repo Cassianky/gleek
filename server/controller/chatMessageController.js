@@ -11,7 +11,7 @@ export const allMessages = async (req, res) => {
       .populate("client", "name photo email")
       .populate("vendor", "companyName companyLogo companyEmail")
       .populate("chatRoom");
-    res.json(messages);
+    res.status(200).json(messages);
   } catch (error) {
     res.status(400);
     throw new Error(error.message);
@@ -36,6 +36,7 @@ export const sendMessage = async (req, res) => {
       client: req.user._id,
       messageContent: content,
       chatRoom: chatroomId,
+      messageDate: Date.now(),
     };
   } else if (senderRole === Role.VENDOR) {
     newMessage = {
@@ -43,20 +44,27 @@ export const sendMessage = async (req, res) => {
       vendor: req.user._id,
       messageContent: content,
       chatRoom: chatroomId,
+      messageDate: Date.now(),
     };
   } else {
     newMessage = {
       senderRole: Role.ADMIN,
       messageContent: content,
       chatRoom: chatroomId,
+      messageDate: Date.now(),
     };
   }
 
   try {
     let message = await ChatMessageModel.create(newMessage);
-    await ChatroomModel.findByIdAndUpdate(req.body.chatId, {
-      latestMessage: message,
-    });
+    let updatedChatroom = await ChatroomModel.findByIdAndUpdate(
+      req.body.chatroomId,
+      {
+        latestMessage: message,
+        lastChatDate: message.messageDate,
+      },
+    );
+    console.log("message sent and chatroom updated::", updatedChatroom);
     res.json(message);
   } catch (error) {
     res.status(400);

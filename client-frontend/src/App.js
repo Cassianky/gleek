@@ -16,6 +16,8 @@ import ShopPage from "./containers/Client/ShopPage";
 import HomePage from "./containers/HomePage";
 import LoginPage from "./containers/LoginPage";
 import SocketConnection from "./utils/SocketConnection";
+import MyBookings from "./containers/Client/Booking/MyBookings";
+import BookingsDetails from "./containers/Client/Booking/BookingsDetails";
 
 import VendorProtectedRoute from "./components/Routes/VendorProtectedRoute";
 import VendorDetails from "./containers/Client/Activity/VendorDetails";
@@ -42,6 +44,7 @@ import VerifyEmailVendor from "./containers/Vendor/VerifyEmailVendor";
 import useClientStore from "./zustand/ClientStore";
 import useVendorStore from "./zustand/VendorStore";
 import PendingSurveys from "./containers/Client/Survey/PendingSurveys";
+import ChatPage from "./containers/ChatPage";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -191,6 +194,24 @@ function App() {
             }
           />
           <Route
+            exact
+            path="/bookings"
+            element={
+              <ClientProtectedRoute>
+                <MyBookings />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/booking/:bookingId"
+            element={
+              <ClientProtectedRoute>
+                <BookingsDetails />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
             path="/login"
             element={
               <LoginPage
@@ -214,7 +235,15 @@ function App() {
             path="/client/forgotPassword"
             element={<ForgotPassword />}
           />
-
+          <Route
+            exact
+            path="/client/chats"
+            element={
+              <ClientProtectedRoute>
+                <ChatPage />
+              </ClientProtectedRoute>
+            }
+          />
           {/* Vendor routes */}
           <Route
             path="/vendor/login"
@@ -353,6 +382,15 @@ function App() {
             element={
               <VendorProtectedRoute>
                 <BlockoutMultipleActivities />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/vendor/chats"
+            element={
+              <VendorProtectedRoute>
+                <ChatPage />
               </VendorProtectedRoute>
             }
           />

@@ -67,4 +67,16 @@ AxiosConnect.postMultiPart = (command, req) => {
   return axios(options);
 };
 
+AxiosConnect.getWithParams = (command, params) => {
+  console.log(uri + command);
+  console.log(params);
+  const options = {
+    method: "GET",
+    url: uri + command,
+    data: params,
+    withCredentials: true,
+  };
+  return axios(options);
+};
+
 export default AxiosConnect;

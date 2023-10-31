@@ -248,7 +248,7 @@ const BookingDetailsForm = ({ appointmentData }) => {
                         </TableRow>
                       )
                     );
-                  }
+                  },
                 )}
               <TableRow>
                 <TableCell />

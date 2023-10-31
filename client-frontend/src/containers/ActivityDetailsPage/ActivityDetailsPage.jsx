@@ -45,6 +45,7 @@ import ActivityBookmarkButton from "../../components/Bookmark/ActivityBookmarkBu
 import VendorProfileItem from "../../components/Vendor/VendorProfileItem";
 import "./styles.css";
 import Holidays from "date-holidays";
+import VendorChatButton from "../../components/Chat/VendorChatButton";
 
 const ActivityDetailsPage = () => {
   const {
@@ -160,7 +161,7 @@ const ActivityDetailsPage = () => {
   const calculateWeekendAddOn = (
     selectedDate,
     weekendPricing,
-    totalBasePrice
+    totalBasePrice,
   ) => {
     if (
       weekendPricing.amount !== null &&
@@ -175,7 +176,7 @@ const ActivityDetailsPage = () => {
     return 0;
   };
 
-  const calculateOfflineAddOn = (location, onlinePricing, totalBasePrice) => {
+  const calculateOnlineAddOn = (location, onlinePricing, totalBasePrice) => {
     if (
       onlinePricing.amount !== null &&
       (location.toLowerCase().includes("off-site") ||
@@ -190,7 +191,7 @@ const ActivityDetailsPage = () => {
     return 0;
   };
 
-  const calculateOnlineAddOn = (location, offlinePricing, totalBasePrice) => {
+  const calculateOfflineAddOn = (location, offlinePricing, totalBasePrice) => {
     if (
       offlinePricing.amount !== null &&
       location.toLowerCase().includes("virtual")
@@ -211,19 +212,19 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-      totalBasePrice
+      totalBasePrice,
     );
 
     const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
 
     const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
 
     const totalPriceCalculated =
@@ -244,17 +245,17 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-      totalBasePrice
+      totalBasePrice,
     );
     const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
     const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
     let activityPricingRule;
     for (const pricingRule of currentActivity?.activityPricingRules) {
@@ -331,8 +332,17 @@ const ActivityDetailsPage = () => {
                   <VendorProfileItem vendor={currentActivity?.linkedVendor} />
                 )}
               </Box>
-
-              <ActivityBookmarkButton activityId={activityId} />
+              <span
+                style={{
+                  width: "50%",
+                  // position: "absolute",
+                  display: "flex",
+                  justifyContent: "right",
+                }}
+              >
+                <VendorChatButton />
+                <ActivityBookmarkButton activityId={activityId} />
+              </span>
             </Box>
           </Grid>
           <Grid
@@ -448,7 +458,7 @@ const ActivityDetailsPage = () => {
                           format="DD/MM/YYYY"
                           minDate={dayjs().add(
                             currentActivity?.bookingNotice,
-                            "days"
+                            "days",
                           )}
                           shouldDisableDate={shouldDisableDate}
                           sx={{ marginRight: "12px" }}
@@ -606,7 +616,7 @@ const ActivityDetailsPage = () => {
                                   ? "-"
                                   : ""}
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
-                                  2
+                                  2,
                                 )}
                                 %
                               </Typography>
@@ -629,9 +639,8 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
-                                  2
-                                )}{" "}
-                                %
+                                  2,
+                                )}
                               </Typography>
                             </Box>
                           </Box>
@@ -651,7 +660,7 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
-                                  2
+                                  2,
                                 )}
                                 %
                               </Typography>

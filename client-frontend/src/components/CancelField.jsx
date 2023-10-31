@@ -1,48 +1,28 @@
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
-import { useState } from "react";
-
+import useSnackbarStore from "../zustand/SnackbarStore";
+import useBookingStore from "../zustand/BookingStore";
 import {
-  Button,
   Dialog,
-  DialogActions,
+  DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogTitle,
+  DialogActions,
+  Button,
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  convertISOtoDate,
-  convertISOtoTime,
-} from "../../../utils/TimeFormatter";
-import useBookingStore from "../../../zustand/BookingStore";
-import useSnackbarStore from "../../../zustand/SnackbarStore";
 
 const CancelField = ({ bookingData }) => {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [reason, setReason] = useState("");
   const { openSnackbar } = useSnackbarStore();
-  const { cancelBooking } = useBookingStore();
+  const { cancelBookingForClient, getAllBookingsForClient } = useBookingStore();
 
   const handleDialogOpen = (event) => {
     event.stopPropagation();
-    const today = Date.now();
-    const bookingDate = new Date(bookingData.startDateTime);
-    const timeDifference = bookingDate - today;
-    console.log(timeDifference);
-    let canCancel = true;
-    if (timeDifference >= 0 && timeDifference <= 14 * 24 * 60 * 60 * 1000) {
-      canCancel = false;
-    }
-    if (!canCancel) {
-      openSnackbar(
-        "Cannot cancel less than 14 days before event start. Please contact admin to cancel!",
-        "error",
-      );
-    } else {
-      setDialogOpen(canCancel);
-    }
+    setDialogOpen(true);
   };
 
   const handleDialogClose = () => {
@@ -50,9 +30,9 @@ const CancelField = ({ bookingData }) => {
   };
 
   const handleConfirmCancel = async (bookingId) => {
-    console.log(bookingId);
     try {
-      const message = await cancelBooking(bookingId, reason);
+      const message = await cancelBookingForClient(bookingId, reason);
+      getAllBookingsForClient();
       openSnackbar(message);
       setDialogOpen(false);
     } catch (error) {
@@ -62,16 +42,19 @@ const CancelField = ({ bookingData }) => {
 
   const confirmationDisplayDetails = [
     { label: "Client Company", value: bookingData.clientId.companyName },
+    { label: "Vendor", value: bookingData.vendorName },
     { label: "Activity", value: bookingData.activityTitle },
     {
       label: "Date",
-      value: convertISOtoDate(bookingData.startDateTime),
+      value: new Date(bookingData.startDateTime).toLocaleDateString(),
     },
     {
       label: "Timeslot",
-      value: `${convertISOtoTime(
+      value: `${new Date(
         bookingData.startDateTime,
-      )} - ${convertISOtoTime(bookingData.endDateTime)}`,
+      ).toLocaleTimeString()} - ${new Date(
+        bookingData.endDateTime,
+      ).toLocaleTimeString()}`,
     },
     { label: "Total Cost", value: `$${bookingData.totalCost}` },
   ];
@@ -82,21 +65,7 @@ const CancelField = ({ bookingData }) => {
         Cancel
       </Button>
 
-      <Dialog
-        fullWidth
-        open={dialogOpen}
-        onClose={handleDialogClose}
-        sx={{
-          "& .MuiDialog-paper": {
-            border: "3px solid #D32F2F",
-            borderRadius: "10px",
-            boxShadow: "none",
-          },
-          "& .MuiBackdrop-root": {
-            backgroundColor: "rgb(0 0 0 / 0.2)",
-          },
-        }}
-      >
+      <Dialog fullWidth open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>Confirm Cancellation</DialogTitle>
         <DialogContent>
           {confirmationDisplayDetails.map((detail, index) => (
@@ -104,7 +73,8 @@ const CancelField = ({ bookingData }) => {
               <Typography>
                 <span
                   style={{
-                    color: theme.palette.primary.main,
+                    fontWeight: "bold",
+                    color: theme.palette.dark_purple.main,
                   }}
                 >
                   {detail.label}:{" "}

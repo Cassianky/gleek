@@ -10,6 +10,8 @@ import {
   updateBookingStatusActionHistory,
 } from "../service/bookingService.js";
 import VendorModel from "../model/vendorModel.js";
+import { getAllBookingsForClientService } from "../service/bookingService.js";
+import { s3GetImages } from "../service/s3ImageServices.js";
 
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
@@ -72,7 +74,21 @@ export const getBookingsWithPendingSurvey = async (req, res) => {
 // GET /booking/getBookingById/:id
 export const getBookingById = async (req, res) => {
   try {
-    const booking = await BookingModel.findById(req.params.id);
+    const booking = await BookingModel.findById(req.params.id)
+      .populate("vendorId")
+      .populate("activityId")
+      .populate("clientId");
+
+    if (booking.vendorId && booking.vendorId.companyLogo) {
+      let preSignedUrl = await s3GetImages(booking.vendorId.companyLogo);
+      booking.vendorId.preSignedPhoto = preSignedUrl;
+    }
+
+    if (booking.activityId && booking.activityId.images) {
+      let preSignedUrlArr = await s3GetImages(booking.activityId.images);
+      booking.activityId.preSignedImages = preSignedUrlArr;
+    }
+
     if (!booking) {
       return res
         .status(404)
@@ -592,14 +608,20 @@ export const updateBookingStatus = async (req, res) => {
   }
 };
 
-// GET /booking/getAllBookingsByClientId/:id
-export const getAllBookingsByClientId = async (req, res) => {
+// GET /booking/getAllBookingsForClient/
+export const getAllBookingsForClient = async (req, res) => {
   try {
+    const client = req.user;
+    console.log(client);
+    const bookings = await getAllBookingsForClientService(client._id);
+    res.status(200).json({
+      bookings: bookings,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: "Server Error! Unable to get bookings by client ID.",
-      error: error.message,
+      status: "error",
+      msg: "Server Error! Unable to get bookings by client ID.",
     });
   }
 };

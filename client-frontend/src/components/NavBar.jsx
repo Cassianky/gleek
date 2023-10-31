@@ -19,6 +19,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 import useClientStore from "../zustand/ClientStore.js";
 import SearchBar from "./SearchBar/SearchBar.jsx";
 import SearchIcon from "@mui/icons-material/Search";
@@ -386,6 +387,17 @@ function NavBar(props) {
                     <EventOutlinedIcon />
                   </ListItemIcon>
                   <ListItemText>My Bookings</ListItemText>
+                </MenuItem>
+                <MenuItem
+                  sx={{ px: "32px" }}
+                  onClick={() => {
+                    navigate("/surveys");
+                  }}
+                >
+                  <ListItemIcon>
+                    <SentimentVerySatisfiedIcon />
+                  </ListItemIcon>
+                  <ListItemText>Post-Event Surveys</ListItemText>
                 </MenuItem>
                 <MenuItem sx={{ px: "32px" }} onClick={logout}>
                   <ListItemIcon>

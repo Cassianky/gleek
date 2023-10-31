@@ -633,6 +633,81 @@ export const useBookingStore = create((set) => ({
   },
 }));
 
+export const useAdminSurveyResponseStore = create((set) => ({
+  survey: null,
+  surveys: [],
+  isLoading: true,
+  getSubmittedSurveys: async () => {
+    try {
+      const response = await AxiosConnect.get("/survey/submitted");
+      console.log("getSubmittedSurveys", response.data);
+      set({ surveys: response.data, isLoading: false });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  getSurveyDetails: async (surveyId) => {
+    try {
+      const response = await AxiosConnect.get(`/survey/${surveyId}`);
+      console.log("getSurveyDetails", response.data);
+      set({ survey: response.data, isLoading: false });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+}));
+
+export const useReviewStore = create((set) => ({
+  reviews: [],
+  activity: null,
+  isLoading: true,
+  getReviewsForActivity: async (id) => {
+    try {
+      const response = await AxiosConnect.get(`/review/activity/${id}`);
+      console.log("getReviewsForActivity", response.data);
+      set({
+        reviews: response.data.reviews,
+        activity: response.data.activity,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  toggleReviewVisibility: async (reviewId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/review/${reviewId}/toggleVisibility`,
+      );
+      const updatedReview = response.data;
+
+      set((state) => {
+        const updatedReviews = state.reviews.map((review) => {
+          if (review._id === updatedReview._id) {
+            return {
+              ...review,
+              hidden: updatedReview.hidden,
+            };
+          }
+          return review;
+
+        });
+        return {
+          ...state,
+          reviews: updatedReviews,
+          isLoading: false,
+        };
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+}));
+
 export const useImageUploadTestStore = create((set) => ({
   testActivities: [],
   setTestActivities: (newActivityList) => {

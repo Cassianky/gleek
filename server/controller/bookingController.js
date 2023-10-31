@@ -40,6 +40,37 @@ export const getAllBookings = async (req, res) => {
   }
 };
 
+// GET /booking/pendingSurvey
+export const getBookingsWithPendingSurvey = async (req, res) => {
+  try {
+    const client = req.user;
+
+    const bookings = await BookingModel.find({
+      clientId: client._id,
+      $and: [
+        { status: { $in: ["PENDING_PAYMENT", "PAID"] } },
+        { isSurveySubmitted: false },
+      ],
+    }).populate({
+      path: "activityId",
+      populate: {
+        path: "linkedVendor",
+        select: "companyName companyEmail",
+      },
+    });
+
+    console.log("getBookingsWithPendingSurvey", bookings.length);
+
+    res.status(200).json({ bookings });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server Error! Unable to get bookings.",
+      error: error.message,
+    });
+  }
+};
+
 // GET /booking/getBookingById/:id
 export const getBookingById = async (req, res) => {
   try {
@@ -165,9 +196,9 @@ export function generateAllTimeslots(
     };
   });
 
-  console.log("Existing bookings on selected day", bookings);
-  console.log("Blocked timeslots on selected day: ", blockedTimeslots);
-  console.log("All timeslots: ", allTimeslots);
+  // console.log("Existing bookings on selected day", bookings);
+  // console.log("Blocked timeslots on selected day: ", blockedTimeslots);
+  // console.log("All timeslots: ", allTimeslots);
 
   return allTimeslots;
 }

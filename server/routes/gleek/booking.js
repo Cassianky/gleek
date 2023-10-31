@@ -5,10 +5,19 @@ import {
   getAllBookingsForClient,
   getBookingById,
   updateBookingStatus,
+  getBookingsWithPendingSurvey
 } from "../../controller/bookingController.js";
 import { verifyToken } from "../../middleware/clientAuth.js";
 
 const router = express.Router();
+
+// Get bookings with pending survey
+router.get(
+  "/pendingSurvey",
+  verifyToken,
+  getBookingsWithPendingSurvey,
+);
+
 
 // Booking
 router.get(

@@ -23,7 +23,11 @@ import AdminNotificationPage from "./components/notification/AdminNotificationPa
 import VerifyEmailPage from "./components/VerifyEmailPage";
 import ViewActiveBookingsPage from "./components/booking/ViewActiveBookingsPage";
 import ViewPastBookingsPage from "./components/booking/ViewPastBookingsPage";
+import SubmittedSurvey from "./components/survey/SubmittedSurvey";
+import SubmittedSurveys from "./components/survey/SubmittedSurveys";
 import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
+import ActivityReviews from "./components/review/ActivityReviews";
+import ManageReviewsForActivity from "./components/review/ManageReviewsForActivity";
 import AdminChatpage from "./components/Chat/AdminChatPage";
 
 function App() {
@@ -201,6 +205,42 @@ function App() {
             element={
               <ProtectedRoute>
                 <AdminChatpage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/surveys"
+            element={
+              <ProtectedRoute>
+                <SubmittedSurveys />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/surveys/:surveyId"
+            element={
+              <ProtectedRoute>
+                <SubmittedSurvey />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/reviews"
+            element={
+              <ProtectedRoute>
+                <ActivityReviews />
+              </ProtectedRoute>
+            }
+          />
+            <Route
+            exact
+            path="/reviews/activity/:activityId"
+            element={
+              <ProtectedRoute>
+                <ManageReviewsForActivity />
               </ProtectedRoute>
             }
           />

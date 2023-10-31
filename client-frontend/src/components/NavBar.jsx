@@ -33,6 +33,7 @@ import {
   LogoutOutlined,
   Person2Outlined,
 } from "@mui/icons-material";
+import ChatIcon from "@mui/icons-material/Chat";
 
 function NavBar(props) {
   const { authenticated, client, logoutClient } = useClientStore();
@@ -243,7 +244,7 @@ function NavBar(props) {
                 Gleek
               </Typography>
             </Link>
-            <Box display="flex" flexDirection="row">
+            <Box display="flex" flexDirection="row" sx={{ marginLeft: "10%" }}>
               <SearchBar />
               <IconButton
                 onClick={searchOnClick}
@@ -257,13 +258,25 @@ function NavBar(props) {
             <Box>
               <IconButton
                 onClick={() => {
+                  navigate("/client/chats");
+                }}
+                disableRipple
+                disableFocusRipple
+                aria-label="chat"
+                color="accent"
+                sx={{ marginRight: "8px" }}
+              >
+                <ChatIcon />
+              </IconButton>
+              <IconButton
+                onClick={() => {
                   navigate("/cart");
                 }}
                 disableRipple
                 disableFocusRipple
                 aria-label="cart"
                 color="accent"
-                sx={{ marginRight: "16px" }}
+                sx={{ marginRight: "12px" }}
               >
                 <ShoppingBagOutlinedIcon />
                 {cartItems.length > 0 && (
@@ -294,7 +307,7 @@ function NavBar(props) {
                 )}
               </IconButton>
               <Button
-                sx={{ marginRight: "16px" }}
+                sx={{ marginRight: "12px" }}
                 variant="text"
                 onClick={() => {
                   navigate("/shop");
@@ -314,7 +327,7 @@ function NavBar(props) {
                 disableFocusRipple
                 aria-label="profile"
                 color="accent"
-                sx={{ marginRight: "16px" }}
+                sx={{ marginRight: "12px" }}
               >
                 {client ? (
                   <Avatar alt={client.name} src={client.preSignedPhoto} />
@@ -409,6 +422,18 @@ function NavBar(props) {
               </Typography>
             </Link>
             <Box>
+              <IconButton
+                onClick={() => {
+                  navigate("/vendor/chats");
+                }}
+                disableRipple
+                disableFocusRipple
+                aria-label="chat"
+                color="accent"
+                sx={{ marginRight: "8px" }}
+              >
+                <ChatIcon />
+              </IconButton>
               <IconButton
                 id="icon-button"
                 aria-controls={open2 ? "authenticated-menu" : undefined}

@@ -83,7 +83,7 @@ const MyBookingsCalendarView = ({ allBookings }) => {
         filterCriteria[newStatus].value === "ALL"
           ? booking.status === filterCriteria.pending.value ||
             booking.status === filterCriteria.confirmed.value
-          : booking.status === filterCriteria[newStatus].value
+          : booking.status === filterCriteria[newStatus].value,
       );
     setBookings(newBookings);
   };
@@ -264,7 +264,7 @@ const MyBookingsCalendarView = ({ allBookings }) => {
         filterCriteria[currentStatus].value === "ALL"
           ? booking.status === filterCriteria.pending.value ||
             booking.status === filterCriteria.confirmed.value
-          : booking.status === filterCriteria[currentStatus].value
+          : booking.status === filterCriteria[currentStatus].value,
       );
   };
 

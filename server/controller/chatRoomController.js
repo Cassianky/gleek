@@ -4,8 +4,9 @@ import { Role } from "../util/roleEnum.js";
 //Fetch all chats for a user
 //route: GET /api/chat/
 export const userFetchChats = async (req, res) => {
-  console.log("fetchChat all request::", req.body);
-  let { userRole } = req.body;
+  console.log("fetchChat all request user::", req.user);
+  console.log("fetchChat all request cookies::", req.cookies);
+  let userRole = req.cookies.userRole;
   userRole = userRole.toUpperCase();
 
   try {
@@ -14,15 +15,16 @@ export const userFetchChats = async (req, res) => {
         ? { client: req.user._id }
         : { vendor: req.user._id },
     )
+      .populate("latestMessage")
       .populate("client", "-password")
       .populate("vendor", "-password")
-      .populate("latestMessage")
       .sort({ lastChatDate: -1 })
       .then(async (results) => {
         // results = await User.populate(results, {
         //     path: "latestMessage.sender",
         //     select: "name pic email",
         // });
+        console.log("final results::", results);
         res.status(200).send(results);
       });
   } catch (error) {
@@ -76,6 +78,7 @@ export const userAccessChat = async (req, res) => {
   if (userRole === Role.CLIENT) {
     console.log("in user access chat user role is client");
     if (recipientRole === Role.VENDOR) {
+      console.log("in user access chat recipient role is vendor");
       isChat = await ChatroomModel.find({
         $and: [
           //initiator of chat - current user who is logged in
@@ -88,7 +91,7 @@ export const userAccessChat = async (req, res) => {
         .populate("vendor", "-password")
         .populate("latestMessage");
     } else {
-      console.log("in user access chat recipient role is vendor");
+      console.log("in user access chat recipient role is admin");
       isChat = await ChatroomModel.find({
         $and: [
           { client: req.user._id },
@@ -102,6 +105,7 @@ export const userAccessChat = async (req, res) => {
   } else {
     console.log("in user access chat user role is vendor");
     if (recipientRole === Role.CLIENT) {
+      console.log("in user access chat recipient role is client");
       isChat = await ChatroomModel.find({
         $and: [
           //initiator of chat - current user who is logged in

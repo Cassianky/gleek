@@ -5,7 +5,6 @@ import { Role } from "../util/roleEnum.js";
 //Admin sent/received message will not have sender/recipient ID
 //Role will be used as differentiator
 const chatroomSchema = mongoose.Schema({
-  // chatName: { type: String, trim: true },
   //Not compulsory due to admin requirement
   client: {
     type: mongoose.Schema.Types.ObjectId,
@@ -29,8 +28,6 @@ const chatroomSchema = mongoose.Schema({
   //Timestamp to sort the order of chat rooms
   lastChatDate: {
     type: Date,
-    required: true,
-    default: Date.now(),
   },
 });
 

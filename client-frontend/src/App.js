@@ -41,6 +41,7 @@ import VendorRegisterPage from "./containers/Vendor/VendorRegisterPage";
 import VerifyEmailVendor from "./containers/Vendor/VerifyEmailVendor";
 import useClientStore from "./zustand/ClientStore";
 import useVendorStore from "./zustand/VendorStore";
+import ChatPage from "./containers/ChatPage";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -201,7 +202,15 @@ function App() {
             path="/client/forgotPassword"
             element={<ForgotPassword />}
           />
-
+          <Route
+            exact
+            path="/client/chats"
+            element={
+              <ClientProtectedRoute>
+                <ChatPage />
+              </ClientProtectedRoute>
+            }
+          />
           {/* Vendor routes */}
           <Route
             path="/vendor/login"
@@ -340,6 +349,15 @@ function App() {
             element={
               <VendorProtectedRoute>
                 <BlockoutMultipleActivities />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/vendor/chats"
+            element={
+              <VendorProtectedRoute>
+                <ChatPage />
               </VendorProtectedRoute>
             }
           />

@@ -16,7 +16,7 @@ router.get("/getAllBookings", adminAuth, getAllBookings);
 router.get("/getBookingById/:id", adminAuth, getBookingById);
 router.get(
   "/getAllBookingsByActivityId/:activityId",
-  getAllBookingsByActivityId
+  getAllBookingsByActivityId,
 );
 router.delete("/deleteBooking/:id", adminAuth, deleteBooking);
 router.patch("/updateBookingStatus/:id", adminAuth, updateBookingStatus);

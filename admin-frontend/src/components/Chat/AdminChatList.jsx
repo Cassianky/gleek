@@ -1,14 +1,11 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import useChatStore from "../../zustand/ChatStore";
-import ChatLoading from "./ChatLoading";
-import { getSenderName } from "../../utils/ChatLogics";
-import useGlobalStore from "../../zustand/GlobalStore";
+import { useChatStore } from "../../zustand/GlobalStore";
+import AdminChatLoading from "./AdminChatLoading";
+import { getSenderName } from "../../utils/AdminChatLogics";
 import dayjs from "dayjs";
 
-const ChatList = () => {
+const AdminChatList = () => {
   const { allChatrooms, selectedChat, setSelectedChat } = useChatStore();
-  const { role } = useGlobalStore();
 
   const onSelectChatroom = (chatroom) => {
     console.log(chatroom);
@@ -24,8 +21,8 @@ const ChatList = () => {
       alignItems="center"
       padding={2}
       bgcolor="white"
-      width={{ md: "30.5%" }}
-      height="100vh"
+      width={{ md: "26.5%" }}
+      height="75vh"
       borderRadius="8px"
       border="1px solid #000"
     >
@@ -45,13 +42,13 @@ const ChatList = () => {
         flexDirection="column"
         padding={3}
         bgcolor="#F8F8F8"
-        width={{ md: "100%" }}
+        width={{ md: "90%" }}
         height="100vh"
         overflow="scroll"
         borderRadius="8px"
       >
         {allChatrooms.length > 0 ? (
-          <Stack spacing={2} width={{ md: "100%" }}>
+          <Stack spacing={2} width={{ md: "100%" }} height={{ md: "100%" }}>
             {allChatrooms.map((chatroom) => (
               <Box
                 onClick={() => onSelectChatroom(chatroom)}
@@ -69,20 +66,16 @@ const ChatList = () => {
                 color={selectedChat === chatroom ? "white" : "black"}
                 key={chatroom._id}
               >
-                <Typography variant="h6">
-                  {getSenderName(role, chatroom)}
-                </Typography>
+                <Typography variant="h6">{getSenderName(chatroom)}</Typography>
                 {chatroom.latestMessage && (
                   <div>
                     <Typography variant="body1">
-                      <b>
-                        {chatroom.latestMessage.senderRole === "VENDOR"
-                          ? chatroom.vendor.companyName
-                          : chatroom.latestMessage.senderRole === "CLIENT"
-                          ? chatroom.client.name
-                          : "Admin"}
-                        {": "}
-                      </b>
+                      {chatroom.latestMessage.senderRole === "VENDOR"
+                        ? chatroom.vendor.companyName
+                        : chatroom.latestMessage.senderRole === "CLIENT"
+                        ? chatroom.client.name
+                        : "Admin"}
+                      {": "}
                       {chatroom.latestMessage.messageContent.length > 50
                         ? chatroom.latestMessage.messageContent.substring(
                             0,
@@ -102,11 +95,11 @@ const ChatList = () => {
             ))}
           </Stack>
         ) : (
-          <ChatLoading />
+          <AdminChatLoading />
         )}
       </Box>
     </Box>
   );
 };
 
-export default ChatList;
+export default AdminChatList;

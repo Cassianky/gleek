@@ -58,7 +58,7 @@ const BookingsDetails = () => {
       try {
          await getBookingSummaryPdf(bookingId);
       } catch (err) {
-         openSnackbar(err.response.data.msg, "error");
+         openSnackbar(err, "error");
       }
    };
 

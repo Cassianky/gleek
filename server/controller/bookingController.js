@@ -11,7 +11,7 @@ import {
 } from "../service/bookingService.js";
 import VendorModel from "../model/vendorModel.js";
 import {
-   getAllPendingAndConfirmedBookingsForVendor,
+   //getAllPendingAndConfirmedBookingsForVendor,
    getAllBookingsForClientService,
 } from "../service/bookingService.js";
 import { s3GetImages } from "../service/s3ImageServices.js";
@@ -777,5 +777,92 @@ export const sendBookingSummaryEmailVendor = async (data) => {
             });
          });
       });
+   });
+};
+
+export const getBookingSummaryPdfUrl = async (req, res) => {
+   try {
+      const userRole = req.cookies.userRole;
+      const bookingId = req.params.id;
+
+      const booking = await BookingModel.findById(bookingId);
+
+      if (!booking) {
+         return res.status(400).send("Booking Not Found");
+      }
+      await booking.populate([
+         {
+            path: "activityId",
+            populate: [{ path: "theme" }, { path: "subtheme" }],
+         },
+         { path: "vendorId" },
+         { path: "clientId" },
+      ]);
+      const pdfContent =
+         userRole == "Vendor"
+            ? BookingSummaryVendor([booking])
+            : BookingSummaryClient([booking]);
+
+      const filename =
+         userRole == "Vendor"
+            ? "bookingSummary" +
+              booking.vendorId.companyName +
+              Date.now() +
+              ".pdf"
+            : "bookingSummary" +
+              booking.clientId.companyName +
+              Date.now() +
+              ".pdf";
+      const pdfFilePath = path.join(process.cwd(), "temp", filename);
+
+      console.log("Reached PDF");
+
+      pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {
+         if (err) {
+            // Handle errors appropriately
+            console.error(err);
+            res.status(500).send("Error generating PDF");
+         } else {
+            // Respond with a success message or the file path
+            res.status(200).send(filename);
+         }
+      });
+   } catch (error) {
+      res.status(500).json({ error: "Server error", message: error.message });
+   }
+};
+
+export const getBookingSummaryPdf = async (req, res) => {
+   const filePath = req.params;
+   const file = path.join(process.cwd(), "temp", filePath.path);
+   fs.access(file, fs.constants.F_OK, (err) => {
+      if (err) {
+         res.status(500).json({
+            err: "Error Accessing File: ",
+            message: err.message,
+         });
+      } else {
+         // File exists, proceed to serve and then delete
+         res.download(file, "BookingSummary.pdf", (downloadError) => {
+            if (downloadError) {
+               res.status(500).json({
+                  err: "Error downloading the file:",
+                  message: err.message,
+               });
+            } else {
+               // File has been successfully sent to the client, now delete it
+               fs.unlink(file, (deleteError) => {
+                  if (deleteError) {
+                     res.status(500).json({
+                        err: "Error deleting the file:",
+                        message: deleteError.message,
+                     });
+                  } else {
+                     console.log("File deleted successfully.");
+                  }
+               });
+            }
+         });
+      }
    });
 };

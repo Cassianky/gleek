@@ -1,4 +1,3 @@
-
 import express from "express";
 import {
   getAllReviews,
@@ -10,6 +9,5 @@ const router = express.Router();
 router.get("/", getAllReviews);
 router.get("/activity/:activityId", getAllReviewsForActivity);
 router.get("/:reviewId/toggleVisibility", toggleReviewVisibility);
-
 
 export default router;

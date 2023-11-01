@@ -18,13 +18,18 @@ import chatroomRoutes from "./routes/chatroomRoute.js";
 import chatMessageRoutes from "./routes/chatMessageRoute.js";
 import pdf from "html-pdf";
 import { InvoiceTemplate } from "./assets/templates/InvoiceTemplate.js";
+import { Server } from "socket.io";
+import { createServer } from "http";
 
 const app = express();
 
 const port = process.env.PORT;
+const userFrontendUrl = process.env.USER_FRONTEND_URL;
+const adminFrontendUrl = process.env.ADMIN_FRONTEND_URL;
+
 // Custom middleware to apply different CORS options based on the origin
 const customCors = (req, callback) => {
-  const whitelist = ["http://localhost:3001", "http://localhost:3002"];
+  const whitelist = [userFrontendUrl, adminFrontendUrl];
   const origin = req.header("Origin");
 
   if (whitelist.includes(origin)) {
@@ -91,6 +96,51 @@ app.get("/pdf", (req, res, next) => {
   });
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
+});
+
+// const httpServer = createServer(app);
+
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: [userFrontendUrl, adminFrontendUrl],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("Connected to socket.io");
+  socket.on("setup", (userData) => {
+    console.log("setup user data: ", userData);
+    socket.join(userData);
+    socket.emit("connected");
+  });
+
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log("User Joined Room: " + room);
+  });
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+
+  socket.on("new message", (newMessageReceived) => {
+    console.log("socket on new message received::", newMessageReceived);
+    var chatroomId = newMessageReceived.chatRoom;
+    console.log("socket on new message received chatroom id::", chatroomId);
+    const userId =
+      newMessageReceived.senderRole === "CLIENT"
+        ? newMessageReceived.client
+        : newMessageReceived.senderRole === "VENDOR"
+        ? newMessageReceived.vendor
+        : "Admin";
+    const uniqueId = newMessageReceived.senderRole + userId;
+    console.log("before emitting message received unique id is: ", uniqueId);
+    socket.to(chatroomId).emit("message received", newMessageReceived);
+  });
+
+  socket.off("setup", () => {
+    console.log("USER DISCONNECTED");
+    socket.leave(userData._id);
+  });
 });

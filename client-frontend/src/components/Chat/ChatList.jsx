@@ -47,7 +47,7 @@ const ChatList = () => {
         bgcolor="#F8F8F8"
         width={{ md: "100%" }}
         height="100vh"
-        overflow="scroll"
+        overflow-y="scroll"
         borderRadius="8px"
       >
         {allChatrooms.length > 0 ? (

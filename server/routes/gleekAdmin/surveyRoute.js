@@ -3,7 +3,7 @@ import {
   getAllSubmittedSurveys,
   getSurveyWithSurveyId,
   submitSurvey,
-  updateSurvey
+  updateSurvey,
 } from "../../controller/surveyController.js";
 
 const router = express.Router();
@@ -19,6 +19,5 @@ router.get("/submitted", getAllSubmittedSurveys);
  * Get survey with known survey id
  */
 router.get("/:surveyId", getSurveyWithSurveyId);
-
 
 export default router;

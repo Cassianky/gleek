@@ -38,7 +38,7 @@ const CancelField = ({ bookingData }) => {
     if (!canCancel) {
       openSnackbar(
         "Cannot cancel less than 14 days before event start. Please contact admin to cancel!",
-        "error"
+        "error",
       );
     } else {
       setDialogOpen(canCancel);
@@ -70,7 +70,7 @@ const CancelField = ({ bookingData }) => {
     {
       label: "Timeslot",
       value: `${convertISOtoTime(
-        bookingData.startDateTime
+        bookingData.startDateTime,
       )} - ${convertISOtoTime(bookingData.endDateTime)}`,
     },
     { label: "Total Cost", value: `$${bookingData.totalCost}` },

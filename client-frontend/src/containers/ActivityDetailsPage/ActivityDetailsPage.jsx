@@ -45,7 +45,7 @@ import ActivityBookmarkButton from "../../components/Bookmark/ActivityBookmarkBu
 import VendorProfileItem from "../../components/Vendor/VendorProfileItem";
 import "./styles.css";
 import Holidays from "date-holidays";
-import useClientStore from "../../zustand/ClientStore";
+import VendorChatButton from "../../components/Chat/VendorChatButton";
 
 const ActivityDetailsPage = () => {
    const {
@@ -214,17 +214,20 @@ const ActivityDetailsPage = () => {
 
       const weekendAddOn = calculateWeekendAddOn(
          selectedDate,
-         currentActivity.weekendPricing
-      );
-
-      const onlineAddOn = calculateOnlineAddOn(
-         location,
-         currentActivity.offlinePricing
+         currentActivity.weekendPricing,
+         totalBasePrice
       );
 
       const offlineAddOn = calculateOfflineAddOn(
          location,
-         currentActivity.onlinePricing
+         currentActivity.offlinePricing,
+         totalBasePrice
+      );
+
+      const onlineAddOn = calculateOnlineAddOn(
+         location,
+         currentActivity.onlinePricing,
+         totalBasePrice
       );
 
       const totalPriceCalculated =
@@ -244,15 +247,18 @@ const ActivityDetailsPage = () => {
       let totalBasePrice = calculateBasePrice(pax);
       const weekendAddOn = calculateWeekendAddOn(
          selectedDate,
-         currentActivity.weekendPricing
+         currentActivity.weekendPricing,
+         totalBasePrice
       );
       const offlineAddOn = calculateOfflineAddOn(
          location,
-         currentActivity.offlinePricing
+         currentActivity.offlinePricing,
+         totalBasePrice
       );
       const onlineAddOn = calculateOnlineAddOn(
          location,
-         currentActivity.onlinePricing
+         currentActivity.onlinePricing,
+         totalBasePrice
       );
       let activityPricingRule;
       for (const pricingRule of currentActivity?.activityPricingRules) {
@@ -671,6 +677,7 @@ const ActivityDetailsPage = () => {
                                                 {currentActivity?.weekendPricing?.amount?.toFixed(
                                                    2
                                                 )}
+                                                %
                                              </Typography>
                                           </Box>
                                        </Box>
@@ -724,6 +731,7 @@ const ActivityDetailsPage = () => {
                                                 {currentActivity?.onlinePricing?.amount?.toFixed(
                                                    2
                                                 )}
+                                                %
                                              </Typography>
                                           </Box>
                                        </Box>

@@ -10,7 +10,7 @@ export const updateCurrentActivity = (selectedActivity) => {
   }));
   console.log(
     "activity store current activity updated::",
-    useActivityStore.getState()
+    useActivityStore.getState(),
   );
 };
 
@@ -21,7 +21,7 @@ export const updateAllActivity = (newAllActivities) => {
   }));
   console.log(
     "activity store all activity updated::",
-    useActivityStore.getState()
+    useActivityStore.getState(),
   );
 };
 
@@ -135,7 +135,7 @@ export const useAdminStore = create((set) => ({
     try {
       const response = await AxiosConnect.post(
         "/gleekAdmin/register",
-        newAdmin
+        newAdmin,
       );
       const data = response.data;
       console.log(data);
@@ -187,7 +187,7 @@ export const useAdminStore = create((set) => ({
         `/gleekAdmin/resendVerificationEmail/`,
         {
           email: email,
-        }
+        },
       );
       return response;
     } catch (error) {
@@ -234,7 +234,7 @@ export const useActivityStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        `/activity/myActivities/${adminId}`
+        `/activity/myActivities/${adminId}`,
       );
       set({ activities: response.data.data });
       set({ isLoading: false });
@@ -246,7 +246,7 @@ export const useActivityStore = create((set) => ({
     try {
       const response = await AxiosConnect.postMultiPart(
         "/activity/addActivity",
-        newActivityData
+        newActivityData,
       );
       set({ newActivity: response.data.activity });
     } catch (error) {
@@ -258,7 +258,7 @@ export const useActivityStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        `/activity/viewActivity/${activityId}`
+        `/activity/viewActivity/${activityId}`,
       );
       set({ activityDetails: response.data.data });
       set({ isLoading: false });
@@ -270,7 +270,7 @@ export const useActivityStore = create((set) => ({
     try {
       const response = await AxiosConnect.postMultiPart(
         "/activity/saveActivity",
-        activityDraftData
+        activityDraftData,
       );
       set({ newActivity: response.data.activity });
     } catch (error) {
@@ -280,7 +280,7 @@ export const useActivityStore = create((set) => ({
   deleteActivity: async (activityId) => {
     try {
       const updatedActivities = await AxiosConnect.delete(
-        `/activity/deleteDraft/${activityId}`
+        `/activity/deleteDraft/${activityId}`,
       );
       set({ activities: updatedActivities.data.activity });
       set({ selectedTab: "draftTab" });
@@ -293,7 +293,7 @@ export const useActivityStore = create((set) => ({
     try {
       const updatedActivities = await AxiosConnect.delete(
         "/activity/bulkDelete",
-        activityIds
+        activityIds,
       );
       set({
         activities: updatedActivities.data.activity,
@@ -309,7 +309,7 @@ export const useActivityStore = create((set) => ({
       const updatedActivities = await AxiosConnect.patch(
         "/activity/approveActivity",
         activityId,
-        { adminId: adminId, markup: markup }
+        { adminId: adminId, markup: markup },
       );
       set({
         selectedActivityTab: "pendingApprovalTab",
@@ -325,7 +325,7 @@ export const useActivityStore = create((set) => ({
       const updatedActivities = await AxiosConnect.patch(
         "/activity/rejectActivity",
         activityId,
-        { rejectionReason: rejectionReason, adminId: adminId }
+        { rejectionReason: rejectionReason, adminId: adminId },
       );
       set({
         selectedActivityTab: "pendingApprovalTab",
@@ -439,7 +439,7 @@ export const useVendorStore = create((set) => ({
   vendorTypesFetcher: async () => {
     try {
       const response = await AxiosConnect.get(
-        "/gleek/vendor/getAllVendorTypes"
+        "/gleek/vendor/getAllVendorTypes",
       );
       const data = response.data;
       set({ vendorTypes: data.VendorTypeEnum });
@@ -490,7 +490,7 @@ export const useClientStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        `/client/getClientDetails/${clientId}`
+        `/client/getClientDetails/${clientId}`,
       );
       set({ clientDetails: response.data });
       set({ isLoading: false });
@@ -633,6 +633,81 @@ export const useBookingStore = create((set) => ({
   },
 }));
 
+export const useAdminSurveyResponseStore = create((set) => ({
+  survey: null,
+  surveys: [],
+  isLoading: true,
+  getSubmittedSurveys: async () => {
+    try {
+      const response = await AxiosConnect.get("/survey/submitted");
+      console.log("getSubmittedSurveys", response.data);
+      set({ surveys: response.data, isLoading: false });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  getSurveyDetails: async (surveyId) => {
+    try {
+      const response = await AxiosConnect.get(`/survey/${surveyId}`);
+      console.log("getSurveyDetails", response.data);
+      set({ survey: response.data, isLoading: false });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+}));
+
+export const useReviewStore = create((set) => ({
+  reviews: [],
+  activity: null,
+  isLoading: true,
+  getReviewsForActivity: async (id) => {
+    try {
+      const response = await AxiosConnect.get(`/review/activity/${id}`);
+      console.log("getReviewsForActivity", response.data);
+      set({
+        reviews: response.data.reviews,
+        activity: response.data.activity,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  toggleReviewVisibility: async (reviewId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/review/${reviewId}/toggleVisibility`,
+      );
+      const updatedReview = response.data;
+
+      set((state) => {
+        const updatedReviews = state.reviews.map((review) => {
+          if (review._id === updatedReview._id) {
+            return {
+              ...review,
+              hidden: updatedReview.hidden,
+            };
+          }
+          return review;
+
+        });
+        return {
+          ...state,
+          reviews: updatedReviews,
+          isLoading: false,
+        };
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+}));
+
 export const useImageUploadTestStore = create((set) => ({
   testActivities: [],
   setTestActivities: (newActivityList) => {
@@ -660,5 +735,51 @@ export const useNotificationStore = create((set) => ({
         set({ unreadNotificationsCount: unreadCount });
         set({ loading: false });
       });
+  },
+}));
+
+export const useChatStore = create((set) => ({
+  user: {},
+  allChatrooms: [],
+  currentChatroomMessages: [],
+  selectedChat: null,
+  loadingMessage: false,
+  setUser: (currentUser) => {
+    set({ user: currentUser });
+  },
+  setSelectedChat: (chatSelected) => {
+    set({ selectedChat: chatSelected });
+  },
+  sendMessage: (messageContent, chatroomId) => {
+    const params = {
+      senderRole: "Admin",
+      content: messageContent,
+      chatroomId: chatroomId,
+    };
+    AxiosConnect.post("/chatMessage/admin/sendMessage", params).then(
+      (response) => {
+        console.log("sent message::", response.data);
+        AxiosConnect.get("/chatroom/admin/fetchChats").then((response) => {
+          console.log(response.data);
+          set({ allChatrooms: response.data });
+        });
+      },
+    );
+  },
+  retrieveAndSetAllChatRooms: () => {
+    AxiosConnect.get("/chatroom/admin/fetchChats").then((response) => {
+      console.log(response.data);
+      set({ allChatrooms: response.data });
+    });
+  },
+  retrieveAndSetChatroomMessages: (chatroomId) => {
+    set({ loadingMessage: true });
+    AxiosConnect.get(`/chatMessage/admin/allMessages/${chatroomId}`).then(
+      (response) => {
+        console.log(response.data);
+        set({ currentChatroomMessages: response.data });
+        set({ loadingMessage: false });
+      },
+    );
   },
 }));

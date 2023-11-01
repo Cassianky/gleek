@@ -17,6 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
+import ChatIcon from "@mui/icons-material/Chat";
 import AxiosConnect from "../../utils/AxiosConnect";
 
 const HomePageNavBar = ({ toggleSidebar }) => {
@@ -38,6 +39,10 @@ const HomePageNavBar = ({ toggleSidebar }) => {
 
   const handleNotificationClick = () => {
     navigate("/notificationList");
+  };
+
+  const handleChatClick = () => {
+    navigate("/chats");
   };
 
   const handleCloseUserMenu = () => {
@@ -78,12 +83,17 @@ const HomePageNavBar = ({ toggleSidebar }) => {
         </Link>
         {authenticated ? (
           <Box sx={{ flexGrow: 0 }}>
+            <IconButton size="large" color="inherit">
+              <AccessAlarmIcon onClick={handleManualCompleteBookingsUpdate} />
+            </IconButton>
+            <IconButton size="large" color="inherit">
+              <ChatIcon onClick={handleChatClick} />
+            </IconButton>
             <IconButton
               size="large"
-              aria-label="show 17 new notifications"
               color="inherit"
+              sx={{ marginRight: "12px" }}
             >
-              <AccessAlarmIcon onClick={handleManualCompleteBookingsUpdate} />
               <Badge badgeContent={unreadNotificationsCount} color="error">
                 <NotificationsIcon onClick={handleNotificationClick} />
               </Badge>

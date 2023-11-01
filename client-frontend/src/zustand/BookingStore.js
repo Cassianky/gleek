@@ -15,7 +15,7 @@ const useBookingStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        "/gleekVendor/booking/getAllBookings"
+        "/gleekVendor/booking/getAllBookings",
       );
       set({ bookings: response.data.bookings });
       set({ isLoading: false });
@@ -23,11 +23,23 @@ const useBookingStore = create((set) => ({
       console.error(error.message);
     }
   },
+  getBookingsWithPendingSurvey: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/gleek/booking/pendingSurvey");
+  
+      set({ bookings: response.data.bookings });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error.message);
+      throw error;
+    }
+  },
   approveBooking: async (bookingId) => {
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.patch(
-        `/gleekVendor/booking/confirmBooking/${bookingId}`
+        `/gleekVendor/booking/confirmBooking/${bookingId}`,
       );
       set({ bookings: response.data.bookings });
       set({ isLoading: false });
@@ -42,7 +54,7 @@ const useBookingStore = create((set) => ({
       set({ isLoading: true });
       const response = await AxiosConnect.patch(
         `/gleekVendor/booking/rejectBooking/${bookingId}`,
-        { rejectionReason: rejectionReason }
+        { rejectionReason: rejectionReason },
       );
       set({ bookings: response.data.bookings });
       set({ isLoading: false });
@@ -57,7 +69,7 @@ const useBookingStore = create((set) => ({
       set({ isLoading: true });
       const response = await AxiosConnect.patch(
         `/gleekVendor/booking/cancelBooking/${bookingId}`,
-        { cancelReason: cancelReason }
+        { cancelReason: cancelReason },
       );
       set({ bookings: response.data.bookings });
       set({ isLoading: false });
@@ -71,7 +83,7 @@ const useBookingStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        "/gleek/booking/getAllBookingsForClient"
+        "/gleek/booking/getAllBookingsForClient",
       );
       set({ bookings: response.data.bookings });
       console.log(response.data.bookings);
@@ -84,7 +96,7 @@ const useBookingStore = create((set) => ({
     try {
       set({ currentBookingLoading: true });
       const response = await AxiosConnect.get(
-        `/gleek/booking/viewBooking/${bookingId}`
+        `/gleek/booking/viewBooking/${bookingId}`,
       );
       set({ currentBooking: response.data.booking });
       console.log(response.data.booking);
@@ -102,7 +114,7 @@ const useBookingStore = create((set) => ({
           newStatus: "CANCELLED",
           actionByUserType: "CLIENT",
           actionRemarks: cancellationReason,
-        }
+        },
       );
       set({ isLoading: false });
       return cancelResponse.data.message;

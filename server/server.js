@@ -8,6 +8,8 @@ import activityRoutes from "./routes/gleekAdmin/activityRoute.js";
 import gleekAdminRoutes from "./routes/gleekAdmin/gleekAdmin.js";
 import gleekVendorRoutes from "./routes/gleekVendor/gleekVendor.js";
 import vendorRoutes from "./routes/gleekAdmin/vendorRoute.js";
+import surveyRoutes from "./routes/gleekAdmin/surveyRoute.js";
+import reviewRoutes from "./routes/gleekAdmin/reviewRoute.js";
 import bookingRoutes from "./routes/gleekAdmin/bookingRoute.js";
 import client from "./routes/gleekAdmin/client.js";
 import activityTestController from "./controller/activityTestController.js";
@@ -46,6 +48,8 @@ app.use("/vendor", vendorRoutes);
 app.use("/activity", activityRoutes);
 app.use("/client", client);
 app.use("/booking", bookingRoutes);
+app.use("/survey", surveyRoutes);
+app.use("/review", reviewRoutes);
 
 /**
  * For Client application

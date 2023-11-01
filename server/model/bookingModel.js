@@ -33,7 +33,7 @@ const bookingSchema = new mongoose.Schema({
   },
   totalVendorAmount: {
     type: Number,
-    required: true,
+    required: false,
   },
   totalPax: {
     type: Number,
@@ -110,6 +110,14 @@ const bookingSchema = new mongoose.Schema({
       "PAID",
     ],
     default: "PENDING_CONFIRMATION",
+  },
+  isSurveySubmitted: {
+    type: Boolean,
+    default: false,
+  },
+  adminSurveyResponse: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AdminSurveyResponse",
   },
   rejectionReason: { type: String },
   creationDateTime: {

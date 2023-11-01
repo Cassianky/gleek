@@ -51,9 +51,9 @@ const CancelField = ({ bookingData }) => {
     {
       label: "Timeslot",
       value: `${new Date(
-        bookingData.startDateTime
+        bookingData.startDateTime,
       ).toLocaleTimeString()} - ${new Date(
-        bookingData.endDateTime
+        bookingData.endDateTime,
       ).toLocaleTimeString()}`,
     },
     { label: "Total Cost", value: `$${bookingData.totalCost}` },

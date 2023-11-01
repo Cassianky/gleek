@@ -6,7 +6,7 @@ export const getAllBookingsForVendor = async (vendorId) => {
     vendorId: vendorId,
   })
     .select(
-      "-weekendAddOnCost -onlineAddOnCost -offlineAddOnCost -basePricePerPax -totalCost"
+      "-weekendAddOnCost -onlineAddOnCost -offlineAddOnCost -basePricePerPax -totalCost",
     )
     .populate({
       path: "clientId",
@@ -26,7 +26,7 @@ export const updateBookingStatusActionHistory = async (
   newStatus,
   actionByUserType,
   userName,
-  actionRemarks
+  actionRemarks,
 ) => {
   const updatedBooking = await BookingModel.findByIdAndUpdate(
     bookingId,
@@ -41,7 +41,7 @@ export const updateBookingStatusActionHistory = async (
         },
       },
     },
-    { new: true }
+    { new: true },
   );
   return updatedBooking;
 };
@@ -62,7 +62,7 @@ export const getAllBookingsForClientService = async (clientId) => {
 
   for (const booking of bookings) {
     booking.activityId.preSignedImages = await s3GetImages(
-      booking.activityId.images
+      booking.activityId.images,
     );
   }
 

@@ -31,6 +31,8 @@ import EditActivityDraftPage from "./containers/Vendor/Activity/EditActivityDraf
 import BlockoutDashboard from "./containers/Vendor/Blockout/BlockoutDashboard";
 import BlockoutMultipleActivities from "./containers/Vendor/Blockout/BlockoutMultipleActivities";
 import BlockoutSingleActivity from "./containers/Vendor/Blockout/BlockoutSingleActivity";
+import FillSurvey from "./containers/Client/Survey/FillSurvey";
+import ViewSurvey from "./containers/Client/Survey/ViewSurvey";
 import BookingsPage from "./containers/Vendor/Booking/BookingsPage";
 import VendorResetPassword from "./containers/Vendor/Password/ResetPassword";
 import VendorForgotPassword from "./containers/Vendor/Password/VendorForgotPassword";
@@ -41,6 +43,8 @@ import VendorRegisterPage from "./containers/Vendor/VendorRegisterPage";
 import VerifyEmailVendor from "./containers/Vendor/VerifyEmailVendor";
 import useClientStore from "./zustand/ClientStore";
 import useVendorStore from "./zustand/VendorStore";
+import PendingSurveys from "./containers/Client/Survey/PendingSurveys";
+import ChatPage from "./containers/ChatPage";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -159,6 +163,36 @@ function App() {
               </ClientProtectedRoute>
             }
           />
+
+          <Route
+            exact
+            path="/booking/:bookingId/survey/edit"
+            element={
+              <ClientProtectedRoute>
+                <FillSurvey />
+              </ClientProtectedRoute>
+            }
+          />
+
+          <Route
+            exact
+            path="/booking/:bookingId/survey/view"
+            element={
+              <ClientProtectedRoute>
+                <ViewSurvey />
+              </ClientProtectedRoute>
+            }
+          />
+
+          <Route
+            exact
+            path="/surveys"
+            element={
+              <ClientProtectedRoute>
+                <PendingSurveys />
+              </ClientProtectedRoute>
+            }
+          />
           <Route
             exact
             path="/bookings"
@@ -201,7 +235,15 @@ function App() {
             path="/client/forgotPassword"
             element={<ForgotPassword />}
           />
-
+          <Route
+            exact
+            path="/client/chats"
+            element={
+              <ClientProtectedRoute>
+                <ChatPage />
+              </ClientProtectedRoute>
+            }
+          />
           {/* Vendor routes */}
           <Route
             path="/vendor/login"
@@ -340,6 +382,15 @@ function App() {
             element={
               <VendorProtectedRoute>
                 <BlockoutMultipleActivities />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/vendor/chats"
+            element={
+              <VendorProtectedRoute>
+                <ChatPage />
               </VendorProtectedRoute>
             }
           />

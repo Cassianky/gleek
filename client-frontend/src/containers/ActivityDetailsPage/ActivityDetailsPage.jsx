@@ -46,6 +46,7 @@ import VendorProfileItem from "../../components/Vendor/VendorProfileItem";
 import "./styles.css";
 import Holidays from "date-holidays";
 import VendorChatButton from "../../components/Chat/VendorChatButton";
+import useClientStore from "../../zustand/ClientStore";
 
 const ActivityDetailsPage = () => {
    const {

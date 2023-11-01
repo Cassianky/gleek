@@ -843,8 +843,6 @@ export const getBookingSummaryPdfUrl = async (req, res) => {
               ".pdf";
       const pdfFilePath = path.join(process.cwd(), "temp", filename);
 
-      console.log("Reached PDF");
-
       pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {
          if (err) {
             // Handle errors appropriately

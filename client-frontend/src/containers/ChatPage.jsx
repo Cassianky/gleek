@@ -50,7 +50,11 @@ const Chatpage = () => {
       ) {
         retrieveAndSetAllChatRooms(role);
       } else {
-        retrieveAndSetChatroomMessages(role, selectedChat._id, socket);
+        retrieveAndSetChatroomMessages(
+          role,
+          newMessageReceived.chatRoom._id,
+          socket,
+        );
       }
     });
   }, [currentChatroomMessages]);

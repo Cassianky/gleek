@@ -5,10 +5,11 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getSenderName } from "../../utils/AdminChatLogics";
 import AdminChatDisplay from "./AdminChatDisplay";
 
-const AdminChatWindow = () => {
+const AdminChatWindow = ({ socket, setSelectedChatCompare }) => {
   const {
     selectedChat,
     setSelectedChat,
+    retrieveAndSetAllChatRooms,
     retrieveAndSetChatroomMessages,
     loadingMessage,
     currentChatroomMessages,
@@ -16,19 +17,13 @@ const AdminChatWindow = () => {
   } = useChatStore();
   const [inputMessage, setInputMessage] = useState("");
 
-  const fetchMessages = () => {
-    if (!selectedChat) return;
-    console.log(selectedChat._id);
-    retrieveAndSetChatroomMessages(selectedChat._id);
-  };
-
   const handleMessageInputChange = (event) => {
     setInputMessage(event.target.value);
   };
 
   const handleSendMessage = () => {
     if (inputMessage.trim() !== "") {
-      sendMessage(inputMessage, selectedChat._id);
+      sendMessage(inputMessage, selectedChat._id, socket);
       setInputMessage("");
     }
   };
@@ -39,9 +34,18 @@ const AdminChatWindow = () => {
     }
   };
 
+  const fetchMessages = () => {
+    console.log(selectedChat);
+    if (selectedChat !== null) {
+      retrieveAndSetChatroomMessages(selectedChat._id, socket);
+    } else {
+      retrieveAndSetAllChatRooms();
+    }
+  };
+
   useEffect(() => {
     fetchMessages();
-    console.log(currentChatroomMessages);
+    setSelectedChatCompare(selectedChat);
   }, [selectedChat]);
 
   return (

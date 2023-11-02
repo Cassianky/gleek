@@ -4,7 +4,6 @@ import ChatroomModel from "../model/chatRoomModel.js";
 
 export const allMessages = async (req, res) => {
   try {
-    console.log(req.params.chatroomId);
     const messages = await ChatMessageModel.find({
       chatRoom: req.params.chatroomId,
     })
@@ -26,8 +25,6 @@ export const sendMessage = async (req, res) => {
     return res.sendStatus(400);
   }
   senderRole = senderRole.toUpperCase();
-
-  console.log("in send message", req.body);
 
   let newMessage;
   if (senderRole === Role.CLIENT) {
@@ -65,7 +62,6 @@ export const sendMessage = async (req, res) => {
         lastChatDate: message.messageDate,
       },
     );
-    console.log("message sent and chatroom updated::", updatedChatroom);
     res.json(message);
   } catch (error) {
     res.status(400);

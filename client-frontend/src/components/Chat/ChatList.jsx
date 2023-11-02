@@ -23,9 +23,11 @@ const ChatList = () => {
     }
   };
 
-  // useEffect(() => {
-  //   selectedChat === null ? setSelectedChatroomId(null) : setSelectedChatroomId(selectedChat._id);
-  // }, [selectedChatroomId])
+  useEffect(() => {
+    selectedChat === null
+      ? setSelectedChatroomId(null)
+      : setSelectedChatroomId(selectedChat._id);
+  }, [selectedChat, selectedChatroomId]);
 
   return (
     <Box

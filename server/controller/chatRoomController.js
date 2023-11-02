@@ -4,8 +4,6 @@ import { Role } from "../util/roleEnum.js";
 //Fetch all chats for a user
 //route: GET /api/chat/
 export const userFetchChats = async (req, res) => {
-  console.log("fetchChat all request user::", req.user);
-  console.log("fetchChat all request cookies::", req.cookies);
   let userRole = req.cookies.userRole;
   userRole = userRole.toUpperCase();
 
@@ -36,8 +34,6 @@ export const userFetchChats = async (req, res) => {
 //Fetch all chats for an admin
 //route: GET /api/chat/
 export const adminFetchChats = async (req, res) => {
-  console.log("fetchChat all request::", req);
-
   try {
     ChatroomModel.find({ admin: true })
       .populate("client", "-password")
@@ -45,10 +41,6 @@ export const adminFetchChats = async (req, res) => {
       .populate("latestMessage")
       .sort({ lastChatDate: -1 })
       .then(async (results) => {
-        // results = await User.populate(results, {
-        //     path: "latestMessage.sender",
-        //     select: "name pic email",
-        // });
         res.status(200).send(results);
       });
   } catch (error) {
@@ -178,8 +170,6 @@ export const userAccessChat = async (req, res) => {
 //Create or fetch chat for an admin
 //route: POST /api/chat/
 export const adminAccessChat = async (req, res) => {
-  console.log("admin accessChat all request body::", req.body);
-
   //User is initiator of chat
   let { recipientId, recipientRole } = req.body;
   recipientRole = recipientRole.toUpperCase();

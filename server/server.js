@@ -121,8 +121,6 @@ io.on("connection", (socket) => {
     socket.join(room);
     console.log("User Joined Room: " + room);
   });
-  socket.on("typing", (room) => socket.in(room).emit("typing"));
-  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
   socket.on("new message", (newMessageReceived) => {
     console.log("socket on new message received::", newMessageReceived);
@@ -146,7 +144,6 @@ io.on("connection", (socket) => {
         uniqueId = "CLIENT" + newMessageReceived.chatRoom.client;
       }
     }
-    console.log("before emitting message received unique id is: ", uniqueId);
     socket.to(uniqueId).emit("message received", newMessageReceived);
   });
 

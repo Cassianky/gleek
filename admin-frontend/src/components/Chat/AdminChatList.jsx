@@ -3,16 +3,29 @@ import { useChatStore } from "../../zustand/GlobalStore";
 import AdminChatLoading from "./AdminChatLoading";
 import { getSenderName } from "../../utils/AdminChatLogics";
 import dayjs from "dayjs";
+import { useState, useEffect } from "react";
 
 const AdminChatList = () => {
   const { allChatrooms, selectedChat, setSelectedChat } = useChatStore();
+  const [selectedChatroomId, setSelectedChatroomId] = useState(null);
 
   const onSelectChatroom = (chatroom) => {
-    console.log(chatroom);
-    chatroom === selectedChat
-      ? setSelectedChat(null)
-      : setSelectedChat(chatroom);
+    console.log("selectedChatroom", chatroom);
+    console.log("currentChatroom state", selectedChat);
+    if (selectedChat === null || chatroom._id !== selectedChat._id) {
+      setSelectedChat(chatroom);
+      setSelectedChatroomId(chatroom._id);
+    } else {
+      setSelectedChat(null);
+      setSelectedChatroomId(null);
+    }
   };
+
+  useEffect(() => {
+    selectedChat === null
+      ? setSelectedChatroomId(null)
+      : setSelectedChatroomId(selectedChat._id);
+  }, [selectedChat, selectedChatroomId]);
 
   return (
     <Box
@@ -61,9 +74,9 @@ const AdminChatList = () => {
                   py: 2,
                 }}
                 backgroundColor={
-                  selectedChat === chatroom ? "#38B2AC" : "#E8E8E8"
+                  selectedChatroomId === chatroom._id ? "#38B2AC" : "#E8E8E8"
                 }
-                color={selectedChat === chatroom ? "white" : "black"}
+                color={selectedChatroomId === chatroom._id ? "white" : "black"}
                 key={chatroom._id}
               >
                 <Typography variant="h6">{getSenderName(chatroom)}</Typography>
@@ -72,9 +85,7 @@ const AdminChatList = () => {
                     <Typography variant="body1">
                       {chatroom.latestMessage.senderRole === "VENDOR"
                         ? chatroom.vendor.companyName
-                        : chatroom.latestMessage.senderRole === "CLIENT"
-                        ? chatroom.client.name
-                        : "Admin"}
+                        : chatroom.client.name}
                       {": "}
                       {chatroom.latestMessage.messageContent.length > 50
                         ? chatroom.latestMessage.messageContent.substring(

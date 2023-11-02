@@ -9,12 +9,17 @@ import dayjs from "dayjs";
 const ChatList = () => {
   const { allChatrooms, selectedChat, setSelectedChat } = useChatStore();
   const { role } = useGlobalStore();
+  const [selectedChatroomId, setSelectedChatroomId] = useState(null);
 
   const onSelectChatroom = (chatroom) => {
     console.log(chatroom);
-    chatroom === selectedChat
-      ? setSelectedChat(null)
-      : setSelectedChat(chatroom);
+    if (chatroom === selectedChat) {
+      setSelectedChat(null);
+      setSelectedChatroomId(null);
+    } else {
+      setSelectedChat(chatroom);
+      setSelectedChatroomId(chatroom._id);
+    }
   };
 
   return (
@@ -64,9 +69,9 @@ const ChatList = () => {
                   py: 2,
                 }}
                 backgroundColor={
-                  selectedChat === chatroom ? "#38B2AC" : "#E8E8E8"
+                  selectedChatroomId === chatroom._id ? "#38B2AC" : "#E8E8E8"
                 }
-                color={selectedChat === chatroom ? "white" : "black"}
+                color={selectedChatroomId === chatroom.id ? "white" : "black"}
                 key={chatroom._id}
               >
                 <Typography variant="h6">

@@ -126,17 +126,28 @@ io.on("connection", (socket) => {
 
   socket.on("new message", (newMessageReceived) => {
     console.log("socket on new message received::", newMessageReceived);
-    var chatroomId = newMessageReceived.chatRoom;
-    console.log("socket on new message received chatroom id::", chatroomId);
-    const userId =
-      newMessageReceived.senderRole === "CLIENT"
-        ? newMessageReceived.client
-        : newMessageReceived.senderRole === "VENDOR"
-        ? newMessageReceived.vendor
-        : "Admin";
-    const uniqueId = newMessageReceived.senderRole + userId;
+    let uniqueId;
+    if (newMessageReceived.senderRole === "CLIENT") {
+      if (newMessageReceived.chatRoom.admin === false) {
+        uniqueId = "VENDOR" + newMessageReceived.chatRoom.vendor;
+      } else {
+        uniqueId = "Admin";
+      }
+    } else if (newMessageReceived.senderRole === "VENDOR") {
+      if (newMessageReceived.chatRoom.admin === false) {
+        uniqueId = "CLIENT" + newMessageReceived.chatRoom.client;
+      } else {
+        uniqueId = "Admin";
+      }
+    } else {
+      if (newMessageReceived.chatRoom.client === null) {
+        uniqueId = "VENDOR" + newMessageReceived.chatRoom.vendor;
+      } else {
+        uniqueId = "CLIENT" + newMessageReceived.chatRoom.client;
+      }
+    }
     console.log("before emitting message received unique id is: ", uniqueId);
-    socket.to(chatroomId).emit("message received", newMessageReceived);
+    socket.to(uniqueId).emit("message received", newMessageReceived);
   });
 
   socket.off("setup", () => {

@@ -5,15 +5,8 @@ import { Box, CircularProgress, Typography, Input } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getSenderName } from "../../utils/ChatLogics";
 import ChatDisplay from "./ChatDisplay";
-import io from "socket.io-client";
-const uri = process.env.REACT_APP_SERVER_IP;
-import useClientStore from "../../zustand/ClientStore";
-import useVendorStore from "../../zustand/VendorStore";
 
-var socket;
-var selectedChatCompare;
-
-const ChatWindow = () => {
+const ChatWindow = ({ socket, setSelectedChatCompare }) => {
   const {
     selectedChat,
     setSelectedChat,
@@ -25,11 +18,6 @@ const ChatWindow = () => {
   } = useChatStore();
   const { role } = useGlobalStore();
   const [inputMessage, setInputMessage] = useState("");
-  const [socketConnected, setSocketConnected] = useState(false);
-  const userId =
-    role === "Client"
-      ? useClientStore.getState().client._id
-      : useVendorStore.getState().vendor._id;
 
   const fetchMessages = () => {
     if (!selectedChat) return;
@@ -56,30 +44,9 @@ const ChatWindow = () => {
 
   //initial socket connection
   useEffect(() => {
-    const uniqueUser = role.toString().toUpperCase() + userId.toString();
-    socket = io(uri);
-    socket.emit("setup", uniqueUser);
-    socket.on("connected", () => {
-      setSocketConnected(true);
-    });
     fetchMessages();
-    selectedChatCompare = selectedChat;
+    setSelectedChatCompare(selectedChat);
   }, [selectedChat]);
-
-  //TODO - make use of this receive socket to update chatroom order
-  useEffect(() => {
-    socket.on("message received", (newMessageReceived) => {
-      console.log("in message received", newMessageReceived);
-      if (
-        !selectedChatCompare || // if chat is not selected or doesn't match current chat
-        selectedChatCompare._id !== newMessageReceived.chatRoom
-      ) {
-        retrieveAndSetAllChatRooms(role);
-      } else {
-        retrieveAndSetChatroomMessages(role, selectedChat._id);
-      }
-    });
-  }, [currentChatroomMessages]);
 
   return (
     <Box

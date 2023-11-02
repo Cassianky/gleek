@@ -57,6 +57,7 @@ export const sendMessage = async (req, res) => {
 
   try {
     let message = await ChatMessageModel.create(newMessage);
+    message.populate("chatRoom");
     let updatedChatroom = await ChatroomModel.findByIdAndUpdate(
       req.body.chatroomId,
       {

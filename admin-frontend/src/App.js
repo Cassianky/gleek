@@ -235,7 +235,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-            <Route
+          <Route
             exact
             path="/reviews/activity/:activityId"
             element={

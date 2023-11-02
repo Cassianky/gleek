@@ -27,7 +27,7 @@ const useBookingStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get("/gleek/booking/pendingSurvey");
-  
+
       set({ bookings: response.data.bookings });
       set({ isLoading: false });
     } catch (error) {

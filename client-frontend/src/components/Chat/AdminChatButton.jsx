@@ -8,9 +8,9 @@ import { Tooltip } from "@mui/material";
 const AdminChatButton = () => {
   const navigate = useNavigate();
   const { role } = useGlobalStore();
-  const { retrieveAndAccessChatroom } = useChatStore();
+  const { setDirectChatAccess } = useChatStore();
   const navigateToAdminChat = () => {
-    retrieveAndAccessChatroom(role, "Admin", null);
+    setDirectChatAccess(true);
     if (role === "Client") {
       navigate("/client/chats");
     } else {

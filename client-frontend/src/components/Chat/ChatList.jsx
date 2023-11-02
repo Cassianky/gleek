@@ -12,15 +12,20 @@ const ChatList = () => {
   const [selectedChatroomId, setSelectedChatroomId] = useState(null);
 
   const onSelectChatroom = (chatroom) => {
-    console.log(chatroom);
-    if (chatroom === selectedChat) {
-      setSelectedChat(null);
-      setSelectedChatroomId(null);
-    } else {
+    console.log("selectedChatroom", chatroom);
+    console.log("currentChatroom state", selectedChat);
+    if (selectedChat === null || chatroom._id !== selectedChat._id) {
       setSelectedChat(chatroom);
       setSelectedChatroomId(chatroom._id);
+    } else {
+      setSelectedChat(null);
+      setSelectedChatroomId(null);
     }
   };
+
+  // useEffect(() => {
+  //   selectedChat === null ? setSelectedChatroomId(null) : setSelectedChatroomId(selectedChat._id);
+  // }, [selectedChatroomId])
 
   return (
     <Box

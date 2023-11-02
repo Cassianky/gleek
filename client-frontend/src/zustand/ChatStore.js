@@ -8,11 +8,19 @@ const useChatStore = create((set) => ({
   currentChatroomMessages: [],
   selectedChat: null,
   loadingMessage: false,
+  directChatAccess: false,
+  directVendorChatAccess: false,
   setUser: (currentUser) => {
     set({ user: currentUser });
   },
   setSelectedChat: (chatSelected) => {
     set({ selectedChat: chatSelected });
+  },
+  setDirectChatAccess: (boolean) => {
+    set({ directChatAccess: boolean });
+  },
+  setDirectVendorChatAccess: (boolean) => {
+    set({ directVendorChatAccess: boolean });
   },
   sendMessage: (messageContent, role, chatroomId, socket) => {
     const params = {
@@ -60,7 +68,7 @@ const useChatStore = create((set) => ({
       set({ allChatrooms: response.data });
     });
   },
-  retrieveAndAccessChatroom: (role, recipientRole, recipientId) => {
+  retrieveAndAccessChatroom: (role, recipientRole, recipientId, socket) => {
     const params = {
       userRole: role,
       recipientRole: recipientRole,
@@ -76,6 +84,7 @@ const useChatStore = create((set) => ({
       .then((response) => {
         console.log(response);
         set({ selectedChat: response.data });
+        socket.emit("join chat", response.data._id);
         AxiosConnect.get(
           role === "Client"
             ? `/chatMessage/client/allMessages/${response.data._id}`
@@ -90,7 +99,7 @@ const useChatStore = create((set) => ({
         console.log(error);
       });
   },
-  retrieveAndSetChatroomMessages: (role, chatroomId) => {
+  retrieveAndSetChatroomMessages: (role, chatroomId, socket) => {
     AxiosConnect.get(
       role === "Client"
         ? `/chatMessage/client/allMessages/${chatroomId}`
@@ -98,6 +107,7 @@ const useChatStore = create((set) => ({
     ).then((response) => {
       console.log(response.data);
       set({ currentChatroomMessages: response.data });
+      socket.emit("join chat", chatroomId);
     });
   },
 }));

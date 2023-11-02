@@ -5,11 +5,17 @@ import { Box, CircularProgress, Typography, Input } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getSenderName } from "../../utils/ChatLogics";
 import ChatDisplay from "./ChatDisplay";
+import useShopStore from "../../zustand/ShopStore";
 
 const ChatWindow = ({ socket, setSelectedChatCompare }) => {
   const {
     selectedChat,
+    directChatAccess,
+    setDirectChatAccess,
+    directVendorChatAccess,
+    setDirectVendorChatAccess,
     setSelectedChat,
+    retrieveAndAccessChatroom,
     retrieveAndSetAllChatRooms,
     retrieveAndSetChatroomMessages,
     loadingMessage,
@@ -17,13 +23,8 @@ const ChatWindow = ({ socket, setSelectedChatCompare }) => {
     sendMessage,
   } = useChatStore();
   const { role } = useGlobalStore();
+  const { currentActivity } = useShopStore();
   const [inputMessage, setInputMessage] = useState("");
-
-  const fetchMessages = () => {
-    if (!selectedChat) return;
-    retrieveAndSetChatroomMessages(role, selectedChat._id);
-    socket.emit("join chat", selectedChat._id);
-  };
 
   const handleMessageInputChange = (event) => {
     setInputMessage(event.target.value);
@@ -42,11 +43,38 @@ const ChatWindow = ({ socket, setSelectedChatCompare }) => {
     }
   };
 
-  //initial socket connection
+  const fetchMessages = () => {
+    console.log(selectedChat);
+    if (selectedChat !== null) {
+      retrieveAndSetChatroomMessages(role, selectedChat._id, socket);
+    } else if (directChatAccess) {
+      console.log("in direct admin");
+      setDirectChatAccess(false);
+      retrieveAndAccessChatroom(role, "Admin", null, socket);
+      retrieveAndSetAllChatRooms(role);
+    } else if (directVendorChatAccess) {
+      console.log("in direct vendor");
+      setDirectVendorChatAccess(false);
+      if (currentActivity.adminCreated === undefined) {
+        retrieveAndAccessChatroom(
+          role,
+          "Vendor",
+          currentActivity.linkedVendor._id,
+          socket,
+        );
+      } else {
+        retrieveAndAccessChatroom(role, "Admin", null, socket);
+      }
+      retrieveAndSetAllChatRooms(role);
+    } else {
+      retrieveAndSetAllChatRooms(role);
+    }
+  };
+
   useEffect(() => {
     fetchMessages();
     setSelectedChatCompare(selectedChat);
-  }, [selectedChat]);
+  }, [selectedChat, directChatAccess]);
 
   return (
     <Box
@@ -120,7 +148,6 @@ const ChatWindow = ({ socket, setSelectedChatCompare }) => {
           </Box>
         </>
       ) : (
-        // to get socket.io on same page
         <Box
           display="flex"
           justifyContent="center"

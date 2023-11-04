@@ -62,7 +62,11 @@ function MyBookmarks() {
 
   useEffect(() => {
     const fetchBookmarks = async () => {
-      await getBookmarks();
+      try {
+        await getBookmarks();
+      } catch (error) {
+        openSnackbar("An error occurred.", "error");
+      }
     };
 
     fetchBookmarks();

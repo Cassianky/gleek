@@ -1,23 +1,20 @@
+import ArticleIcon from "@mui/icons-material/Article";
 import {
   Box,
-  Tab,
+  Button,
   Chip,
-  Tabs,
-  Typography,
-  Badge,
   Divider,
   Grid,
-  Button,
+  Typography
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import useBookingStore from "../../../zustand/BookingStore";
+import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { lighten, useTheme } from "@mui/material/styles";
+import React, { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import notFound from "../../../assets/not_found.png";
-import VendorProfileItem from "../../../components/Vendor/VendorProfileItem";
-import { Link } from "react-router-dom";
 import MainBodyContainer from "../../../components/Common/MainBodyContainer";
+import VendorProfileItem from "../../../components/Vendor/VendorProfileItem";
+import useBookingStore from "../../../zustand/BookingStore";
 
 const BookingsDetails = () => {
   const { bookingId } = useParams();
@@ -401,12 +398,13 @@ const BookingsDetails = () => {
               <Button
                 variant="contained"
                 component={Link}
-                to={`/booking/${currentBooking?._id}/survey/edit`}
+                startIcon={<ArticleIcon />}
+                to={`/booking/${currentBooking?._id}/survey/edit` }
               >
                 Fill In Survey
               </Button>
             ) : (
-              <Button variant="contained" disabled>
+              <Button variant="contained" disabled >
                 Survey not available
               </Button>
             )}

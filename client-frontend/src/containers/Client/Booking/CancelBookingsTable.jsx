@@ -1,65 +1,39 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import notFound from "../../../assets/not_found.png";
 import { Box, Chip, Typography, useTheme, Alert } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import CancelField from "../../../components/CancelField";
+import {
+  convertISOtoDate,
+  convertISOtoTime,
+  convertISOtoShortDate,
+} from "../../../utils/TimeFormatter";
 
 const CancelBookingsTable = ({ allBookings, filter, hasCancel }) => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const theme = useTheme();
   const secondary = theme.palette.secondary.main;
+  let [searchParams, setSearchParams] = useSearchParams();
 
   let containerStyle = {
     minHeight: "10rem", // Default for extra-large screens
-    width: "100%",
+    width: "10rem",
     objectFit: "cover",
     borderTopLeftRadius: "4px",
     borderTopRightRadius: "4px",
     borderBottomRightRadius: "4px",
     borderBottomLeftRadius: "4px",
+    borderRadius: "4px",
   };
   useEffect(() => {
     const formattedBookings = filter(allBookings);
     setBookings(formattedBookings);
+    const tab = searchParams.get("tab");
   }, [allBookings]);
-
-  const convertISOtoDate = (value) => {
-    const date = new Date(value);
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    const formattedDate = date.toLocaleDateString("en-SG", options);
-    return formattedDate;
-  };
-  const convertISOtoShortDate = (value) => {
-    const date = new Date(value);
-    const options = {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-    };
-    const formattedDate = date.toLocaleDateString("en-SG", options);
-    return formattedDate;
-  };
-
-  const convertISOtoTime = (value) => {
-    const date = new Date(value);
-    const formattedTime = date
-      .toLocaleTimeString("en-SG", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      })
-      .toUpperCase();
-    return formattedTime;
-  };
 
   const handleRowClick = ({ _id }) => {
     navigate(`/booking/${_id.toString()}`);
@@ -83,7 +57,7 @@ const CancelBookingsTable = ({ allBookings, filter, hasCancel }) => {
         const title = params.value;
         const preSignedImages = params.row.activityId.preSignedImages;
         return (
-          <Box display="flex" flexDirection="column">
+          <Box display="flex" flexDirection="column" p={2}>
             <Typography
               fontSize={"0.875rem"}
               color={secondary}
@@ -92,12 +66,7 @@ const CancelBookingsTable = ({ allBookings, filter, hasCancel }) => {
             >
               {title}
             </Typography>
-            <Box
-              display="flex"
-              justifyContent="center"
-              width={"100%"}
-              bgcolor={"grey.50"}
-            >
+            <Box display="flex" justifyContent="center" width={"100%"}>
               {/* Apply styling to the image */}
               {preSignedImages && preSignedImages.length > 0 && (
                 <img
@@ -337,7 +306,7 @@ const CancelBookingsTable = ({ allBookings, filter, hasCancel }) => {
   ];
 
   return (
-    <div style={{ height: "80vh", width: "99%" }}>
+    <div style={{ height: 800, width: "98%" }}>
       {hasCancel && (
         <Box mt={2} mb={2} boxShadow={1}>
           <Alert severity="info">

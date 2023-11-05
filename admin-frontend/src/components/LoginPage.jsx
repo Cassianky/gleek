@@ -62,9 +62,7 @@ function LoginPage(props) {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(adminError);
     const responseStatus = await login(email, password);
-    console.log(adminError.message);
     if (responseStatus) {
       // setOpen(true);
       openSnackbar("Login is successful!")

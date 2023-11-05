@@ -460,6 +460,27 @@ export const useVendorStore = create((set) => ({
       console.error(error);
     }
   },
+  toggleIsDisabled: async (vendorId, isDisabled) => {
+    try {
+      set(() => ({ isLoading: true }));
+      console.log(vendorId);
+      const toggleResponse = await AxiosConnect.patch(
+        "/vendor/toggleVendorIsDisabled",
+        vendorId,
+        {
+          isDisabled: isDisabled,
+        }
+      );
+      const response = await AxiosConnect.get("/vendor/viewAllVendors");
+      set({ vendors: response.data });
+      set(() => ({ isLoading: false }));
+      return toggleResponse.data.message;
+    } catch (error) {
+      set(() => ({ isLoading: false }));
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
 }));
 
 export const useClientStore = create((set) => ({
@@ -497,6 +518,27 @@ export const useClientStore = create((set) => ({
       set({ isLoading: false });
     } catch (error) {
       console.error(error);
+    }
+  },
+  toggleIsDisabled: async (clientId, isDisabled) => {
+    try {
+      set(() => ({ isLoading: true }));
+      console.log(clientId);
+      const toggleResponse = await AxiosConnect.patch(
+        "/client/toggleClientIsDisabled",
+        clientId,
+        {
+          isDisabled: isDisabled,
+        }
+      );
+      const response = await AxiosConnect.get("/client/getAllClients");
+      set({ clients: response.data });
+      set(() => ({ isLoading: false }));
+      return toggleResponse.data.message;
+    } catch (error) {
+      set(() => ({ isLoading: false }));
+      console.error(error.message);
+      throw new Error(error.message);
     }
   },
 }));

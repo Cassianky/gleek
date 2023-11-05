@@ -28,6 +28,7 @@ import {
   NotificationEvent,
 } from "../util/notificationRelatedEnum.js";
 import { createNotification } from "./notificationController.js";
+import ClientModel from "../model/clientModel.js";
 
 const secret = process.env.JWT_SECRET_ClIENT;
 
@@ -133,7 +134,7 @@ export const postRegister = async (req, res) => {
     await createClientConsent(
       createdClient.id,
       acceptTermsAndConditions,
-      session,
+      session
     );
 
     const token = await generateJwtToken(createdClient.id);
@@ -267,7 +268,7 @@ export const postChangePassword = async (req, res) => {
     const updatedClient = await Client.findOneAndUpdate(
       { _id: client.id },
       { password: hashed },
-      { new: true },
+      { new: true }
     );
 
     return res.status(200).json({ msg: "Password successfully changed." });
@@ -292,7 +293,7 @@ export const postResetPassword = async (req, res) => {
     const updatedClient = await Client.findOneAndUpdate(
       { _id: client.id },
       { password: hashed },
-      { new: true },
+      { new: true }
     );
 
     return res.status(200).json({ msg: "Password successfully changed." });
@@ -327,7 +328,7 @@ export const updateClientAccountDetails = async (req, res) => {
         select: {
           password: 0,
         },
-      },
+      }
     );
 
     console.log("updateClientAccountDetails: Updated client", updatedClient);
@@ -412,7 +413,7 @@ export const updateProfilePicture = async (req, res) => {
     const updatedClient = await Client.findOneAndUpdate(
       { _id: client._id },
       { photo: fileS3Location },
-      { new: true },
+      { new: true }
     );
 
     if (updatedClient.photo) {
@@ -525,5 +526,31 @@ export const resetPasswordRedirect = async (req, res) => {
     res.status(200).redirect("http://localhost:3001/client/resetPassword");
   } catch (cookieError) {
     return res.status(500).send("Error setting cookie");
+  }
+};
+
+export const toggleClientIsDisabled = async (req, res) => {
+  try {
+    const clientId = req.params.id;
+    const { isDisabled } = req.body;
+    const client = await ClientModel.findByIdAndUpdate(
+      clientId,
+      {
+        isDisabled: isDisabled,
+      },
+      { new: true }
+    );
+    const message = isDisabled
+      ? "Client disabled successfully!"
+      : "Client enabled successfully!";
+    res.status(200).json({
+      client: client,
+      message: message,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Server Error! Unable to update client.",
+      error: err.message,
+    });
   }
 };

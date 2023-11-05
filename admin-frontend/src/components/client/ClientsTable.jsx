@@ -3,6 +3,7 @@ import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import CloseIcon from "@mui/icons-material/Close";
+import ToggleIsDisabledButton from "./ToggleIsDisabledButton";
 import { Badge, Tab, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import {
@@ -124,6 +125,19 @@ const ClientsTable = ({ clients, updateClient }) => {
         });
         return formattedDate;
       },
+    },
+    {
+      field: "isDisabled",
+      headerName: "Disable/Enable",
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <ToggleIsDisabledButton
+            isDisabled={params.row.isDisabled}
+            userId={params.row._id}
+          />
+        );
+      }
     });
   }
 

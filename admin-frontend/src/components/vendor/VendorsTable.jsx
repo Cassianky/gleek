@@ -15,6 +15,7 @@ import {
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ToggleIsDisabledButton from "./ToggleIsDisabledButton";
 
 const StyledButton = styled(Button)`
   padding-left: 6px;
@@ -152,6 +153,19 @@ const VendorsTable = ({ vendors, updateVendor }) => {
         });
         return formattedDate;
       },
+    },
+    {
+      field: "isDisabled",
+      headerName: "Disable/Enable",
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <ToggleIsDisabledButton
+            isDisabled={params.row.isDisabled}
+            userId={params.row._id}
+          />
+        );
+      }
     });
   }
 

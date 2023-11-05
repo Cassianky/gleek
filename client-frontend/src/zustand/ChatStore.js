@@ -36,7 +36,7 @@ const useChatStore = create((set) => ({
       (response) => {
         console.log(
           "after send message received data of message: ",
-          response.data,
+          response.data
         );
         socket.emit("new message", response.data);
         AxiosConnect.getWithParams(chatroompath + "/fetchChats", params).then(
@@ -44,14 +44,14 @@ const useChatStore = create((set) => ({
             console.log("after send message set chat list");
             set({ allChatrooms: response.data });
             AxiosConnect.get(
-              chatMessagepath + `/allMessages/${chatroomId}`,
+              chatMessagepath + `/allMessages/${chatroomId}`
             ).then((response) => {
               console.log("after send message set chat window");
               set({ currentChatroomMessages: response.data });
             });
-          },
+          }
         );
-      },
+      }
     );
   },
   retrieveAndSetAllChatRooms: (role) => {
@@ -62,7 +62,7 @@ const useChatStore = create((set) => ({
       role === "Client"
         ? "/chatroom/client/fetchChats"
         : "/chatroom/vendor/fetchChats",
-      params,
+      params
     ).then((response) => {
       console.log(response.data);
       set({ allChatrooms: response.data });
@@ -79,7 +79,7 @@ const useChatStore = create((set) => ({
       role === "Client"
         ? "/chatroom/client/accessChat"
         : "/chatroom/vendor/accessChat",
-      params,
+      params
     )
       .then((response) => {
         console.log(response);
@@ -88,7 +88,7 @@ const useChatStore = create((set) => ({
         AxiosConnect.get(
           role === "Client"
             ? `/chatMessage/client/allMessages/${response.data._id}`
-            : `/chatMessage/vendor/allMessages/${response.data._id}`,
+            : `/chatMessage/vendor/allMessages/${response.data._id}`
         ).then((response) => {
           console.log(response.data);
           set({ currentChatroomMessages: response.data });
@@ -103,7 +103,7 @@ const useChatStore = create((set) => ({
     AxiosConnect.get(
       role === "Client"
         ? `/chatMessage/client/allMessages/${chatroomId}`
-        : `/chatMessage/vendor/allMessages/${chatroomId}`,
+        : `/chatMessage/vendor/allMessages/${chatroomId}`
     ).then((response) => {
       console.log(response.data);
       set({ currentChatroomMessages: response.data });

@@ -39,6 +39,10 @@ const clientSchema = new mongoose.Schema({
     default: false,
     required: true,
   },
+  isDisabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const ClientModel = mongoose.model("Client", clientSchema, "clients");

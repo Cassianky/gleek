@@ -19,14 +19,15 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import LockPersonIcon from "@mui/icons-material/LockPerson";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useAdminStore } from "../zustand/GlobalStore.js";
+import { useAdminStore, useSnackbarStore } from "../zustand/GlobalStore.js";
 import loginImage from "../assets/imageUploadIcon/login.png";
 import HomePageNavBar from "./navbar/HomePageNavBar.jsx";
 
 function LoginPage(props) {
   const theme = useTheme();
-  const { isLoading, AdminError, login, admin, authenticated } =
+  const { isLoading, adminError, login, admin, authenticated } =
     useAdminStore(); // Destructure the relevant state and actions
+    const { openSnackbar } = useSnackbarStore();
   const tertiary = theme.palette.secondary.main;
   const primary = theme.palette.primary.main;
   const [showPassword, setShowPassword] = useState(false);
@@ -61,13 +62,15 @@ function LoginPage(props) {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    console.log(adminError);
     const responseStatus = await login(email, password);
+    console.log(adminError.message);
     if (responseStatus) {
-      setOpen(true);
+      // setOpen(true);
+      openSnackbar("Login is successful!")
       navigate("/");
     } else {
-      setOpenError(true);
+      openSnackbar(adminError?.message, "error");
     }
   };
 
@@ -100,7 +103,7 @@ function LoginPage(props) {
           alignItems="center"
           p={5}
         >
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert
               onClose={handleClose}
               severity="success"
@@ -108,8 +111,8 @@ function LoginPage(props) {
             >
               Login is successful!
             </Alert>
-          </Snackbar>
-          <Snackbar
+          </Snackbar> */}
+          {/* <Snackbar
             open={openError}
             autoHideDuration={6000}
             onClose={handleClose}
@@ -119,13 +122,13 @@ function LoginPage(props) {
               severity="error"
               sx={{ width: "100%" }}
             >
-              {AdminError &&
-                AdminError.response &&
-                AdminError.response.data &&
-                (AdminError.response.data.errors?.[0]?.msg ||
-                  AdminError.response.data)}
+              {adminError &&
+              adminError.message &&
+                adminError.response &&
+                adminError.response.data &&
+                (adminError.message || adminError.response.data.errors?.[0]?.msg)}
             </Alert>
-          </Snackbar>
+          </Snackbar> */}
           <form onSubmit={handleSubmit}>
             <Box
               display="flex"

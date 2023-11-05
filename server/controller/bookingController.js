@@ -122,7 +122,7 @@ function getTimeslotCapacities(
   capacity,
   bookings,
   blockedTimeslots,
-  duration,
+  duration
 ) {
   // Create a hashmap to store capacities for each starttime slot
   const capacities = new Map(startTimes.map((slot) => [slot, capacity]));
@@ -172,12 +172,12 @@ export function generateAllTimeslots(
   capacity,
   bookings,
   blockedTimeslots,
-  duration,
+  duration
 ) {
   const startTimes = generateStartTimes(
     earliestStartTime,
     latestStartTime,
-    interval,
+    interval
   );
 
   const timeslotCapacities = getTimeslotCapacities(
@@ -185,7 +185,7 @@ export function generateAllTimeslots(
     capacity,
     bookings,
     blockedTimeslots,
-    duration,
+    duration
   );
 
   const allTimeslots = startTimes.map((startTime, index) => {
@@ -261,7 +261,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
     const minDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() + daysInAdvance,
+      today.getDate() + daysInAdvance
     );
     if (dateParam < minDate) {
       return res.status(400).json({
@@ -280,24 +280,24 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.startTime.getHours(),
       activity.startTime.getMinutes(),
       0,
-      0,
+      0
     );
     const latestStartTime = new Date(dateParam);
     latestStartTime.setHours(
       activity.endTime.getHours(),
       activity.endTime.getMinutes(),
       0,
-      0,
+      0
     );
     console.log(
       "EARLIEST START TIME: ",
       earliestStartTime.toLocaleDateString(),
-      earliestStartTime.toLocaleTimeString(),
+      earliestStartTime.toLocaleTimeString()
     );
     console.log(
       "LATEST START TIME: ",
       latestStartTime.toLocaleDateString(),
-      latestStartTime.toLocaleTimeString(),
+      latestStartTime.toLocaleTimeString()
     );
 
     const interval = 30; // 30 minutes
@@ -314,6 +314,9 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       startDateTime: {
         $gte: startOfDay,
         $lt: endOfDay,
+      },
+      status: {
+        $in: ["PENDING_CONFIRMATION", "CONFIRMED"],
       },
     });
 
@@ -333,7 +336,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.capacity,
       bookings,
       blockedTimeslots,
-      activity.duration,
+      activity.duration
     );
 
     res.status(200).json({
@@ -351,13 +354,13 @@ export const getAvailableBookingTimeslots = async (req, res) => {
 export function getTimeslotAvailability(
   allTimeslots,
   selectedStartDateTime,
-  selectedEndDateTime,
+  selectedEndDateTime
 ) {
   const timeslot = allTimeslots.find(
     (timeslot) =>
       timeslot.startTime.getTime() === selectedStartDateTime.getTime() &&
       timeslot.endTime.getTime() === selectedEndDateTime.getTime() &&
-      timeslot.isAvailable,
+      timeslot.isAvailable
   );
 
   return timeslot !== undefined;
@@ -494,7 +497,7 @@ export const confirmBooking = async (req, res) => {
       "CONFIRMED",
       "VENDOR",
       vendor?.companyName,
-      null,
+      null
     );
     const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
@@ -522,7 +525,7 @@ export const rejectBooking = async (req, res) => {
       "REJECTED",
       "VENDOR",
       vendorName?.companyName,
-      rejectionReason,
+      rejectionReason
     );
     const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
@@ -549,7 +552,7 @@ export const cancelBooking = async (req, res) => {
       "CANCELLED",
       "VENDOR",
       vendorName?.companyName,
-      cancelReason,
+      cancelReason
     );
     const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
@@ -593,7 +596,7 @@ export const updateBookingStatus = async (req, res) => {
           },
         },
       },
-      { new: true },
+      { new: true }
     );
     res.status(200).json({
       booking: updatedBooking,

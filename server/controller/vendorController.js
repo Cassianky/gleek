@@ -231,6 +231,11 @@ export const postLogin = async (req, res) => {
           .status(400)
           .send({ msg: "Your Vendor registration has been rejected." });
       }
+      if (vendor.isDisabled) {
+        return res.status(400).send({
+          msg: "Your account has been disabled. Please contact admin for assistance.",
+        });
+      }
       if (vendor.companyLogo) {
         const preSignedUrl = await s3GetImages(vendor.companyLogo);
         vendor.preSignedPhoto = preSignedUrl;

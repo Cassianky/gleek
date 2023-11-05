@@ -188,6 +188,14 @@ export const postLogin = async (req, res) => {
           .send({ msg: "Your Client registration has been rejected." });
       }
 
+      if (client.isDisabled) {
+        return res
+          .status(400)
+          .send({
+            msg: "Your account has been disabled. Please contact admin for assistance.",
+          });
+      }
+
       if (client.photo) {
         const preSignedUrl = await s3GetImages(client.photo);
         client.preSignedPhoto = preSignedUrl;

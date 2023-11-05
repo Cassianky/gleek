@@ -27,7 +27,7 @@ function LoginPage(props) {
   const theme = useTheme();
   const { isLoading, adminError, login, admin, authenticated } =
     useAdminStore(); // Destructure the relevant state and actions
-    const { openSnackbar } = useSnackbarStore();
+  const { openSnackbar } = useSnackbarStore();
   const tertiary = theme.palette.secondary.main;
   const primary = theme.palette.primary.main;
   const [showPassword, setShowPassword] = useState(false);
@@ -65,7 +65,7 @@ function LoginPage(props) {
     const responseStatus = await login(email, password);
     if (responseStatus) {
       // setOpen(true);
-      openSnackbar("Login is successful!")
+      openSnackbar("Login is successful!");
       navigate("/");
     } else {
       openSnackbar(adminError?.message, "error");

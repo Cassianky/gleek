@@ -134,7 +134,7 @@ export const postRegister = async (req, res) => {
     await createClientConsent(
       createdClient.id,
       acceptTermsAndConditions,
-      session
+      session,
     );
 
     const token = await generateJwtToken(createdClient.id);
@@ -189,11 +189,9 @@ export const postLogin = async (req, res) => {
       }
 
       if (client.isDisabled) {
-        return res
-          .status(400)
-          .send({
-            msg: "Your account has been disabled. Please contact admin for assistance.",
-          });
+        return res.status(400).send({
+          msg: "Your account has been disabled. Please contact admin for assistance.",
+        });
       }
 
       if (client.photo) {
@@ -276,7 +274,7 @@ export const postChangePassword = async (req, res) => {
     const updatedClient = await Client.findOneAndUpdate(
       { _id: client.id },
       { password: hashed },
-      { new: true }
+      { new: true },
     );
 
     return res.status(200).json({ msg: "Password successfully changed." });
@@ -301,7 +299,7 @@ export const postResetPassword = async (req, res) => {
     const updatedClient = await Client.findOneAndUpdate(
       { _id: client.id },
       { password: hashed },
-      { new: true }
+      { new: true },
     );
 
     return res.status(200).json({ msg: "Password successfully changed." });
@@ -336,7 +334,7 @@ export const updateClientAccountDetails = async (req, res) => {
         select: {
           password: 0,
         },
-      }
+      },
     );
 
     console.log("updateClientAccountDetails: Updated client", updatedClient);
@@ -421,7 +419,7 @@ export const updateProfilePicture = async (req, res) => {
     const updatedClient = await Client.findOneAndUpdate(
       { _id: client._id },
       { photo: fileS3Location },
-      { new: true }
+      { new: true },
     );
 
     if (updatedClient.photo) {
@@ -546,7 +544,7 @@ export const toggleClientIsDisabled = async (req, res) => {
       {
         isDisabled: isDisabled,
       },
-      { new: true }
+      { new: true },
     );
     const message = isDisabled
       ? "Client disabled successfully!"

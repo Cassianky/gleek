@@ -1,18 +1,15 @@
 import React from "react";
 import { useTheme } from "@emotion/react";
 import { useClientStore, useSnackbarStore } from "../../zustand/GlobalStore";
-import {
-  Button,
-  Typography,
-} from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
-const ToggleIsDisabledButton = ({userId, isDisabled}) => {
+const ToggleIsDisabledButton = ({ userId, isDisabled }) => {
   const theme = useTheme();
   const { isLoading, toggleIsDisabled } = useClientStore();
   const { openSnackbar } = useSnackbarStore();
 
   const handleEnableButton = async (event) => {
-    console.log(userId)
+    console.log(userId);
     try {
       event.stopPropagation();
       const message = await toggleIsDisabled(userId, false);
@@ -37,17 +34,20 @@ const ToggleIsDisabledButton = ({userId, isDisabled}) => {
   } else {
     if (isDisabled) {
       return (
-        <Button variant="contained" color="success" onClick={handleEnableButton}>
-        Enable
-      </Button>
-    );
-} else {
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleEnableButton}
+        >
+          Enable
+        </Button>
+      );
+    } else {
       return (
         <Button variant="contained" color="error" onClick={handleDisableButton}>
-        Disable
-      </Button>
-        
-      )
+          Disable
+        </Button>
+      );
     }
   }
 };

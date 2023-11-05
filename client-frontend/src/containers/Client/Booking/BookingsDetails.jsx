@@ -1,12 +1,5 @@
 import ArticleIcon from "@mui/icons-material/Article";
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  Typography
-} from "@mui/material";
+import { Box, Button, Chip, Divider, Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { useEffect } from "react";
@@ -399,12 +392,12 @@ const BookingsDetails = () => {
                 variant="contained"
                 component={Link}
                 startIcon={<ArticleIcon />}
-                to={`/booking/${currentBooking?._id}/survey/edit` }
+                to={`/booking/${currentBooking?._id}/survey/edit`}
               >
                 Fill In Survey
               </Button>
             ) : (
-              <Button variant="contained" disabled >
+              <Button variant="contained" disabled>
                 Survey not available
               </Button>
             )}

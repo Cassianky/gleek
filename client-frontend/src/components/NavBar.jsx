@@ -492,6 +492,14 @@ function NavBar(props) {
                 <MenuItem
                   sx={{ px: "32px" }}
                   onClick={() => {
+                    navigate("/vendor/dashboard");
+                  }}
+                >
+                  Dashboard
+                </MenuItem>
+                <MenuItem
+                  sx={{ px: "32px" }}
+                  onClick={() => {
                     navigate("/vendor/activities");
                   }}
                 >

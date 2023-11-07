@@ -31,9 +31,8 @@ const adminSurveyResponseSchema = new mongoose.Schema({
   },
 });
 
-const AdminSurveyResponseModel = mongoose.model(
-  "AdminSurveyResponse",
-  adminSurveyResponseSchema,
-);
+const AdminSurveyResponseModel =
+  mongoose.models.AdminSurveyResponse ||
+  mongoose.model("AdminSurveyResponse", adminSurveyResponseSchema);
 
 export default AdminSurveyResponseModel;

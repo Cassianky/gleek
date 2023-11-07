@@ -153,7 +153,6 @@ const bookingSchema = new mongoose.Schema({
   ],
   activityPricingRule: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: "ActivityPricingRules",
   },
 });

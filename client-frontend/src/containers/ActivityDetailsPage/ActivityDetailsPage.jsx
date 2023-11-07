@@ -46,6 +46,7 @@ import VendorProfileItem from "../../components/Vendor/VendorProfileItem";
 import "./styles.css";
 import Holidays from "date-holidays";
 import VendorChatButton from "../../components/Chat/VendorChatButton";
+import useClientStore from "../../zustand/ClientStore";
 
 const ActivityDetailsPage = () => {
   const {
@@ -55,6 +56,7 @@ const ActivityDetailsPage = () => {
     getTimeSlots,
     timeSlotsLoading,
     timeSlots,
+    getQuotationPdf,
   } = useShopStore();
   const { addToCart, addToCartLoading } = useCartStore();
   const { activityId } = useParams();
@@ -71,6 +73,8 @@ const ActivityDetailsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [comments, setComments] = useState("");
   const { openSnackbar } = useSnackbarStore();
+  const [fileUrl, setFileUrl] = useState(null);
+  const { client } = useClientStore();
 
   const handleTimeChange = (event) => {
     setTime(event.target.value);
@@ -300,6 +304,43 @@ const ActivityDetailsPage = () => {
       openSnackbar(error.response.data.msg, "error");
     }
   };
+  const handleDownloadQuotation = async (event) => {
+    try {
+      const weekendAddOn = calculateWeekendAddOn(
+        selectedDate,
+        currentActivity.weekendPricing,
+      );
+      const onlineAddOn = calculateOnlineAddOn(
+        location,
+        currentActivity.offlinePricing,
+      );
+      const offlineAddOn = calculateOfflineAddOn(
+        location,
+        currentActivity.onlinePricing,
+      );
+
+      const bookingData = {
+        title: currentActivity.title,
+        selectedDate,
+        totalPax: pax,
+        location,
+        time,
+        totalCost: totalPrice(),
+        theme: currentActivity.theme,
+        subtheme: currentActivity.subtheme,
+        activityType: currentActivity.activityType,
+        client: client,
+        comments: comments,
+        weekendAddOnCost: weekendAddOn,
+        onlineAddOnCost: onlineAddOn,
+        offlineAddOnCost: offlineAddOn,
+        basePrice: calculateBasePrice(pax),
+      };
+      const url = await getQuotationPdf(bookingData);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     // Check if all three variables are defined
     if (pax.length !== 0 && selectedDate !== null && location.length !== 0) {
@@ -332,17 +373,8 @@ const ActivityDetailsPage = () => {
                   <VendorProfileItem vendor={currentActivity?.linkedVendor} />
                 )}
               </Box>
-              <span
-                style={{
-                  width: "50%",
-                  // position: "absolute",
-                  display: "flex",
-                  justifyContent: "right",
-                }}
-              >
-                <VendorChatButton />
-                <ActivityBookmarkButton activityId={activityId} />
-              </span>
+
+              <ActivityBookmarkButton activityId={activityId} />
             </Box>
           </Grid>
           <Grid
@@ -765,6 +797,7 @@ const ActivityDetailsPage = () => {
                       location.length === 0 ||
                       time.length === 0
                     }
+                    onClick={handleDownloadQuotation}
                   >
                     Download Quotation PDF
                   </Button>

@@ -16,8 +16,6 @@ import activityTestController from "./controller/activityTestController.js";
 import notificationRoutes from "./routes/notificationRoute.js";
 import chatroomRoutes from "./routes/chatroomRoute.js";
 import chatMessageRoutes from "./routes/chatMessageRoute.js";
-import pdf from "html-pdf";
-import { InvoiceTemplate } from "./assets/templates/InvoiceTemplate.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
 

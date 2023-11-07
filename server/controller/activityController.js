@@ -16,6 +16,11 @@ import {
   NotificationEvent,
 } from "../util/notificationRelatedEnum.js";
 import { createNotification } from "./notificationController.js";
+import { QuotationTemplate } from "../assets/templates/QuotationTemplate.js";
+import pdf from "html-pdf";
+import fs from "fs";
+import path from "path";
+import Client from "../model/clientModel.js";
 
 // yt: this endpoint retrieves and returns PUBLISHED & PENDING APPROVAL activities only
 export const getAllActivities = async (req, res) => {
@@ -87,7 +92,7 @@ export const getAllActivitiesForAdmin = async (req, res) => {
 export const getPreSignedImgs = async (req, res) => {
   try {
     const foundActivity = await ActivityModel.findById(req.params.id).populate(
-      "linkedVendor"
+      "linkedVendor",
     );
     let preSignedUrlArr = await s3GetImages(foundActivity.images);
     let vendorProfile;
@@ -121,7 +126,7 @@ export const getActivity = async (req, res) => {
       await findMinimumPricePerPax(foundActivity);
     if (foundActivity.linkedVendor && foundActivity.linkedVendor.companyLogo) {
       let preSignedUrl = await s3GetImages(
-        foundActivity.linkedVendor.companyLogo
+        foundActivity.linkedVendor.companyLogo,
       );
       foundActivity.linkedVendor.preSignedPhoto = preSignedUrl;
     }
@@ -163,7 +168,7 @@ const saveActivityPricingRules = async (
   activityPricingRules,
   session,
   savedActivity,
-  validateBeforeSave
+  validateBeforeSave,
 ) => {
   const activitypriceobjects = [];
   if (Array.isArray(activityPricingRules)) {
@@ -204,7 +209,7 @@ const saveActivityPricingRules = async (
           {
             session,
             validateBeforeSave,
-          }
+          },
         );
         await ActivityModel.findByIdAndUpdate(
           savedActivity._id,
@@ -213,12 +218,12 @@ const saveActivityPricingRules = async (
               activityPricingRules: newPricingRule[0]._id,
             },
           },
-          { new: true, session }
+          { new: true, session },
         );
       } catch (error) {
         throw new Error("Error when creating activity pricing rules!");
       }
-    })
+    }),
   );
 };
 
@@ -227,7 +232,7 @@ const saveApprovalStatusChangeLog = async (
   rejectionReason,
   activityId,
   adminId,
-  session
+  session,
 ) => {
   try {
     const newChangeLogEntry = new ApprovalStatusChangeLog({
@@ -343,12 +348,12 @@ export const saveActivity = async (req, res) => {
           {
             new: true,
             session,
-          }
+          },
         );
         savedActivity = updatedRejectedDraft;
         await ActivityPricingRulesModel.deleteMany(
           { activity: activityId },
-          { session }
+          { session },
         );
         // this is a parent, create a new reject draft (child)
       } else {
@@ -371,7 +376,7 @@ export const saveActivity = async (req, res) => {
           {
             new: true,
             session,
-          }
+          },
         );
         savedActivity = rejectDraft;
         console.log("New saved activity", savedActivity);
@@ -383,7 +388,7 @@ export const saveActivity = async (req, res) => {
           await ActivityModel.findById(activityId).session(session);
         if (!foundActivity) {
           throw new Error(
-            "Activity draft you are trying to save does not exist!"
+            "Activity draft you are trying to save does not exist!",
           );
         } else {
           let parentId;
@@ -408,11 +413,11 @@ export const saveActivity = async (req, res) => {
             {
               new: true,
               session,
-            }
+            },
           );
           await ActivityPricingRulesModel.deleteMany(
             { activity: activityId },
-            { session }
+            { session },
           );
 
           if (savedActivity.adminCreated === undefined) {
@@ -481,10 +486,10 @@ export const saveActivity = async (req, res) => {
     }
 
     const srcS3ToBeKeptImageList = savedActivity.images.filter((item) =>
-      processedS3ImageUrlToBeKept.includes(item)
+      processedS3ImageUrlToBeKept.includes(item),
     );
     const srcS3ToBeRemovedImageList = savedActivity.images.filter(
-      (item) => !processedS3ImageUrlToBeKept.includes(item)
+      (item) => !processedS3ImageUrlToBeKept.includes(item),
     );
 
     const fileBody = req.files;
@@ -512,7 +517,7 @@ export const saveActivity = async (req, res) => {
     await ActivityModel.findByIdAndUpdate(
       savedActivity._id,
       { images: srcS3ToBeKeptImageList },
-      { new: true, session }
+      { new: true, session },
     );
 
     if (activityPricingRules) {
@@ -520,7 +525,7 @@ export const saveActivity = async (req, res) => {
         activityPricingRules,
         session,
         savedActivity,
-        false
+        false,
       );
     }
 
@@ -532,9 +537,10 @@ export const saveActivity = async (req, res) => {
   } catch (error) {
     console.log("Error caught", error);
     await session.abortTransaction();
-    res
-      .status(500)
-      .json({ error: "Activity cannot be added", message: error.message });
+    res.status(500).json({
+      error: "Activity cannot be added",
+      message: error.message,
+    });
   } finally {
     session.endSession();
   }
@@ -553,7 +559,7 @@ export const approveActivity = async (req, res) => {
       null,
       activityId,
       adminId,
-      session
+      session,
     );
 
     const savedActivity = await ActivityModel.findByIdAndUpdate(
@@ -569,7 +575,7 @@ export const approveActivity = async (req, res) => {
       {
         new: true,
         session,
-      }
+      },
     );
     for (const ruleId of savedActivity.activityPricingRules) {
       try {
@@ -581,13 +587,13 @@ export const approveActivity = async (req, res) => {
         const { pricePerPax } = rule;
         const clientPrice = Math.ceil(
           parseFloat(pricePerPax) * (parseFloat(markup) / 100) +
-            parseFloat(pricePerPax)
+            parseFloat(pricePerPax),
         );
 
         const updatedRule = await ActivityPricingRulesModel.findByIdAndUpdate(
           ruleId,
           { clientPrice },
-          { new: true, session }
+          { new: true, session },
         );
       } catch (error) {
         throw new Error(`Error processing ruleId: ${ruleId}`, error);
@@ -624,7 +630,7 @@ export const rejectActivity = async (req, res) => {
       rejectionReason,
       activityId,
       adminId,
-      session
+      session,
     );
 
     const savedActivity = await ActivityModel.findByIdAndUpdate(
@@ -639,7 +645,7 @@ export const rejectActivity = async (req, res) => {
       {
         new: true,
         session,
-      }
+      },
     );
 
     await session.commitTransaction();
@@ -675,7 +681,7 @@ export const publishActivity = async (req, res) => {
       {
         new: true,
         session,
-      }
+      },
     )
       .populate({
         path: "approvalStatusChangeLog",
@@ -710,7 +716,7 @@ export const deleteActivityDraft = async (req, res) => {
     const deletedActivity = await ActivityModel.findByIdAndDelete(activityId);
     await ActivityPricingRulesModel.deleteMany(
       { activity: activityId },
-      { session }
+      { session },
     );
     let activities;
     if (deletedActivity.adminCreated) {
@@ -723,7 +729,7 @@ export const deleteActivityDraft = async (req, res) => {
           {
             rejectedDraft: null,
           },
-          { new: true }
+          { new: true },
         );
         console.log("new parent", newParent);
       }
@@ -773,7 +779,7 @@ export const bulkDeleteActivityDraft = async (req, res) => {
             {
               rejectedDraft: null,
             },
-            { new: true }
+            { new: true },
           );
         }
       });
@@ -821,9 +827,9 @@ export const bulkAddThemes = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .json({ error: `Error when adding themes: ${err.message} ` });
+    res.status(500).json({
+      error: `Error when adding themes: ${err.message} `,
+    });
   }
 };
 
@@ -838,7 +844,10 @@ const processThemes = async (themes, parentStatus) => {
 
     if (!parentTheme) {
       if (parent) {
-        parentTheme = new ThemeModel({ name: parent, status: parentStatus });
+        parentTheme = new ThemeModel({
+          name: parent,
+          status: parentStatus,
+        });
         await parentTheme.save();
       }
     }
@@ -876,7 +885,9 @@ export const getAllThemes = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: `Themes cannot be added: ${error.message}` });
+    res.status(500).json({
+      error: `Themes cannot be added: ${error.message}`,
+    });
   }
 };
 
@@ -890,7 +901,7 @@ export const updateTheme = async (req, res) => {
         name: theme.name,
         status: theme.status,
       },
-      { new: true }
+      { new: true },
     );
     const updatedThemes = await findAllThemes();
     res.status(201).json({
@@ -899,9 +910,9 @@ export const updateTheme = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ error: `Error when updating theme: ${error.message} ` });
+    res.status(500).json({
+      error: `Error when updating theme: ${error.message} `,
+    });
   }
 };
 
@@ -929,7 +940,7 @@ export const getActivitiesWithFilters = async (req, res) => {
 
     // Convert string IDs to ObjectId instances
     const subthemeIds = filter.themes.map(
-      (id) => new mongoose.Types.ObjectId(id)
+      (id) => new mongoose.Types.ObjectId(id),
     );
 
     if (subthemeIds.length > 0) {
@@ -1022,7 +1033,7 @@ export const getAllActivitiesNames = async (req, res) => {
     // Query the collection to get titles of all documents
     const activityTitles = await ActivityModel.find(
       { isDraft: false },
-      "title"
+      "title",
     );
 
     // Extract the titles from the result
@@ -1042,7 +1053,7 @@ export const getAllActivitiesNames = async (req, res) => {
 export const getMinAndMaxPricePerPax = async (req, res) => {
   try {
     const activities = await ActivityModel.find({}).populate(
-      "activityPricingRules"
+      "activityPricingRules",
     );
     if (activities.length === 0) {
       return res.status(200).send({
@@ -1054,7 +1065,7 @@ export const getMinAndMaxPricePerPax = async (req, res) => {
     }
 
     const pricingRules = activities.flatMap(
-      (activity) => activity.activityPricingRules
+      (activity) => activity.activityPricingRules,
     );
 
     if (pricingRules.length === 0) {
@@ -1114,7 +1125,7 @@ export const getActivityTitle = async (req, res) => {
   try {
     const foundActivity = await ActivityModel.findById(
       req.params.activityId,
-      "title"
+      "title",
     );
 
     if (!foundActivity) {
@@ -1125,4 +1136,48 @@ export const getActivityTitle = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+export const getQuotationPdfUrl = async (req, res) => {
+  const data = req.body;
+
+  const pdfContent = QuotationTemplate(data);
+  const filename = "quotation" + Date.now() + ".pdf";
+  const pdfFilePath = path.join(process.cwd(), "temp", filename);
+  pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {
+    if (err) {
+      // Handle errors appropriately
+      console.error(err);
+      res.status(500).send("Error generating PDF");
+    } else {
+      // Respond with a success message or the file path
+      res.status(200).send(filename);
+    }
+  });
+};
+
+export const getQuotationPdf = async (req, res) => {
+  const filePath = req.params;
+  const file = path.join(process.cwd(), "temp", filePath.path);
+  fs.access(file, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error("File does not exist or cannot be accessed:", err);
+    } else {
+      // File exists, proceed to serve and then delete
+      res.download(file, "quotation.pdf", (downloadError) => {
+        if (downloadError) {
+          console.error("Error downloading the file:", downloadError);
+        } else {
+          // File has been successfully sent to the client, now delete it
+          fs.unlink(file, (deleteError) => {
+            if (deleteError) {
+              console.error("Error deleting the file:", deleteError);
+            } else {
+              console.log("File deleted successfully.");
+            }
+          });
+        }
+      });
+    }
+  });
 };

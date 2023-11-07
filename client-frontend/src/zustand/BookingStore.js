@@ -123,6 +123,20 @@ const useBookingStore = create((set) => ({
       throw new Error(error.message);
     }
   },
+  getBookingSummaryPdf: async (id) => {
+    try {
+      const response = await AxiosConnect.post(
+        `/gleek/booking//downloadBookingSummaryUrl/${id}`,
+      );
+      window.open(
+        `http://localhost:5000/gleek/booking/downloadBookingSummaryPdf/${response.data}`,
+      );
+      return;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message);
+    }
+  },
 }));
 
 export default useBookingStore;

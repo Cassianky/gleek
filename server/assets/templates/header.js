@@ -1,4 +1,5 @@
-export const header = `<header
+export const header = (type) => {
+  return `<header
    id="header-div"
    style="
        position: relative;
@@ -13,7 +14,7 @@ export const header = `<header
            <div class="ft16" style="font-weight: bold">
                Gleek
            </div>
-           <div class="ft17">invoice CHECKOUT001</div>
+           <div class="ft17">${type}</div>
            </div>
        </div>
    </div>
@@ -33,3 +34,4 @@ export const header = `<header
        <p style="white-space: nowrap" class="ft10">202120661D</p>
    </div>
 </header>`;
+};

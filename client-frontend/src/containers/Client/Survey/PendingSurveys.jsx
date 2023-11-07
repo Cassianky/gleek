@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import useBookingStore from "../../../zustand/BookingStore";
 import PendingSurveysTable from "./PendingSurveysTable";
 import MainBodyContainer from "../../../components/Common/MainBodyContainer";
+import useSnackbarStore from "../../../zustand/SnackbarStore";
 
 const StyledPaper = styled(Paper)`
   padding: 20px;
@@ -16,13 +17,17 @@ const StyledPaper = styled(Paper)`
 function PendingSurveys() {
   const { bookings, getBookingsWithPendingSurvey, isLoading } =
     useBookingStore();
-
+  const { openSnackbar } = useSnackbarStore();
   useEffect(() => {
-    const get = async () => {
-      await getBookingsWithPendingSurvey();
-    };
+    try {
+      const get = async () => {
+        await getBookingsWithPendingSurvey();
+      };
 
-    get();
+      get();
+    } catch (error) {
+      openSnackbar("An error occurred.", "error");
+    }
   }, []);
 
   return (

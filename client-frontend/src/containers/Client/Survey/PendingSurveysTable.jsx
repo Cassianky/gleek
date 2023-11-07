@@ -17,7 +17,10 @@ import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { convertISOtoDate, convertISOtoTime } from "../../../utils/TimeFormatter";
+import {
+  convertISOtoDate,
+  convertISOtoTime,
+} from "../../../utils/TimeFormatter";
 
 const PendingSurveysTable = ({
   allBookings,

@@ -6,7 +6,7 @@ import {
   Paper,
   Rating,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -123,7 +123,6 @@ function FillSurvey() {
         <Typography color="secondary" variant="h3">
           Post-Activity Survey Response
         </Typography>
-
 
         <form>
           <Grid container spacing={2} p={7}>

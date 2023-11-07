@@ -693,7 +693,6 @@ export const useReviewStore = create((set) => ({
             };
           }
           return review;
-
         });
         return {
           ...state,
@@ -750,7 +749,7 @@ export const useChatStore = create((set) => ({
   setSelectedChat: (chatSelected) => {
     set({ selectedChat: chatSelected });
   },
-  sendMessage: (messageContent, chatroomId) => {
+  sendMessage: (messageContent, chatroomId, socket) => {
     const params = {
       senderRole: "Admin",
       content: messageContent,
@@ -758,10 +757,20 @@ export const useChatStore = create((set) => ({
     };
     AxiosConnect.post("/chatMessage/admin/sendMessage", params).then(
       (response) => {
-        console.log("sent message::", response.data);
+        console.log(
+          "after send message received data of message: ",
+          response.data,
+        );
+        socket.emit("new message", response.data);
         AxiosConnect.get("/chatroom/admin/fetchChats").then((response) => {
           console.log(response.data);
           set({ allChatrooms: response.data });
+          AxiosConnect.get(`/chatMessage/admin/allMessages/${chatroomId}`).then(
+            (response) => {
+              console.log("after send message set chat window");
+              set({ currentChatroomMessages: response.data });
+            },
+          );
         });
       },
     );
@@ -772,13 +781,12 @@ export const useChatStore = create((set) => ({
       set({ allChatrooms: response.data });
     });
   },
-  retrieveAndSetChatroomMessages: (chatroomId) => {
-    set({ loadingMessage: true });
+  retrieveAndSetChatroomMessages: (chatroomId, socket) => {
     AxiosConnect.get(`/chatMessage/admin/allMessages/${chatroomId}`).then(
       (response) => {
-        console.log(response.data);
+        console.log(chatroomId);
         set({ currentChatroomMessages: response.data });
-        set({ loadingMessage: false });
+        socket.emit("join chat", chatroomId);
       },
     );
   },

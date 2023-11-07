@@ -3,7 +3,7 @@ import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import CloseIcon from "@mui/icons-material/Close";
-import ToggleIsDisabledButton from "./ToggleIsDisabledButton";
+import ToggleIsDisabledButton from "../common/ToggleIsDisabledButton";
 import { Badge, Tab, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import {
@@ -136,6 +136,8 @@ const ClientsTable = ({ clients, updateClient }) => {
             <ToggleIsDisabledButton
               isDisabled={params.row.isDisabled}
               userId={params.row._id}
+              userType="client"
+              userName={params.row.name}
             />
           );
         },

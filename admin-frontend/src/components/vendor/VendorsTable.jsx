@@ -15,7 +15,7 @@ import {
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ToggleIsDisabledButton from "./ToggleIsDisabledButton";
+import ToggleIsDisabledButton from "../common/ToggleIsDisabledButton";
 
 const StyledButton = styled(Button)`
   padding-left: 6px;
@@ -164,6 +164,8 @@ const VendorsTable = ({ vendors, updateVendor }) => {
             <ToggleIsDisabledButton
               isDisabled={params.row.isDisabled}
               userId={params.row._id}
+              userType="vendor"
+              userName={params.row.companyName}
             />
           );
         },

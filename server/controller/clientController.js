@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { validationResult } from "express-validator";
 import Client from "../model/clientModel.js";
+import { getAllBookingsForClientService } from "../service/bookingService.js";
 import Consent from "../model/consentModel.js";
 import jwt from "jsonwebtoken";
 import {
@@ -532,6 +533,24 @@ export const resetPasswordRedirect = async (req, res) => {
     res.status(200).redirect("http://localhost:3001/client/resetPassword");
   } catch (cookieError) {
     return res.status(500).send("Error setting cookie");
+  }
+};
+
+export const hasActiveBookings = async (req, res) => {
+  try {
+    const clientId = req.params.id;
+    const bookings = await getAllBookingsForClientService(clientId);
+    const hasActiveBookings = bookings.some((booking) =>
+      ["PENDING_CONFIRMATION", "CONFIRMED", "PENDING_PAYMENT"].includes(
+        booking.status,
+      ),
+    );
+    res.status(200).json(hasActiveBookings);
+  } catch (err) {
+    res.status(500).json({
+      message: "Server Error! Unable to check if client has active bookings.",
+      error: err.message,
+    });
   }
 };
 

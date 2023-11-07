@@ -460,6 +460,17 @@ export const useVendorStore = create((set) => ({
       console.error(error);
     }
   },
+  hasActiveBookings: async (vendorId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/vendor/hasActiveBookings/${vendorId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  },
   toggleIsDisabled: async (vendorId, isDisabled) => {
     try {
       set(() => ({ isLoading: true }));
@@ -518,6 +529,17 @@ export const useClientStore = create((set) => ({
       set({ isLoading: false });
     } catch (error) {
       console.error(error);
+    }
+  },
+  hasActiveBookings: async (clientId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/client/hasActiveBookings/${clientId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
     }
   },
   toggleIsDisabled: async (clientId, isDisabled) => {

@@ -1,10 +1,7 @@
-import {
-  Button,
-  Typography
-} from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import ReviewsIcon from '@mui/icons-material/Reviews';
+import ReviewsIcon from "@mui/icons-material/Reviews";
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
@@ -24,9 +21,10 @@ const ReviewActivityTable = ({ activities }) => {
   };
 
   useEffect(() => {
-    const filteredActivities = activities.filter(activity => activity.approvalStatus === "Published");
+    const filteredActivities = activities.filter(
+      (activity) => activity.approvalStatus === "Published",
+    );
     setCurrentTabRows(filteredActivities);
-
   }, [activities]);
 
   // const handleRowClick = async (activity) => {
@@ -83,7 +81,7 @@ const ReviewActivityTable = ({ activities }) => {
         return `${params.value} min`;
       },
     },
-   
+
     {
       field: "modifiedDate",
       headerName: "Published",
@@ -111,7 +109,8 @@ const ReviewActivityTable = ({ activities }) => {
           </div>
         );
       },
-    },{
+    },
+    {
       field: "go",
       type: "actions",
       flex: 1,
@@ -127,7 +126,7 @@ const ReviewActivityTable = ({ activities }) => {
             }}
           >
             <Button
-             color="light_purple"
+              color="light_purple"
               onClick={() => handleGoToReviews(params.row)}
             >
               <ReviewsIcon />
@@ -136,8 +135,6 @@ const ReviewActivityTable = ({ activities }) => {
         );
       },
     },
-    
- 
   );
 
   return (

@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import {
   useActivityStore,
   useReviewStore,
-  useSnackbarStore
+  useSnackbarStore,
 } from "../../zustand/GlobalStore";
 import MainBodyContainer from "../common/MainBodyContainer";
 
@@ -35,7 +35,7 @@ function ManageReviewsForActivity() {
   const handleToggle = async (reviewId) => {
     try {
       await toggleReviewVisibility(reviewId);
-      console.log("after handle toggle", reviews)
+      console.log("after handle toggle", reviews);
     } catch (error) {
       console.error(error);
       openSnackbar("An error occurred", "error");
@@ -60,7 +60,12 @@ function ManageReviewsForActivity() {
       >
         Manage Reviews For {activity?.title}
       </Typography>
-      {reviews && <ManageReviewsForActivityTable reviews={reviews} handleToggle={handleToggle} />}
+      {reviews && (
+        <ManageReviewsForActivityTable
+          reviews={reviews}
+          handleToggle={handleToggle}
+        />
+      )}
     </MainBodyContainer>
   );
 }

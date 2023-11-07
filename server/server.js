@@ -11,6 +11,7 @@ import vendorRoutes from "./routes/gleekAdmin/vendorRoute.js";
 import surveyRoutes from "./routes/gleekAdmin/surveyRoute.js";
 import reviewRoutes from "./routes/gleekAdmin/reviewRoute.js";
 import bookingRoutes from "./routes/gleekAdmin/bookingRoute.js";
+import testimonialRoutes from "./routes/gleekAdmin/testimonialRoute.js";
 import client from "./routes/gleekAdmin/client.js";
 import activityTestController from "./controller/activityTestController.js";
 import notificationRoutes from "./routes/notificationRoute.js";
@@ -55,6 +56,7 @@ app.use("/client", client);
 app.use("/booking", bookingRoutes);
 app.use("/survey", surveyRoutes);
 app.use("/review", reviewRoutes);
+app.use("/testimonial", testimonialRoutes);
 
 /**
  * For Client application

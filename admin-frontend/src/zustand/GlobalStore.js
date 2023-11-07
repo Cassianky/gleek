@@ -707,6 +707,52 @@ export const useReviewStore = create((set) => ({
   },
 }));
 
+export const useTestimonialStore = create((set) => ({
+  testimonials: [],
+  isLoading: true,
+  getAllTestimonials: async () => {
+    try {
+      const response = await AxiosConnect.get(`/testimonial/`);
+      console.log("getAllTestimonials", response.data);
+      set({
+        testimonials: response.data,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  toggleTestimonialVisibility: async (reviewId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/review/${reviewId}/toggleVisibility`,
+      );
+      const updatedReview = response.data;
+
+      set((state) => {
+        const updatedReviews = state.reviews.map((review) => {
+          if (review._id === updatedReview._id) {
+            return {
+              ...review,
+              hidden: updatedReview.hidden,
+            };
+          }
+          return review;
+        });
+        return {
+          ...state,
+          reviews: updatedReviews,
+          isLoading: false,
+        };
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+}));
+
 export const useImageUploadTestStore = create((set) => ({
   testActivities: [],
   setTestActivities: (newActivityList) => {

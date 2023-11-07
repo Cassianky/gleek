@@ -1,5 +1,4 @@
-import AdminSurveyResponseModel from "../model/AdminSurveyResponseModel.js";
-import SurveyResponse from "../model/AdminSurveyResponseModel.js";
+import SurveyResponse from "../model/adminSurveyResponseModel.js";
 import Booking from "../model/bookingModel.js";
 import Review from "../model/reviewModel.js";
 

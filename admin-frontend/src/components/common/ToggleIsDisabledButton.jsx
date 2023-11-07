@@ -116,7 +116,7 @@ const ToggleIsDisabledButton = ({ userType, userId, userName, isDisabled }) => {
                 This user will no longer be able to login to their account until
                 enabled again.
                 {userType === "vendor" &&
-                  " All published activities of this vendor will be unpublished."}
+                  " All activities of this vendor will also be disabled."}
               </Typography>
               {hasActiveBookings && (
                 <Typography

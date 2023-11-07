@@ -12,7 +12,7 @@ export async function findMinimumPricePerPax(foundActivity) {
 }
 
 export async function prepareActivityMinimumPricePerPaxAndSingleImage(
-  activity,
+  activity
 ) {
   activity.minimumPricePerPax = await findMinimumPricePerPax(activity);
   if (activity.images && activity.images.length > 0) {
@@ -41,4 +41,11 @@ export async function getAllVendorActivities(vendorId) {
     })
     .populate("rejectedDraft");
   return activities;
+}
+
+export async function disableVendorActivities(vendorId, isDisabled) {
+  await ActivityModel.updateMany(
+    { linkedVendor: vendorId },
+    { disabled: isDisabled }
+  );
 }

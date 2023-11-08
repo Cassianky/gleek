@@ -25,6 +25,7 @@ import MainBodyContainer from "../common/MainBodyContainer";
 import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
 import { useParams } from "react-router-dom";
 import styled from "@emotion/styled";
+import TestimonialMenuButton from "./TestimonialMenuButton";
 
 function TestimonialDetails() {
   const theme = useTheme();
@@ -83,17 +84,27 @@ function TestimonialDetails() {
       breadcrumbNames={["Manage Testimonials"]}
       breadcrumbLinks={["/testimonials"]}
       currentBreadcrumbName={"View Testimonial"}
+
     >
-      <Typography
-        fontSize={25}
-        fontWeight={700}
-        noWrap
-        component="div"
-        color={theme.palette.primary.main}
-        mb={2}
+      <Stack
+        direction="row"
+        spacing={2}
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ marginBottom: 3 }} 
       >
-        Testimonial Details
-      </Typography>
+        <Typography
+          fontSize={25}
+          fontWeight={700}
+          noWrap
+          component="div"
+          color={theme.palette.primary.main}
+          mb={2}
+        >
+          Testimonial Details
+        </Typography>
+        <TestimonialMenuButton testimonial={testimonial} />
+      </Stack>
 
       {testimonial && (
         <div>

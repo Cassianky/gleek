@@ -849,6 +849,17 @@ export const useTestimonialStore = create((set) => ({
       throw error;
     }
   },
+  deleteTestimonial: async (testimonialId) => {
+    try {
+      const response = await AxiosConnect.delete(
+        `/testimonial/${testimonialId}`,
+      );
+      console.log("deleteTestimonial", response.data);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
   toggleTestimonialVisibility: async (testimonialId) => {
     try {
       const response = await AxiosConnect.post(

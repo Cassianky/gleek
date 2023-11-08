@@ -1,10 +1,8 @@
+import { Article } from "@mui/icons-material";
 import {
-  Dialog,
-  DialogContent,
-  Rating,
-  Stack,
+  Button,
   Switch,
-  Typography,
+  Typography
 } from "@mui/material";
 
 import Box from "@mui/material/Box";
@@ -52,7 +50,7 @@ const TestimonialsTable = ({ testimonials, handleToggle }) => {
         return (
           <div style={{ display: "flex" }}>
             <Typography color="#9F91CC" fontSize={"0.875rem"}>
-              Submitted on&nbsp;
+              Created on&nbsp;
               <span style={{ color: "black" }}>
                 {formattedDate} at {formattedTime}
               </span>
@@ -62,7 +60,52 @@ const TestimonialsTable = ({ testimonials, handleToggle }) => {
       },
     },
     {
-      field: "actions",
+      field: "updated",
+      headerName: "Updated",
+      flex: 1,
+      renderCell: (params) => {
+        const date = new Date(params.value);
+        const formattedDate = date.toLocaleDateString(undefined, {
+          year: "2-digit",
+          month: "2-digit",
+          day: "2-digit",
+        });
+        const formattedTime = date.toLocaleTimeString(undefined, {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        });
+        return (
+          <div style={{ display: "flex" }}>
+            <Typography color="#9F91CC" fontSize={"0.875rem"}>
+              Updated on&nbsp;
+              <span style={{ color: "black" }}>
+                {formattedDate} at {formattedTime}
+              </span>
+            </Typography>
+          </div>
+        );
+      },
+    },
+    {
+      field: "survey",
+      flex: 1,
+      type: "actions",
+      headerName: "Original Survey",
+      renderCell: (params) => {
+        const survey = params.row.survey;
+        const surveyId = survey._id;
+        const surveyLink = `/surveys/${surveyId}`;
+        return (
+          <Button color="light_purple" href={surveyLink}>
+            <Article />
+          </Button>
+        );
+      },
+    },
+
+    {
+      field: "hidden",
       type: "actions",
       flex: 1,
       headerName: "Shown",

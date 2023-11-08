@@ -32,7 +32,7 @@ export const getTestimonialById = async (req, res) => {
 
     const testimonialId = req.params.testimonialId;
 
-    const testimonial = await Testimonial.findById(testimonialId);
+    const testimonial = await Testimonial.findById(testimonialId).populate("survey");
 
     return res.status(200).json({ testimonial: testimonial });
   } catch (err) {
@@ -171,3 +171,23 @@ export const updateTestimonialById = async (req, res) => {
     });
   }
 };
+
+export const deleteTestimonialById = async (req, res) => {
+  try {
+    const testimonialId = req.params.testimonialId;
+    const deletedTestimonial = await Testimonial.findByIdAndDelete(testimonialId);
+
+    if (!deletedTestimonial) {
+      return res.status(404).json({ message: "Testimonial not found." });
+    }
+
+    res.status(200).json({ message: "Testimonial deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server Error! Unable to delete testimonial.",
+      error: error.message,
+    });
+  }
+};
+

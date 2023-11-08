@@ -709,6 +709,7 @@ export const useReviewStore = create((set) => ({
 
 export const useTestimonialStore = create((set) => ({
   testimonials: [],
+  testimonial: null,
   isLoading: true,
   getAllTestimonials: async () => {
     try {
@@ -723,26 +724,66 @@ export const useTestimonialStore = create((set) => ({
       throw error;
     }
   },
-  toggleTestimonialVisibility: async (reviewId) => {
+  getTestimonialById: async (testimonialId) => {
+    try {
+      const response = await AxiosConnect.get(`/testimonial/${testimonialId}`);
+      console.log("getTestimonialById", response.data);
+      set({
+        testimonial: response.data.testimonial,
+        isLoading: false,
+      });
+      return response.data.testimonial;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  hasTestimonialForSurvey: async (surveyId) => {
     try {
       const response = await AxiosConnect.get(
-        `/review/${reviewId}/toggleVisibility`,
+        `/testimonial/survey/${surveyId}`,
       );
-      const updatedReview = response.data;
+      console.log("hasTestimonialForSurvey", response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  createTestimonialForSurvey: async (surveyId) => {
+    try {
+      const response = await AxiosConnect.post(`/testimonial/create`, {
+        surveyId,
+      });
+      console.log("createTestimonialForSurvey", response.data);
+
+      return response.data.testimonial;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  toggleTestimonialVisibility: async (testimonialId) => {
+    try {
+      const response = await AxiosConnect.post(
+        `/testimonial/${testimonialId}/toggleVisibility`,
+      );
+      const updatedTestimonial = response.data;
 
       set((state) => {
-        const updatedReviews = state.reviews.map((review) => {
-          if (review._id === updatedReview._id) {
+        const updatedTestimonials = state.testimonials.map((t) => {
+          if (t._id === updatedTestimonial._id) {
             return {
-              ...review,
-              hidden: updatedReview.hidden,
+              ...t,
+              hidden: updatedTestimonial.hidden,
             };
           }
-          return review;
+          return t;
         });
         return {
           ...state,
-          reviews: updatedReviews,
+          testimonials: updatedTestimonials,
           isLoading: false,
         };
       });

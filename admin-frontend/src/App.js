@@ -30,6 +30,7 @@ import ActivityReviews from "./components/review/ActivityReviews";
 import ManageReviewsForActivity from "./components/review/ManageReviewsForActivity";
 import AdminChatpage from "./components/Chat/AdminChatPage";
 import ManageTestimonials from "./components/testimonial/ManageTestimonials.jsx";
+import TestimonialDetails from "./components/testimonial/TestimonialDetails.jsx";
 
 function App() {
   return (
@@ -252,6 +253,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <ManageTestimonials />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/testimonials/:testimonialId"
+            element={
+              <ProtectedRoute>
+                <TestimonialDetails />
               </ProtectedRoute>
             }
           />

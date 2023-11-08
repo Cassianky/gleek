@@ -11,17 +11,18 @@ import Box from "@mui/material/Box";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const TestimonialsTable = ({ testimonials, handleToggle }) => {
   const [currentTabRows, setCurrentTabRows] = useState(testimonials);
   const [selectedReview, setSelectedReview] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCurrentTabRows(testimonials);
   }, [testimonials]);
 
   const columns = [
-
     {
       field: "testimonialBody",
       headerName: "Client Testimonial",
@@ -31,7 +32,6 @@ const TestimonialsTable = ({ testimonials, handleToggle }) => {
       field: "displayName",
       headerName: "Client Display Name",
       flex: 1,
-   
     },
     {
       field: "created",
@@ -89,7 +89,7 @@ const TestimonialsTable = ({ testimonials, handleToggle }) => {
   ];
 
   const handleRowClick = (params) => {
-    setSelectedReview(params.row);
+    navigate(`${params.row._id}`);
   };
 
   const handleClose = () => {
@@ -125,20 +125,6 @@ const TestimonialsTable = ({ testimonials, handleToggle }) => {
           }}
         />
       </div>
-      <Dialog open={selectedReview !== null} onClose={handleClose} fullWidth>
-        <DialogContent>
-          {selectedReview && (
-            <div>
-              <Typography variant="h6">Rating:</Typography>
-              <Rating name="read-only" value={selectedReview.rating} readOnly />
-              <Typography variant="h6">Comment:</Typography>
-              <Typography>{selectedReview.comment}</Typography>
-              <Typography variant="h6">By:</Typography>
-              <Typography>{selectedReview.client.name}</Typography>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </Box>
   );
 };

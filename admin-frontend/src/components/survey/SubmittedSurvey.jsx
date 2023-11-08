@@ -1,54 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 
-import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import {
-  Badge,
-  CircularProgress,
-  Tabs,
-  Tab,
-  Typography,
-  Divider,
-  Box,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, CircularProgress, Divider, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   useAdminSurveyResponseStore,
-  useBookingStore,
   useSnackbarStore,
+  useTestimonialStore,
 } from "../../zustand/GlobalStore";
-import InfoIcon from "@mui/icons-material/Info";
 import MainBodyContainer from "../common/MainBodyContainer";
 import SurveyDetails from "./SurveyDetails";
-import { useParams } from "react-router-dom";
+import { convertISOtoDate } from "../../utils/TimeFormatter";
 
-const convertISOtoDate = (value) => {
-  const date = new Date(value);
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-  const formattedDate = date.toLocaleDateString("en-SG", options);
-  return formattedDate;
-};
 function SubmittedSurvey() {
   const theme = useTheme();
   const { surveyId } = useParams();
   const { survey, getSurveyDetails, isLoading } = useAdminSurveyResponseStore();
+  const { hasTestimonialForSurvey, createTestimonialForSurvey } =
+    useTestimonialStore();
   const { openSnackbar } = useSnackbarStore();
+  const [hasTestimonial, setHasTestimonial] = useState();
+  const [testimonial, setTestimonial] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const get = async () => {
       try {
         await getSurveyDetails(surveyId);
+        const testimonialData = await hasTestimonialForSurvey(surveyId);
+        setHasTestimonial(testimonialData.hasTestimonial);
+        if (testimonialData.hasTestimonial) {
+          setTestimonial(testimonialData.testimonial);
+        }
       } catch (err) {
         openSnackbar("Error retrieving survey.", "error");
       }
     };
     get();
   }, []);
+
+  const handleCreateTestimonial = async () => {
+    try {
+      const newT = await createTestimonialForSurvey(surveyId);
+      navigate(`/testimonials/${newT._id}`);
+      openSnackbar("Created new testimonial.", "success");
+    } catch (err) {
+      console.log(err)
+      openSnackbar("Error creating testimonial.", "error");
+    }
+  };
 
   if (isLoading) {
     return <CircularProgress />;
@@ -100,7 +101,14 @@ function SubmittedSurvey() {
         <Divider />
       </Box>
 
-      {survey && <SurveyDetails surveyData={survey} />}
+      {survey && (
+        <SurveyDetails
+          surveyData={survey}
+          hasTestimonial={hasTestimonial}
+          testimonial={testimonial}
+          handleCreateTestimonial={() => handleCreateTestimonial()}
+        />
+      )}
     </MainBodyContainer>
   );
 }

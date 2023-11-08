@@ -48,8 +48,8 @@ const VendorDetails = () => {
     vendor?.companyPhoneNumber,
     vendor?.companyEmail,
   ];
-  const companySocialsFields = Object.keys(vendor?.companySocials);
-  const companySocialsValues = Object.values(vendor?.companySocials);
+  const companySocialsFields = Object.keys(vendor?.companySocials || {});
+  const companySocialsValues = Object.values(vendor?.companySocials || {});
 
   const accountDetailsFields =
     vendor?.status === "APPROVED"
@@ -150,12 +150,12 @@ const VendorDetails = () => {
                 component="div"
                 color={theme.palette.primary.main}
               >
-                {vendor?.companyName}
+                {vendor?.companyName || "-"}
               </Typography>
               <Typography fontSize={15} color={theme.palette.dark_purple.main}>
                 Company UEN: {vendor?.companyUEN || "-"}
               </Typography>
-              {vendor.isDisabled && (
+              {vendor?.isDisabled && (
                 <Typography
                   sx={{
                     display: "flex",
@@ -180,7 +180,7 @@ const VendorDetails = () => {
                 title={detail.title}
                 icon={detail.icon}
                 fieldNames={detail.fieldNames}
-                fieldValues={detail.fieldValues}
+                fieldValues={detail.fieldValues || ["-"]}
               />
             ))}
           </Box>

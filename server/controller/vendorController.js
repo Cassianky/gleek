@@ -18,6 +18,7 @@ import {
   createVerifyEmailOptionsVendor,
   createResetPasswordEmailOptionsVendor,
   createRegistrationApprovalEmailOptions,
+  createDisableOrEnableEmailOptions,
 } from "../util/sendMailOptions.js";
 import sendMail from "../util/sendMail.js";
 import { Role } from "../util/roleEnum.js";
@@ -117,7 +118,7 @@ export const postRegister = async (req, res) => {
     const { acceptTermsAndConditions, ...newVendor } = req.body;
     console.log(
       "vendorController postRegister(): acceptTermsAndConditions",
-      acceptTermsAndConditions,
+      acceptTermsAndConditions
     );
 
     if (await vendorExists(newVendor.companyEmail)) {
@@ -135,7 +136,7 @@ export const postRegister = async (req, res) => {
     await createVendorConsent(
       createdVendor.id,
       acceptTermsAndConditions,
-      session,
+      session
     );
 
     const token = await generateJwtToken(createdVendor.id);
@@ -158,7 +159,7 @@ export const postRegister = async (req, res) => {
     session.endSession();
     const { password, ...vendorWithoutPassword } = createdVendor.toObject();
     vendorWithoutPassword.companySocials = Object.fromEntries(
-      vendorWithoutPassword.companySocials,
+      vendorWithoutPassword.companySocials
     );
     setCookieAndRespond(res, token, vendorWithoutPassword);
   } catch (err) {
@@ -246,7 +247,7 @@ export const postLogin = async (req, res) => {
       const token = await generateJwtToken(vendor.id);
       const { password, ...vendorWithoutPassword } = vendor.toObject();
       vendorWithoutPassword.companySocials = Object.fromEntries(
-        vendorWithoutPassword.companySocials,
+        vendorWithoutPassword.companySocials
       );
       setCookieAndRespond(res, token, vendorWithoutPassword);
     } else {
@@ -283,7 +284,7 @@ export const validateToken = async (req, res) => {
 
     const { password, ...vendorWithoutPassword } = vendor.toObject();
     vendorWithoutPassword.companySocials = Object.fromEntries(
-      vendorWithoutPassword.companySocials,
+      vendorWithoutPassword.companySocials
     );
     return res.status(200).json({
       msg: "Vendor Validation Success",
@@ -396,7 +397,7 @@ export const updateVendor = async (req, res) => {
     const updatedVendor = await VendorModel.findOneAndUpdate(
       { _id: req.params.id },
       { ...updateData, approvedDate: new Date() },
-      { new: true },
+      { new: true }
     );
     sendMail(createRegistrationApprovalEmailOptions(updatedVendor));
     return res.status(201).json(updatedVendor);
@@ -426,7 +427,7 @@ export const updateCompanyLogo = async (req, res) => {
     const updatedVendor = await VendorModel.findOneAndUpdate(
       { _id: vendor._id },
       { companyLogo: fileS3Location },
-      { new: true },
+      { new: true }
     );
 
     if (updatedVendor.companyLogo) {
@@ -474,7 +475,7 @@ export const postChangePassword = async (req, res) => {
     const updatedVendor = await VendorModel.findOneAndUpdate(
       { _id: vendor.id },
       { password: hashed },
-      { new: true },
+      { new: true }
     );
 
     return res.status(200).json("Password successfully changed.");
@@ -506,7 +507,7 @@ export const updateVendorAccountDetails = async (req, res) => {
         select: {
           password: 0,
         },
-      },
+      }
     );
 
     console.log("updateVendorAccountDetails: Updated vendor", updatedVendor);
@@ -522,7 +523,7 @@ export const updateVendorAccountDetails = async (req, res) => {
       res.status(500).json({
         error: true,
         msg: "Server error",
-      }),
+      })
     );
   }
 };
@@ -542,7 +543,7 @@ export const postResetPassword = async (req, res) => {
     const updatedVendor = await VendorModel.findOneAndUpdate(
       { _id: vendor.id },
       { password: hashed },
-      { new: true },
+      { new: true }
     );
 
     return res.status(200).json({ msg: "Password successfully changed." });
@@ -562,7 +563,7 @@ export const recoverPasswordMail = async (req, res) => {
   try {
     const { companyEmail } = req.body;
     const vendor = await VendorModel.findOne({ companyEmail }).select(
-      "-password",
+      "-password"
     );
     if (!vendor) {
       return res
@@ -605,8 +606,8 @@ export const hasActiveBookings = async (req, res) => {
     const bookings = await getAllBookingsForVendor(vendorId);
     const hasActiveBookings = bookings.some((booking) =>
       ["PENDING_CONFIRMATION", "CONFIRMED", "PENDING_PAYMENT"].includes(
-        booking.status,
-      ),
+        booking.status
+      )
     );
     res.status(200).json(hasActiveBookings);
   } catch (err) {
@@ -626,7 +627,7 @@ export const toggleVendorIsDisabled = async (req, res) => {
       {
         isDisabled: isDisabled,
       },
-      { new: true },
+      { new: true }
     );
 
     disableVendorActivities(vendorId, isDisabled);
@@ -634,6 +635,9 @@ export const toggleVendorIsDisabled = async (req, res) => {
     const message = isDisabled
       ? "Vendor disabled successfully!"
       : "Vendor enabled successfully!";
+
+    sendMail(createDisableOrEnableEmailOptions(vendor, isDisabled));
+
     res.status(200).json({
       vendor: vendor,
       message: message,

@@ -19,6 +19,7 @@ import sendMail from "../util/sendMail.js";
 import { s3GetImages } from "../service/s3ImageServices.js";
 import {
   createClientWelcomeMailOptions,
+  createDisableOrEnableEmailOptions,
   createResendVerifyEmailOptions,
   createResetPasswordEmailOptions,
   createVerifyEmailOptions,
@@ -135,7 +136,7 @@ export const postRegister = async (req, res) => {
     await createClientConsent(
       createdClient.id,
       acceptTermsAndConditions,
-      session,
+      session
     );
 
     const token = await generateJwtToken(createdClient.id);
@@ -275,7 +276,7 @@ export const postChangePassword = async (req, res) => {
     const updatedClient = await Client.findOneAndUpdate(
       { _id: client.id },
       { password: hashed },
-      { new: true },
+      { new: true }
     );
 
     return res.status(200).json({ msg: "Password successfully changed." });
@@ -300,7 +301,7 @@ export const postResetPassword = async (req, res) => {
     const updatedClient = await Client.findOneAndUpdate(
       { _id: client.id },
       { password: hashed },
-      { new: true },
+      { new: true }
     );
 
     return res.status(200).json({ msg: "Password successfully changed." });
@@ -335,7 +336,7 @@ export const updateClientAccountDetails = async (req, res) => {
         select: {
           password: 0,
         },
-      },
+      }
     );
 
     console.log("updateClientAccountDetails: Updated client", updatedClient);
@@ -420,7 +421,7 @@ export const updateProfilePicture = async (req, res) => {
     const updatedClient = await Client.findOneAndUpdate(
       { _id: client._id },
       { photo: fileS3Location },
-      { new: true },
+      { new: true }
     );
 
     if (updatedClient.photo) {
@@ -542,8 +543,8 @@ export const hasActiveBookings = async (req, res) => {
     const bookings = await getAllBookingsForClientService(clientId);
     const hasActiveBookings = bookings.some((booking) =>
       ["PENDING_CONFIRMATION", "CONFIRMED", "PENDING_PAYMENT"].includes(
-        booking.status,
-      ),
+        booking.status
+      )
     );
     res.status(200).json(hasActiveBookings);
   } catch (err) {
@@ -563,11 +564,13 @@ export const toggleClientIsDisabled = async (req, res) => {
       {
         isDisabled: isDisabled,
       },
-      { new: true },
+      { new: true }
     );
     const message = isDisabled
       ? "Client disabled successfully!"
       : "Client enabled successfully!";
+
+    sendMail(createDisableOrEnableEmailOptions(client, isDisabled));
     res.status(200).json({
       client: client,
       message: message,

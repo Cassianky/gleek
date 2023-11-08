@@ -16,7 +16,13 @@ import {
   DialogActions,
 } from "@mui/material";
 
-const ToggleIsDisabledButton = ({ userType, userId, userName, isDisabled }) => {
+const ToggleIsDisabledButton = ({
+  userType,
+  userId,
+  userName,
+  isDisabled,
+  onUpdate,
+}) => {
   const theme = useTheme();
   let isLoading;
   let toggleIsDisabled;
@@ -59,6 +65,8 @@ const ToggleIsDisabledButton = ({ userType, userId, userName, isDisabled }) => {
     try {
       event.stopPropagation();
       const message = await toggleIsDisabled(userId, false);
+      setDialogOpen(false);
+      onUpdate && onUpdate();
       openSnackbar(message);
     } catch (error) {
       openSnackbar(error.message, "error");
@@ -69,6 +77,7 @@ const ToggleIsDisabledButton = ({ userType, userId, userName, isDisabled }) => {
     try {
       event.stopPropagation();
       const message = await toggleIsDisabled(userId, true);
+      onUpdate && onUpdate();
       openSnackbar(message);
     } catch (error) {
       openSnackbar(error.message, "error");
@@ -83,7 +92,7 @@ const ToggleIsDisabledButton = ({ userType, userId, userName, isDisabled }) => {
         <Button
           variant="contained"
           color="success"
-          onClick={handleEnableButton}
+          onClick={(event) => handleEnableButton(event)}
         >
           Enable
         </Button>

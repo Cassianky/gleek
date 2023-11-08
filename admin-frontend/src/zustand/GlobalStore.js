@@ -448,15 +448,17 @@ export const useVendorStore = create((set) => ({
       console.error(error);
     }
   },
-  vendorDetails: {},
+  // vendorDetails: {},
   getVendorDetails: async (vendorId) => {
     try {
       set({ isLoading: true });
       console.log("vendorId", vendorId);
       const response = await AxiosConnect.get(`/vendor/viewVendor/${vendorId}`);
-      set({ vendorDetails: response.data });
+      console.log(response);
+      set({ vendor: response.data });
       set({ isLoading: false });
     } catch (error) {
+      set({ isLoading: false });
       console.error(error);
     }
   },

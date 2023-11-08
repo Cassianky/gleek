@@ -59,6 +59,9 @@ const theme = createTheme({
     pale_purple: {
       main: "#c7bfe2",
     },
+    yellow: {
+      main: "#ffc65c",
+    },
   },
   typography: {
     fontFamily: "Fredoka",

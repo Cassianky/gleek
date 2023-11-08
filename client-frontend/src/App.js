@@ -45,6 +45,7 @@ import useClientStore from "./zustand/ClientStore";
 import useVendorStore from "./zustand/VendorStore";
 import PendingSurveys from "./containers/Client/Survey/PendingSurveys";
 import ChatPage from "./containers/ChatPage";
+import DashboardPage from "./containers/Vendor/Dashboard/DashboardPage";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -259,6 +260,7 @@ function App() {
             }
           />
           <Route path="/vendor/register" element={<VendorRegisterPage />} />
+          <Route path="/vendor/dashboard" element={<DashboardPage />} />
           <Route path="/error" element={<ErrorPage />} />
           <Route
             path="/vendor/activities"

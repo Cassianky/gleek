@@ -31,6 +31,7 @@ import ManageReviewsForActivity from "./components/review/ManageReviewsForActivi
 import AdminChatpage from "./components/Chat/AdminChatPage";
 import ManageTestimonials from "./components/testimonial/ManageTestimonials.jsx";
 import TestimonialDetails from "./components/testimonial/TestimonialDetails.jsx";
+import VendorDetails from "./components/vendor/VendorDetails";
 
 function App() {
   return (

@@ -1,5 +1,5 @@
 export const header = (type) => {
-   return `<header
+  return `<header
    id="header-div"
    style="
        position: relative;

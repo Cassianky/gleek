@@ -20,8 +20,9 @@ import PersonIcon from "@mui/icons-material/Person";
 import BusinessIcon from "@mui/icons-material/Business";
 import PaidIcon from "@mui/icons-material/Paid";
 import BadgeIcon from "@mui/icons-material/Badge";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import WarningIcon from "@mui/icons-material/Warning";
 import MainBodyContainer from "../common/MainBodyContainer";
+import ToggleIsDisabledButton from "../common/ToggleIsDisabledButton";
 
 const ClientDetails = () => {
   const { clientId } = useParams();
@@ -36,9 +37,15 @@ const ClientDetails = () => {
     setIsUpdated(true);
   };
 
+  const handleIsDisabledUpdate = async () => {
+    console.log("helelo");
+    setIsUpdated(true);
+  };
+
   useEffect(() => {
     const fetchClientDetails = async () => {
       await getClientDetails(clientId);
+      setIsUpdated(false);
     };
     console.log("fetchin" + clientId);
     fetchClientDetails();
@@ -75,6 +82,22 @@ const ClientDetails = () => {
               <Typography fontSize={15} color={theme.palette.dark_purple.main}>
                 Point of Contact: {clientDetails.name}
               </Typography>
+              {clientDetails.isDisabled && (
+                <Typography
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                  fontSize={15}
+                  color={theme.palette.error.main}
+                >
+                  <WarningIcon
+                    color={theme.palette.error.main}
+                    sx={{ mr: 1 }}
+                  />
+                  Account Disabled
+                </Typography>
+              )}
             </Box>
           </Box>
           <Box display="flex" flexDirection="row" flexWrap="wrap">
@@ -144,9 +167,9 @@ const ClientDetails = () => {
                 }
                 fieldNames={["Signup Date", "Status", "Approved Date"]}
                 fieldValues={[
-                  clientDetails.signupDate,
+                  new Date(clientDetails.signupDate).toLocaleString(),
                   clientDetails.status,
-                  clientDetails.approvedDate,
+                  new Date(clientDetails.approvedDate).toLocaleString(),
                 ]}
               />
             )}
@@ -159,7 +182,10 @@ const ClientDetails = () => {
                   />
                 }
                 fieldNames={["Signup Date", "Status"]}
-                fieldValues={[clientDetails.signupDate, clientDetails.status]}
+                fieldValues={[
+                  new Date(clientDetails.signupDate).toLocaleString(),
+                  clientDetails.status,
+                ]}
               />
             )}
           </Box>
@@ -200,6 +226,22 @@ const ClientDetails = () => {
               >
                 Reject
               </Button>
+            </Box>
+          )}
+          {clientDetails.status === "APPROVED" && (
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="center"
+              mt={2}
+            >
+              <ToggleIsDisabledButton
+                userType="client"
+                userId={clientDetails._id}
+                userName={clientDetails.name}
+                isDisabled={clientDetails.isDisabled}
+                onUpdate={handleIsDisabledUpdate}
+              />
             </Box>
           )}
         </React.Fragment>

@@ -19,6 +19,17 @@ export const fetchBookmarks = async (req, res) => {
       })
       .sort("-created");
 
+    // Filter out bookmarks where either vendor or activity is disabled
+    const filteredBookmarks = bookmarks.filter((bookmark) => {
+      if (bookmark.vendor && bookmark.vendor.isDisabled) {
+        return false;
+      }
+      if (bookmark.activity && bookmark.activity.disabled) {
+        return false;
+      }
+      return true;
+    });
+
     console.log(bookmarks[0]);
 
     const preSignedPromises = bookmarks.map(async (bm) => {
@@ -33,7 +44,7 @@ export const fetchBookmarks = async (req, res) => {
 
     console.log(bookmarks);
 
-    res.status(200).json(bookmarks);
+    res.status(200).json(filteredBookmarks);
   } catch (error) {
     console.error(error);
     res.status(400).json({

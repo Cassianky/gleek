@@ -1,6 +1,9 @@
 import SurveyResponse from "../model/adminSurveyResponseModel.js";
 import Booking from "../model/bookingModel.js";
 import Review from "../model/reviewModel.js";
+import ReviewSentimentModel from "../model/reviewSentimentModel.js";
+import SurveySentimentModel from "../model/surveySentimentModel.js";
+import { analyzeFeedback, getSentiment } from "../service/nlpService.js";
 
 /*
  * Get the survey for a booking, or return nothing if no survey exists.
@@ -115,7 +118,7 @@ export const submitSurveyForBooking = async (req, res) => {
       // in case we want draft surveys
       { booking: bookingId },
       updateFields,
-      { new: true, upsert: true },
+      { new: true, upsert: true }
     );
 
     let review;
@@ -132,15 +135,42 @@ export const submitSurveyForBooking = async (req, res) => {
       review = await Review.findOneAndUpdate(
         { booking: bookingId },
         reviewUpdateFields,
-        { new: true, upsert: true },
+        { new: true, upsert: true }
       );
+      const reviewAnalysis = getSentiment(comment);
+      const newReviewSentiment = {
+        activity: booking.activityId,
+        vendor: booking.vendorId,
+        review: review._id,
+        overallSentiment: reviewAnalysis.overallSentiment,
+        keywords: reviewAnalysis.keyWords,
+      };
+      const reviewSentiment = new ReviewSentimentModel(newReviewSentiment);
+      reviewSentiment.save();
     }
 
     await Booking.findByIdAndUpdate(
       bookingId,
       { isSurveySubmitted: true },
-      { new: true },
+      { new: true }
     );
+
+    const { activityLikedKeyWords, activityImprovementsKeyWords } =
+      analyzeFeedback(activityLiked, activityImprovements);
+    const overallScore =
+      activityLikedKeyWords.overallSentiment +
+      activityImprovementsKeyWords.overallSentiment;
+    const newSurveySentiment = {
+      activity: booking.activityId,
+      adminSurveyResponse: survey._id,
+      overallSentiment: overallScore,
+      activityImprovementsKeyWords: activityImprovementsKeyWords.keyWords,
+      activityLikedKeyWords: activityLikedKeyWords.keyWords,
+      vendor: booking.vendorId,
+    };
+
+    const surveySentiment = new SurveySentimentModel(newSurveySentiment);
+    await surveySentiment.save();
 
     return res.status(200).json({ survey, review });
   } catch (err) {
@@ -230,7 +260,7 @@ export const updateSurvey = async (req, res) => {
     const survey = await SurveyResponse.findByIdAndUpdate(
       surveyId,
       updateFields,
-      { new: true },
+      { new: true }
     );
 
     return res.status(200).json(survey);
@@ -278,13 +308,27 @@ export const submitSurvey = async (req, res) => {
     const survey = await SurveyResponse.findByIdAndUpdate(
       surveyId,
       updateFields,
-      { new: true },
+      { new: true }
     );
+
+    const { activityLikedKeyWords, activityImprovementsKeyWords } =
+      analyzeFeedback(activityLiked, activityImprovements);
+    const overallScore =
+      activityLikedKeyWords.overallSentiment +
+      activityImprovementsKeyWords.overallSentiment;
+    const newSurveySentiment = {
+      adminSurveyResponse: surveyId,
+      overallSentiment: overallScore,
+      activityImprovementsKeyWords: activityImprovementsKeyWords.keyWords,
+      activityLikedKeyWords: activityLikedKeyWords.keyWords,
+    };
+    const surveySentiment = new SurveySentimentModel(newSurveySentiment);
+    await surveySentiment.save();
 
     await Booking.findByIdAndUpdate(
       survey.booking,
       { isSurveySubmitted: true },
-      { new: true },
+      { new: true }
     );
 
     return res.status(200).json(survey);

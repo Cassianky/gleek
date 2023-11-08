@@ -10,6 +10,9 @@ import fs from "fs";
 const code =
   "4/0AfJohXmqTlZ5E9sEox1QQTYyQAr9UIiStYPxR41ouK7QkrAxY-wzBVhv5zkwMjPRAHlo6A";
 
+// const code =
+//   "4/0AfJohXlQSplw-TkJPxPcnb1euQ7_a_E5FXnH8z1mAVC7WMXQSW8GsZBpcMhWjOubW8Y_Kw";
+
 const { client_secret, client_id, redirect_uris } = credentials.web;
 const oAuth2Client = new google.auth.OAuth2(
   client_id,

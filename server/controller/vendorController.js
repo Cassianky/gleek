@@ -1,4 +1,5 @@
 import VendorModel from "../model/vendorModel.js";
+import { getAllBookingsForVendor } from "../service/bookingService.js";
 import { VendorTypeEnum } from "../util/vendorTypeEnum.js";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
@@ -17,6 +18,7 @@ import {
   createVerifyEmailOptionsVendor,
   createResetPasswordEmailOptionsVendor,
   createRegistrationApprovalEmailOptions,
+  createDisableOrEnableEmailOptions,
 } from "../util/sendMailOptions.js";
 import sendMail from "../util/sendMail.js";
 import { Role } from "../util/roleEnum.js";
@@ -25,6 +27,7 @@ import {
   NotificationEvent,
 } from "../util/notificationRelatedEnum.js";
 import { createNotification } from "./notificationController.js";
+import { disableVendorActivities } from "../service/activityService.js";
 
 const secret = process.env.JWT_SECRET_VENDOR;
 
@@ -231,6 +234,11 @@ export const postLogin = async (req, res) => {
           .status(400)
           .send({ msg: "Your Vendor registration has been rejected." });
       }
+      if (vendor.isDisabled) {
+        return res.status(400).send({
+          msg: "Your account has been disabled. Please contact admin for assistance.",
+        });
+      }
       if (vendor.companyLogo) {
         const preSignedUrl = await s3GetImages(vendor.companyLogo);
         vendor.preSignedPhoto = preSignedUrl;
@@ -330,6 +338,7 @@ export const resendVerifyEmail = async (req, res) => {
 
 export const addVendor = async (req, res) => {
   try {
+    const admin = req.user;
     const password = "adminpassword";
     const approvedDate = new Date();
     const status = "APPROVED";
@@ -338,6 +347,7 @@ export const addVendor = async (req, res) => {
       password,
       approvedDate,
       status,
+      adminCreated: admin._id,
     });
     await newVendor.save();
 
@@ -589,5 +599,55 @@ export const resetPasswordRedirect = async (req, res) => {
   } catch (cookieError) {
     console.log(cookieError);
     return res.status(500).send("Error setting cookie");
+  }
+};
+
+export const hasActiveBookings = async (req, res) => {
+  try {
+    const vendorId = req.params.id;
+    const bookings = await getAllBookingsForVendor(vendorId);
+    const hasActiveBookings = bookings.some((booking) =>
+      ["PENDING_CONFIRMATION", "CONFIRMED", "PENDING_PAYMENT"].includes(
+        booking.status,
+      ),
+    );
+    res.status(200).json(hasActiveBookings);
+  } catch (err) {
+    res.status(500).json({
+      message: "Server Error! Unable to check if vendor has active bookings.",
+      error: err.message,
+    });
+  }
+};
+
+export const toggleVendorIsDisabled = async (req, res) => {
+  try {
+    const vendorId = req.params.id;
+    const { isDisabled } = req.body;
+    const vendor = await VendorModel.findByIdAndUpdate(
+      vendorId,
+      {
+        isDisabled: isDisabled,
+      },
+      { new: true },
+    );
+
+    disableVendorActivities(vendorId, isDisabled);
+
+    const message = isDisabled
+      ? "Vendor disabled successfully!"
+      : "Vendor enabled successfully!";
+
+    sendMail(createDisableOrEnableEmailOptions(vendor, isDisabled));
+
+    res.status(200).json({
+      vendor: vendor,
+      message: message,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Server Error! Unable to update vendor.",
+      error: err.message,
+    });
   }
 };

@@ -235,6 +235,9 @@ export async function isCartItemStillAvailable(cartItemId) {
       $gte: startOfDay,
       $lt: endOfDay,
     },
+    status: {
+      $in: ["PENDING_CONFIRMATION", "CONFIRMED"],
+    },
   });
 
   // Get activities blocked timeslots for the selected date

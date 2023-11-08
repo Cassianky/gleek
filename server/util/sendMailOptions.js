@@ -258,3 +258,20 @@ export const createRegistrationApprovalEmailOptions = (user) => {
   };
   return options;
 };
+
+// for when admin disables/enables client / vendor account
+export const createDisableOrEnableEmailOptions = (user, isDisabled) => {
+  console.log("disable/enabled called");
+  console.log(user.name ?? user.companyName);
+  console.log(user.email ?? user.companyEmail);
+
+  const message = `Hi ${
+    user.name ?? user.companyName
+  }! Your account with Gleek has been ${isDisabled ? "disabled" : "enabled"}.`;
+  const options = {
+    to: user.email ?? user.companyEmail,
+    subject: "Gleek: Account Status Update",
+    text: message,
+  };
+  return options;
+};

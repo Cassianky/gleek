@@ -227,7 +227,7 @@ const BookingDetailsForm = ({ appointmentData }) => {
                       }
                       secondary={
                         details.actionRemarks &&
-                        "Reason: " + details.actionRemarks
+                        "Remarks: " + details.actionRemarks
                       }
                     />
                   </ListItem>

@@ -1,13 +1,13 @@
 import express from "express";
 import {
-   getAvailableBookingTimeslots,
-   createBookings,
-   getAllBookingsForClient,
-   getBookingById,
-   updateBookingStatus,
-   getBookingsWithPendingSurvey,
-   getBookingSummaryPdfUrl,
-   getBookingSummaryPdf,
+  getAvailableBookingTimeslots,
+  createBookings,
+  getAllBookingsForClient,
+  getBookingById,
+  updateBookingStatus,
+  getBookingsWithPendingSurvey,
+  getBookingSummaryPdfUrl,
+  getBookingSummaryPdf,
 } from "../../controller/bookingController.js";
 import { verifyToken } from "../../middleware/clientAuth.js";
 
@@ -19,9 +19,9 @@ router.get("/pendingSurvey", verifyToken, getBookingsWithPendingSurvey);
 
 // Booking
 router.get(
-   "/getAvailableBookingTimeslots/:activityId/:selectedDate",
-   verifyToken,
-   getAvailableBookingTimeslots
+  "/getAvailableBookingTimeslots/:activityId/:selectedDate",
+  verifyToken,
+  getAvailableBookingTimeslots,
 );
 
 // /gleek/booking/createBookings
@@ -35,14 +35,14 @@ router.get("/viewBooking/:id", verifyToken, getBookingById);
 router.patch("/updateBookingStatus/:id", verifyToken, updateBookingStatus);
 
 router.post(
-   "/downloadBookingSummaryUrl/:id",
-   verifyToken,
-   getBookingSummaryPdfUrl
+  "/downloadBookingSummaryUrl/:id",
+  verifyToken,
+  getBookingSummaryPdfUrl,
 );
 
 router.get(
-   "/downloadBookingSummaryPdf/:path",
-   verifyToken,
-   getBookingSummaryPdf
+  "/downloadBookingSummaryPdf/:path",
+  verifyToken,
+  getBookingSummaryPdf,
 );
 export default router;

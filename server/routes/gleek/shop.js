@@ -1,9 +1,9 @@
 import express from "express";
 import { check } from "express-validator";
 import {
-   getActivitiesWithFilters,
-   getQuotationPdf,
-   getQuotationPdfUrl,
+  getActivitiesWithFilters,
+  getQuotationPdf,
+  getQuotationPdfUrl,
 } from "../../controller/activityController.js";
 import { getAllThemes } from "../../controller/activityController.js";
 import { getAllActivitiesNames } from "../../controller/activityController.js";

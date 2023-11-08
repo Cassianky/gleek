@@ -31,7 +31,8 @@ function TestimonialDetails() {
   const { testimonialId } = useParams();
 
   const { openSnackbar } = useSnackbarStore();
-  const { testimonial, getTestimonialById, isLoading } = useTestimonialStore();
+  const { testimonial, getTestimonialById, isLoading, updateTestimonialById } =
+    useTestimonialStore();
 
   const StyledPaper = styled(Paper)`
     padding: 20px;
@@ -41,16 +42,21 @@ function TestimonialDetails() {
     box-shadow: 3px 3px 0px 0px rgb(159, 145, 204, 40%);
   `;
 
-  const handleButton = () => {
-    // Implement the button's functionality here
+  const handleUpdate = async () => {
+    try {
+      await updateTestimonialById(testimonialId, testimonialDetail);
+      openSnackbar("Sucessfully updated testimonial.", "success");
+    } catch (error) {
+      console.log(error);
+      openSnackbar(error.message, "error");
+    }
   };
-  const handleToggle = () => {
-    // Implement the button's functionality here
-  };
+
   const [testimonialDetail, setTestimonialDetail] = useState({
     testimonialBody: "",
     displayName: "",
-    hidden: false,
+    clientName: "",
+    hidden: true,
   });
 
   useEffect(() => {
@@ -73,9 +79,9 @@ function TestimonialDetails() {
 
   return (
     <MainBodyContainer
-      hasBackButton={false}
-      breadcrumbNames={[]}
-      breadcrumbLinks={[]}
+      hasBackButton={true}
+      breadcrumbNames={["Manage Testimonials"]}
+      breadcrumbLinks={["/testimonials"]}
       currentBreadcrumbName={"View Testimonial"}
     >
       <Typography
@@ -84,6 +90,7 @@ function TestimonialDetails() {
         noWrap
         component="div"
         color={theme.palette.primary.main}
+        mb={2}
       >
         Testimonial Details
       </Typography>
@@ -128,7 +135,7 @@ function TestimonialDetails() {
               onChange={(e) =>
                 setTestimonialDetail({
                   ...testimonialDetail,
-                  displayName: e.target.value,
+                  clientName: e.target.value,
                 })
               }
             />
@@ -151,7 +158,7 @@ function TestimonialDetails() {
           <Box
             sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}
           >
-            <Button variant="contained" color="primary" onClick={handleButton}>
+            <Button variant="contained" color="primary" onClick={handleUpdate}>
               Update
             </Button>
           </Box>
@@ -171,9 +178,17 @@ function TestimonialDetails() {
               <CardContent>
                 <FormatQuoteIcon sx={{ transform: "scaleX(-1)" }} />
 
-                <Typography variant="h5" align="center">
-                  {testimonial.testimonialBody}
-                </Typography>
+                <div
+                  style={{
+                    height: "200px",
+                    overflowY: "scroll",
+                    overflowWrap: "break-word",
+                  }}
+                >
+                  <Typography variant="h5" align="center">
+                    {testimonial.testimonialBody}
+                  </Typography>
+                </div>
 
                 <Typography variant="body1" align="center">
                   - {testimonial.displayName}, {testimonial.clientName}

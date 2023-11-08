@@ -14,7 +14,7 @@ import {
 router.get("/", adminAuth, getAllTestimonials);
 router.get("/:testimonialId", getTestimonialById);
 router.get("/survey/:surveyId", getTestimonialForSurvey);
-router.patch("/survey/:surveyId", updateTestimonialById);
+router.patch("/:testimonialId", updateTestimonialById);
 router.post("/:testimonialId/toggleVisibility", toggleTestimonialVisibility);
 
 router.post("/create", adminAuth, createTestimonialFromSurvey);

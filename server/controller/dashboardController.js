@@ -22,21 +22,21 @@ export const getTotalRevenue = async (req, res) => {
   const thisMonthRev = await calculateRevenue(
     currentYear,
     currentMonth,
-    vendorId
+    vendorId,
   );
   const lastMonthRev = await calculateRevenue(
     previousYear,
     previousMonth,
-    vendorId
+    vendorId,
   );
 
   const revenueDiff = calculateDifference(
     thisMonthRev.revenue,
-    lastMonthRev.revenue
+    lastMonthRev.revenue,
   );
   const bookingsDiff = calculateDifference(
     thisMonthRev.count,
-    lastMonthRev.count
+    lastMonthRev.count,
   );
 
   for (let i = 0; i < 12; i++) {
@@ -51,7 +51,7 @@ export const getTotalRevenue = async (req, res) => {
       const { revenue, count, activityByRevenue } = await calculateRevenue(
         year,
         month,
-        vendorId
+        vendorId,
       );
       for (let a of Object.keys(activityByRevenue)) {
         if (activityByRevenue[a].activityTitle in activityRevenue) {
@@ -59,7 +59,7 @@ export const getTotalRevenue = async (req, res) => {
             activityByRevenue[a].totalRevenue;
         } else {
           activityRevenue[activityByRevenue[a].activityTitle] = new Array(
-            12
+            12,
           ).fill(0);
           activityRevenue[activityByRevenue[a].activityTitle][i] =
             activityByRevenue[a].totalRevenue;
@@ -69,7 +69,7 @@ export const getTotalRevenue = async (req, res) => {
             activityByRevenue[a].totalBookings;
         } else {
           activityBookings[activityByRevenue[a].activityTitle] = new Array(
-            12
+            12,
           ).fill(0);
           activityBookings[activityByRevenue[a].activityTitle][i] =
             activityByRevenue[a].totalBookings;
@@ -149,7 +149,7 @@ export const calculateRevenue = async (currentYear, currentMonth, vendorId) => {
         acc[activityId].totalRevenue += totalVendorAmount;
         return acc;
       },
-      {}
+      {},
     );
 
     return {
@@ -159,7 +159,7 @@ export const calculateRevenue = async (currentYear, currentMonth, vendorId) => {
     };
   } catch (error) {
     throw new Error(
-      "Server Error! Unable to retrieve dashboard." + error.message
+      "Server Error! Unable to retrieve dashboard." + error.message,
     );
   }
 };
@@ -182,7 +182,7 @@ export const getActivitySentiment = async (vendorId) => {
         .populate("review")
         .then((sentiments) => {
           const filteredSentiments = sentiments.filter(
-            (sentiment) => sentiment.review.hidden === false
+            (sentiment) => sentiment.review.hidden === false,
           );
           return filteredSentiments;
         })
@@ -199,13 +199,13 @@ export const getActivitySentiment = async (vendorId) => {
       });
       const totalRecommendationScore = surveys.reduce(
         (total, s) => total + s.recommendationScore,
-        0
+        0,
       );
       const avgRecommendationScore = totalRecommendationScore / surveys.length;
 
       const totalRepeatActivityDifferentVendorScore = surveys.reduce(
         (total, s) => total + s.repeatActivityDifferentVendorScore,
-        0
+        0,
       );
 
       const avgRepeatActivityDifferentVendorScore =
@@ -213,7 +213,7 @@ export const getActivitySentiment = async (vendorId) => {
 
       const totalRepeatActivityScore = surveys.reduce(
         (total, s) => total + s.repeatActivityScore,
-        0
+        0,
       );
 
       const avgTotalRepeatActivityScore =
@@ -221,7 +221,7 @@ export const getActivitySentiment = async (vendorId) => {
 
       const totalSentiment = surveySentiments.reduce(
         (total, s) => total + s.overallSentiment,
-        0
+        0,
       );
 
       const reviews = await Review.find({
@@ -231,7 +231,7 @@ export const getActivitySentiment = async (vendorId) => {
 
       const totalRatingScore = reviews.reduce(
         (total, s) => total + s.rating,
-        0
+        0,
       );
       const avgReviewRating = totalRatingScore / reviews.length;
       let activityLiked = [];
@@ -249,7 +249,7 @@ export const getActivitySentiment = async (vendorId) => {
       });
       const reviewSentimentScore = reviewSentiments.reduce(
         (total, s) => total + s.overallSentiment,
-        0
+        0,
       );
       res.push({
         activity: activity,

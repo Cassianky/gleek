@@ -4,18 +4,18 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import MoneyIcon from "@mui/icons-material/Money";
 import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CircularProgress,
-    Container,
-    Grid,
-    Rating,
-    Typography,
-    useTheme,
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CircularProgress,
+  Container,
+  Grid,
+  Rating,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import useAnalyticsStore from "../../../zustand/AnalyticsStore";
@@ -55,7 +55,7 @@ const DashboardPage = () => {
       const sortedKeys = Object.keys(rev.activityByRevenue).sort(
         (a, b) =>
           rev.activityByRevenue[b].totalBookings -
-          rev.activityByRevenue[a].totalBookings
+          rev.activityByRevenue[a].totalBookings,
       );
 
       if (sortedKeys.length > 0) {
@@ -75,7 +75,7 @@ const DashboardPage = () => {
       const sortedKeys = Object.keys(rev.activityByRevenue).sort(
         (a, b) =>
           rev.activityByRevenue[b].totalRevenue -
-          rev.activityByRevenue[a].totalRevenue
+          rev.activityByRevenue[a].totalRevenue,
       );
 
       if (sortedKeys.length > 0) {
@@ -126,14 +126,14 @@ const DashboardPage = () => {
             <Grid item xs={3} sx={{ paddingRight: 2 }}>
               <OverviewCard
                 difference={data?.confirmedPendingPaidBookingsRevenue?.difference?.toFixed(
-                  2
+                  2,
                 )}
                 positive={
                   data?.confirmedPendingPaidBookingsRevenue?.difference > 0
                 }
                 sx={{ height: "100%" }}
                 value={data?.confirmedPendingPaidBookingsRevenue?.value?.toFixed(
-                  2
+                  2,
                 )}
                 title="Revenue"
                 icon={<MonetizationOnIcon fontSize="medium" />}

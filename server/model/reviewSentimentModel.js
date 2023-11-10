@@ -29,7 +29,7 @@ const reviewSentimentSchema = new mongoose.Schema({
 
 const ReviewSentimentModel = mongoose.model(
   "ReviewSentiment",
-  reviewSentimentSchema
+  reviewSentimentSchema,
 );
 
 export default ReviewSentimentModel;

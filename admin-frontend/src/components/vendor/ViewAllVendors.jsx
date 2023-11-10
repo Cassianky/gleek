@@ -7,7 +7,8 @@ import VendorsTable from "./VendorsTable";
 
 const ViewAllVendors = () => {
   const theme = useTheme();
-  const { vendors, getVendors, isVendorLoading, updateVendor } = useVendorStore();
+  const { vendors, getVendors, isVendorLoading, updateVendor } =
+    useVendorStore();
   useEffect(() => {
     const fetchData = async () => {
       await getVendors();

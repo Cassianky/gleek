@@ -1,13 +1,13 @@
 import NorthIcon from "@mui/icons-material/North";
 import SouthIcon from "@mui/icons-material/South";
 import {
-    Avatar,
-    Card,
-    CardContent,
-    Stack,
-    SvgIcon,
-    Typography,
-    useTheme,
+  Avatar,
+  Card,
+  CardContent,
+  Stack,
+  SvgIcon,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import PropTypes from "prop-types";
 

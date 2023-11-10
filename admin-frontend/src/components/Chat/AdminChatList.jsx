@@ -85,7 +85,9 @@ const AdminChatList = () => {
                     <Typography variant="body1">
                       {chatroom.latestMessage.senderRole === "VENDOR"
                         ? chatroom.vendor.companyName
-                        : chatroom.client.name}
+                        : chatroom.latestMessage.senderRole === "CLIENT"
+                        ? chatroom.client.name
+                        : "Admin"}
                       {": "}
                       {chatroom.latestMessage.messageContent.length > 50
                         ? chatroom.latestMessage.messageContent.substring(

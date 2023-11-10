@@ -6,6 +6,7 @@ const useBookingStore = create((set) => ({
    pendingBookings: [],
    isLoading: false,
    currentBooking: null,
+   leaderboard: [],
    setCurrentBooking: (newCurrentBooking) =>
       set({ currentBooking: newCurrentBooking }),
    currentBookingLoading: true,
@@ -128,12 +129,27 @@ const useBookingStore = create((set) => ({
    getBookingSummaryPdf: async (id) => {
       try {
          const response = await AxiosConnect.post(
-            `/gleek/booking//downloadBookingSummaryUrl/${id}`
+            `/gleek/booking/downloadBookingSummaryUrl/${id}`
          );
          window.open(
             `http://localhost:5000/gleek/booking/downloadBookingSummaryPdf/${response.data}`
          );
          return;
+      } catch (err) {
+         console.log(err);
+         throw new Error(err.message);
+      }
+   },
+   getLeaderboard: async () => {
+      try {
+         set({ isLoading: true });
+         const response = await AxiosConnect.get(`/gleek/leaderboard`);
+         let data = Object.entries(response.data);
+
+         data = data.map((entry) => entry[1]);
+         data.sort().reverse();
+         set({ isLoading: false, leaderboard: data });
+         return data;
       } catch (err) {
          console.log(err);
          throw new Error(err.message);

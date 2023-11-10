@@ -11,6 +11,7 @@ export const getLeaderBoard = async (req, res) => {
             ? mappedClients[booking.clientId.id].push(booking)
             : (mappedClients[booking.clientId.id] = [booking])
       );
+
       res.status(200).json(mappedClients);
    } catch (err) {
       console.log(err.message);

@@ -29,6 +29,7 @@ const bookingManagementList = [
 const surveyManagementList = [
   { "View Submitted Surveys": "/surveys" },
   { "Manage Reviews": "/reviews" },
+  { "Manage Testimonials": "/testimonials" },
 ];
 const badgeManagementList = [{ "View Badges": "/badges" }];
 

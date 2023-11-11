@@ -171,6 +171,19 @@ export default function CustomPaginationActionsTable() {
       setPage(0);
    };
 
+   const getRowStyle = (index) => {
+      switch (index) {
+         case 1:
+            return { backgroundColor: "rgba(255, 215, 0, 0.5)" }; // Golden for first
+         case 2:
+            return { backgroundColor: "rgba(192, 192, 192, 0.5)" }; // Silver for second
+         case 3:
+            return { backgroundColor: "rgba(205, 133, 63, 0.5)" }; // Bronze for third
+         default:
+            return { backgroundColor: "transparent" }; // Default styling for other rows
+      }
+   };
+
    return (
       <Box
          flexDirection="column"
@@ -212,8 +225,37 @@ export default function CustomPaginationActionsTable() {
             </Grid>
             <TableContainer sx={{ width: "100%" }}>
                {isClientRanked ? (
-                  <Paper sx={{ width: "50%", margin: "2% auto" }}>
-                     Client is Ranked
+                  <Paper
+                     sx={{
+                        width: "50%",
+                        margin: "2% auto",
+                        backgroundColor: theme.palette.primary.main,
+                        p: 2,
+                     }}>
+                     <Typography
+                        sx={{
+                           color: theme.palette.secondary.main,
+                           fontSize: "21px",
+                           fontWeight: "bold",
+                           width: "100%",
+                           margin: "auto 2%",
+                        }}>
+                        Your Rank :{" "}
+                        {
+                           filteredRows.find((row) => row._id == client?._id)
+                              .rank
+                        }
+                     </Typography>
+                     {filteredRows.find((row) => row._id == client?._id).rank >
+                     1 ? (
+                        <Typography sx={{ width: "100%", margin: "auto 2%" }}>
+                           Create more bookings to get ranked higher!
+                        </Typography>
+                     ) : (
+                        <Typography sx={{ width: "100%", margin: "auto 2%" }}>
+                           Congratulations on topping the leaderboard!
+                        </Typography>
+                     )}
                   </Paper>
                ) : (
                   <Alert severity="info" sx={{ width: "50%", margin: "auto" }}>
@@ -221,7 +263,7 @@ export default function CustomPaginationActionsTable() {
                   </Alert>
                )}
                <Table
-                  sx={{ width: "50%", margin: "auto" }}
+                  sx={{ width: "50%", margin: "auto", fontSize: "18px" }}
                   aria-label="custom pagination table">
                   <TableHead>
                      <TableRow>
@@ -232,7 +274,7 @@ export default function CustomPaginationActionsTable() {
                               Rank
                            </Typography>
                         </TableCell>
-                        <TableCell style={{ width: "60%" }} align="center">
+                        <TableCell style={{ width: "60%" }} align="left">
                            <Typography
                               fontSize={"1.5rem"}
                               sx={{ color: theme.palette.primary.main }}>
@@ -256,7 +298,7 @@ export default function CustomPaginationActionsTable() {
                           )
                         : filteredRows
                      ).map((row) => (
-                        <TableRow key={row.name}>
+                        <TableRow key={row.name} style={getRowStyle(row.rank)}>
                            <TableCell style={{ width: "20%" }} align="center">
                               <Typography
                                  fontSize={"1rem"}
@@ -264,7 +306,7 @@ export default function CustomPaginationActionsTable() {
                                  {row.rank}
                               </Typography>
                            </TableCell>
-                           <TableCell style={{ width: "60%" }} align="center">
+                           <TableCell style={{ width: "60%" }} align="left">
                               <Typography
                                  fontSize={"1rem"}
                                  sx={{ color: theme.palette.secondary.main }}>

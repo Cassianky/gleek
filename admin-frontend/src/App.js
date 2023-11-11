@@ -30,6 +30,8 @@ import ActivityReviews from "./components/review/ActivityReviews";
 import ManageReviewsForActivity from "./components/review/ManageReviewsForActivity";
 import AdminChatpage from "./components/Chat/AdminChatPage";
 import VendorDetails from "./components/vendor/VendorDetails";
+import ManageNewsletters from "./components/marketing/ManageNewsletters";
+import ViewMailingLists from "./components/marketing/ViewMailingLists";
 
 function App() {
   return (
@@ -242,6 +244,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <ManageReviewsForActivity />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/newsletters"
+            element={
+              <ProtectedRoute>
+                <ManageNewsletters />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/mailingLists"
+            element={
+              <ProtectedRoute>
+                <ViewMailingLists />
               </ProtectedRoute>
             }
           />

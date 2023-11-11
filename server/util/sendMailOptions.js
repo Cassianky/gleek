@@ -275,3 +275,100 @@ export const createDisableOrEnableEmailOptions = (user, isDisabled) => {
   };
   return options;
 };
+
+export const createCustomEdmMailOptions = (
+  client,
+  customSubject,
+  customMessageBody
+) => {
+  try {
+    const greeting = `Hello, ${client.name}!`;
+    const to = client.email;
+
+    const htmlContent = `
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          background-color: #5c4b99;
+          color: #ffffff;
+          padding: 10px;
+          text-align: center;
+          border-radius: 5px 5px 0 0;
+        }
+        .content {
+          padding: 20px;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+        p {
+          margin-bottom: 10px;
+        }
+        .footer {
+          margin-top: 20px;
+          text-align: center;
+          font-size: 12px;
+          color: #555555;
+          background-color: #EAEAEA;
+          padding: 10px;
+          border-radius: 0 0 5px 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Gleek</h1>
+        </div>
+        <div class="content">
+          <p>${greeting}</p>
+          <img src="cid:welcome-client-image" alt="Welcome to Gleek!" />
+          <p>
+            ${customMessageBody}
+          </p>
+        </div>
+        <div class="footer">
+          <p>
+            If you no longer wish to receive emails from Gleek, you can
+            <a href="https://yourdomain.com/unsubscribe">unsubscribe here</a>.
+          </p>
+        </div>
+      </div>
+    </body>
+  </html>
+
+
+  `;
+
+    const options = {
+      customSubject,
+      html: htmlContent,
+      attachments: [
+        {
+          filename: "ClientWelcome.png",
+          path: "../server/assets/email/ClientWelcome.png",
+          cid: "welcome-client-image",
+        },
+      ],
+      to,
+    };
+    return options;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};

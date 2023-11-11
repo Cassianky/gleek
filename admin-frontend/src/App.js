@@ -32,6 +32,8 @@ import AdminChatpage from "./components/Chat/AdminChatPage";
 import ManageTestimonials from "./components/testimonial/ManageTestimonials.jsx";
 import TestimonialDetails from "./components/testimonial/TestimonialDetails.jsx";
 import VendorDetails from "./components/vendor/VendorDetails";
+import Badges from "./components/badges/Badges.jsx";
+import CreateBadgePage from "./components/badges/CreateBadgePage.jsx";
 
 function App() {
   return (
@@ -263,6 +265,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <TestimonialDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/badges"
+            element={
+              <ProtectedRoute>
+                <Badges />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/createBadge"
+            element={
+              <ProtectedRoute>
+                <CreateBadgePage />
               </ProtectedRoute>
             }
           />

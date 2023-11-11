@@ -29,6 +29,7 @@ import useShopStore from "../zustand/ShopStore.js";
 import useSnackbarStore from "../zustand/SnackbarStore.js";
 import useCartStore from "../zustand/CartStore.js";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
+import MilitaryTechOutlinedIcon from "@mui/icons-material/MilitaryTechOutlined";
 import {
   BookmarkBorderOutlined,
   LogoutOutlined,
@@ -250,7 +251,7 @@ function NavBar(props) {
               <IconButton
                 onClick={searchOnClick}
                 sx={{ marginLeft: "5px" }}
-                color="tertiary"
+                color="secondary"
                 aria-label="search"
               >
                 <SearchIcon />
@@ -398,6 +399,17 @@ function NavBar(props) {
                     <SentimentVerySatisfiedIcon />
                   </ListItemIcon>
                   <ListItemText>Post-Event Surveys</ListItemText>
+                </MenuItem>
+                <MenuItem
+                  sx={{ px: "32px" }}
+                  onClick={() => {
+                    navigate("/myBadges");
+                  }}
+                >
+                  <ListItemIcon>
+                    <MilitaryTechOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText>My Badges</ListItemText>
                 </MenuItem>
                 <MenuItem sx={{ px: "32px" }} onClick={logout}>
                   <ListItemIcon>

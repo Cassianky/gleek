@@ -1,8 +1,12 @@
 import mongoose from "mongoose";
-import { BadgeSdgTypeEnum } from "../util/badgeEnum";
-import { SustainableDevelopmentGoalsEnum } from "../util/sdgEnum";
+import { BadgeSdgTypeEnum } from "../util/badgeEnum.js";
+import { SustainableDevelopmentGoalsEnum } from "../util/sdgEnum.js";
 const badgeSchema = new mongoose.Schema({
   name: {
+    type: String,
+    required: true,
+  },
+  caption: {
     type: String,
     required: true,
   },
@@ -11,14 +15,10 @@ const badgeSchema = new mongoose.Schema({
     required: true,
   },
   // GOLD, SLIVER, BRONZE for SDG related badges
-  sgdBadgeType: {
+  // OTHER for non SDG related badges
+  sdgBadgeType: {
     type: String,
     enum: BadgeSdgTypeEnum,
-    required: false,
-  },
-  // For user to define own badge type if any
-  nonSdgBadgeType: {
-    type: String,
     required: false,
   },
   // Mainly part of information supplied for SDG badges
@@ -44,11 +44,11 @@ const badgeSchema = new mongoose.Schema({
   // badge image made on canva
   badgeImage: {
     type: String,
-    required: true,
+    required: false,
   },
   badgePreSignedImage: {
     type: String,
-    required: true,
+    required: false,
   },
   // Descriptive images for badge description if any
   images: {
@@ -62,7 +62,7 @@ const badgeSchema = new mongoose.Schema({
   // One of sdg, sdgThreshold, bookingThreshold must be filled
 
   // SDG goal for badge if any
-  sgd: {
+  sdg: {
     type: String,
     enum: SustainableDevelopmentGoalsEnum,
     required: false,

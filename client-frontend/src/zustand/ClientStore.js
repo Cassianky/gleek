@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import AxiosConnect from "../utils/AxiosConnect";
 import useVendorStore from "./VendorStore";
+import useShopStore from "./ShopStore";
 const useClientStore = create((set) => ({
   authenticated: false,
   client: null,
@@ -23,6 +24,14 @@ const useClientStore = create((set) => ({
       setTimeout(() => {
         set({ isLoading: false });
       }, 500);
+
+      // Fetch shop needed information upon login
+      const getThemes = useShopStore.getState().getThemes;
+      const getPriceInterval = useShopStore.getState().getPriceInterval;
+
+      await getThemes();
+      await getPriceInterval();
+
       return true;
     } catch (error) {
       setTimeout(() => {
@@ -74,7 +83,7 @@ const useClientStore = create((set) => ({
     try {
       const response = await AxiosConnect.post(
         "/gleek/auth/register",
-        userData,
+        userData
       );
       const data = response.data;
       console.log("CLIENT DATA AFTER REGISTER", data.client);
@@ -91,7 +100,7 @@ const useClientStore = create((set) => ({
     try {
       const response = await AxiosConnect.patch(
         "/gleek/client/updateAccount",
-        userData,
+        userData
       );
       const data = response.data;
       set({ client: data.client });
@@ -106,7 +115,7 @@ const useClientStore = create((set) => ({
   verifyEmail: async (token) => {
     try {
       const response = await AxiosConnect.get(
-        `/gleek/client/verifyEmail/${token}`,
+        `/gleek/client/verifyEmail/${token}`
       );
 
       if (response.data.status === "success") {

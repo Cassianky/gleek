@@ -1,5 +1,6 @@
 export const BadgeSdgTypeEnum = {
   GOLD: "GOLD",
-  SLIVER: "SLIVER",
+  SLIVER: "SILVER",
   BRONZE: "BRONZE",
+  OTHER: "OTHER",
 };

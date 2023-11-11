@@ -37,7 +37,7 @@ const surveySentimentSchema = new mongoose.Schema({
 
 const SurveySentimentModel = mongoose.model(
   "SurveySentiment",
-  surveySentimentSchema
+  surveySentimentSchema,
 );
 
 export default SurveySentimentModel;

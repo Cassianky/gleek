@@ -118,7 +118,7 @@ export const submitSurveyForBooking = async (req, res) => {
       // in case we want draft surveys
       { booking: bookingId },
       updateFields,
-      { new: true, upsert: true }
+      { new: true, upsert: true },
     );
 
     let review;
@@ -135,7 +135,7 @@ export const submitSurveyForBooking = async (req, res) => {
       review = await Review.findOneAndUpdate(
         { booking: bookingId },
         reviewUpdateFields,
-        { new: true, upsert: true }
+        { new: true, upsert: true },
       );
       const reviewAnalysis = getSentiment(comment);
       const newReviewSentiment = {
@@ -152,7 +152,7 @@ export const submitSurveyForBooking = async (req, res) => {
     await Booking.findByIdAndUpdate(
       bookingId,
       { isSurveySubmitted: true },
-      { new: true }
+      { new: true },
     );
 
     const { activityLikedKeyWords, activityImprovementsKeyWords } =
@@ -260,7 +260,7 @@ export const updateSurvey = async (req, res) => {
     const survey = await SurveyResponse.findByIdAndUpdate(
       surveyId,
       updateFields,
-      { new: true }
+      { new: true },
     );
 
     return res.status(200).json(survey);
@@ -308,7 +308,7 @@ export const submitSurvey = async (req, res) => {
     const survey = await SurveyResponse.findByIdAndUpdate(
       surveyId,
       updateFields,
-      { new: true }
+      { new: true },
     );
 
     const { activityLikedKeyWords, activityImprovementsKeyWords } =
@@ -328,7 +328,7 @@ export const submitSurvey = async (req, res) => {
     await Booking.findByIdAndUpdate(
       survey.booking,
       { isSurveySubmitted: true },
-      { new: true }
+      { new: true },
     );
 
     return res.status(200).json(survey);

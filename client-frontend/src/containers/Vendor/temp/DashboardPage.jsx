@@ -2,17 +2,17 @@ import styled from "@emotion/styled";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import {
-    Box,
-    Card,
-    CardContent,
-    CardHeader,
-    CircularProgress,
-    Container,
-    Grid,
-    Rating,
-    Stack,
-    Typography,
-    useTheme,
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  CircularProgress,
+  Container,
+  Grid,
+  Rating,
+  Stack,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import useAnalyticsStore from "../../../zustand/AnalyticsStore";

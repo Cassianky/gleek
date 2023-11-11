@@ -774,6 +774,122 @@ export const useReviewStore = create((set) => ({
   },
 }));
 
+export const useTestimonialStore = create((set) => ({
+  testimonials: [],
+  testimonial: null,
+  isLoading: true,
+  getAllTestimonials: async () => {
+    try {
+      const response = await AxiosConnect.get(`/testimonial/`);
+      console.log("getAllTestimonials", response.data);
+      set({
+        testimonials: response.data,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  getTestimonialById: async (testimonialId) => {
+    try {
+      const response = await AxiosConnect.get(`/testimonial/${testimonialId}`);
+      console.log("getTestimonialById", response.data);
+      set({
+        testimonial: response.data.testimonial,
+        isLoading: false,
+      });
+      return response.data.testimonial;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  updateTestimonialById: async (testimonialId, updateData) => {
+    try {
+      const response = await AxiosConnect.patch(
+        `/testimonial`,
+        testimonialId,
+        updateData,
+      );
+      console.log("updateTestimonialById", response.data);
+      set({
+        testimonial: response.data.testimonial,
+        isLoading: false,
+      });
+      return response.data.testimonial;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  hasTestimonialForSurvey: async (surveyId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/testimonial/survey/${surveyId}`,
+      );
+      console.log("hasTestimonialForSurvey", response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  createTestimonialForSurvey: async (surveyId) => {
+    try {
+      const response = await AxiosConnect.post(`/testimonial/create`, {
+        surveyId,
+      });
+      console.log("createTestimonialForSurvey", response.data);
+
+      return response.data.testimonial;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  deleteTestimonial: async (testimonialId) => {
+    try {
+      const response = await AxiosConnect.delete(
+        `/testimonial/${testimonialId}`,
+      );
+      console.log("deleteTestimonial", response.data);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  toggleTestimonialVisibility: async (testimonialId) => {
+    try {
+      const response = await AxiosConnect.post(
+        `/testimonial/${testimonialId}/toggleVisibility`,
+      );
+      const updatedTestimonial = response.data;
+
+      set((state) => {
+        const updatedTestimonials = state.testimonials.map((t) => {
+          if (t._id === updatedTestimonial._id) {
+            return {
+              ...t,
+              hidden: updatedTestimonial.hidden,
+            };
+          }
+          return t;
+        });
+        return {
+          ...state,
+          testimonials: updatedTestimonials,
+          isLoading: false,
+        };
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+}));
+
 export const useImageUploadTestStore = create((set) => ({
   testActivities: [],
   setTestActivities: (newActivityList) => {

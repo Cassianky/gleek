@@ -58,6 +58,7 @@ export const useAdminStore = create((set) => ({
       return true;
     } catch (error) {
       console.log(error);
+      console.log(error.message);
       setTimeout(() => {
         set({
           adminError: error,
@@ -413,22 +414,22 @@ export const useVendorStore = create((set) => ({
   },
   updateVendor: async (id, payload) => {
     try {
-      set(() => ({ isLoading: true }));
+      set(() => ({ isVendorLoading: true }));
       await AxiosConnect.patch("/vendor/updateVendor", id, payload);
       const response = await AxiosConnect.get("/vendor/viewAllVendors");
       set({ vendors: response.data });
-      set(() => ({ isLoading: false }));
+      set(() => ({ isVendorLoading: false }));
     } catch (error) {
       console.error(error);
     }
   },
   createVendor: async (vendorData) => {
     try {
-      set({ isLoading: true });
+      set({ isVendorLoading: true });
       const response = await AxiosConnect.post("/vendor/addVendor", vendorData);
       set({ vendor: response.data });
       setTimeout(() => {
-        set({ isLoading: false });
+        set({ isVendorLoading: false });
       }, 500);
       return true;
     } catch (error) {
@@ -447,16 +448,50 @@ export const useVendorStore = create((set) => ({
       console.error(error);
     }
   },
-  vendorDetails: {},
+  // vendorDetails: {},
   getVendorDetails: async (vendorId) => {
     try {
-      set({ isLoading: true });
-      console.log("vendorId", vendorId);
+      set({ isVendorLoading: true });
+      console.log("loading get vendor details vendorId", vendorId);
       const response = await AxiosConnect.get(`/vendor/viewVendor/${vendorId}`);
-      set({ vendorDetails: response.data });
-      set({ isLoading: false });
+      console.log(response);
+      set({ vendor: response.data });
+      set({ isVendorLoading: false });
+    } catch (error) {
+      set({ isVendorLoading: false });
+      console.error(error);
+    }
+  },
+  hasActiveBookings: async (vendorId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/vendor/hasActiveBookings/${vendorId}`,
+      );
+      return response.data;
     } catch (error) {
       console.error(error);
+      throw new Error(error.message);
+    }
+  },
+  toggleIsDisabled: async (vendorId, isDisabled) => {
+    try {
+      set(() => ({ isVendorLoading: true }));
+      console.log(vendorId);
+      const toggleResponse = await AxiosConnect.patch(
+        "/vendor/toggleVendorIsDisabled",
+        vendorId,
+        {
+          isDisabled: isDisabled,
+        },
+      );
+      const response = await AxiosConnect.get("/vendor/viewAllVendors");
+      set({ vendors: response.data });
+      set(() => ({ isVendorLoading: false }));
+      return toggleResponse.data.message;
+    } catch (error) {
+      set(() => ({ isVendorLoading: false }));
+      console.error(error.message);
+      throw new Error(error.message);
     }
   },
 }));
@@ -496,6 +531,38 @@ export const useClientStore = create((set) => ({
       set({ isLoading: false });
     } catch (error) {
       console.error(error);
+    }
+  },
+  hasActiveBookings: async (clientId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/client/hasActiveBookings/${clientId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  },
+  toggleIsDisabled: async (clientId, isDisabled) => {
+    try {
+      set(() => ({ isLoading: true }));
+      console.log(clientId);
+      const toggleResponse = await AxiosConnect.patch(
+        "/client/toggleClientIsDisabled",
+        clientId,
+        {
+          isDisabled: isDisabled,
+        },
+      );
+      const response = await AxiosConnect.get("/client/getAllClients");
+      set({ clients: response.data });
+      set(() => ({ isLoading: false }));
+      return toggleResponse.data.message;
+    } catch (error) {
+      set(() => ({ isLoading: false }));
+      console.error(error.message);
+      throw new Error(error.message);
     }
   },
 }));

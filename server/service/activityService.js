@@ -42,3 +42,10 @@ export async function getAllVendorActivities(vendorId) {
     .populate("rejectedDraft");
   return activities;
 }
+
+export async function disableVendorActivities(vendorId, isDisabled) {
+  await ActivityModel.updateMany(
+    { linkedVendor: vendorId },
+    { disabled: isDisabled },
+  );
+}

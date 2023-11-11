@@ -7,7 +7,8 @@ import VendorsTable from "./VendorsTable";
 
 const ViewAllVendors = () => {
   const theme = useTheme();
-  const { vendors, getVendors, isLoading, updateVendor } = useVendorStore();
+  const { vendors, getVendors, isVendorLoading, updateVendor } =
+    useVendorStore();
   useEffect(() => {
     const fetchData = async () => {
       await getVendors();
@@ -31,7 +32,7 @@ const ViewAllVendors = () => {
       >
         View All Vendor Partners
       </Typography>
-      {isLoading ? (
+      {isVendorLoading ? (
         <CircularProgress sx={{ margin: "auto", marginTop: "32px" }} />
       ) : (
         <VendorsTable

@@ -29,6 +29,7 @@ import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
 import ActivityReviews from "./components/review/ActivityReviews";
 import ManageReviewsForActivity from "./components/review/ManageReviewsForActivity";
 import AdminChatpage from "./components/Chat/AdminChatPage";
+import VendorDetails from "./components/vendor/VendorDetails";
 import Badges from "./components/badges/Badges.jsx";
 import CreateBadgePage from "./components/badges/CreateBadgePage.jsx";
 
@@ -102,7 +103,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
+          <Route
             exact
             path="/viewVendor/:vendorId"
             element={
@@ -110,7 +111,7 @@ function App() {
                 <VendorDetails />
               </ProtectedRoute>
             }
-          /> */}
+          />
           <Route
             exact
             path="/addVendor"

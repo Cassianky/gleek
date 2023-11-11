@@ -1,12 +1,5 @@
 import ArticleIcon from "@mui/icons-material/Article";
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  Typography
-} from "@mui/material";
+import { Box, Button, Chip, Divider, Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { useEffect } from "react";
@@ -15,14 +8,17 @@ import notFound from "../../../assets/not_found.png";
 import MainBodyContainer from "../../../components/Common/MainBodyContainer";
 import VendorProfileItem from "../../../components/Vendor/VendorProfileItem";
 import useBookingStore from "../../../zustand/BookingStore";
+import useSnackbarStore from "../../../zustand/SnackbarStore";
 
 const BookingsDetails = () => {
   const { bookingId } = useParams();
   const theme = useTheme();
-  const { getBookingForClient, currentBooking } = useBookingStore();
+  const { getBookingForClient, currentBooking, getBookingSummaryPdf } =
+    useBookingStore();
   const primary = theme.palette.primary.main;
   const secondary = theme.palette.secondary.main;
   let color = "default"; // Default color
+  const { openSnackbar } = useSnackbarStore();
 
   let containerStyle = {
     height: "10rem",
@@ -49,6 +45,17 @@ const BookingsDetails = () => {
     color = "success";
   }
 
+  const handleBookingSummaryDownload = async (event) => {
+    try {
+      await getBookingSummaryPdf(bookingId);
+    } catch (err) {
+      openSnackbar(err, "error");
+    }
+  };
+
+  useEffect(() => {
+    getBookingForClient(bookingId);
+  }, [bookingId]);
   useEffect(() => {
     getBookingForClient(bookingId);
   }, [bookingId]);
@@ -381,6 +388,7 @@ const BookingsDetails = () => {
             variant="contained"
             color="secondary"
             style={{ color: "white" }}
+            onClick={handleBookingSummaryDownload}
           >
             View Booking Summary
           </Button>
@@ -399,12 +407,12 @@ const BookingsDetails = () => {
                 variant="contained"
                 component={Link}
                 startIcon={<ArticleIcon />}
-                to={`/booking/${currentBooking?._id}/survey/edit` }
+                to={`/booking/${currentBooking?._id}/survey/edit`}
               >
                 Fill In Survey
               </Button>
             ) : (
-              <Button variant="contained" disabled >
+              <Button variant="contained" disabled>
                 Survey not available
               </Button>
             )}

@@ -15,6 +15,7 @@ import {
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ToggleIsDisabledButton from "../common/ToggleIsDisabledButton";
 
 const StyledButton = styled(Button)`
   padding-left: 6px;
@@ -139,20 +140,37 @@ const VendorsTable = ({ vendors, updateVendor }) => {
     });
   }
   if (selectedTab === "approvedTab") {
-    columns.push({
-      field: "approvedDate",
-      headerName: "Approved Date",
-      flex: 1,
-      valueFormatter: (params) => {
-        const date = new Date(params.value);
-        const formattedDate = date.toLocaleDateString(undefined, {
-          day: "2-digit",
-          month: "2-digit",
-          year: "2-digit",
-        });
-        return formattedDate;
+    columns.push(
+      {
+        field: "approvedDate",
+        headerName: "Approved Date",
+        flex: 1,
+        valueFormatter: (params) => {
+          const date = new Date(params.value);
+          const formattedDate = date.toLocaleDateString(undefined, {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          });
+          return formattedDate;
+        },
       },
-    });
+      {
+        field: "isDisabled",
+        headerName: "Disable/Enable",
+        flex: 1,
+        renderCell: (params) => {
+          return (
+            <ToggleIsDisabledButton
+              isDisabled={params.row.isDisabled}
+              userId={params.row._id}
+              userType="vendor"
+              userName={params.row.companyName}
+            />
+          );
+        },
+      },
+    );
   }
 
   return (

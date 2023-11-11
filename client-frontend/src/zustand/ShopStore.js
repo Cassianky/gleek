@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import AxiosConnect from "../utils/AxiosConnect";
+import download from "downloadjs";
 
 const useShopStore = create((set) => ({
   activities: [],
@@ -165,6 +166,21 @@ const useShopStore = create((set) => ({
     set({ parentChecked: newParentChecked }),
   childChecked: [],
   setChildChecked: (newChildChecked) => set({ childChecked: newChildChecked }),
+  getQuotationPdf: async (bookingData) => {
+    try {
+      const response = await AxiosConnect.post(
+        "/gleek/shop/getQuotationPdfUrl",
+        bookingData,
+      );
+      window.open(
+        `http://localhost:5000/gleek/shop/getQuotationPdf/${response.data}`,
+      );
+      return;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message);
+    }
+  },
 }));
 
 export default useShopStore;

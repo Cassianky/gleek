@@ -6,12 +6,15 @@ import {
   getBookingById,
   updateBookingStatus,
   getBookingsWithPendingSurvey,
+  getBookingSummaryPdfUrl,
+  getBookingSummaryPdf,
 } from "../../controller/bookingController.js";
 import { verifyToken } from "../../middleware/clientAuth.js";
 
 const router = express.Router();
 
 // Get bookings with pending survey
+router.get("/pendingSurvey", verifyToken, getBookingsWithPendingSurvey);
 router.get("/pendingSurvey", verifyToken, getBookingsWithPendingSurvey);
 
 // Booking
@@ -30,4 +33,16 @@ router.get("/getAllBookingsForClient", verifyToken, getAllBookingsForClient);
 router.get("/viewBooking/:id", verifyToken, getBookingById);
 // /gleek/booking/updateBookingStatus/:id
 router.patch("/updateBookingStatus/:id", verifyToken, updateBookingStatus);
+
+router.post(
+  "/downloadBookingSummaryUrl/:id",
+  verifyToken,
+  getBookingSummaryPdfUrl,
+);
+
+router.get(
+  "/downloadBookingSummaryPdf/:path",
+  verifyToken,
+  getBookingSummaryPdf,
+);
 export default router;

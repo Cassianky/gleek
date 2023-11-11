@@ -16,6 +16,11 @@ import {
   NotificationEvent,
 } from "../util/notificationRelatedEnum.js";
 import { createNotification } from "./notificationController.js";
+import { QuotationTemplate } from "../assets/templates/QuotationTemplate.js";
+import pdf from "html-pdf";
+import fs from "fs";
+import path from "path";
+import Client from "../model/clientModel.js";
 
 // yt: this endpoint retrieves and returns PUBLISHED & PENDING APPROVAL activities only
 export const getAllActivities = async (req, res) => {
@@ -30,10 +35,18 @@ export const getAllActivities = async (req, res) => {
         populate: { path: "admin", model: "Admin" },
       });
     const publishedActivities = activities.filter((row) => {
-      return row.approvalStatus === "Published" && row.isDraft === false;
+      return (
+        row.approvalStatus === "Published" &&
+        row.isDraft === false &&
+        row.disabled === false
+      );
     });
     const pendingApprovalActivities = activities.filter((row) => {
-      return row.approvalStatus === "Pending Approval" && row.isDraft === false;
+      return (
+        row.approvalStatus === "Pending Approval" &&
+        row.isDraft === false &&
+        row.disabled === false
+      );
     });
     res.status(200).json({
       publishedActivities,
@@ -48,7 +61,10 @@ export const getAllActivities = async (req, res) => {
 export const getAllActivitiesForAdmin = async (req, res) => {
   try {
     const adminId = req.params.id;
-    const activities = await ActivityModel.find({ adminCreated: adminId })
+    const activities = await ActivityModel.find({
+      adminCreated: adminId,
+      disabled: false,
+    })
       .populate({
         path: "adminCreated",
         match: { _id: adminId },
@@ -521,9 +537,10 @@ export const saveActivity = async (req, res) => {
   } catch (error) {
     console.log("Error caught", error);
     await session.abortTransaction();
-    res
-      .status(500)
-      .json({ error: "Activity cannot be added", message: error.message });
+    res.status(500).json({
+      error: "Activity cannot be added",
+      message: error.message,
+    });
   } finally {
     session.endSession();
   }
@@ -810,9 +827,9 @@ export const bulkAddThemes = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .json({ error: `Error when adding themes: ${err.message} ` });
+    res.status(500).json({
+      error: `Error when adding themes: ${err.message} `,
+    });
   }
 };
 
@@ -827,7 +844,10 @@ const processThemes = async (themes, parentStatus) => {
 
     if (!parentTheme) {
       if (parent) {
-        parentTheme = new ThemeModel({ name: parent, status: parentStatus });
+        parentTheme = new ThemeModel({
+          name: parent,
+          status: parentStatus,
+        });
         await parentTheme.save();
       }
     }
@@ -865,7 +885,9 @@ export const getAllThemes = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: `Themes cannot be added: ${error.message}` });
+    res.status(500).json({
+      error: `Themes cannot be added: ${error.message}`,
+    });
   }
 };
 
@@ -888,9 +910,9 @@ export const updateTheme = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ error: `Error when updating theme: ${error.message} ` });
+    res.status(500).json({
+      error: `Error when updating theme: ${error.message} `,
+    });
   }
 };
 
@@ -1114,4 +1136,48 @@ export const getActivityTitle = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+export const getQuotationPdfUrl = async (req, res) => {
+  const data = req.body;
+
+  const pdfContent = QuotationTemplate(data);
+  const filename = "quotation" + Date.now() + ".pdf";
+  const pdfFilePath = path.join(process.cwd(), "temp", filename);
+  pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {
+    if (err) {
+      // Handle errors appropriately
+      console.error(err);
+      res.status(500).send("Error generating PDF");
+    } else {
+      // Respond with a success message or the file path
+      res.status(200).send(filename);
+    }
+  });
+};
+
+export const getQuotationPdf = async (req, res) => {
+  const filePath = req.params;
+  const file = path.join(process.cwd(), "temp", filePath.path);
+  fs.access(file, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error("File does not exist or cannot be accessed:", err);
+    } else {
+      // File exists, proceed to serve and then delete
+      res.download(file, "quotation.pdf", (downloadError) => {
+        if (downloadError) {
+          console.error("Error downloading the file:", downloadError);
+        } else {
+          // File has been successfully sent to the client, now delete it
+          fs.unlink(file, (deleteError) => {
+            if (deleteError) {
+              console.error("Error deleting the file:", deleteError);
+            } else {
+              console.log("File deleted successfully.");
+            }
+          });
+        }
+      });
+    }
+  });
 };

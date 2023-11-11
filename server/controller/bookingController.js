@@ -12,6 +12,12 @@ import {
 import VendorModel from "../model/vendorModel.js";
 import { getAllBookingsForClientService } from "../service/bookingService.js";
 import { s3GetImages } from "../service/s3ImageServices.js";
+import { BookingSummaryClient } from "../assets/templates/BookingSummaryClient.js";
+import { BookingSummaryVendor } from "../assets/templates/BookingSummaryVendor.js";
+import sendMail from "../util/sendMail.js";
+import fs from "fs";
+import path from "path";
+import pdf from "html-pdf";
 
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
@@ -433,7 +439,6 @@ export const createBookings = async (req, res) => {
         ...cartItemPlainObject,
       });
     }
-
     let createdBookings = [];
     // Start transaction to create bookings
     const session = await mongoose.startSession();
@@ -442,6 +447,13 @@ export const createBookings = async (req, res) => {
       // Create booking
       const booking = new BookingModel(bookingDetails);
       await booking.save();
+      await booking.populate([
+        {
+          path: "activityId",
+          populate: [{ path: "theme" }, { path: "subtheme" }],
+        },
+        { path: "vendorId" },
+      ]);
       createdBookings.push(booking);
     }
 
@@ -450,7 +462,8 @@ export const createBookings = async (req, res) => {
 
     await session.commitTransaction();
     session.endSession();
-
+    await sendBookingSummaryEmailClient(createdBookings, billingEmail);
+    await sendBookingSummaryEmailVendor(createdBookings);
     res.status(200).json({
       message: "Successfully created bookings!",
       bookings: createdBookings,
@@ -700,4 +713,172 @@ export const updateCompletedBookings = async (req, res) => {
     console.error("Error updating bookings:", error);
     res.status(500).json({ error: "Server error", message: error.message });
   }
+};
+
+//Generate the PDF for the Client And Send Email
+export const sendBookingSummaryEmailClient = async (data, email) => {
+  const pdfContent = BookingSummaryClient(data);
+  const filename = "bookingSummary" + Date.now() + ".pdf";
+  const pdfFilePath = path.join(process.cwd(), "temp", filename);
+
+  pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {
+    if (err) {
+      // Handle errors appropriately
+      console.error(err);
+      res.status(500).send("Error generating PDF");
+    }
+    const options = {
+      to: email,
+      subject: "Your Booking is Confirmed!",
+      text: "Your booking is confirmed",
+      attachments: [
+        {
+          filename: "BookingSummary.pdf",
+          path: pdfFilePath,
+          contentType: "application/pdf",
+        },
+      ],
+    };
+
+    sendMail(options).then(() => {
+      fs.access(pdfFilePath, fs.constants.F_OK, (err) => {
+        if (err) {
+          console.error("File does not exist or cannot be accessed:", err);
+        } else {
+          fs.unlink(pdfFilePath, (deleteError) => {
+            if (deleteError) {
+              console.error("Error deleting the file:", deleteError);
+            } else {
+              console.log("File deleted successfully.");
+            }
+          });
+        }
+      });
+    });
+  });
+};
+
+//Generate the PDF for the vendor And send Email
+export const sendBookingSummaryEmailVendor = async (data) => {
+  data.forEach((booking) => {
+    const pdfContent = BookingSummaryVendor(booking);
+    const filename =
+      "bookingSummary" + booking.vendorId.companyName + Date.now() + ".pdf";
+    const pdfFilePath = path.join(process.cwd(), "temp", filename);
+
+    pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {
+      if (err) {
+        // Handle errors appropriately
+        console.error(err);
+        res.status(500).send("Error generating PDF");
+      }
+      const options = {
+        to: booking.vendorId.companyEmail,
+        subject: "You have a New Booking!",
+        text: "You have a New Booking!",
+        attachments: [
+          {
+            filename: "BookingSummary.pdf",
+            path: pdfFilePath,
+            contentType: "application/pdf",
+          },
+        ],
+      };
+
+      sendMail(options).then(() => {
+        fs.access(pdfFilePath, fs.constants.F_OK, (err) => {
+          if (err) {
+            console.error("File does not exist or cannot be accessed:", err);
+          } else {
+            fs.unlink(pdfFilePath, (deleteError) => {
+              if (deleteError) {
+                console.error("Error deleting the file:", deleteError);
+              } else {
+                console.log("File deleted successfully.");
+              }
+            });
+          }
+        });
+      });
+    });
+  });
+};
+
+export const getBookingSummaryPdfUrl = async (req, res) => {
+  try {
+    const userRole = req.cookies.userRole;
+    const bookingId = req.params.id;
+
+    const booking = await BookingModel.findById(bookingId);
+
+    if (!booking) {
+      return res.status(400).send("Booking Not Found");
+    }
+    await booking.populate([
+      {
+        path: "activityId",
+        populate: [{ path: "theme" }, { path: "subtheme" }],
+      },
+      { path: "vendorId" },
+      { path: "clientId" },
+    ]);
+    const pdfContent =
+      userRole == "Vendor"
+        ? BookingSummaryVendor([booking])
+        : BookingSummaryClient([booking]);
+
+    const filename =
+      userRole == "Vendor"
+        ? "bookingSummary" + booking.vendorId.companyName + Date.now() + ".pdf"
+        : "bookingSummary" + booking.clientId.companyName + Date.now() + ".pdf";
+    const pdfFilePath = path.join(process.cwd(), "temp", filename);
+
+    pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {
+      if (err) {
+        // Handle errors appropriately
+        console.error(err);
+        res.status(500).send("Error generating PDF");
+      } else {
+        // Respond with a success message or the file path
+        res.status(200).send(filename);
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error", message: error.message });
+  }
+};
+
+export const getBookingSummaryPdf = async (req, res) => {
+  const filePath = req.params;
+  const file = path.join(process.cwd(), "temp", filePath.path);
+  fs.access(file, fs.constants.F_OK, (err) => {
+    if (err) {
+      res.status(500).json({
+        err: "Error Accessing File: ",
+        message: err.message,
+      });
+    } else {
+      // File exists, proceed to serve and then delete
+      res.download(file, "BookingSummary.pdf", (downloadError) => {
+        if (downloadError) {
+          res.status(500).json({
+            err: "Error downloading the file:",
+            message: err.message,
+          });
+        } else {
+          // File has been successfully sent to the client, now delete it
+          fs.unlink(file, (deleteError) => {
+            if (deleteError) {
+              res.status(500).json({
+                err: "Error deleting the file:",
+                message: deleteError.message,
+              });
+            } else {
+              console.log("File deleted successfully.");
+            }
+          });
+        }
+      });
+    }
+  });
 };

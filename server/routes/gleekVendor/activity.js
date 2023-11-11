@@ -1,18 +1,18 @@
 import express from "express";
 
-import vendorVerifyToken from "../../middleware/vendorAuth.js";
 import {
-  getActivityTitle,
   bulkDeleteActivityDraft,
   deleteActivityDraft,
   getActivity,
-  getAllThemes,
+  getActivityTitle,
+  getAllActiveThemes,
   getPreSignedImgs,
   getVendorActivities,
   publishActivity,
   saveActivity,
 } from "../../controller/activityController.js";
 import { uploadS3ActivityImages } from "../../middleware/multer.js";
+import vendorVerifyToken from "../../middleware/vendorAuth.js";
 
 const router = express.Router();
 
@@ -23,12 +23,12 @@ const router = express.Router();
 router.get("/mine", vendorVerifyToken, getVendorActivities);
 router.delete("/deleteDraft/:id", vendorVerifyToken, deleteActivityDraft);
 router.delete("/bulkDelete", vendorVerifyToken, bulkDeleteActivityDraft);
-router.get("/getThemes", vendorVerifyToken, getAllThemes);
+router.get("/getThemes", vendorVerifyToken, getAllActiveThemes);
 router.post(
   "/saveActivity",
   vendorVerifyToken,
   uploadS3ActivityImages.array("images", 5),
-  saveActivity,
+  saveActivity
 );
 router.get("/viewActivity/:id", vendorVerifyToken, getActivity);
 router.patch("/publishActivity/:id", vendorVerifyToken, publishActivity);

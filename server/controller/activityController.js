@@ -321,8 +321,6 @@ export const saveActivity = async (req, res) => {
       modifiedDate: Date.now(),
     };
 
-    console.log("linked vendor: ", req.user);
-
     activity["weekendPricing"] = {
       amount: parsedWeekend?.amount,
       isDiscount: parsedWeekend?.isDiscount,
@@ -379,7 +377,6 @@ export const saveActivity = async (req, res) => {
           },
         );
         savedActivity = rejectDraft;
-        console.log("New saved activity", savedActivity);
       }
       // submit
     } else if (activityId) {
@@ -477,7 +474,6 @@ export const saveActivity = async (req, res) => {
     console.log("Saved Activity is: ", savedActivity);
 
     const processedS3ImageUrlToBeKept = [];
-    console.log("updatedImageList yoo", updatedImageList);
 
     if (updatedImageList !== undefined && updatedImageList.length > 0) {
       for (let i = 0; i < updatedImageList.length; i++) {

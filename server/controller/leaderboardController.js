@@ -2,10 +2,21 @@ import BookingModel from "../model/bookingModel.js";
 
 export const getLeaderBoard = async (req, res) => {
    try {
-      const bookings = await BookingModel.find().populate({
-         path: "clientId",
-      });
+      let bookings = await BookingModel.find().populate([
+         {
+            path: "clientId",
+            select: "-password",
+         },
+         {
+            path: "activityId",
+            populate: [{ path: "theme" }],
+         },
+      ]);
       const mappedClients = {};
+      bookings = bookings.filter(
+         (booking) =>
+            !(booking.status === "REJECTED" || booking.status === "CANCELLED")
+      );
       bookings.forEach((booking) =>
          mappedClients[booking.clientId.id]
             ? mappedClients[booking.clientId.id].push(booking)

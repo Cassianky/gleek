@@ -24,8 +24,8 @@ export const sendCustomEdm = async (req, res) => {
           email: "yowyiying@gmail.com",
         },
         "Custome EDM Subject",
-        "Custome EDM COntente lorem ipsum test test lkdfjvlerjlksdnflkjdfla ;sadf"
-      )
+        "Custome EDM COntente lorem ipsum test test lkdfjvlerjlksdnflkjdfla ;sadf",
+      ),
     );
     res.status(200).json({ message: "Email sent" });
   } catch (err) {
@@ -35,19 +35,31 @@ export const sendCustomEdm = async (req, res) => {
 
 export const saveScheduledNewsletter = async (req, res) => {
   try {
-    const { subject, messageBody, scheduledTime, photo } = req.body;
-    const newScheduledNewsletter = new ScheduledNewsletterModel({
-      subject,
-      messageBody,
-      photo,
-      scheduledTime,
-    });
+    const newScheduledNewsletter = new ScheduledNewsletterModel(req.body);
     await newScheduledNewsletter.save();
-    return res.status(200).json({ message: "Scheduled email saved!" });
+    return res.status(200).json({ message: "Scheduled newsletter saved!" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({
-      message: "Server Error! Unable to save scheduled email.",
+      message: "Server Error! Unable to save scheduled newsletter.",
+      error: err.message,
+    });
+  }
+};
+
+export const updateScheduledNewsletter = async (req, res) => {
+  try {
+    const { scheduledNewsletterId } = req.params;
+    await ScheduledNewsletterModel.findByIdAndUpdate(
+      scheduledNewsletterId,
+      req.body,
+      { new: true, runValidators: true },
+    );
+    return res.status(200).json({ message: "Scheduled newsletter updated!" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: "Server Error! Unable to update scheduled newsletter.",
       error: err.message,
     });
   }
@@ -55,13 +67,15 @@ export const saveScheduledNewsletter = async (req, res) => {
 
 export const cancelScheduledNewsletter = async (req, res) => {
   try {
-    const { scheduledNewsletterId } = req.body;
+    const { scheduledNewsletterId } = req.params;
     await ScheduledNewsletterModel.findByIdAndDelete(scheduledNewsletterId);
-    res.status(200).json({ message: "Scheduled email cancelled" });
+    res
+      .status(200)
+      .json({ message: "Scheduled newsletter cancelled successfully!" });
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Server Error! Unable to cancel scheduled email.",
+      message: "Server Error! Unable to cancel scheduled newsletter.",
       error: err.message,
     });
   }
@@ -74,7 +88,7 @@ export const getAllScheduledNewsletters = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Server Error! Unable to get all scheduled emails.",
+      message: "Server Error! Unable to get all scheduled newsletters.",
       error: err.message,
     });
   }
@@ -85,7 +99,7 @@ cron.schedule("* * * * *", async () => {
   try {
     const currentTimestamp = Date.now();
     console.log(
-      `Cron job running at: ${new Date(currentTimestamp).toLocaleString()}`
+      `Cron job running at: ${new Date(currentTimestamp).toLocaleString()}`,
     );
 
     // Find scheduled emails that are due to be sent
@@ -105,14 +119,14 @@ cron.schedule("* * * * *", async () => {
               email: "yowyiying@gmail.com",
             },
             scheduledNewsletter.subject,
-            scheduledNewsletter.messageBody
-          )
+            scheduledNewsletter.messageBody,
+          ),
         );
         await ScheduledNewsletterModel.findByIdAndUpdate(
           scheduledNewsletter._id,
           {
             status: "SENT",
-          }
+          },
         );
       } catch (error) {
         console.error(`Error sending scheduled email: ${error.message}`);
@@ -121,7 +135,7 @@ cron.schedule("* * * * *", async () => {
           {
             status: "FAILED",
             errorLog: error.message,
-          }
+          },
         );
       }
     });

@@ -279,7 +279,7 @@ export const createDisableOrEnableEmailOptions = (user, isDisabled) => {
 export const createCustomEdmMailOptions = (
   client,
   customSubject,
-  customMessageBody
+  customMessageBody,
 ) => {
   try {
     const greeting = `Hello, ${client.name}!`;

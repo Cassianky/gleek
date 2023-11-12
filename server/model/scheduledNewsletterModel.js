@@ -17,6 +17,11 @@ const scheduledNewsletterSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  newsletterType: {
+    type: String,
+    required: true,
+    enum: ["CUSTOM", "PERSONALISED"],
+  },
   status: {
     type: String,
     required: true,
@@ -32,6 +37,6 @@ const scheduledNewsletterSchema = new mongoose.Schema({
 const ScheduledNewsletterModel = mongoose.model(
   "ScheduledNewsletter",
   scheduledNewsletterSchema,
-  "scheduledNewsletter"
+  "scheduledNewsletter",
 );
 export default ScheduledNewsletterModel;

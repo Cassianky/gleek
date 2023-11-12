@@ -6,6 +6,7 @@ import {
   getAllScheduledNewsletters,
   saveScheduledNewsletter,
   sendCustomEdm,
+  updateScheduledNewsletter,
 } from "../../controller/newsletterController.js";
 const router = express.Router();
 
@@ -13,14 +14,19 @@ const router = express.Router();
 router.post("/sendCustomEdm", adminAuth, sendCustomEdm);
 router.post("/saveScheduledNewsletter", adminAuth, saveScheduledNewsletter);
 router.patch(
-  "/cancelScheduledNewsletter",
+  "/updateScheduledNewsletter/:scheduledNewsletterId",
   adminAuth,
-  cancelScheduledNewsletter
+  updateScheduledNewsletter,
+);
+router.delete(
+  "/cancelScheduledNewsletter/:scheduledNewsletterId",
+  adminAuth,
+  cancelScheduledNewsletter,
 );
 router.get(
   "/getAllScheduledNewsletters",
   adminAuth,
-  getAllScheduledNewsletters
+  getAllScheduledNewsletters,
 );
 
 export default router;

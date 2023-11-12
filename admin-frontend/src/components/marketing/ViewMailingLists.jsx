@@ -15,47 +15,47 @@ import MainBodyContainer from "../common/MainBodyContainer";
 
 const ViewMailingLists = () => {
   const theme = useTheme();
-//   const [dialogOpen, setDialogOpen] = useState(false);
-//   const { openSnackbar } = useSnackbarStore();
-//   const { updateBookingToPaid } = useBookingStore();
+  //   const [dialogOpen, setDialogOpen] = useState(false);
+  //   const { openSnackbar } = useSnackbarStore();
+  //   const { updateBookingToPaid } = useBookingStore();
 
-//   const handleDialogOpen = (event) => {
-//     event.stopPropagation();
-//     setDialogOpen(true);
-//   };
+  //   const handleDialogOpen = (event) => {
+  //     event.stopPropagation();
+  //     setDialogOpen(true);
+  //   };
 
-//   const handleDialogClose = () => {
-//     setDialogOpen(false);
-//   };
+  //   const handleDialogClose = () => {
+  //     setDialogOpen(false);
+  //   };
 
-//   const handleConfirm = async (bookingId) => {
-//     try {
-//       const message = await updateBookingToPaid(bookingId);
-//       openSnackbar(message);
-//       handleDialogClose();
-//     } catch (error) {
-//       openSnackbar(error.message, "error");
-//     }
-//   };
+  //   const handleConfirm = async (bookingId) => {
+  //     try {
+  //       const message = await updateBookingToPaid(bookingId);
+  //       openSnackbar(message);
+  //       handleDialogClose();
+  //     } catch (error) {
+  //       openSnackbar(error.message, "error");
+  //     }
+  //   };
 
-//   const confirmationDisplayDetails = [
-//     { label: "Client Company", value: bookingData.clientId.companyName },
-//     { label: "Vendor", value: bookingData.vendorName },
-//     { label: "Activity", value: bookingData.activityTitle },
-//     {
-//       label: "Date",
-//       value: new Date(bookingData.startDateTime).toLocaleDateString(),
-//     },
-//     {
-//       label: "Timeslot",
-//       value: `${new Date(
-//         bookingData.startDateTime,
-//       ).toLocaleTimeString()} - ${new Date(
-//         bookingData.endDateTime,
-//       ).toLocaleTimeString()}`,
-//     },
-//     { label: "Total Cost", value: `$${bookingData.totalCost}` },
-//   ];
+  //   const confirmationDisplayDetails = [
+  //     { label: "Client Company", value: bookingData.clientId.companyName },
+  //     { label: "Vendor", value: bookingData.vendorName },
+  //     { label: "Activity", value: bookingData.activityTitle },
+  //     {
+  //       label: "Date",
+  //       value: new Date(bookingData.startDateTime).toLocaleDateString(),
+  //     },
+  //     {
+  //       label: "Timeslot",
+  //       value: `${new Date(
+  //         bookingData.startDateTime,
+  //       ).toLocaleTimeString()} - ${new Date(
+  //         bookingData.endDateTime,
+  //       ).toLocaleTimeString()}`,
+  //     },
+  //     { label: "Total Cost", value: `$${bookingData.totalCost}` },
+  //   ];
 
   return (
     <MainBodyContainer

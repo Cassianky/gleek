@@ -23,7 +23,9 @@ function ClientTestimonial({ testimonial }) {
       <Card elevation={0}>
         <CardContent>
           <FormatQuote
+            color="primary"
             sx={{
+              fontSize: "3rem",
               transform: "scaleX(-1)",
             }}
           />
@@ -32,13 +34,19 @@ function ClientTestimonial({ testimonial }) {
             style={{
               height: "200px",
               overflowY: "auto",
+
               overflowWrap: "break-word",
             }}
           >
             <Typography
               variant="h6"
               align="center"
-              sx={{ lineHeight: 1.3, textAlign: "justify", fontSize: "1.4rem" }}
+              sx={{
+                lineHeight: 1.2,
+                textAlign: "justify",
+                fontSize: "1.3rem",
+                padding: 2,
+              }}
             >
               {testimonial.testimonialBody}
             </Typography>

@@ -1,23 +1,17 @@
 import {
-  Box,
-  Button,
   Container,
-  Grid,
-  MobileStepper,
-  Slider,
-  Typography,
+  Stack,
+  Typography
 } from "@mui/material";
-import { useTestimonialStore } from "../../zustand/TestimonialStore";
 import { useEffect } from "react";
-import useSnackbarStore from "../../zustand/SnackbarStore";
-import ClientTestimonial from "./ClientTestimonial";
-import { useState } from "react";
-import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import useSnackbarStore from "../../zustand/SnackbarStore";
+import { useTestimonialStore } from "../../zustand/TestimonialStore";
+import ClientTestimonial from "./ClientTestimonial";
 
 function TestimonialSection() {
   const { testimonials, getAllTestimonials } = useTestimonialStore();
@@ -38,22 +32,10 @@ function TestimonialSection() {
 
   if (testimonials.length === 0) return <></>;
 
-  return (
-    <Container
-      maxWidth="xl"
-      sx={{
-        width: "100%",
-        maxWidth: "80vw",
-      }}
-    >
-      <Typography
-        variant="h4"
-        gutterBottom
-        sx={{ fontSize: "2rem", textAlign: "center" }}
-      >
-        What else our clients say
-      </Typography>
+  function TestimonialSwiper() {
+    return (
       <Swiper
+        maxWidth="fit-content"
         slidesPerView={3}
         spaceBetween={30}
         pagination={{
@@ -82,7 +64,6 @@ function TestimonialSection() {
             key={index}
             style={{
               display: "flex",
-              justifyContent: "center",
               position: "relative",
               padding: "10px",
               boxSizing: "border-box",
@@ -91,21 +72,44 @@ function TestimonialSection() {
             <ClientTestimonial
               key={testimonial._id}
               testimonial={testimonial}
-              style={{
-                maxWidth: "100%",
-              }}
+              style={{}}
             />
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {/* <Grid container spacing={3} justifyContent="center">
+    );
+  }
+  function TestimonialGrid() {
+    return (
+      <Stack spacing={5} justifyContent="center" direction={"row"} width="100%">
         {testimonials.map((testimonial) => (
-          <Grid item key={testimonial._id} xs={12} md={4}>
+          <>
             <ClientTestimonial testimonial={testimonial} />
-          </Grid>
+          </>
         ))}
-      </Grid> */}
+      </Stack>
+    );
+  }
+
+  return (
+    <Container
+      maxWidth="xl"
+      sx={{
+        width: "100%",
+        maxWidth: "80vw",
+        height: "100%",
+        paddingTop: 5,
+      }}
+    >
+      <Typography
+        variant="h4"
+        gutterBottom
+        py={6}
+        sx={{ fontSize: "2rem", textAlign: "center" }}
+      >
+        Testimonials
+      </Typography>
+      {testimonials.length < 3 ? <TestimonialGrid /> : <TestimonialSwiper />}
     </Container>
   );
 }

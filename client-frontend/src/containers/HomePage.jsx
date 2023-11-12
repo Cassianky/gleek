@@ -13,10 +13,11 @@ import image from "../assets/NatureOnScreen.png";
 import useClientStore from "../zustand/ClientStore";
 import useVendorStore from "../zustand/VendorStore";
 import TestimonialSection from "../components/Home/TestimonialSection";
+import FeatureSection from "../components/Recommendation/FeatureSection";
 
 const ImageSection = () => {
-  const { authenticated, client, logoutClient } = useClientStore();
-  const { vendorAuthenticated, vendor, logoutVendor } = useVendorStore();
+  const { authenticated } = useClientStore();
+  const { vendorAuthenticated } = useVendorStore();
 
   return (
     <Container
@@ -55,24 +56,26 @@ const ImageSection = () => {
             Book or post employee engagement activities on Gleek. Explore
             sustainable activities and improve employee wellbeing.
           </Typography>
-          <Stack direction="row" spacing={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              href="/register"
-            >
-              Get Started as a Client
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              size="large"
-              href="/vendor/register"
-            >
-              Get Started as a Vendor
-            </Button>
-          </Stack>
+          {!authenticated && !vendorAuthenticated && (
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                href="/register"
+              >
+                Get Started as a Client
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="large"
+                href="/vendor/register"
+              >
+                Get Started as a Vendor
+              </Button>
+            </Stack>
+          )}
         </Grid>
 
         <Grid item xs={12} md={6}>
@@ -90,7 +93,8 @@ const HomePage = () => {
   return (
     <>
       <Container elevation={0} maxWidth>
-        <ImageSection />
+        <FeatureSection/>
+        {<ImageSection />}
         <TestimonialSection />
       </Container>
     </>

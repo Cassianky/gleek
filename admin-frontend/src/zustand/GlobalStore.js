@@ -352,6 +352,16 @@ export const useThemeStore = create((set) => ({
       console.error(error);
     }
   },
+  getActiveThemes: async () => {
+    try {
+      set({ isThemeLoading: true });
+      const response = await AxiosConnect.get("/activity/getActiveThemes");
+      set({ themes: response.data });
+      set({ isThemeLoading: false });
+    } catch (error) {
+      console.error(error);
+    }
+  },
   addThemes: async (themes, status) => {
     const data = { themes, status };
     try {

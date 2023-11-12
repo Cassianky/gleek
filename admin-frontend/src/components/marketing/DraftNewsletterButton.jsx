@@ -132,7 +132,6 @@ const DraftNewsletterButton = ({ newsletterData }) => {
     }
   };
 
-
   return (
     <div>
       {newsletterData === undefined ? (
@@ -171,40 +170,50 @@ const DraftNewsletterButton = ({ newsletterData }) => {
         <DialogContent>
           <FormLabel>Newsletter Type</FormLabel>
           <Box display="flex" flexDirection="column" alignItems="flex-start">
-          <RadioGroup
-            value={selectedOption}
-            onChange={handleOptionChange}
-            row
-            
-          >
-            <FormControlLabel
-              value="CUSTOM"
-              control={<Radio color="primary" />}
-              label="Custom Newsletter"
-            />
-            <FormControlLabel
-              value="PERSONALISED"
-              control={<Radio color="primary" />}
-              label="Personalised Recommendations"
-            />
-          </RadioGroup>
-          <Box display="flex" flexDirection="row" >
-          <InfoIcon fontSize="small" color="primary" style={{ marginRight: "10px" }} />
-          {selectedOption === "CUSTOM" && (
-            <Typography fontSize={"0.875rem"} color="primary">
-              This option allows you to create your own newsletter to be sent out to subcribers of the xxx mailing list.
-            </Typography>
-          )}
-          {selectedOption === "PERSONALISED" && (
-            <Typography fontSize={"0.875rem"} color="primary">
-              This option allows you to send out newsletters to subscribers of the xxx mailing list
-              with a curated list of activities based on client preferences.
-            </Typography>
-          )}
-          </Box>
+            <RadioGroup
+              value={selectedOption}
+              onChange={handleOptionChange}
+              row
+            >
+              <FormControlLabel
+                value="CUSTOM"
+                control={<Radio color="primary" />}
+                label="Custom Newsletter"
+              />
+              <FormControlLabel
+                value="PERSONALISED"
+                control={<Radio color="primary" />}
+                label="Personalised Recommendations"
+              />
+            </RadioGroup>
+            <Box display="flex" flexDirection="row">
+              <InfoIcon
+                fontSize="small"
+                color="primary"
+                style={{ marginRight: "10px" }}
+              />
+              {selectedOption === "CUSTOM" && (
+                <Typography fontSize={"0.875rem"} color="primary">
+                  This option allows you to create your own newsletter to be
+                  sent out to subcribers of the xxx mailing list.
+                </Typography>
+              )}
+              {selectedOption === "PERSONALISED" && (
+                <Typography fontSize={"0.875rem"} color="primary">
+                  This option allows you to send out newsletters to subscribers
+                  of the xxx mailing list with a curated list of activities
+                  based on client preferences.
+                </Typography>
+              )}
+            </Box>
           </Box>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Box display="flex" flexDirection="column" alignItems="flex-start" style={{ paddingTop: "30px" }}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="flex-start"
+              style={{ paddingTop: "30px" }}
+            >
               <DateTimePicker
                 label="Scheduled Time"
                 value={selectedDateTime}

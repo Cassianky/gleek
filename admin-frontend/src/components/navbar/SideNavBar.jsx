@@ -204,7 +204,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
               </StyledLink>
             ))}
           </List>
-              <Divider />
+          <Divider />
           <Box sx={{ paddingLeft: 2, paddingTop: 2 }}>
             <Typography
               fontWeight={700}

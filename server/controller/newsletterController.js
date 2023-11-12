@@ -25,8 +25,8 @@ export const sendCustomEdm = async (req, res) => {
           email: "yowyiying@gmail.com",
         },
         "Custome EDM Subject",
-        "Custome EDM COntente lorem ipsum test test lkdfjvlerjlksdnflkjdfla ;sadf"
-      )
+        "Custome EDM COntente lorem ipsum test test lkdfjvlerjlksdnflkjdfla ;sadf",
+      ),
     );
     res.status(200).json({ message: "Email sent" });
   } catch (err) {
@@ -69,7 +69,7 @@ export const updateScheduledNewsletter = async (req, res) => {
     await ScheduledNewsletterModel.findByIdAndUpdate(
       scheduledNewsletterId,
       req.body,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
     return res.status(200).json({ message: "Scheduled newsletter updated!" });
   } catch (err) {
@@ -141,14 +141,14 @@ cron.schedule("* * * * *", async () => {
             },
             scheduledNewsletter.subject,
             scheduledNewsletter.messageBody,
-            preSignedUrl
-          )
+            preSignedUrl,
+          ),
         );
         await ScheduledNewsletterModel.findByIdAndUpdate(
           scheduledNewsletter._id,
           {
             status: "SENT",
-          }
+          },
         );
       } catch (error) {
         console.error(`Error sending scheduled email: ${error.message}`);
@@ -157,7 +157,7 @@ cron.schedule("* * * * *", async () => {
           {
             status: "FAILED",
             errorLog: error.message,
-          }
+          },
         );
       }
     });

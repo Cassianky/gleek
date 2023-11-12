@@ -280,7 +280,7 @@ export const createCustomEdmMailOptions = (
   client,
   subject,
   messageBody,
-  preSignedUrl
+  preSignedUrl,
 ) => {
   try {
     const greeting = `Hello, ${client.name}!`;

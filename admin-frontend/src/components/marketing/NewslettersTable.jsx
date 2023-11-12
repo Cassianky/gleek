@@ -53,7 +53,14 @@ const NewslettersTable = ({ newsletters, status, additionalColumns }) => {
           dateTimeOptions,
         );
         return (
-          <div style={{ display: "flex", width: "100%", marginTop: "10px", marginBottom: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              marginTop: "10px",
+              marginBottom: "10px",
+            }}
+          >
             <Chip
               icon={<AccessTimeIcon />}
               label={
@@ -88,8 +95,6 @@ const NewslettersTable = ({ newsletters, status, additionalColumns }) => {
   ];
 
   const columns = [...standardColumns, ...additionalColumns];
-
-
 
   return (
     <div style={{ height: "100%", width: "99%" }}>

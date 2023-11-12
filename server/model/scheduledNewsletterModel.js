@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const scheduledEmailSchema = new mongoose.Schema({
+const scheduledNewsletterSchema = new mongoose.Schema({
   subject: {
     type: String,
     required: true,
@@ -20,14 +20,18 @@ const scheduledEmailSchema = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ["SCHEDULED", "CANCELLED", "SENT", "FAILED"],
+    enum: ["SCHEDULED", "SENT", "FAILED"],
     default: "SCHEDULED",
+  },
+  errorLog: {
+    type: String,
+    required: false,
   },
 });
 
-const ScheduledEmailModel = mongoose.model(
-  "ScheduledEmail",
-  scheduledEmailSchema,
-  "scheduledemails"
+const ScheduledNewsletterModel = mongoose.model(
+  "ScheduledNewsletter",
+  scheduledNewsletterSchema,
+  "scheduledNewsletter"
 );
-export default ScheduledEmailModel;
+export default ScheduledNewsletterModel;

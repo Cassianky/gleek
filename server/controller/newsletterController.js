@@ -1,6 +1,6 @@
 import sendMail from "../util/sendMail.js";
 import { createCustomEdmMailOptions } from "../util/sendMailOptions.js";
-import ScheduledEmailModel from "../model/scheduledEmailModel.js";
+import ScheduledNewsletterModel from "../model/scheduledNewsletterModel.js";
 import cron from "node-cron";
 
 export const sendCustomEdm = async (req, res) => {
@@ -33,16 +33,16 @@ export const sendCustomEdm = async (req, res) => {
   }
 };
 
-export const saveScheduledEmail = async (req, res) => {
+export const saveScheduledNewsletter = async (req, res) => {
   try {
     const { subject, messageBody, scheduledTime, photo } = req.body;
-    const newScheduledEmail = new ScheduledEmailModel({
+    const newScheduledNewsletter = new ScheduledNewsletterModel({
       subject,
       messageBody,
       photo,
       scheduledTime,
     });
-    await newScheduledEmail.save();
+    await newScheduledNewsletter.save();
     return res.status(200).json({ message: "Scheduled email saved!" });
   } catch (err) {
     console.log(err);
@@ -53,12 +53,10 @@ export const saveScheduledEmail = async (req, res) => {
   }
 };
 
-export const cancelScheduledEmail = async (req, res) => {
+export const cancelScheduledNewsletter = async (req, res) => {
   try {
-    const { scheduledEmailId } = req.body;
-    const scheduledEmail = await ScheduledEmailModel.findById(scheduledEmailId);
-    scheduledEmail.status = "CANCELLED";
-    await scheduledEmail.save();
+    const { scheduledNewsletterId } = req.body;
+    await ScheduledNewsletterModel.findByIdAndDelete(scheduledNewsletterId);
     res.status(200).json({ message: "Scheduled email cancelled" });
   } catch (err) {
     console.log(err);
@@ -69,10 +67,10 @@ export const cancelScheduledEmail = async (req, res) => {
   }
 };
 
-export const getAllScheduledEmails = async (req, res) => {
+export const getAllScheduledNewsletters = async (req, res) => {
   try {
-    const scheduledEmails = await ScheduledEmailModel.find();
-    res.status(200).json(scheduledEmails);
+    const scheduledNewsletters = await ScheduledNewsletterModel.find();
+    res.status(200).json(scheduledNewsletters);
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -82,6 +80,7 @@ export const getAllScheduledEmails = async (req, res) => {
   }
 };
 
+// Run scheduler every minute
 cron.schedule("* * * * *", async () => {
   try {
     const currentTimestamp = Date.now();
@@ -90,13 +89,13 @@ cron.schedule("* * * * *", async () => {
     );
 
     // Find scheduled emails that are due to be sent
-    const scheduledEmailsDue = await ScheduledEmailModel.find({
+    const scheduledNewslettersDue = await ScheduledNewsletterModel.find({
       scheduledTime: { $lte: currentTimestamp },
       status: "SCHEDULED",
     });
 
     // Send the due emails
-    scheduledEmailsDue.forEach(async (scheduledEmail) => {
+    scheduledNewslettersDue.forEach(async (scheduledNewsletter) => {
       try {
         console.log("Sending due email...");
         sendMail(
@@ -105,18 +104,25 @@ cron.schedule("* * * * *", async () => {
               name: "Yiying",
               email: "yowyiying@gmail.com",
             },
-            scheduledEmail.subject,
-            scheduledEmail.messageBody
+            scheduledNewsletter.subject,
+            scheduledNewsletter.messageBody
           )
         );
-        await ScheduledEmailModel.findByIdAndUpdate(scheduledEmail._id, {
-          status: "SENT",
-        });
+        await ScheduledNewsletterModel.findByIdAndUpdate(
+          scheduledNewsletter._id,
+          {
+            status: "SENT",
+          }
+        );
       } catch (error) {
         console.error(`Error sending scheduled email: ${error.message}`);
-        await ScheduledEmailModel.findByIdAndUpdate(scheduledEmail._id, {
-          status: "FAILED",
-        });
+        await ScheduledNewsletterModel.findByIdAndUpdate(
+          scheduledNewsletter._id,
+          {
+            status: "FAILED",
+            errorLog: error.message,
+          }
+        );
       }
     });
   } catch (error) {

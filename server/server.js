@@ -16,7 +16,7 @@ import activityTestController from "./controller/activityTestController.js";
 import notificationRoutes from "./routes/notificationRoute.js";
 import chatroomRoutes from "./routes/chatroomRoute.js";
 import chatMessageRoutes from "./routes/chatMessageRoute.js";
-import edmRoutes from "./routes/gleekAdmin/edmRoute.js";
+import marketingRoutes from "./routes/gleekAdmin/marketingRoute.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
 
@@ -56,7 +56,7 @@ app.use("/client", client);
 app.use("/booking", bookingRoutes);
 app.use("/survey", surveyRoutes);
 app.use("/review", reviewRoutes);
-app.use("/edm", edmRoutes);
+app.use("/marketing", marketingRoutes);
 
 /**
  * For Client application

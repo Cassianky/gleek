@@ -10,8 +10,10 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+
 import MainBodyContainer from "../common/MainBodyContainer";
-const ViewMailingList = () => {
+
+const ViewMailingLists = () => {
   const theme = useTheme();
 //   const [dialogOpen, setDialogOpen] = useState(false);
 //   const { openSnackbar } = useSnackbarStore();
@@ -60,7 +62,7 @@ const ViewMailingList = () => {
       hasBackButton={false}
       breadcrumbNames={[]}
       breadcrumbLinks={[]}
-      currentBreadcrumbName={"Manage Newsletters"}
+      currentBreadcrumbName={"View Mailing Lists"}
     >
       <Typography
         fontSize={25}
@@ -69,7 +71,7 @@ const ViewMailingList = () => {
         component="div"
         color={theme.palette.primary.main}
       >
-        Manage Newsletters
+        View Mailing Lists
       </Typography>
     </MainBodyContainer>
     // <div>
@@ -116,4 +118,4 @@ const ViewMailingList = () => {
   );
 };
 
-export default ViewMailingList;
+export default ViewMailingLists;

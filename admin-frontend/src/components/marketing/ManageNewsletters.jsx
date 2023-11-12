@@ -1,60 +1,115 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "@emotion/react";
 import { useBookingStore, useSnackbarStore } from "../../zustand/GlobalStore";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
+    CircularProgress, Tabs, Tab,
   Typography,
 } from "@mui/material";
 import MainBodyContainer from "../common/MainBodyContainer";
+import InfoIcon from "@mui/icons-material/Info";
+import ScheduleSendIcon from '@mui/icons-material/ScheduleSend';
+import CancelScheduleSendIcon from '@mui/icons-material/CancelScheduleSend';
+import SendIcon from '@mui/icons-material/Send';
 
 const ManageNewsletters = () => {
   const theme = useTheme();
-//   const [dialogOpen, setDialogOpen] = useState(false);
-//   const { openSnackbar } = useSnackbarStore();
-//   const { updateBookingToPaid } = useBookingStore();
+  const [currentTab, setCurrentTab] = useState("scheduled");
+  const isLoading = false;
+  //const { isLoading, newsletters, getAllNewsletters } = useBookingStore();
 
-//   const handleDialogOpen = (event) => {
-//     event.stopPropagation();
-//     setDialogOpen(true);
-//   };
+//   const pendingBookingBadgeNumber = bookings.filter(
+//     (booking) => booking.status === "PENDING_CONFIRMATION",
+//   ).length;
 
-//   const handleDialogClose = () => {
-//     setDialogOpen(false);
-//   };
+//   const confirmedBookingBadgeNumber = bookings.filter(
+//     (booking) => booking.status === "CONFIRMED",
+//   ).length;
 
-//   const handleConfirm = async (bookingId) => {
-//     try {
-//       const message = await updateBookingToPaid(bookingId);
-//       openSnackbar(message);
-//       handleDialogClose();
-//     } catch (error) {
-//       openSnackbar(error.message, "error");
-//     }
-//   };
+//   const pendingPaymentBookingBadgeNumber = bookings.filter(
+//     (booking) => booking.status === "PENDING_PAYMENT",
+//   ).length;
 
-//   const confirmationDisplayDetails = [
-//     { label: "Client Company", value: bookingData.clientId.companyName },
-//     { label: "Vendor", value: bookingData.vendorName },
-//     { label: "Activity", value: bookingData.activityTitle },
+//   const pendingConfirmationAdditionalColumns = [
 //     {
-//       label: "Date",
-//       value: new Date(bookingData.startDateTime).toLocaleDateString(),
+//       field: "creationDateTime",
+//       headerName: "Booked on",
+//       type: "dateTime",
+//       flex: 2,
+//       valueGetter: (params) => {
+//         const dateString = params.row.creationDateTime;
+//         return new Date(dateString);
+//       },
 //     },
 //     {
-//       label: "Timeslot",
-//       value: `${new Date(
-//         bookingData.startDateTime,
-//       ).toLocaleTimeString()} - ${new Date(
-//         bookingData.endDateTime,
-//       ).toLocaleTimeString()}`,
+//       field: "confirmAction",
+//       headerName: "Confirm?",
+//       flex: 1,
+//       sortable: false,
+//       renderCell: (params) => {
+//         return <ConfirmField bookingData={params.row} />;
+//       },
 //     },
-//     { label: "Total Cost", value: `$${bookingData.totalCost}` },
 //   ];
+
+//   const confirmedAdditionalColumns = [
+//     {
+//       field: "details",
+//       headerName: "Confirmation Details",
+//       flex: 2,
+//       sortable: false,
+//       renderCell: (params) => {
+//         return <DetailsField params={params} isLoading={isLoading} />;
+//       },
+//     },
+//     {
+//       field: "cancelAction",
+//       headerName: "Cancel?",
+//       flex: 1,
+//       sortable: false,
+//       renderCell: (params) => {
+//         return <CancelField bookingData={params.row} />;
+//       },
+//     },
+//   ];
+
+//   const pendingPaymentAdditionalColumns = [
+//     {
+//       field: "downloadInvoice",
+//       headerName: "Invoice",
+//       flex: 1,
+//       sortable: false,
+//       renderCell: (params) => {
+//         return <InvoiceDownloadButton />;
+//       },
+//     },
+//     {
+//       field: "paidAction",
+//       headerName: "Paid?",
+//       flex: 1,
+//       sortable: false,
+//       renderCell: (params) => {
+//         return <PaidField bookingData={params.row} />;
+//       },
+//     },
+//   ];
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       await getAllNewsletters();
+//     };
+//     fetchData();
+//   }, [getAllNewsletters]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("testing")
+    };
+    fetchData();
+  }, []);
+
+  const handleChange = (event, newVal) => {
+    setCurrentTab(newVal);
+  };
 
   return (
     <MainBodyContainer
@@ -72,48 +127,66 @@ const ManageNewsletters = () => {
       >
         Manage Newsletters
       </Typography>
+      <div style={{ display: "flex", alignItems: "center" }}>
+          <InfoIcon fontSize="small" sx={{ color: "#9F91CC" }} />
+          <Typography color="#9F91CC">
+            Schedule newsletters to be sent to clients subscribed to the mailing list.
+          </Typography>
+        </div>
+        <Tabs value={currentTab} onChange={handleChange} centered>
+        <Tab
+          icon={
+              <ScheduleSendIcon />
+          }
+          value="scheduled"
+          label="Scheduled"
+        />
+        <Tab
+        icon={
+          <SendIcon />
+      }
+          value="sent"
+          label="Sent"
+        />
+        <Tab
+        icon={
+          <CancelScheduleSendIcon />
+      }
+          value="failed"
+          label="Failed"
+        />
+      </Tabs>
+      {isLoading ? (
+        <CircularProgress sx={{ margin: "auto", marginTop: "32px" }} />
+      ) : (
+        <>
+          {currentTab === "scheduled" && (
+            <></>
+            // <BookingsTable
+            //   bookings={bookings}
+            //   //status="SCHEDULED"
+            //   //additionalColumns={pendingConfirmationAdditionalColumns}
+            // />
+          )}
+          {currentTab === "sent" && (
+            <></>
+            // <BookingsTable
+            //   bookings={bookings}
+            //   //status="SENT"
+            //   //additionalColumns={confirmedAdditionalColumns}
+            // />
+          )}
+          {currentTab === "failed" && (
+            <></>
+            // <BookingsTable
+            //   bookings={bookings}
+            //   //status="FAILED"
+            //   //additionalColumns={pendingPaymentAdditionalColumns}
+            // />
+          )}
+        </>
+      )}
     </MainBodyContainer>
-    // <div>
-    //   <Button variant="contained" color="success" onClick={handleDialogOpen}>
-    //     Paid
-    //   </Button>
-
-    //   <Dialog open={dialogOpen} onClose={handleDialogClose}>
-    //     <DialogTitle>Confirm Payment</DialogTitle>
-    //     <DialogContent>
-    //       {confirmationDisplayDetails.map((detail, index) => (
-    //         <div key={index}>
-    //           <Typography>
-    //             <span
-    //               style={{
-    //                 fontWeight: "bold",
-    //                 color: theme.palette.dark_purple.main,
-    //               }}
-    //             >
-    //               {detail.label}:{" "}
-    //             </span>
-    //             {detail.value}
-    //           </Typography>
-    //         </div>
-    //       ))}
-
-    //       <DialogContentText sx={{ pt: 2 }}>
-    //         Are you sure you want to mark this booking as paid?
-    //       </DialogContentText>
-    //     </DialogContent>
-    //     <DialogActions>
-    //       <Button onClick={handleDialogClose} color="primary">
-    //         Cancel
-    //       </Button>
-    //       <Button
-    //         onClick={async () => await handleConfirm(bookingData.id)}
-    //         color="primary"
-    //       >
-    //         Confirm
-    //       </Button>
-    //     </DialogActions>
-    //   </Dialog>
-    // </div>
   );
 };
 

@@ -15,6 +15,7 @@ import {
   Avatar,
   ListItemIcon,
   ListItemText,
+  Badge,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
@@ -28,6 +29,7 @@ import useVendorStore from "../zustand/VendorStore.js";
 import useShopStore from "../zustand/ShopStore.js";
 import useSnackbarStore from "../zustand/SnackbarStore.js";
 import useCartStore from "../zustand/CartStore.js";
+import { useNotificationStore } from "../zustand/NotficationStore";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import {
   BookmarkBorderOutlined,
@@ -35,6 +37,7 @@ import {
   Person2Outlined,
 } from "@mui/icons-material";
 import ChatIcon from "@mui/icons-material/Chat";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 function NavBar(props) {
   const { authenticated, client, logoutClient } = useClientStore();
@@ -50,6 +53,7 @@ function NavBar(props) {
   const { getCartItems, newCartItem, cartItems, cartItemsToCheckOut } =
     useCartStore();
   const { role, setRole } = useGlobalStore();
+  const { unreadNotificationsCount } = useNotificationStore();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorE2, setAnchorE2] = React.useState(null);
 
@@ -271,6 +275,20 @@ function NavBar(props) {
               </IconButton>
               <IconButton
                 onClick={() => {
+                  navigate("/client/notifications");
+                }}
+                disableRipple
+                disableFocusRipple
+                aria-label="chat"
+                color="accent"
+                sx={{ marginRight: "8px" }}
+              >
+                <Badge badgeContent={unreadNotificationsCount} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                onClick={() => {
                   navigate("/cart");
                 }}
                 disableRipple
@@ -445,6 +463,20 @@ function NavBar(props) {
                 sx={{ marginRight: "8px" }}
               >
                 <ChatIcon />
+              </IconButton>
+              <IconButton
+                onClick={() => {
+                  navigate("/vendor/notifications");
+                }}
+                disableRipple
+                disableFocusRipple
+                aria-label="chat"
+                color="accent"
+                sx={{ marginRight: "8px" }}
+              >
+                <Badge badgeContent={unreadNotificationsCount} color="error">
+                  <NotificationsIcon />
+                </Badge>
               </IconButton>
               <IconButton
                 id="icon-button"

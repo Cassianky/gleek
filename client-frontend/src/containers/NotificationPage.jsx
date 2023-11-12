@@ -1,12 +1,12 @@
-import { useAdminStore, useNotificationStore } from "../../zustand/GlobalStore";
+import { useNotificationStore } from "../zustand/NotficationStore";
 import { useEffect, useState } from "react";
 import { Button, Typography, CircularProgress } from "@mui/material";
-import AdminNotificationList from "./AdminNotificationList";
-import MainBodyContainer from "../common/MainBodyContainer";
+import NotificationList from "../components/Notifications/NotificationList";
 import { useTheme } from "@emotion/react";
+import useGlobalStore from "../zustand/GlobalStore";
 
-const AdminNotificationPage = () => {
-  const adminCredentials = useAdminStore((state) => state.admin);
+const NotificationPage = () => {
+  const { role } = useGlobalStore();
   const { notifications, loading, retrieveAndSetAllNotifications } =
     useNotificationStore();
 
@@ -14,17 +14,13 @@ const AdminNotificationPage = () => {
 
   useEffect(() => {
     // Fetch notifications when the component mounts
-    retrieveAndSetAllNotifications(adminCredentials);
+    retrieveAndSetAllNotifications(role);
   }, []);
 
   return (
-    <MainBodyContainer
-      hasBackButton={false}
-      breadcrumbNames={[]}
-      breadcrumbLinks={[]}
-      currentBreadcrumbName={"All Notifications"}
-    >
+    <div>
       <Typography
+        marginLeft={2}
         fontSize={25}
         fontWeight={700}
         noWrap
@@ -36,10 +32,10 @@ const AdminNotificationPage = () => {
       {loading ? (
         <CircularProgress />
       ) : (
-        <AdminNotificationList notifications={notifications} />
+        <NotificationList notifications={notifications} />
       )}
-    </MainBodyContainer>
+    </div>
   );
 };
 
-export default AdminNotificationPage;
+export default NotificationPage;

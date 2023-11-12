@@ -46,6 +46,7 @@ import useVendorStore from "./zustand/VendorStore";
 import PendingSurveys from "./containers/Client/Survey/PendingSurveys";
 import ChatPage from "./containers/ChatPage";
 import DashboardPage from "./containers/Vendor/Dashboard/DashboardPage";
+import NotificationPage from "./containers/NotificationPage";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -245,6 +246,15 @@ function App() {
               </ClientProtectedRoute>
             }
           />
+          <Route
+            exact
+            path="/client/notifications"
+            element={
+              <ClientProtectedRoute>
+                <NotificationPage />
+              </ClientProtectedRoute>
+            }
+          />
           {/* Vendor routes */}
           <Route
             path="/vendor/login"
@@ -393,6 +403,15 @@ function App() {
             element={
               <VendorProtectedRoute>
                 <ChatPage />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/vendor/notifications"
+            element={
+              <VendorProtectedRoute>
+                <NotificationPage />
               </VendorProtectedRoute>
             }
           />

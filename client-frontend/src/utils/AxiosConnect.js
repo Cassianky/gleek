@@ -23,6 +23,7 @@ AxiosConnect.get = (command) => {
 };
 
 AxiosConnect.patch = (command, req) => {
+  console.log(uri + command);
   const options = {
     method: "PATCH",
     url: uri + command,

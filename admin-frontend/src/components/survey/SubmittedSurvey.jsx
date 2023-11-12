@@ -46,7 +46,7 @@ function SubmittedSurvey() {
       navigate(`/testimonials/${newT._id}`);
       openSnackbar("Created new testimonial.", "success");
     } catch (err) {
-      console.log(err)
+      console.log(err);
       openSnackbar("Error creating testimonial.", "error");
     }
   };

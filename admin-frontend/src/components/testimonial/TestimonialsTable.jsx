@@ -1,9 +1,5 @@
 import { Article } from "@mui/icons-material";
-import {
-  Button,
-  Switch,
-  Typography
-} from "@mui/material";
+import { Button, Switch, Typography } from "@mui/material";
 
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";

@@ -16,7 +16,7 @@ const StyledPage = styled("div")(({ theme }) => ({
 
 const CreateActivityPage = () => {
   const theme = useTheme();
-  const { themes, getThemes, isThemeLoading } = useThemeStore();
+  const { themes, getActiveThemes, isThemeLoading } = useThemeStore();
   const { vendors, getVendors } = useVendorStore();
   const { admin } = useAdminStore();
 
@@ -25,11 +25,11 @@ const CreateActivityPage = () => {
   useEffect(() => {
     console.log("Use Effect");
     const fetchData = async () => {
-      await getThemes();
+      await getActiveThemes();
       await getVendors();
     };
     fetchData();
-  }, [getThemes]);
+  }, [getActiveThemes]);
 
   return (
     <StyledPage>

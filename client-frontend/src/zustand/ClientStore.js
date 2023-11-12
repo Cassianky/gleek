@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import AxiosConnect from "../utils/AxiosConnect";
 import useVendorStore from "./VendorStore";
+import useShopStore from "./ShopStore";
 const useClientStore = create((set) => ({
   authenticated: false,
   client: null,
@@ -23,6 +24,14 @@ const useClientStore = create((set) => ({
       setTimeout(() => {
         set({ isLoading: false });
       }, 500);
+
+      // Fetch shop needed information upon login
+      const getThemes = useShopStore.getState().getThemes;
+      const getPriceInterval = useShopStore.getState().getPriceInterval;
+
+      await getThemes();
+      await getPriceInterval();
+
       return true;
     } catch (error) {
       setTimeout(() => {

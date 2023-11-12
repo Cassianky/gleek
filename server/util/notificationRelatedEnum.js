@@ -7,7 +7,7 @@ export const NotificationEvent = {
 export const NotificationAction = {
   CREATE: "CREATE", //Register, Activity
   REQUEST: "REQUEST", //Booking
-  UPDATE: "UPDATE", //Activity, Booking
+  UPDATE: "UPDATE", //Booking
   APPROVE: "APPROVE", //Register, Booking, Activity (Upon email validation?)
   REJECT: "REJECT", //Activity creation?
   DISABLED: "DISABLED",

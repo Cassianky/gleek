@@ -42,7 +42,7 @@ const MyBookings = () => {
 
   const completedBookingBadgeNumber = bookings.filter(
     (booking) =>
-      booking.status === "PENDING PAYMENT" ||
+      booking.status === "PENDING_PAYMENT" ||
       booking.status === "PAID" ||
       (booking.status === "CONFIRMED" &&
         new Date(booking.startDateTime) < new Date()),
@@ -54,7 +54,7 @@ const MyBookings = () => {
   ).length;
 
   const pendingPaymentBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "PENDING PAYMENT",
+    (booking) => booking.status === "PENDING_PAYMENT",
   ).length;
 
   const paidBookingBadgeNumber = bookings.filter(
@@ -81,7 +81,7 @@ const MyBookings = () => {
   const completedBookingsFilter = (bookings) => {
     const filteredBookings = bookings.filter(
       (booking) =>
-        booking.status === "PENDING PAYMENT" ||
+        booking.status === "PENDING_PAYMENT" ||
         booking.status === "PAID" ||
         (booking.status === "CONFIRMED" &&
           new Date(booking.startDateTime) < new Date()),
@@ -99,7 +99,7 @@ const MyBookings = () => {
 
   const pendingPaymentBookingsFilter = (bookings) => {
     const filteredBookings = bookings.filter(
-      (booking) => booking.status === "PENDING PAYMENT",
+      (booking) => booking.status === "PENDING_PAYMENT",
     );
     return filteredBookings;
   };

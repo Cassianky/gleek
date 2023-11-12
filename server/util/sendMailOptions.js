@@ -278,11 +278,13 @@ export const createDisableOrEnableEmailOptions = (user, isDisabled) => {
 
 export const createCustomEdmMailOptions = (
   client,
-  customSubject,
-  customMessageBody,
+  subject,
+  messageBody,
+  preSignedUrl
 ) => {
   try {
     const greeting = `Hello, ${client.name}!`;
+    const signature = `Best Regards,<br/>Gleek Team`;
     const to = client.email;
 
     const htmlContent = `
@@ -336,9 +338,12 @@ export const createCustomEdmMailOptions = (
         </div>
         <div class="content">
           <p>${greeting}</p>
-          <img src="cid:welcome-client-image" alt="Welcome to Gleek!" />
+          <img src="cid:newsletter-image" alt="Gleek Newsletter Image" />
           <p>
-            ${customMessageBody}
+            ${messageBody}
+          </p>
+          <p>
+            ${signature}
           </p>
         </div>
         <div class="footer">
@@ -354,16 +359,26 @@ export const createCustomEdmMailOptions = (
 
   `;
 
+    const attachments = [];
+    if (preSignedUrl !== undefined) {
+      // If preSignedUrl is not null, attach the image using preSignedUrl
+      attachments.push({
+        filename: "NewsletterImage.png",
+        href: preSignedUrl,
+        cid: "newsletter-image",
+      });
+    } else {
+      // If preSignedUrl is null, attach an image from the file path
+      attachments.push({
+        filename: "DefaultNewsletterImage.jpg",
+        path: "../server/assets/email/DefaultNewsletterImage.jpg",
+        cid: "newsletter-image",
+      });
+    }
     const options = {
-      customSubject,
+      subject,
       html: htmlContent,
-      attachments: [
-        {
-          filename: "ClientWelcome.png",
-          path: "../server/assets/email/ClientWelcome.png",
-          cid: "welcome-client-image",
-        },
-      ],
+      attachments,
       to,
     };
     return options;

@@ -7,6 +7,7 @@ import {
 } from "../../zustand/GlobalStore";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import ScheduleSendIcon from "@mui/icons-material/ScheduleSend";
+import InfoIcon from "@mui/icons-material/Info";
 import Email from "@mui/icons-material/Email";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -89,7 +90,7 @@ const DraftNewsletterButton = ({ newsletterData }) => {
   const handleDialogClose = () => {
     if (newsletterData === undefined) {
       setSelectedOption("CUSTOM");
-      setSelectedDateTime(dayjs()); // Assuming dayjs() is the default value
+      setSelectedDateTime(dayjs());
       setEmailSubject("");
       setMessageBody("");
       setScheduledTimeError("");
@@ -131,24 +132,6 @@ const DraftNewsletterButton = ({ newsletterData }) => {
     }
   };
 
-  // const confirmationDisplayDetails = [
-  //   { label: "Client Company", value: newsletterData.clientId.companyName },
-  //   { label: "Vendor", value: newsletterData.vendorName },
-  //   { label: "Activity", value: newsletterData.activityTitle },
-  //   {
-  //     label: "Date",
-  //     value: new Date(newsletterData.startDateTime).toLocaleDateString(),
-  //   },
-  //   {
-  //     label: "Timeslot",
-  //     value: `${new Date(
-  //       newsletterData.startDateTime,
-  //     ).toLocaleTimeString()} - ${new Date(
-  //       newsletterData.endDateTime,
-  //     ).toLocaleTimeString()}`,
-  //   },
-  //   { label: "Total Cost", value: `$${newsletterData.totalCost}` },
-  // ];
 
   return (
     <div>
@@ -187,11 +170,12 @@ const DraftNewsletterButton = ({ newsletterData }) => {
         </DialogTitle>
         <DialogContent>
           <FormLabel>Newsletter Type</FormLabel>
+          <Box display="flex" flexDirection="column" alignItems="flex-start">
           <RadioGroup
             value={selectedOption}
             onChange={handleOptionChange}
             row
-            style={{ paddingBottom: "16px" }}
+            
           >
             <FormControlLabel
               value="CUSTOM"
@@ -204,8 +188,23 @@ const DraftNewsletterButton = ({ newsletterData }) => {
               label="Personalised Recommendations"
             />
           </RadioGroup>
+          <Box display="flex" flexDirection="row" >
+          <InfoIcon fontSize="small" color="primary" style={{ marginRight: "10px" }} />
+          {selectedOption === "CUSTOM" && (
+            <Typography fontSize={"0.875rem"} color="primary">
+              This option allows you to create your own newsletter to be sent out to subcribers of the xxx mailing list.
+            </Typography>
+          )}
+          {selectedOption === "PERSONALISED" && (
+            <Typography fontSize={"0.875rem"} color="primary">
+              This option allows you to send out newsletters to subscribers of the xxx mailing list
+              with a curated list of activities based on client preferences.
+            </Typography>
+          )}
+          </Box>
+          </Box>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Box display="flex" flexDirection="column" alignItems="flex-start">
+            <Box display="flex" flexDirection="column" alignItems="flex-start" style={{ paddingTop: "30px" }}>
               <DateTimePicker
                 label="Scheduled Time"
                 value={selectedDateTime}

@@ -10,10 +10,7 @@ import PreviewIcon from "@mui/icons-material/Preview";
 import PreviewButton from "./PreviewButton";
 
 const NewslettersTable = ({ newsletters, status, additionalColumns }) => {
-  const theme = useTheme();
   const [filteredNewsletters, setFilteredNewsletters] = useState([]);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedNewsletter, setSelectedNewsletter] = useState();
 
   useEffect(() => {
     setFilteredNewsletters(
@@ -56,7 +53,7 @@ const NewslettersTable = ({ newsletters, status, additionalColumns }) => {
           dateTimeOptions,
         );
         return (
-          <div style={{ display: "flex", width: "100%" }}>
+          <div style={{ display: "flex", width: "100%", marginTop: "10px", marginBottom: "10px" }}>
             <Chip
               icon={<AccessTimeIcon />}
               label={
@@ -92,15 +89,7 @@ const NewslettersTable = ({ newsletters, status, additionalColumns }) => {
 
   const columns = [...standardColumns, ...additionalColumns];
 
-  const handleRowClick = (newsletterData) => {
-    setSelectedNewsletter(newsletterData);
-    setIsDrawerOpen(true);
-  };
 
-  const handleCloseNewsletterDetails = () => {
-    setSelectedNewsletter();
-    setIsDrawerOpen(false);
-  };
 
   return (
     <div style={{ height: "100%", width: "99%" }}>
@@ -108,6 +97,7 @@ const NewslettersTable = ({ newsletters, status, additionalColumns }) => {
         rows={filteredNewsletters}
         columns={columns}
         autoHeight
+        getRowHeight={() => "auto"}
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 25 },
@@ -115,17 +105,7 @@ const NewslettersTable = ({ newsletters, status, additionalColumns }) => {
         }}
         disableRowSelectionOnClick
         slots={{ toolbar: GridToolbarFilterButton }}
-        onRowClick={(params) => handleRowClick(params.row)}
       />
-      {/* <Drawer
-        anchor="left"
-        open={isDrawerOpen}
-        onClose={handleCloseNewsletterDetails}
-      >
-        <Box sx={{ width: "600px", paddingTop: "75px" }}>
-          <NewsletterDetailsForm appointmentData={selectedNewsletter} />
-        </Box>
-      </Drawer> */}
     </div>
   );
 };

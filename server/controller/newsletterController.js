@@ -1,5 +1,6 @@
 import sendMail from "../util/sendMail.js";
 import { createCustomEdmMailOptions } from "../util/sendMailOptions.js";
+import { s3GetImages } from "../service/s3ImageServices.js";
 import ScheduledNewsletterModel from "../model/scheduledNewsletterModel.js";
 import cron from "node-cron";
 
@@ -24,8 +25,8 @@ export const sendCustomEdm = async (req, res) => {
           email: "yowyiying@gmail.com",
         },
         "Custome EDM Subject",
-        "Custome EDM COntente lorem ipsum test test lkdfjvlerjlksdnflkjdfla ;sadf",
-      ),
+        "Custome EDM COntente lorem ipsum test test lkdfjvlerjlksdnflkjdfla ;sadf"
+      )
     );
     res.status(200).json({ message: "Email sent" });
   } catch (err) {
@@ -35,7 +36,22 @@ export const sendCustomEdm = async (req, res) => {
 
 export const saveScheduledNewsletter = async (req, res) => {
   try {
-    const newScheduledNewsletter = new ScheduledNewsletterModel(req.body);
+    const reqFile = req.file;
+    let fileS3Location;
+    if (reqFile === undefined) {
+      console.log("No image files uploaded");
+    } else {
+      console.log("Retrieving uploaded images url");
+      fileS3Location = req.file.location;
+    }
+    console.log(fileS3Location);
+
+    const newsletterData = {
+      ...req.body,
+      ...(fileS3Location && { photo: fileS3Location }),
+    };
+
+    const newScheduledNewsletter = new ScheduledNewsletterModel(newsletterData);
     await newScheduledNewsletter.save();
     return res.status(200).json({ message: "Scheduled newsletter saved!" });
   } catch (err) {
@@ -53,7 +69,7 @@ export const updateScheduledNewsletter = async (req, res) => {
     await ScheduledNewsletterModel.findByIdAndUpdate(
       scheduledNewsletterId,
       req.body,
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     );
     return res.status(200).json({ message: "Scheduled newsletter updated!" });
   } catch (err) {
@@ -98,9 +114,9 @@ export const getAllScheduledNewsletters = async (req, res) => {
 cron.schedule("* * * * *", async () => {
   try {
     const currentTimestamp = Date.now();
-    console.log(
-      `Cron job running at: ${new Date(currentTimestamp).toLocaleString()}`,
-    );
+    // console.log(
+    //   `Cron job running at: ${new Date(currentTimestamp).toLocaleString()}`,
+    // );
 
     // Find scheduled emails that are due to be sent
     const scheduledNewslettersDue = await ScheduledNewsletterModel.find({
@@ -112,6 +128,11 @@ cron.schedule("* * * * *", async () => {
     scheduledNewslettersDue.forEach(async (scheduledNewsletter) => {
       try {
         console.log("Sending due email...");
+        const preSignedUrl =
+          scheduledNewsletter.photo &&
+          (await s3GetImages(scheduledNewsletter.photo));
+        console.log("presigned url", preSignedUrl);
+
         sendMail(
           createCustomEdmMailOptions(
             {
@@ -120,13 +141,14 @@ cron.schedule("* * * * *", async () => {
             },
             scheduledNewsletter.subject,
             scheduledNewsletter.messageBody,
-          ),
+            preSignedUrl
+          )
         );
         await ScheduledNewsletterModel.findByIdAndUpdate(
           scheduledNewsletter._id,
           {
             status: "SENT",
-          },
+          }
         );
       } catch (error) {
         console.error(`Error sending scheduled email: ${error.message}`);
@@ -135,7 +157,7 @@ cron.schedule("* * * * *", async () => {
           {
             status: "FAILED",
             errorLog: error.message,
-          },
+          }
         );
       }
     });

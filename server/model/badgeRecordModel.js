@@ -36,6 +36,6 @@ const badgeRecordSchema = new mongoose.Schema({
 const BadgeRecordModel = mongoose.model(
   "BadgeRecord",
   badgeRecordSchema,
-  "badgeRecords"
+  "badgeRecords",
 );
 export default BadgeRecordModel;

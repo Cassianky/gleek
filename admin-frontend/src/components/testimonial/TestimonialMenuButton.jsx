@@ -13,14 +13,17 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArticleIcon from "@mui/icons-material/Article";
 import { KeyboardArrowDown } from "@mui/icons-material";
-import { useSnackbarStore, useTestimonialStore } from "../../zustand/GlobalStore";
+import {
+  useSnackbarStore,
+  useTestimonialStore,
+} from "../../zustand/GlobalStore";
 import { useNavigate } from "react-router-dom";
 
 function TestimonialMenuButton({ testimonial }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { deleteTestimonial } = useTestimonialStore();
-  const {openSnackbar} = useSnackbarStore()
+  const { openSnackbar } = useSnackbarStore();
   const navigate = useNavigate();
 
   const handleClick = (event) => {
@@ -38,7 +41,7 @@ function TestimonialMenuButton({ testimonial }) {
 
   const handleViewOriginalSurvey = () => {
     // Add your view original survey method logic here
-    navigate(`/surveys/${testimonial.survey._id}`)
+    navigate(`/surveys/${testimonial.survey._id}`);
     handleClose();
   };
 
@@ -46,11 +49,11 @@ function TestimonialMenuButton({ testimonial }) {
     try {
       await deleteTestimonial(testimonial._id);
       setDeleteDialogOpen(false);
-      openSnackbar("Deleted.", "success")
-      navigate("/testimonials")
+      openSnackbar("Deleted.", "success");
+      navigate("/testimonials");
     } catch (error) {
       console.error(error);
-      openSnackbar(error.message, "error")
+      openSnackbar(error.message, "error");
     }
   };
 
@@ -107,6 +110,5 @@ function TestimonialMenuButton({ testimonial }) {
     </div>
   );
 }
-
 
 export default TestimonialMenuButton;

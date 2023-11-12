@@ -68,7 +68,7 @@ const ImageAndFileUpload = ({
         setImageListToEdit(newImg);
       }
     },
-    [activityImages, limit]
+    [activityImages, limit],
   );
 
   // const calcSize = (size) => {

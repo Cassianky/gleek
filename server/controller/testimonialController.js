@@ -32,7 +32,8 @@ export const getTestimonialById = async (req, res) => {
 
     const testimonialId = req.params.testimonialId;
 
-    const testimonial = await Testimonial.findById(testimonialId).populate("survey");
+    const testimonial =
+      await Testimonial.findById(testimonialId).populate("survey");
 
     return res.status(200).json({ testimonial: testimonial });
   } catch (err) {
@@ -50,6 +51,17 @@ export const getAllTestimonials = async (req, res) => {
       //   select: "companyName companyEmail",
       // },
     });
+
+    return res.status(200).json(testimonials);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ message: "Server error" });
+  }
+};
+
+export const getAllVisibleTestimonials = async (req, res) => {
+  try {
+    const testimonials = await Testimonial.find({ hidden: false });
 
     return res.status(200).json(testimonials);
   } catch (err) {
@@ -175,7 +187,8 @@ export const updateTestimonialById = async (req, res) => {
 export const deleteTestimonialById = async (req, res) => {
   try {
     const testimonialId = req.params.testimonialId;
-    const deletedTestimonial = await Testimonial.findByIdAndDelete(testimonialId);
+    const deletedTestimonial =
+      await Testimonial.findByIdAndDelete(testimonialId);
 
     if (!deletedTestimonial) {
       return res.status(404).json({ message: "Testimonial not found." });
@@ -190,4 +203,3 @@ export const deleteTestimonialById = async (req, res) => {
     });
   }
 };
-

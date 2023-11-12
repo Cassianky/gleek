@@ -66,7 +66,6 @@ const useClientStore = create((set) => ({
       return response;
     } catch (error) {
       console.error(error);
-      alert(error.response.data);
     }
   },
 
@@ -84,6 +83,7 @@ const useClientStore = create((set) => ({
       }, 500);
       return true;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -100,6 +100,7 @@ const useClientStore = create((set) => ({
       }, 500);
       return true;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },

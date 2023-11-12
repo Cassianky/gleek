@@ -20,6 +20,7 @@ const ImageSection = () => {
 
   return (
     <Container
+      maxWidth="xl"
       sx={{
         display: "flex",
         justifyContent: "center",
@@ -55,10 +56,20 @@ const ImageSection = () => {
             sustainable activities and improve employee wellbeing.
           </Typography>
           <Stack direction="row" spacing={2}>
-            <Button variant="contained" color="primary" size="large" href="/register">
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              href="/register"
+            >
               Get Started as a Client
             </Button>
-            <Button variant="outlined" color="primary" size="large" href="/vendor/register">
+            <Button
+              variant="outlined"
+              color="primary"
+              size="large"
+              href="/vendor/register"
+            >
               Get Started as a Vendor
             </Button>
           </Stack>
@@ -77,10 +88,12 @@ const ImageSection = () => {
 };
 const HomePage = () => {
   return (
-    <Container elevation={0} maxWidth>
-      <ImageSection />
-      <TestimonialSection />
-    </Container>
+    <>
+      <Container elevation={0} maxWidth>
+        <ImageSection />
+        <TestimonialSection />
+      </Container>
+    </>
   );
 };
 

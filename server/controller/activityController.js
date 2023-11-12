@@ -421,14 +421,12 @@ export const saveActivity = async (req, res) => {
           );
 
           if (savedActivity.adminCreated === undefined) {
-            console.log("activity is created by vendor::");
-
             req.notificationReq = {
               senderRole: Role.VENDOR,
               sender: savedActivity.linkedVendor,
               recipientRole: Role.ADMIN,
               notificationEvent: NotificationEvent.ACTIVITY,
-              notificationAction: NotificationAction.APPROVE,
+              notificationAction: NotificationAction.CREATE,
               eventId: activityId,
               eventObj: savedActivity,
             };
@@ -460,7 +458,7 @@ export const saveActivity = async (req, res) => {
             sender: newActivity.linkedVendor,
             recipientRole: Role.ADMIN,
             notificationEvent: NotificationEvent.ACTIVITY,
-            notificationAction: NotificationAction.APPROVE,
+            notificationAction: NotificationAction.CREATE,
             eventObj: newActivity,
           };
 
@@ -577,6 +575,18 @@ export const approveActivity = async (req, res) => {
         session,
       },
     );
+
+    req.notificationReq = {
+      senderRole: Role.ADMIN,
+      recipientRole: Role.VENDOR,
+      recipient: savedActivity.linkedVendor,
+      notificationEvent: NotificationEvent.ACTIVITY,
+      notificationAction: NotificationAction.APPROVE,
+      eventObj: savedActivity,
+    };
+
+    await createNotification(req.notificationReq, session);
+
     for (const ruleId of savedActivity.activityPricingRules) {
       try {
         const rule =
@@ -647,6 +657,17 @@ export const rejectActivity = async (req, res) => {
         session,
       },
     );
+
+    req.notificationReq = {
+      senderRole: Role.ADMIN,
+      recipientRole: Role.VENDOR,
+      recipient: savedActivity.linkedVendor,
+      notificationEvent: NotificationEvent.ACTIVITY,
+      notificationAction: NotificationAction.REJECT,
+      eventObj: savedActivity,
+    };
+
+    await createNotification(req.notificationReq, session);
 
     await session.commitTransaction();
 

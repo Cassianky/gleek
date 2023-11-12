@@ -245,7 +245,7 @@ const CreateBadgeForm = (theme) => {
     }
     const responseStatus = await AxiosConnect.post(
       "/badge/createBadge",
-      formDataN
+      formDataN,
     );
 
     console.log(responseStatus);
@@ -378,7 +378,7 @@ const CreateBadgeForm = (theme) => {
                         <MenuItem key={value} value={value}>
                           {value}
                         </MenuItem>
-                      )
+                      ),
                     )}
                   </Select>
                   {errorData.sdg && (

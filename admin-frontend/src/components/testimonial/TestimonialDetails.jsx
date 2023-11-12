@@ -84,14 +84,13 @@ function TestimonialDetails() {
       breadcrumbNames={["Manage Testimonials"]}
       breadcrumbLinks={["/testimonials"]}
       currentBreadcrumbName={"View Testimonial"}
-
     >
       <Stack
         direction="row"
         spacing={2}
         justifyContent="space-between"
         alignItems="center"
-        sx={{ marginBottom: 3 }} 
+        sx={{ marginBottom: 3 }}
       >
         <Typography
           fontSize={25}

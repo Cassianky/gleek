@@ -13,24 +13,9 @@ import notificationModel from "../model/notificationModel.js";
 
 export const getAdminNotifications = async (req, res) => {
   try {
-    const adminId = req.adminId;
-    const adminRole = req.adminRole; //in case theres any need to filter between mnger and exec exclusive notifications
-    const allNotifications =
-      adminRole === Role.EXECUTIVE
-        ? await NotificationModel.find()
-            .or([
-              { recipient: adminId },
-              { recipientRole: Role.ADMIN },
-              { recipientRole: Role.EXECUTIVE },
-            ])
-            .sort({ createdDate: -1 })
-        : await NotificationModel.find()
-            .or([
-              { recipient: adminId },
-              { recipientRole: Role.ADMIN },
-              { recipientRole: Role.MANAGERIAL },
-            ])
-            .sort({ createdDate: -1 });
+    const allNotifications = await NotificationModel.find({
+      recipientRole: Role.ADMIN,
+    }).sort({ createdDate: -1 });
 
     res.status(200).json({
       data: allNotifications,
@@ -42,10 +27,17 @@ export const getAdminNotifications = async (req, res) => {
 
 export const getNonAdminNotifications = async (req, res) => {
   try {
+    const role =
+      req.cookies.userRole.toUpperCase() === Role.VENDOR
+        ? Role.VENDOR
+        : Role.CLIENT;
     const recipientId = req.user._id;
+    console.log("receipient role, ", role);
+
     const allNotifications = await NotificationModel.find({
       recipient: recipientId,
-    });
+      $and: [{ recipientRole: role }],
+    }).sort({ createdDate: -1 });
 
     res.status(200).json({
       data: allNotifications,
@@ -57,11 +49,11 @@ export const getNonAdminNotifications = async (req, res) => {
 
 export const createNotification = async (req, session) => {
   try {
-    console.log("req in notification controller:", req);
+    console.log("req in notification creation controller:", req);
 
     const newNotification = new NotificationModel({
       senderRole: req.senderRole,
-      sender: req.sender._id,
+      sender: req.sender ? req.sender : undefined,
       recipientRole: req.recipientRole,
       recipient: req.recipient ? req.recipient : undefined,
       notificationEvent: req.notificationEvent,
@@ -89,21 +81,29 @@ export const createNotification = async (req, session) => {
         }) 
         awaiting your review`;
         break;
+
       case NotificationEvent.ACTIVITY:
         console.log("activity requesting approval::", req.eventObj);
-
         const activityVendor = await VendorModel.findById(req.sender).exec();
-        console.log("vendor of activity::", activityVendor);
-
         newNotification.title = "Activity Notification";
-        if (req.notificationAction === NotificationAction.APPROVE) {
+        if (req.notificationAction === NotificationAction.CREATE) {
           newNotification.text = `
           Vendor ${activityVendor.companyName.toUpperCase()} 
           is requesting approval to publish ${req.eventObj.title.toUpperCase()}
           `;
+        } else if (req.notificationAction === NotificationAction.APPROVE) {
+          newNotification.text = `
+            Admin has approved your request to publish 
+            the activity ${req.eventObj.title.toUpperCase()}.
+            `;
+        } else {
+          newNotification.text = `
+            Admin has rejected your request to publish 
+            the activity ${req.eventObj.title.toUpperCase()}. Please check activity log for reason.
+            `;
         }
         break;
-      //To be uncommented when booking is implemented
+
       // case NotificationEvent.BOOKING:
       //     const bookingEvent = BookingModel.findById(req.eventId).populate("client").populate("activity");
       //     newNotification.title = "Booking Notification";
@@ -123,12 +123,10 @@ export const createNotification = async (req, session) => {
 
 export const updateNotificationAsRead = async (req, res) => {
   try {
-    const { _id, ...remainingFields } = req.body;
-    console.log("_id", _id);
-    console.log("remaining fields", remainingFields);
+    console.log("_id", req.params.id);
 
     const updatedNotification = await notificationModel.findByIdAndUpdate(
-      { _id: _id },
+      { _id: req.params.id },
       { read: true },
     );
 
@@ -143,15 +141,11 @@ export const updateNotificationAsRead = async (req, res) => {
   }
 };
 
-export const updateAllNotificationsAsRead = async (req, res) => {};
-
 export const deleteNotification = async (req, res) => {
   try {
-    const { _id, ...remainingFields } = req.body;
-    console.log("_id", _id);
-    console.log("remaining fields", remainingFields);
+    console.log("_id", req.params.id);
 
-    await notificationModel.findByIdAndDelete(_id);
+    await notificationModel.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       message: "Notification successfully deleted",
@@ -161,3 +155,5 @@ export const deleteNotification = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const updateAllNotificationsAsRead = async (req, res) => {};

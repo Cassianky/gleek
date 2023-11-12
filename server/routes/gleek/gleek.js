@@ -9,6 +9,7 @@ import bookmarkRoutes from "./bookmark.js";
 import activityRoutes from "./activity.js";
 import surveyRoutes from "./survey.js";
 import cartRoutes from "./cart.js";
+import badgeRoutes from "./badge.js";
 import { userRouter } from "../../controller/gleekUserRouterController.js";
 const router = express.Router();
 
@@ -38,4 +39,6 @@ router.use("/activity", activityRoutes);
 router.use("/cart", cartRoutes);
 // /gleek/survey
 router.use("/survey", surveyRoutes);
+// /gleek/badge
+router.use("/badge", badgeRoutes);
 export default router;

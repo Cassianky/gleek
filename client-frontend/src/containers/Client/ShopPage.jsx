@@ -49,7 +49,7 @@ const ShopPage = (props) => {
   const secondary = theme.palette.secondary.main;
   const accent = theme.palette.accent.main;
   const tertiary = theme.palette.tertiary.main;
-
+  const primary = theme.palette.primary.main;
   const itemsPerPage = 24;
 
   const totalItems = activities.length;
@@ -63,8 +63,15 @@ const ShopPage = (props) => {
       await getThemes();
       await getPriceInterval();
     };
-    fetchData();
-  }, []);
+    if (!themes) {
+      console.log("TEST");
+      fetchData();
+    }
+    if (!minPriceValue && !maxPriceValue) {
+      console.log("TEST1213");
+      fetchData();
+    }
+  }, [getPriceInterval, getThemes]);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -75,15 +82,15 @@ const ShopPage = (props) => {
     let sortedActivities = [...activities];
     if (event.target.value === "Newest First") {
       sortedActivities = sortedActivities.sort(
-        (a, b) => new Date(b.createdDate) - new Date(a.createdDate),
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
       );
     } else if (event.target.value === "Price High to Low") {
       sortedActivities = sortedActivities.sort(
-        (a, b) => b.minimumPricePerPax - a.minimumPricePerPax,
+        (a, b) => b.minimumPricePerPax - a.minimumPricePerPax
       );
     } else if (event.target.value === "Price Low to High") {
       sortedActivities = sortedActivities.sort(
-        (a, b) => a.minimumPricePerPax - b.minimumPricePerPax,
+        (a, b) => a.minimumPricePerPax - b.minimumPricePerPax
       );
     }
 
@@ -112,7 +119,7 @@ const ShopPage = (props) => {
   };
 
   const initialLocationState = Object.fromEntries(
-    Object.entries(Locations).map(([key, value]) => [value, false]),
+    Object.entries(Locations).map(([key, value]) => [value, false])
   );
 
   const [locationState, setLocationState] =
@@ -153,7 +160,7 @@ const ShopPage = (props) => {
     Object.entries(SustainableDevelopmentGoals).map(([key, value]) => [
       value,
       false,
-    ]),
+    ])
   );
 
   const [sgState, setSGState] = React.useState(initialSGState);
@@ -174,11 +181,11 @@ const ShopPage = (props) => {
     Object.entries(ActivityDayAvailability).map(([key, value]) => [
       value,
       false,
-    ]),
+    ])
   );
 
   const [daysAvailabilityState, setDaysAvailabilityState] = React.useState(
-    initialDaysAvailabilityState,
+    initialDaysAvailabilityState
   );
   const handleDaysAvailabilityChange = (event) => {
     setDaysAvailabilityState({
@@ -196,11 +203,11 @@ const ShopPage = (props) => {
   };
 
   const initialActivityTypeState = Object.fromEntries(
-    Object.entries(TYPE).map(([key, value]) => [value, false]),
+    Object.entries(TYPE).map(([key, value]) => [value, false])
   );
 
   const [activityTypeState, setActivityTypeState] = React.useState(
-    initialActivityTypeState,
+    initialActivityTypeState
   );
   const handleActivityTypeChange = (event) => {
     setActivityTypeState({
@@ -217,7 +224,7 @@ const ShopPage = (props) => {
   };
 
   const initialDurationState = Object.fromEntries(
-    Object.entries(durations).map(([key, value]) => [value, false]),
+    Object.entries(durations).map(([key, value]) => [value, false])
   );
 
   const [durationState, setDurationState] =
@@ -354,7 +361,7 @@ const ShopPage = (props) => {
           flexDirection="row"
           bgcolor={tertiary}
           justifyContent="space-between"
-          boxShadow={1}
+          boxShadow={2}
           p={2}
         >
           <Typography color={accent} variant="h6">
@@ -407,7 +414,7 @@ const ShopPage = (props) => {
                   onClick={(event) => {
                     event.preventDefault();
                     const clickedActivity = activities.find(
-                      (item) => item._id.toString() === activity._id.toString(),
+                      (item) => item._id.toString() === activity._id.toString()
                     );
                     navigate(`/shop/activity/${activity._id.toString()}`);
                   }}

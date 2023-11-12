@@ -17,7 +17,9 @@ import HomePage from "./containers/HomePage";
 import LoginPage from "./containers/LoginPage";
 import SocketConnection from "./utils/SocketConnection";
 import MyBookings from "./containers/Client/Booking/MyBookings";
+import MyBadges from "./containers/Client/Badge/MyBadges";
 import BookingsDetails from "./containers/Client/Booking/BookingsDetails";
+import ClientDetails from "./containers/Client/Badge/ClientDetails";
 
 import VendorProtectedRoute from "./components/Routes/VendorProtectedRoute";
 import VendorDetails from "./containers/Client/Activity/VendorDetails";
@@ -210,6 +212,24 @@ function App() {
             element={
               <ClientProtectedRoute>
                 <BookingsDetails />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/myBadges"
+            element={
+              <ClientProtectedRoute>
+                <MyBadges />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/client/:id"
+            element={
+              <ClientProtectedRoute>
+                <ClientDetails />
               </ClientProtectedRoute>
             }
           />

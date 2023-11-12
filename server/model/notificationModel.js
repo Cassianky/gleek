@@ -12,7 +12,7 @@ const notificationSchema = new mongoose.Schema({
     required: true,
   },
   //ID of notification sender
-  sender: { type: mongoose.Schema.Types.ObjectId, required: true },
+  sender: { type: mongoose.Schema.Types.ObjectId },
   //In cases of sending all admin some notification
   //e.g. activity created by vendor, user registration , booking status etc
   recipientRole: {

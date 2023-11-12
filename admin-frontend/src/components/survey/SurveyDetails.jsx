@@ -1,12 +1,8 @@
-import React from "react";
 import styled from "@emotion/styled";
+import { LinkOff, MoodOutlined } from "@mui/icons-material";
+import AddIcon from "@mui/icons-material/Add";
 import {
-  Box,
   Button,
-  Checkbox,
-  CircularProgress,
-  Divider,
-  FormControlLabel,
   Grid,
   Paper,
   Rating,
@@ -14,8 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
-import AddIcon from "@mui/icons-material/Add";
+import React from "react";
 
 const StyledPaper = styled(Paper)`
   padding: 20px;
@@ -25,8 +20,12 @@ const StyledPaper = styled(Paper)`
   box-shadow: 3px 3px 0px 0px rgb(159, 145, 204, 40%);
 `;
 
-function SurveyDetails({ surveyData }) {
-  console.log(surveyData);
+function SurveyDetails({
+  surveyData,
+  hasTestimonial,
+  testimonial,
+  handleCreateTestimonial,
+}) {
   return (
     <>
       <Grid container spacing={2}>
@@ -154,9 +153,25 @@ function SurveyDetails({ surveyData }) {
             <Typography color="#9F91CC" variant="h5">
               Testimonial
             </Typography>
-            <Button variant="contained" color="primary" startIcon={<AddIcon />}>
-              Use Testimonial
-            </Button>
+            {hasTestimonial ? (
+              <Button
+                variant="outlined"
+                color="primary"
+                href={`/testimonials/${testimonial._id}`}
+                startIcon={<MoodOutlined />}
+              >
+                View Testimonial
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => handleCreateTestimonial()}
+              >
+                Use Testimonial
+              </Button>
+            )}
           </Stack>
         </Grid>
 

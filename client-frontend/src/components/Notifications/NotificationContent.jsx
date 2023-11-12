@@ -3,8 +3,9 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useAdminStore, useNotificationStore } from "../../zustand/GlobalStore";
-import AdminNotificationPopper from "./AdminNotificationPopper";
+import { useNotificationStore } from "../../zustand/NotficationStore";
+import useGlobalStore from "../../zustand/GlobalStore";
+import NotificationPopper from "./NotificationPopper";
 import AxiosConnect from "../../utils/AxiosConnect";
 
 const timeCalculator = (givenDate) => {
@@ -37,9 +38,10 @@ const timeCalculator = (givenDate) => {
   return timeAgo;
 };
 
-const AdminNotificationContent = ({ notification }) => {
+const NotificationContent = ({ notification }) => {
   const { retrieveAndSetAllNotifications } = useNotificationStore();
-  const adminCredentials = useAdminStore((state) => state.admin);
+  const { role } = useGlobalStore();
+  const rolePath = role.toLowerCase();
   let calculatedTime = timeCalculator(notification.createdDate);
   const [isPopperOpen, setPopperOpen] = useState(false);
   const [popperAnchorEl, setPopperAnchorEl] = useState(null);
@@ -59,17 +61,24 @@ const AdminNotificationContent = ({ notification }) => {
   };
 
   const handleMarkAsRead = () => {
-    AxiosConnect.patch(
-      "/notification/updateNotificationAsRead",
-      notification._id,
+    console.log(
+      `/notification/${rolePath}/updateNotificationAsRead/${notification._id}`,
     );
-    retrieveAndSetAllNotifications(adminCredentials);
+    AxiosConnect.patch(
+      `/notification/${rolePath}/updateNotificationAsRead/${notification._id}`,
+    );
+    retrieveAndSetAllNotifications(role);
     handleClosePopper();
   };
 
   const handleDelete = () => {
-    AxiosConnect.patch("/notification/deleteNotification", notification._id),
-      retrieveAndSetAllNotifications(adminCredentials);
+    console.log(
+      `/notification/${rolePath}/deleteNotification/${notification._id}`,
+    );
+    AxiosConnect.patch(
+      `/notification/${rolePath}/deleteNotification/${notification._id}`,
+    );
+    retrieveAndSetAllNotifications(role);
     handleClosePopper();
   };
 
@@ -91,7 +100,7 @@ const AdminNotificationContent = ({ notification }) => {
           onClick={handlePopperToggle}
           style={{ cursor: "pointer", flexDirection: "column" }}
         />
-        <AdminNotificationPopper
+        <NotificationPopper
           open={isPopperOpen}
           anchorEl={popperAnchorEl}
           onClose={handleClosePopper}
@@ -103,4 +112,4 @@ const AdminNotificationContent = ({ notification }) => {
   );
 };
 
-export default AdminNotificationContent;
+export default NotificationContent;

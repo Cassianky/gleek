@@ -22,11 +22,13 @@ const ImageSection = () => {
   return (
     <Container
       maxWidth="xl"
+      
       sx={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        paddingTop: "3rem",
+        paddingY: "5rem",
+
       }}
     >
       <Grid container spacing={3}>

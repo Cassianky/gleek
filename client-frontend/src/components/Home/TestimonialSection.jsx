@@ -1,13 +1,10 @@
-import {
-  Container,
-  Stack,
-  Typography
-} from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/autoplay";
 import "swiper/css/pagination";
-import { Navigation, Pagination } from "swiper/modules";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import useSnackbarStore from "../../zustand/SnackbarStore";
 import { useTestimonialStore } from "../../zustand/TestimonialStore";
@@ -37,12 +34,19 @@ function TestimonialSection() {
       <Swiper
         maxWidth="fit-content"
         slidesPerView={3}
-        spaceBetween={30}
-        pagination={{
-          clickable: true,
+        autoplay={{
+          delay: 6000,
+          disableOnInteraction: true,
+          pauseOnMouseEnter: true
         }}
+        
+        speed={1200}
+        spaceBetween={30}
+        // pagination={{
+        //   clickable: true,
+        // }}
         navigation={true}
-        modules={[Pagination, Navigation]}
+        modules={[Pagination, Navigation, Autoplay]}
         className="mySwiper"
         style={{
           boxShadow: "none",
@@ -107,7 +111,7 @@ function TestimonialSection() {
         py={6}
         sx={{ fontSize: "2rem", textAlign: "center" }}
       >
-        Testimonials
+        What our clients say
       </Typography>
       {testimonials.length < 3 ? <TestimonialGrid /> : <TestimonialSwiper />}
     </Container>

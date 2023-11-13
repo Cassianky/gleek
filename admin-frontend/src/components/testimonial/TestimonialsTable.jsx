@@ -137,7 +137,7 @@ const TestimonialsTable = ({ testimonials, handleToggle }) => {
 
   return (
     <Box>
-      <div style={{ height: 500, width: "99%" }}>
+      <div style={{ height: 800, width: "99%"}}>
         <DataGrid
           initialState={{
             pagination: {

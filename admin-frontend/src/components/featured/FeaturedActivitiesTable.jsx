@@ -30,6 +30,7 @@ import {
   useAdminStore,
   useSnackbarStore,
 } from "../../zustand/GlobalStore";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -47,7 +48,6 @@ const WrappedTextCell = (params) => {
 
 const FeaturedActivitiesTable = ({ activities, pendingApprovalActivities }) => {
   const [currentTabRows, setCurrentTabRows] = useState(activities);
-
   const [selectedActivity, setSelectedActivity] = useState();
   const [imgs, setImgs] = useState([]);
   const [vendorProfile, setVendorProfile] = useState();
@@ -59,8 +59,7 @@ const FeaturedActivitiesTable = ({ activities, pendingApprovalActivities }) => {
     setPendingApprovalActivities,
   } = useActivityStore();
 
-  const [markup, setMarkup] = useState();
-  const [pricingRanges, setPricingRanges] = useState();
+  const navigate = useNavigate();
 
   const { openSnackbar } = useSnackbarStore();
   const { admin } = useAdminStore();
@@ -74,7 +73,7 @@ const FeaturedActivitiesTable = ({ activities, pendingApprovalActivities }) => {
   }, [activities]);
 
   const handleRowClick = async (activity) => {
-    console.log("row click");
+    navigate(`/featured/${activity._id}`);
   };
 
   const handleTabChange = (event, newValue) => {

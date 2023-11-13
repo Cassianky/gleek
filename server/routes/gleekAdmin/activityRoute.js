@@ -9,6 +9,7 @@ import {
   getAllActivities,
   getAllActivitiesForAdmin,
   getAllThemes,
+  getFeaturedActivity,
   getPreSignedImgs,
   rejectActivity,
   saveActivity,
@@ -38,5 +39,5 @@ router.patch("/rejectActivity/:activityId", rejectActivity);
 router.get("/getImages/:id", getPreSignedImgs);
 
 router.post("/feature/:activityId", updateFeaturedActivity);
-
+router.get("/feature/:activityId", getFeaturedActivity);
 export default router;

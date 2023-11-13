@@ -1234,6 +1234,31 @@ export const updateFeaturedActivity = async (req, res) => {
   }
 };
 
+export const getFeaturedActivity = async (req, res) => {
+  try {
+    const activityId = req.params.activityId;
+    const activity = await ActivityModel.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ error: "Activity not found" });
+    }
+
+    const featuredActivity = await FeaturedActivity.findOne({
+      activity: activityId,
+    });
+
+    // If a featured activity exists, return it; otherwise, return nothing
+    if (featuredActivity) {
+      return res.status(200).json(featuredActivity);
+    } else {
+      return res.status(204).end(); // 204 No Content
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
 export const getQuotationPdfUrl = async (req, res) => {
   const data = req.body;
 

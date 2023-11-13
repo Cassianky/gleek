@@ -8,6 +8,7 @@ import timeslotRoutes from "./timeslot.js";
 import bookmarkRoutes from "./bookmark.js";
 import activityRoutes from "./activity.js";
 import surveyRoutes from "./survey.js";
+import testimonialRoutes from "./testimonial.js";
 import cartRoutes from "./cart.js";
 import badgeRoutes from "./badge.js";
 import { userRouter } from "../../controller/gleekUserRouterController.js";
@@ -39,6 +40,8 @@ router.use("/activity", activityRoutes);
 router.use("/cart", cartRoutes);
 // /gleek/survey
 router.use("/survey", surveyRoutes);
+// /gleek/testimonial
+router.use("/testimonial", testimonialRoutes);
 // /gleek/badge
 router.use("/badge", badgeRoutes);
 export default router;

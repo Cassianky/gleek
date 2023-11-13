@@ -59,6 +59,17 @@ export const getAllTestimonials = async (req, res) => {
   }
 };
 
+export const getAllVisibleTestimonials = async (req, res) => {
+  try {
+    const testimonials = await Testimonial.find({ hidden: false });
+
+    return res.status(200).json(testimonials);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ message: "Server error" });
+  }
+};
+
 export const toggleTestimonialVisibility = async (req, res) => {
   try {
     const testimonialId = req.params.testimonialId;

@@ -18,7 +18,7 @@ export const createBadge = async (req, res) => {
   try {
     const { ...newBadge } = req.body;
     const fileBody = req.files;
-    fileBody.image[0].location
+    fileBody.image[0].location;
     let fileS3Location;
     if (!fileBody?.image || fileBody?.image?.length === 0) {
       console.log("No image files uploaded");
@@ -60,7 +60,7 @@ export const createBadge = async (req, res) => {
     const updatedBadge = await BadgeModel.findByIdAndUpdate(
       createdBadge._id,
       { images: imagesPathArr },
-      { new: true, session }
+      { new: true, session },
     );
 
     // Upon successful creation of badge, create a corresponding badge record for each client

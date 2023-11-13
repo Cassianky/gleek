@@ -202,7 +202,7 @@ const CreateBadgeForm = (theme) => {
 
   const handleRemoveImage = (image) => {
     setImageListToEdit((oldState) =>
-      oldState.filter((item) => item.src !== image.src)
+      oldState.filter((item) => item.src !== image.src),
     );
     const updatedList = [...badgeImages];
     updatedList.splice(badgeImages.indexOf(image.file), 1);
@@ -226,7 +226,6 @@ const CreateBadgeForm = (theme) => {
     }
 
     const selectedFile = target.files[0];
-    
 
     if (selectedFile.size > 5000000) {
       setOpen(`Image size must be smaller than ${5000000 / 1000000} MB`);

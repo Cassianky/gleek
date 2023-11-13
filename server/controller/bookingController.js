@@ -18,6 +18,12 @@ import sendMail from "../util/sendMail.js";
 import fs from "fs";
 import path from "path";
 import pdf from "html-pdf";
+import { Role } from "../util/roleEnum.js";
+import {
+  NotificationAction,
+  NotificationEvent,
+} from "../util/notificationRelatedEnum.js";
+import { createNotification } from "./notificationController.js";
 
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
@@ -451,11 +457,48 @@ export const createBookings = async (req, res) => {
       await booking.populate([
         {
           path: "activityId",
-          populate: [{ path: "theme" }, { path: "subtheme" }],
+          populate: [
+            { path: "title" },
+            { path: "adminCreated" },
+            { path: "theme" },
+            { path: "subtheme" },
+          ],
         },
-        { path: "vendorId" },
+        { path: "vendorId", populate: [{ path: "companyName" }] },
+        { path: "clientId", populate: [{ path: "name" }] },
       ]);
       createdBookings.push(booking);
+    }
+
+    for (const createdBooking of createdBookings) {
+      // send a notification to vendor if vendor registered on gleek
+      console.log(createdBooking.activityId.adminCreated);
+      if (createdBooking.activityId.adminCreated === undefined) {
+        const notificationReq = {
+          senderRole: Role.CLIENT,
+          sender: createdBooking.clientId,
+          recipientRole: Role.VENDOR,
+          recipient: createdBooking.vendorId,
+          notificationEvent: NotificationEvent.BOOKING,
+          notificationAction: NotificationAction.REQUEST,
+          eventId: createdBooking._id,
+          eventObj: createdBooking,
+        };
+
+        await createNotification(notificationReq, session);
+      }
+      //send a notification to admin by default
+      const notificationReq = {
+        senderRole: Role.CLIENT,
+        sender: createdBooking.clientId,
+        recipientRole: Role.ADMIN,
+        notificationEvent: NotificationEvent.BOOKING,
+        notificationAction: NotificationAction.REQUEST,
+        eventId: createdBooking._id,
+        eventObj: createdBooking,
+      };
+
+      await createNotification(notificationReq, session);
     }
 
     // Delete cart items
@@ -510,6 +553,41 @@ export const confirmBooking = async (req, res) => {
       vendor?.companyName,
       null,
     );
+
+    await newBooking.populate([
+      {
+        path: "activityId",
+        populate: [{ path: "title" }, { path: "adminCreated" }],
+      },
+      { path: "vendorId", populate: [{ path: "companyName" }] },
+      { path: "clientId", populate: [{ path: "name" }] },
+    ]);
+
+    const notificationReq = {
+      senderRole: Role.VENDOR,
+      sender: newBooking.vendorId,
+      recipientRole: Role.CLIENT,
+      recipient: newBooking.clientId,
+      notificationEvent: NotificationEvent.BOOKING,
+      notificationAction: NotificationAction.APPROVE,
+      eventId: newBooking._id,
+      eventObj: newBooking,
+    };
+
+    await createNotification(notificationReq);
+
+    const adminNotificationReq = {
+      senderRole: Role.VENDOR,
+      sender: newBooking.vendorId,
+      recipientRole: Role.ADMIN,
+      notificationEvent: NotificationEvent.BOOKING,
+      notificationAction: NotificationAction.APPROVEUPDATEADMIN,
+      eventId: newBooking._id,
+      eventObj: newBooking,
+    };
+
+    await createNotification(adminNotificationReq);
+
     const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
       bookings: updatedBookings,
@@ -538,6 +616,41 @@ export const rejectBooking = async (req, res) => {
       vendorName?.companyName,
       rejectionReason,
     );
+
+    await newBooking.populate([
+      {
+        path: "activityId",
+        populate: [{ path: "title" }, { path: "adminCreated" }],
+      },
+      { path: "vendorId", populate: [{ path: "companyName" }] },
+      { path: "clientId", populate: [{ path: "name" }] },
+    ]);
+
+    const notificationReq = {
+      senderRole: Role.VENDOR,
+      sender: newBooking.vendorId,
+      recipientRole: Role.CLIENT,
+      recipient: newBooking.clientId,
+      notificationEvent: NotificationEvent.BOOKING,
+      notificationAction: NotificationAction.REJECT,
+      eventId: newBooking._id,
+      eventObj: newBooking,
+    };
+
+    await createNotification(notificationReq);
+
+    const adminNotificationReq = {
+      senderRole: Role.VENDOR,
+      sender: newBooking.vendorId,
+      recipientRole: Role.ADMIN,
+      notificationEvent: NotificationEvent.BOOKING,
+      notificationAction: NotificationAction.REJECTUPDATEADMIN,
+      eventId: newBooking._id,
+      eventObj: newBooking,
+    };
+
+    await createNotification(adminNotificationReq);
+
     const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
       bookings: updatedBookings,
@@ -565,6 +678,41 @@ export const cancelBooking = async (req, res) => {
       vendorName?.companyName,
       cancelReason,
     );
+
+    await newBooking.populate([
+      {
+        path: "activityId",
+        populate: [{ path: "title" }, { path: "adminCreated" }],
+      },
+      { path: "vendorId", populate: [{ path: "companyName" }] },
+      { path: "clientId", populate: [{ path: "name" }] },
+    ]);
+
+    const notificationReq = {
+      senderRole: Role.VENDOR,
+      sender: newBooking.vendorId,
+      recipientRole: Role.CLIENT,
+      recipient: newBooking.clientId,
+      notificationEvent: NotificationEvent.BOOKING,
+      notificationAction: NotificationAction.CANCEL,
+      eventId: newBooking._id,
+      eventObj: newBooking,
+    };
+
+    await createNotification(notificationReq);
+
+    const adminNotificationReq = {
+      senderRole: Role.VENDOR,
+      sender: newBooking.vendorId,
+      recipientRole: Role.ADMIN,
+      notificationEvent: NotificationEvent.BOOKING,
+      notificationAction: NotificationAction.CANCELUPDATEADMIN,
+      eventId: newBooking._id,
+      eventObj: newBooking,
+    };
+
+    await createNotification(adminNotificationReq);
+
     const updatedBookings = await getAllBookingsForVendor(vendorId);
     res.status(200).json({
       bookings: updatedBookings,
@@ -609,6 +757,49 @@ export const updateBookingStatus = async (req, res) => {
       },
       { new: true },
     );
+
+    if (newStatus === "CONFIRMED") {
+      const notificationReq = {
+        senderRole: Role.ADMIN,
+        recipientRole: Role.CLIENT,
+        recipient: updatedBooking.clientId,
+        notificationEvent: NotificationEvent.BOOKING,
+        notificationAction: NotificationAction.APPROVEBYADMIN,
+        eventId: updatedBooking._id,
+        eventObj: updatedBooking,
+      };
+
+      await createNotification(notificationReq);
+    }
+
+    if (newStatus === "REJECTED") {
+      const notificationReq = {
+        senderRole: Role.ADMIN,
+        recipientRole: Role.CLIENT,
+        recipient: updatedBooking.clientId,
+        notificationEvent: NotificationEvent.BOOKING,
+        notificationAction: NotificationAction.REJECTBYADMIN,
+        eventId: updatedBooking._id,
+        eventObj: updatedBooking,
+      };
+
+      await createNotification(notificationReq);
+    }
+
+    if (newStatus === "CANCELLED") {
+      const notificationReq = {
+        senderRole: Role.ADMIN,
+        recipientRole: Role.CLIENT,
+        recipient: updatedBooking.clientId,
+        notificationEvent: NotificationEvent.BOOKING,
+        notificationAction: NotificationAction.CANCELBYADMIN,
+        eventId: updatedBooking._id,
+        eventObj: updatedBooking,
+      };
+
+      await createNotification(notificationReq);
+    }
+
     res.status(200).json({
       booking: updatedBooking,
       message: `Booking status for ${updatedBooking.activityTitle} updated to ${newStatus} successfully!`,

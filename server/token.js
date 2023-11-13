@@ -8,7 +8,7 @@ import fs from "fs";
 
 // Replace with the code you received from Google
 const code =
-  "4/0AfJohXmqTlZ5E9sEox1QQTYyQAr9UIiStYPxR41ouK7QkrAxY-wzBVhv5zkwMjPRAHlo6A";
+  "4/0AfJohXl_fMXpFG95YiZuSxkDbeH6dvcJtG4M8Qge6oOa0U5YUB1pS5hb1LolRxMdo0SWVw";
 
 // const code =
 //   "4/0AfJohXlQSplw-TkJPxPcnb1euQ7_a_E5FXnH8z1mAVC7WMXQSW8GsZBpcMhWjOubW8Y_Kw";

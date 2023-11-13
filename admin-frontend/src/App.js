@@ -34,6 +34,7 @@ import TestimonialDetails from "./components/testimonial/TestimonialDetails.jsx"
 import VendorDetails from "./components/vendor/VendorDetails";
 import Badges from "./components/badges/Badges.jsx";
 import CreateBadgePage from "./components/badges/CreateBadgePage.jsx";
+import ManageFeaturedActivities from "./components/featured/ManageFeaturedActivities.jsx";
 
 function App() {
   return (
@@ -301,6 +302,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreateBadgePage />
+              </ProtectedRoute>
+            }
+          />
+             <Route
+            exact
+            path="/featured"
+            element={
+              <ProtectedRoute>
+                <ManageFeaturedActivities />
               </ProtectedRoute>
             }
           />

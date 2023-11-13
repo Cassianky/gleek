@@ -12,6 +12,7 @@ import {
   getPreSignedImgs,
   rejectActivity,
   saveActivity,
+  updateFeaturedActivity,
   updateTheme,
 } from "../../controller/activityController.js";
 import { uploadS3ActivityImages } from "../../middleware/multer.js";
@@ -35,5 +36,7 @@ router.delete("/bulkDelete", bulkDeleteActivityDraft);
 router.patch("/approveActivity/:activityId", approveActivity);
 router.patch("/rejectActivity/:activityId", rejectActivity);
 router.get("/getImages/:id", getPreSignedImgs);
+
+router.post("/feature/:activityId", updateFeaturedActivity);
 
 export default router;

@@ -288,6 +288,24 @@ function App() {
           />
           <Route
             exact
+            path="/badges"
+            element={
+              <ProtectedRoute>
+                <Badges />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/createBadge"
+            element={
+              <ProtectedRoute>
+                <CreateBadgePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
             path="/verifyEmail/:token"
             element={<VerifyEmailPage />}
           />

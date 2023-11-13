@@ -75,7 +75,6 @@ const useClientStore = create((set) => ({
       return response;
     } catch (error) {
       console.error(error);
-      alert(error.response.data);
     }
   },
 
@@ -83,7 +82,7 @@ const useClientStore = create((set) => ({
     try {
       const response = await AxiosConnect.post(
         "/gleek/auth/register",
-        userData
+        userData,
       );
       const data = response.data;
       console.log("CLIENT DATA AFTER REGISTER", data.client);
@@ -93,6 +92,7 @@ const useClientStore = create((set) => ({
       }, 500);
       return true;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -100,7 +100,7 @@ const useClientStore = create((set) => ({
     try {
       const response = await AxiosConnect.patch(
         "/gleek/client/updateAccount",
-        userData
+        userData,
       );
       const data = response.data;
       set({ client: data.client });
@@ -109,13 +109,14 @@ const useClientStore = create((set) => ({
       }, 500);
       return true;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
   verifyEmail: async (token) => {
     try {
       const response = await AxiosConnect.get(
-        `/gleek/client/verifyEmail/${token}`
+        `/gleek/client/verifyEmail/${token}`,
       );
 
       if (response.data.status === "success") {

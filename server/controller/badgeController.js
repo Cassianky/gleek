@@ -17,14 +17,14 @@ export const createBadge = async (req, res) => {
 
   try {
     const { ...newBadge } = req.body;
-    const reqFile = req.file;
-
+    const fileBody = req.files;
+    fileBody.image[0].location
     let fileS3Location;
-    if (reqFile === undefined) {
+    if (!fileBody?.image || fileBody?.image?.length === 0) {
       console.log("No image files uploaded");
     } else {
       console.log("Retrieving uploaded images url");
-      fileS3Location = req.file.location;
+      fileS3Location = fileBody.image[0].location;
     }
 
     const badgeNameExists = await badgeExists(newBadge.name, session);
@@ -39,14 +39,33 @@ export const createBadge = async (req, res) => {
       [{ ...newBadge, badgeImage: fileS3Location }],
       {
         session: session,
-      }
+      },
     );
 
     const createdBadge = await newBadgeCreated[0].save();
 
+    const imagesPathArr = [];
+
+    if (!fileBody?.images || fileBody?.images?.length === 0) {
+      console.log("Badge image descriptions: No image files uploaded");
+    } else {
+      let fileArray = fileBody.images,
+        fileLocation;
+      for (let i = 0; i < fileArray.length; i++) {
+        fileLocation = fileArray[i].location;
+        imagesPathArr.push(fileLocation);
+      }
+    }
+
+    const updatedBadge = await BadgeModel.findByIdAndUpdate(
+      createdBadge._id,
+      { images: imagesPathArr },
+      { new: true, session }
+    );
+
     // Upon successful creation of badge, create a corresponding badge record for each client
     const clients = await ClientModel.find({ status: "APPROVED" }).session(
-      session
+      session,
     );
 
     for (const client of clients) {
@@ -92,7 +111,7 @@ export const createBadge = async (req, res) => {
             ],
             {
               session: session,
-            }
+            },
           );
 
           const createdBadgeRecord = await newBadgeRecord[0].save({ session });
@@ -121,7 +140,7 @@ export const createBadge = async (req, res) => {
             ],
             {
               session: session,
-            }
+            },
           );
 
           const createdBadgeRecord = await newBadgeRecord[0].save({ session });
@@ -145,7 +164,7 @@ export const createBadge = async (req, res) => {
                 bookingCount: completedBookingsCount,
               },
             ],
-            { session: session }
+            { session: session },
           );
 
           const createdBadgeRecord = await newBadgeRecord[0].save();
@@ -165,11 +184,12 @@ export const createBadge = async (req, res) => {
 
     return res.status(200).json({
       message: "Badge and user badge records are successfully created!",
-      badge: createdBadge,
+      badge: updatedBadge,
     });
   } catch (err) {
     await session.abortTransaction();
     session.endSession();
+    console.error(err.message);
     return res.status(500).json({ status: "error", msg: "Server Error" });
   }
 };
@@ -191,7 +211,7 @@ export const updateBadge = async (req, res) => {
     const updatedBadge = await BadgeModel.findByIdAndUpdate(
       badgeId,
       updatedBadgeData,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!updatedBadge) {

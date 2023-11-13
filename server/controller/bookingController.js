@@ -372,11 +372,12 @@ export function getTimeslotAvailability(
 
 export const createBookings = async (req, res) => {
    const errors = validationResult(req);
-
+   //TODO
    const client = req.user;
    let cartItemsToCheckOut = req.body;
    console.log(cartItemsToCheckOut);
    const cartIds = [];
+   //TODO list of activities to send notification
    let cartItems = [];
 
    if (!errors.isEmpty()) {

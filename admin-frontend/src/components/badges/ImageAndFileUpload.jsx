@@ -39,6 +39,8 @@ const ImageAndFileUpload = ({
 }) => {
   const wrapperRef = useRef(null);
 
+  const onDragEnter = () => wrapperRef.current?.classList.add("dragover");
+  const onDragLeave = () => wrapperRef.current?.classList.remove("dragover");
   const [open, setOpen] = useState();
 
   const handleClose = () => {
@@ -68,7 +70,7 @@ const ImageAndFileUpload = ({
         setImageListToEdit(newImg);
       }
     },
-    [activityImages, limit]
+    [activityImages, limit],
   );
 
   // const calcSize = (size) => {

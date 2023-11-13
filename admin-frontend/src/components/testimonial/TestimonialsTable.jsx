@@ -1,9 +1,5 @@
 import { Article } from "@mui/icons-material";
-import {
-  Button,
-  Switch,
-  Typography
-} from "@mui/material";
+import { Button, Switch, Typography } from "@mui/material";
 
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
@@ -141,7 +137,7 @@ const TestimonialsTable = ({ testimonials, handleToggle }) => {
 
   return (
     <Box>
-      <div style={{ height: 500, width: "99%" }}>
+      <div style={{ height: 800, width: "99%"}}>
         <DataGrid
           initialState={{
             pagination: {

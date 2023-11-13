@@ -1,22 +1,21 @@
 import express from "express";
-import { check } from "express-validator";
 import {
   getActivitiesWithFilters,
+  getActivity,
+  getAllActiveThemes,
+  getAllActivitiesNames,
+  getMinAndMaxPricePerPax,
   getQuotationPdf,
   getQuotationPdfUrl,
 } from "../../controller/activityController.js";
-import { getAllThemes } from "../../controller/activityController.js";
-import { getAllActivitiesNames } from "../../controller/activityController.js";
-import { getMinAndMaxPricePerPax } from "../../controller/activityController.js";
 import { verifyToken } from "../../middleware/clientAuth.js";
-import { getActivity } from "../../controller/activityController.js";
 const router = express.Router();
 
 /*
 Note: This file contains the /shop router
 */
 
-router.get("/getAllThemes", verifyToken, getAllThemes);
+router.get("/getAllThemes", verifyToken, getAllActiveThemes);
 
 router.post("/getFilteredActivities", verifyToken, getActivitiesWithFilters);
 

@@ -28,7 +28,7 @@ router.post(
   "/saveActivity",
   vendorVerifyToken,
   uploadS3ActivityImages.array("images", 5),
-  saveActivity
+  saveActivity,
 );
 router.get("/viewActivity/:id", vendorVerifyToken, getActivity);
 router.patch("/publishActivity/:id", vendorVerifyToken, publishActivity);

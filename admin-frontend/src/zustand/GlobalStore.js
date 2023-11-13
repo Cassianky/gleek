@@ -735,6 +735,101 @@ export const useBookingStore = create((set) => ({
    },
 }));
 
+export const useNewsletterStore = create((set) => ({
+  newsletters: [],
+  isLoading: false,
+  getAllScheduledNewsletters: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get(
+        "/marketing/getAllScheduledNewsletters",
+      );
+      set({
+        newsletters: response.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+    }
+  },
+  saveScheduledNewsletter: async (newsletterData) => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.post(
+        "/marketing/saveScheduledNewsletter",
+        newsletterData,
+      );
+      const newslettersResponse = await AxiosConnect.get(
+        "/marketing/getAllScheduledNewsletters",
+      );
+      set({
+        newsletters: newslettersResponse.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return response.data.message;
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  updateScheduledNewsletter: async (newsletterId, newsletterData) => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.patch(
+        `/marketing/updateScheduledNewsletter`,
+        newsletterId,
+        newsletterData,
+      );
+      const newslettersResponse = await AxiosConnect.get(
+        "/marketing/getAllScheduledNewsletters",
+      );
+      set({
+        newsletters: newslettersResponse.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return response.data.message;
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  cancelScheduledNewsletter: async (newsletterId) => {
+    try {
+      set({ isLoading: true });
+      const cancelResponse = await AxiosConnect.delete(
+        `/marketing/cancelScheduledNewsletter/${newsletterId}`,
+      );
+      const newslettersResponse = await AxiosConnect.get(
+        "/marketing/getAllScheduledNewsletters",
+      );
+      set({
+        newsletters: newslettersResponse.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return cancelResponse.data.message;
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+}));
+
 export const useAdminSurveyResponseStore = create((set) => ({
    survey: null,
    surveys: [],

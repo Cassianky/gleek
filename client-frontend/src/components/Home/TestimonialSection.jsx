@@ -50,7 +50,6 @@ function TestimonialSection() {
         className="mySwiper"
         style={{
           boxShadow: "none",
-
           padding: 30,
           backgroundColor: "transparent",
         }}
@@ -71,6 +70,7 @@ function TestimonialSection() {
               position: "relative",
               padding: "10px",
               boxSizing: "border-box",
+              backgroundColor: "transparent",
             }}
           >
             <ClientTestimonial

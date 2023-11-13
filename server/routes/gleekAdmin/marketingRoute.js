@@ -8,14 +8,21 @@ import {
   sendCustomEdm,
   updateScheduledNewsletter,
 } from "../../controller/newsletterController.js";
+import { uploadS3NewsletterImage } from "../../middleware/multer.js";
 const router = express.Router();
 
 // /marketing/xxx
 router.post("/sendCustomEdm", adminAuth, sendCustomEdm);
-router.post("/saveScheduledNewsletter", adminAuth, saveScheduledNewsletter);
+router.post(
+  "/saveScheduledNewsletter",
+  adminAuth,
+  uploadS3NewsletterImage.single("image"),
+  saveScheduledNewsletter,
+);
 router.patch(
   "/updateScheduledNewsletter/:scheduledNewsletterId",
   adminAuth,
+  uploadS3NewsletterImage.single("image"),
   updateScheduledNewsletter,
 );
 router.delete(

@@ -17,7 +17,7 @@ function FeatureSection() {
         paddingTop: "3rem",
       }}
     >
-      Insert Featured Activities Here 
+      Insert Featured Activities Here
     </Container>
   );
 }

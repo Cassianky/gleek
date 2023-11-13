@@ -24,7 +24,7 @@ function ManageTestimonials() {
   const handleToggle = async (testimonialId) => {
     try {
       await toggleTestimonialVisibility(testimonialId);
-      openSnackbar(`Toggled testimonial successfully.`, "success")
+      openSnackbar(`Toggled testimonial successfully.`, "success");
     } catch (error) {
       console.error(error);
       openSnackbar("An error occurred", "error");

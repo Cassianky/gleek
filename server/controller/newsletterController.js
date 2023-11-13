@@ -65,10 +65,25 @@ export const saveScheduledNewsletter = async (req, res) => {
 
 export const updateScheduledNewsletter = async (req, res) => {
   try {
+    const reqFile = req.file;
+    let fileS3Location;
+    if (reqFile === undefined) {
+      console.log("No image files uploaded");
+    } else {
+      console.log("Retrieving uploaded images url");
+      fileS3Location = req.file.location;
+    }
+    console.log(fileS3Location);
+
+    const newsletterData = {
+      ...req.body,
+      ...(fileS3Location && { photo: fileS3Location }),
+    };
+
     const { scheduledNewsletterId } = req.params;
     await ScheduledNewsletterModel.findByIdAndUpdate(
       scheduledNewsletterId,
-      req.body,
+      newsletterData,
       { new: true, runValidators: true },
     );
     return res.status(200).json({ message: "Scheduled newsletter updated!" });
@@ -100,6 +115,15 @@ export const cancelScheduledNewsletter = async (req, res) => {
 export const getAllScheduledNewsletters = async (req, res) => {
   try {
     const scheduledNewsletters = await ScheduledNewsletterModel.find();
+
+    for (let i = 0; i < scheduledNewsletters.length; i++) {
+      if (scheduledNewsletters[i].photo) {
+        scheduledNewsletters[i] = scheduledNewsletters[i].toObject();
+        const preSignedUrl = await s3GetImages(scheduledNewsletters[i].photo);
+        scheduledNewsletters[i].preSignedPhoto = preSignedUrl;
+      }
+    }
+
     res.status(200).json(scheduledNewsletters);
   } catch (err) {
     console.log(err);
@@ -131,13 +155,13 @@ cron.schedule("* * * * *", async () => {
         const preSignedUrl =
           scheduledNewsletter.photo &&
           (await s3GetImages(scheduledNewsletter.photo));
-        console.log("presigned url", preSignedUrl);
+        //console.log("presigned url", preSignedUrl);
 
-        sendMail(
+        await sendMail(
           createCustomEdmMailOptions(
             {
               name: "Yiying",
-              email: "yowyiying@gmail.com",
+              email: "yowyiying@@gmail.com",
             },
             scheduledNewsletter.subject,
             scheduledNewsletter.messageBody,

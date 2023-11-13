@@ -338,10 +338,10 @@ export const createCustomEdmMailOptions = (
         </div>
         <div class="content">
           <p>${greeting}</p>
-          <img src="cid:newsletter-image" alt="Gleek Newsletter Image" />
           <p>
             ${messageBody}
           </p>
+          <img src="cid:newsletter-image" alt="Gleek Newsletter Image" />
           <p>
             ${signature}
           </p>

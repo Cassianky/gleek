@@ -37,9 +37,8 @@ function TestimonialSection() {
         autoplay={{
           delay: 6000,
           disableOnInteraction: true,
-          pauseOnMouseEnter: true
+          pauseOnMouseEnter: true,
         }}
-        
         speed={1200}
         spaceBetween={30}
         // pagination={{

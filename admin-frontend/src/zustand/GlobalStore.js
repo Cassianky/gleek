@@ -719,6 +719,7 @@ export const useNewsletterStore = create((set) => ({
       const response = await AxiosConnect.get(
         "/marketing/getAllScheduledNewsletters",
       );
+      console.log(response);
       set({
         newsletters: response.data.map((item) => ({
           ...item,

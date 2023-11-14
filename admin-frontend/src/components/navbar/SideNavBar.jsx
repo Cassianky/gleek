@@ -16,6 +16,7 @@ const activityManagementList = [
   { "Activity Approvals": "/viewPublishedActivities" },
   { "View My Activities": "/viewActivityDrafts" },
   { "Activity Themes": "/activityThemes" },
+  { "Featured Activities": "/featured" },
 ];
 const userManagementList = [
   { "Admin Team": "/adminTeam" },

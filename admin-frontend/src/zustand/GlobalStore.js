@@ -204,6 +204,55 @@ export const useAdminStore = create((set) => ({
    },
 }));
 
+export const useFeaturedActivityStore = create((set) => ({
+  activities:null,
+  featuredActivity: null,
+  isLoadingFeaturedActivity: true,
+  getActivitiesWithFeatureStatus: async() => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/activity/feature/activities");
+      set({
+        activities: response.data.publishedActivities,
+
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getFeaturedActivity: async (activityId) => {
+    try {
+      const res = await AxiosConnect.get(`/activity/feature/${activityId}`);
+      console.log(res.data)
+      set({
+        featuredActivity: res.data,
+        isLoadingFeaturedActivity: false,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  },
+  updateFeaturedActivity: async (activityId, updateFeaturedActivity) => {
+    try {
+      const res = await AxiosConnect.post(
+        `/activity/feature/${activityId}`,
+        updateFeaturedActivity,
+      );
+      set({
+        featuredActivity: res.data,
+        isLoadingFeaturedActivity: false,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  },
+}));
+
 export const useActivityStore = create((set) => ({
    activities: [],
    isLoading: false,

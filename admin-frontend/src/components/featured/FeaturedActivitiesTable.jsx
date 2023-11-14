@@ -1,46 +1,20 @@
-import styled from "@emotion/styled";
-import { AccessTime, Schedule, Star } from "@mui/icons-material";
+import { Schedule, Star } from "@mui/icons-material";
+import HistoryToggleOff from '@mui/icons-material/HistoryToggleOff';
 import {
-  Badge,
   Chip
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  useActivityStore,
-  useAdminStore,
-  useSnackbarStore,
-} from "../../zustand/GlobalStore";
-
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  "& .MuiBadge-badge": {
-    right: -3,
-    top: 13,
-    border: `2px solid ${theme.palette.background.paper}`,
-    padding: "0 4px",
-    color: "white",
-  },
-}));
 
 const WrappedTextCell = (params) => {
   return <div style={{ whiteSpace: "normal" }}>{params.value}</div>;
 };
 
-const FeaturedActivitiesTable = ({ activities, pendingApprovalActivities }) => {
+const FeaturedActivitiesTable = ({ activities }) => {
   const [currentTabRows, setCurrentTabRows] = useState(activities);
-
-  const { selectedActivityTab, setSelectedActivityTab } = useActivityStore();
-
   const navigate = useNavigate();
-
-  const { openSnackbar } = useSnackbarStore();
-  const { admin } = useAdminStore();
-  const filterCriteria = {
-    publishedTab: { approvalStatus: "Published" },
-    pendingApprovalTab: { approvalStatus: "Pending Approval" },
-  };
 
   useEffect(() => {
     setCurrentTabRows(activities);
@@ -107,7 +81,7 @@ const FeaturedActivitiesTable = ({ activities, pendingApprovalActivities }) => {
             chipColor = "info";
             break;
           default:
-            chipIcon = <AccessTime />;
+            chipIcon = <HistoryToggleOff />;
             chipColor = "default";
         }
   

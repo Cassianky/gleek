@@ -1,17 +1,11 @@
-import React from "react";
-import {
-  CircularProgress,
-  Divider,
-  Typography,
-  alpha,
-  useTheme,
-  Button,
-  Box,
-} from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
+import {
+  Typography,
+  useTheme
+} from "@mui/material";
+import React, { useEffect } from "react";
+import { useFeaturedActivityStore } from "../../zustand/GlobalStore";
 import MainBodyContainer from "../common/MainBodyContainer";
-import { useActivityStore, useFeaturedActivityStore } from "../../zustand/GlobalStore";
-import { useEffect } from "react";
 import FeaturedActivitiesTable from "./FeaturedActivitiesTable";
 
 function ManageFeaturedActivities() {

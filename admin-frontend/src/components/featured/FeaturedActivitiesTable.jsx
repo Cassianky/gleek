@@ -1,36 +1,18 @@
 import styled from "@emotion/styled";
-import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
-import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import TaskIcon from "@mui/icons-material/Task";
+import { AccessTime, Schedule, Star } from "@mui/icons-material";
 import {
-  AppBar,
   Badge,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-  Slide,
-  Tab,
-  Tabs,
-  TextField,
-  Toolbar,
-  Typography,
+  Chip
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import AxiosConnect from "../../utils/AxiosConnect";
+import { useNavigate } from "react-router-dom";
 import {
   useActivityStore,
   useAdminStore,
   useSnackbarStore,
 } from "../../zustand/GlobalStore";
-import { Navigate, useNavigate } from "react-router-dom";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -48,16 +30,8 @@ const WrappedTextCell = (params) => {
 
 const FeaturedActivitiesTable = ({ activities, pendingApprovalActivities }) => {
   const [currentTabRows, setCurrentTabRows] = useState(activities);
-  const [selectedActivity, setSelectedActivity] = useState();
-  const [imgs, setImgs] = useState([]);
-  const [vendorProfile, setVendorProfile] = useState();
-  const {
-    selectedActivityTab,
-    setSelectedActivityTab,
-    approveActivity,
-    rejectActivity,
-    setPendingApprovalActivities,
-  } = useActivityStore();
+
+  const { selectedActivityTab, setSelectedActivityTab } = useActivityStore();
 
   const navigate = useNavigate();
 
@@ -76,21 +50,7 @@ const FeaturedActivitiesTable = ({ activities, pendingApprovalActivities }) => {
     navigate(`/featured/${activity._id}`);
   };
 
-  const handleTabChange = (event, newValue) => {
-    setSelectedActivityTab(newValue);
-    const filteredRows =
-      filterCriteria[selectedActivityTab].approvalStatus === "Published"
-        ? activities
-        : pendingApprovalActivities;
-    setCurrentTabRows(filteredRows);
-  };
 
-  const publishedBadgeNumber = Array.isArray(activities)
-    ? activities.length
-    : null;
-  const pendingApprovalBadgeNumber = Array.isArray(pendingApprovalActivities)
-    ? pendingApprovalActivities.length
-    : null;
   const columns = [];
 
   columns.push(
@@ -128,12 +88,37 @@ const FeaturedActivitiesTable = ({ activities, pendingApprovalActivities }) => {
       valueGetter: (params) => {
         return params.value.map((x) => x.name);
       },
-    },
+    }, {
+      field: "featureStatus",
+      headerName: "Featured Status",
+      flex: 1,
+      renderCell: (params) => {
+        const featureStatus = params.value;
+        let chipIcon;
+        let chipColor;
+  
+        switch (featureStatus) {
+          case "Active":
+            chipIcon = <Star />;
+            chipColor = "success";
+            break;
+          case "Sometimes Active":
+            chipIcon = <Schedule />;
+            chipColor = "info";
+            break;
+          default:
+            chipIcon = <AccessTime />;
+            chipColor = "default";
+        }
+  
+        return <Chip icon={chipIcon} label={featureStatus} color={chipColor} />;
+      }
+    }
   );
 
   return (
     <Box>
-      <div style={{ height: 500, width: "99%" }}>
+      <div style={{ height: 800, width: "99%" }}>
         <DataGrid
           initialState={{
             pagination: {

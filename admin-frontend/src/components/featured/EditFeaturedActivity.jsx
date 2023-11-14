@@ -1,29 +1,30 @@
-import React, { useEffect, useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  Typography,
-  TextField,
-  Button,
-  Box,
-  CircularProgress,
-  Checkbox,
-  FormControlLabel,
-  useTheme,
-  FormControl,
-  Chip,
   Alert,
   AlertTitle,
+  Box,
+  Button,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  FormControl,
+  FormControlLabel,
+  TextField,
+  Typography,
+  Stack,
+  useTheme,
 } from "@mui/material";
-import MainBodyContainer from "../common/MainBodyContainer";
-import InfoIcon from "@mui/icons-material/Info";
+import { DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   useFeaturedActivityStore,
   useSnackbarStore,
 } from "../../zustand/GlobalStore";
-import { useParams } from "react-router-dom";
-import dayjs from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import MainBodyContainer from "../common/MainBodyContainer";
 
 function EditFeaturedActivity() {
   const theme = useTheme();
@@ -89,6 +90,30 @@ function EditFeaturedActivity() {
     }
   };
 
+  const filterDates = (dates) => {
+    const currentDate = dayjs();
+    const upcomingDates = dates.filter((date) =>
+      dayjs(date).isAfter(currentDate),
+    );
+    const pastDates = dates.filter((date) => dayjs(date).isBefore(currentDate));
+    return { upcomingDates, pastDates };
+  };
+
+  const disableSaveChanges = () => {
+    return (
+      featuredActivity?.showOnSpecificDates &&
+      featuredActivity?.showOnDates.length === 0
+    );
+  };
+
+  const handleClearDates = (section) => {
+    const remainingDates = filterDates(featuredActivity.showOnDates)[
+      section === "upcomingDates" ? "pastDates" : "upcomingDates"
+    ];
+
+    handleInputChange("showOnDates", remainingDates);
+  };
+
   const handleRemoveDate = (date) => {
     handleInputChange(
       "showOnDates",
@@ -112,9 +137,9 @@ function EditFeaturedActivity() {
 
   return (
     <MainBodyContainer
-      hasBackButton={false}
-      breadcrumbNames={[]}
-      breadcrumbLinks={[]}
+      hasBackButton={true}
+      breadcrumbNames={["Manage Featured Activities"]}
+      breadcrumbLinks={["/featured"]}
       currentBreadcrumbName={"Edit Featured Activity Settings"}
     >
       <Typography
@@ -179,37 +204,93 @@ function EditFeaturedActivity() {
         {featuredActivity.showOnSpecificDates && (
           <>
             <Box py={2}>
+              <Box py={3}>
+                <LocalizationProvider dateAdapter={AdapterDayjs} locale="en">
+                  <FormControl>
+                    <DatePicker
+                      value={selectedDate}
+                      onChange={handleDateChange}
+                      renderInput={(startProps) => (
+                        <TextField {...startProps} />
+                      )}
+                      sx={{ marginRight: "12px" }}
+                      shouldDisableDate={(date) =>
+                        featuredActivity.showOnDates.includes(
+                          date.toISOString(),
+                        )
+                      }
+                    />
+                  </FormControl>
+                </LocalizationProvider>
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddDate}
+                >
+                  Add Date
+                </Button>
+              </Box>
               {featuredActivity.showOnDates.length > 0 ? (
-                featuredActivity.showOnDates.map((date) => (
-                  <Chip
-                    key={date}
-                    label={formatDisplayDate(date)}
-                    onDelete={() => handleRemoveDate(date)}
-                    style={{ marginRight: "8px", marginTop: "8px" }}
-                  />
-                ))
+                <>
+                  {/* Upcoming Dates */}
+                  {filterDates(featuredActivity.showOnDates).upcomingDates
+                    .length > 0 && (
+                    <Box mb={3}>
+                      <Stack direction="row" alignItems="center">
+                        <Typography variant="h6" color="textPrimary">
+                          Upcoming Dates
+                        </Typography>
+                        <DeleteIcon
+                          style={{ marginLeft: "8px", cursor: "pointer" }}
+                          onClick={() => handleClearDates("upcomingDates")}
+                        />
+                      </Stack>
+                      {filterDates(featuredActivity.showOnDates)
+                        .upcomingDates.sort((a, b) => a.localeCompare(b))
+                        .map((date) => (
+                          <Chip
+                            key={date}
+                            label={formatDisplayDate(date)}
+                            onDelete={() => handleRemoveDate(date)}
+                            style={{ marginRight: "8px", marginTop: "8px" }}
+                          />
+                        ))}
+                    </Box>
+                  )}
+                  {/* Past Dates */}
+                  {filterDates(featuredActivity.showOnDates).pastDates.length >
+                    0 && (
+                    <>
+                      <Stack direction="row" alignItems="center">
+                        <Typography variant="h6" color="textPrimary">
+                          Past Dates
+                        </Typography>
+                        <DeleteIcon
+                          style={{ marginLeft: "8px", cursor: "pointer" }}
+                          onClick={() => handleClearDates("pastDates")}
+                        />
+                      </Stack>
+
+                      {filterDates(featuredActivity.showOnDates)
+                        .pastDates.sort((a, b) => a.localeCompare(b))
+                        .map((date) => (
+                          <Chip
+                            key={date}
+                            label={formatDisplayDate(date)}
+                            onDelete={() => handleRemoveDate(date)}
+                            style={{ marginRight: "8px", marginTop: "8px" }}
+                          />
+                        ))}
+                    </>
+                  )}
+                </>
               ) : (
                 <Typography variant="body2" color="textSecondary">
                   Start adding dates.
                 </Typography>
               )}
             </Box>
-            <LocalizationProvider dateAdapter={AdapterDayjs} locale="en">
-              <FormControl>
-                <DatePicker
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                  renderInput={(startProps) => <TextField {...startProps} />}
-                  sx={{ marginRight: "12px" }}
-                  shouldDisableDate={(date) =>
-                    featuredActivity.showOnDates.includes(date.toISOString())
-                  }
-                />
-              </FormControl>
-            </LocalizationProvider>
-            <Button variant="contained" color="primary" onClick={handleAddDate}>
-              Add Date
-            </Button>
           </>
         )}
       </Box>
@@ -218,7 +299,7 @@ function EditFeaturedActivity() {
         marginTop={2}
         sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}
       >
-        <Button variant="contained" color="primary" onClick={handleSaveChanges}>
+        <Button variant="contained" color="primary" onClick={handleSaveChanges} disabled={disableSaveChanges()}>
           Save Changes
         </Button>
       </Box>

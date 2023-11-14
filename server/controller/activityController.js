@@ -1192,20 +1192,70 @@ export const getActivityTitle = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const getActivitiesWithFeatureStatus = async (req, res) => {
+  try {
+    const activities = await ActivityModel.find()
+      .populate("linkedVendor")
+      .populate("theme")
+      .populate("subtheme");
+
+    const publishedActivities = activities.filter((row) => {
+      return (
+        row.approvalStatus === "Published" &&
+        row.isDraft === false &&
+        row.disabled === false
+      );
+    });
+
+    const activitiesWithFeatureStatus = await Promise.all(
+      publishedActivities.map(async (activity) => {
+        const featuredActivity = await FeaturedActivity.findOne({
+          activity: activity._id,
+        });
+
+        let featureStatus = "Inactive";
+
+        if (featuredActivity) {
+          if (
+            featuredActivity.isFeatured &&
+            !featuredActivity.showOnSpecificDates
+          ) {
+            featureStatus = "Active";
+          } else if (
+            featuredActivity.isFeatured &&
+            featuredActivity.showOnSpecificDates
+          ) {
+            featureStatus = "Sometimes Active";
+          }
+        }
+
+        return {
+          ...activity.toObject(),
+          featureStatus,
+        };
+      }),
+    );
+
+    res.status(200).json({
+      publishedActivities: activitiesWithFeatureStatus,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 export const updateFeaturedActivity = async (req, res) => {
   try {
     const activityId = req.params.activityId;
     const showOnDates = req.body.showOnDates;
     const isFeatured = req.body.isFeatured;
-    const showOnSpecificDates = req.body.showOnSpecificDates
+    const showOnSpecificDates = req.body.showOnSpecificDates;
 
     // Check if the activity with the given ID exists
     const activity = await ActivityModel.findById(activityId);
     if (!activity) {
       return res.status(404).json({ error: "Activity not found" });
     }
-
 
     let featuredActivity = await FeaturedActivity.findOne({
       activity: activityId,
@@ -1221,7 +1271,7 @@ export const updateFeaturedActivity = async (req, res) => {
       featuredActivity = new FeaturedActivity({
         activity: activityId,
         isFeatured,
-        showOnSpecificDates: Boolean(showOnDates),
+        showOnSpecificDates: showOnSpecificDates,
         showOnDates: showOnDates || [],
       });
     }
@@ -1258,7 +1308,6 @@ export const getFeaturedActivity = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 export const getQuotationPdfUrl = async (req, res) => {
   const data = req.body;

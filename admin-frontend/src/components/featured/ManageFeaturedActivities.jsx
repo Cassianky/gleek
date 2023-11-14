@@ -10,20 +10,21 @@ import {
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import MainBodyContainer from "../common/MainBodyContainer";
-import { useActivityStore } from "../../zustand/GlobalStore";
+import { useActivityStore, useFeaturedActivityStore } from "../../zustand/GlobalStore";
 import { useEffect } from "react";
 import FeaturedActivitiesTable from "./FeaturedActivitiesTable";
 
 function ManageFeaturedActivities() {
   const theme = useTheme();
-  const { activities, getActivity, isLoading, pendingApprovalActivities } =
-    useActivityStore();
+  // const { activities, getActivity, isLoading, pendingApprovalActivities } =
+  //   useActivityStore();
+  const {activities, getActivitiesWithFeatureStatus} = useFeaturedActivityStore()
   useEffect(() => {
     const fetchData = async () => {
-      await getActivity();
+      await getActivitiesWithFeatureStatus();
     };
     fetchData();
-  }, [getActivity]);
+  }, [getActivitiesWithFeatureStatus]);
   return (
     <MainBodyContainer
       hasBackButton={false}
@@ -43,7 +44,7 @@ function ManageFeaturedActivities() {
           display: "flex",
         }}
       >
-        Activity Themes
+        Feature Activities
       </Typography>
       <div
         style={{

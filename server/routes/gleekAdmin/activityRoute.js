@@ -4,6 +4,7 @@ import {
   bulkAddThemes,
   bulkDeleteActivityDraft,
   deleteActivityDraft,
+  getActivitiesWithFeatureStatus,
   getActivity,
   getAllActiveThemes,
   getAllActivities,
@@ -38,6 +39,7 @@ router.patch("/approveActivity/:activityId", approveActivity);
 router.patch("/rejectActivity/:activityId", rejectActivity);
 router.get("/getImages/:id", getPreSignedImgs);
 
+router.get("/feature/activities", getActivitiesWithFeatureStatus);
 router.post("/feature/:activityId", updateFeaturedActivity);
 router.get("/feature/:activityId", getFeaturedActivity);
 export default router;

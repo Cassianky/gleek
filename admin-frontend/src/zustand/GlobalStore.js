@@ -199,8 +199,22 @@ export const useAdminStore = create((set) => ({
 }));
 
 export const useFeaturedActivityStore = create((set) => ({
+  activities:null,
   featuredActivity: null,
   isLoadingFeaturedActivity: true,
+  getActivitiesWithFeatureStatus: async() => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/activity/feature/activities");
+      set({
+        activities: response.data.publishedActivities,
+
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error);
+    }
+  },
   getFeaturedActivity: async (activityId) => {
     try {
       const res = await AxiosConnect.get(`/activity/feature/${activityId}`);

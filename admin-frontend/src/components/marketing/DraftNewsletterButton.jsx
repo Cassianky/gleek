@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "@emotion/react";
 import {
   useBookingStore,
@@ -12,6 +12,7 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import InfoIcon from "@mui/icons-material/Info";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Email from "@mui/icons-material/Email";
+import HideImageIcon from "@mui/icons-material/HideImage";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -61,6 +62,7 @@ const DraftNewsletterButton = ({ newsletterData }) => {
   const [emailSubject, setEmailSubject] = useState("");
   const [messageBody, setMessageBody] = useState("");
   const [image, setImage] = useState({ file: null, preview: null });
+  const [removeExistingPhoto, setRemoveExistingPhoto] = useState(false);
   const [scheduledTimeError, setScheduledTimeError] = useState("");
 
   const handleOptionChange = (event) => {
@@ -101,21 +103,28 @@ const DraftNewsletterButton = ({ newsletterData }) => {
         file: selectedFile,
         preview: URL.createObjectURL(selectedFile),
       });
+      setRemoveExistingPhoto(false);
     } else {
       alert("Please select a valid PNG, JPG or JPEG image.");
       e.target.value = "";
     }
   };
 
+  const handleRemoveImage = () => {
+    setImage({ file: null, preview: null });
+    console.log("newsletter data photo", newsletterData?.photo);
+    newsletterData?.photo !== undefined &&
+      newsletterData?.photo !== null &&
+      setRemoveExistingPhoto(true);
+  };
+
+  useEffect(() => {
+    //console.log("remove existing photo", removeExistingPhoto);
+  }, [removeExistingPhoto]);
+
   const handleDialogOpen = (event) => {
     event.stopPropagation();
-    if (newsletterData === undefined) {
-      setSelectedOption("CUSTOM");
-      setSelectedDateTime(dayjs());
-      setEmailSubject("");
-      setMessageBody("");
-      setScheduledTimeError("");
-    } else {
+    if (newsletterData !== undefined) {
       setSelectedOption(newsletterData.newsletterType);
       setSelectedDateTime(dayjs(newsletterData.scheduledTime));
       setEmailSubject(newsletterData.subject ?? "");
@@ -134,6 +143,7 @@ const DraftNewsletterButton = ({ newsletterData }) => {
     setMessageBody("");
     setScheduledTimeError("");
     setImage({ file: null, preview: null });
+    setRemoveExistingPhoto(false);
     setDialogOpen(false);
   };
 
@@ -144,7 +154,7 @@ const DraftNewsletterButton = ({ newsletterData }) => {
         return;
       }
       setScheduledTimeError("");
-
+      console.log("remove existing photo:", removeExistingPhoto);
       const formData = new FormData();
       formData.append("newsletterType", selectedOption);
       formData.append("scheduledTime", selectedDateTime);
@@ -152,7 +162,9 @@ const DraftNewsletterButton = ({ newsletterData }) => {
       formData.append("messageBody", messageBody);
       formData.append("image", image.file);
 
-      console.log(formData);
+      newsletterData !== undefined &&
+        formData.append("removeExistingPhoto", removeExistingPhoto);
+
       const message =
         newsletterData === undefined
           ? await saveScheduledNewsletter(formData)
@@ -310,17 +322,35 @@ const DraftNewsletterButton = ({ newsletterData }) => {
                 src={image.preview}
               />
             )}
-            <Button
-              style={{ marginTop: "20px" }}
-              component="label"
-              variant="contained"
-              color="primary"
-              startIcon={<FileUploadIcon />}
-              onChange={handleUploadImage}
-            >
-              Image
-              <input type="file" hidden />
-            </Button>
+            <Box display={"flex"} flexDirection={"row"} alignItems={"center"}>
+              <Button
+                sx={{
+                  mt: 2,
+                }}
+                component="label"
+                variant="contained"
+                color="primary"
+                startIcon={<FileUploadIcon />}
+                onChange={handleUploadImage}
+              >
+                Image
+                <input type="file" hidden />
+              </Button>
+              {image.preview && (
+                <Button
+                  sx={{
+                    mt: 2,
+                    ml: 1,
+                  }}
+                  variant="contained"
+                  color="error"
+                  onClick={handleRemoveImage}
+                  startIcon={<HideImageIcon />}
+                >
+                  Remove
+                </Button>
+              )}
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>

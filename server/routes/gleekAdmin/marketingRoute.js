@@ -4,6 +4,7 @@ import adminAuth from "../../middleware/adminAuth.js";
 import {
   cancelScheduledNewsletter,
   getAllScheduledNewsletters,
+  getPreview,
   saveScheduledNewsletter,
   sendCustomEdm,
   updateScheduledNewsletter,
@@ -34,6 +35,13 @@ router.get(
   "/getAllScheduledNewsletters",
   adminAuth,
   getAllScheduledNewsletters,
+);
+
+// router.get("/getNewsletterPreview", adminAuth, getPreview);
+router.get(
+  "/getNewsletterPreview/:messageBody/:preSignedPhoto/:newsletterType",
+  adminAuth,
+  getPreview,
 );
 
 export default router;

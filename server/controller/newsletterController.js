@@ -3,6 +3,7 @@ import { createCustomEdmMailOptions } from "../util/sendMailOptions.js";
 import { s3GetImages } from "../service/s3ImageServices.js";
 import ScheduledNewsletterModel from "../model/scheduledNewsletterModel.js";
 import cron from "node-cron";
+import { NewsletterTemplate } from "../assets/templates/NewsletterTemplate.js";
 
 export const sendCustomEdm = async (req, res) => {
   try {
@@ -73,12 +74,17 @@ export const updateScheduledNewsletter = async (req, res) => {
       console.log("Retrieving uploaded images url");
       fileS3Location = req.file.location;
     }
-    console.log(fileS3Location);
+
+    const { removeExistingPhoto, ...otherFields } = req.body;
+    console.log("Remove photo?", removeExistingPhoto);
 
     const newsletterData = {
-      ...req.body,
+      ...otherFields,
       ...(fileS3Location && { photo: fileS3Location }),
+      ...(removeExistingPhoto === "true" && { $unset: { photo: 1 } }),
     };
+
+    console.log(newsletterData);
 
     const { scheduledNewsletterId } = req.params;
     await ScheduledNewsletterModel.findByIdAndUpdate(
@@ -134,6 +140,27 @@ export const getAllScheduledNewsletters = async (req, res) => {
   }
 };
 
+export const getPreview = async (req, res) => {
+  try {
+    const { messageBody, preSignedPhoto, newsletterType } = req.params;
+    console.log(messageBody, preSignedPhoto, newsletterType);
+    const admin = req.user;
+    const htmlContent = NewsletterTemplate({
+      recipientName: admin.name,
+      messageBody: messageBody,
+      preSignedPhoto: preSignedPhoto,
+      forEmail: false,
+    });
+    res.status(200).json({ htmlContent });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Server Error! Unable to get preview.",
+      error: err.message,
+    });
+  }
+};
+
 // Run scheduler every minute
 cron.schedule("* * * * *", async () => {
   try {
@@ -161,7 +188,7 @@ cron.schedule("* * * * *", async () => {
           createCustomEdmMailOptions(
             {
               name: "Yiying",
-              email: "yowyiying@@gmail.com",
+              email: "yowyiying@gmail.com",
             },
             scheduledNewsletter.subject,
             scheduledNewsletter.messageBody,

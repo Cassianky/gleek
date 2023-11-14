@@ -804,6 +804,25 @@ export const useNewsletterStore = create((set) => ({
       throw new Error(error.message);
     }
   },
+  getNewsletterPreview: async (messageBody, preSignedPhoto, newsletterType) => {
+    try {
+      // console.log("getNewsletterPreview", messageBody, preSignedPhoto);
+      const response = await AxiosConnect.get(
+        `/marketing/getNewsletterPreview/${encodeURIComponent(
+          messageBody,
+        )}/${encodeURIComponent(preSignedPhoto)}/${encodeURIComponent(
+          newsletterType,
+        )}`,
+      );
+
+      // set({ isLoading: false });
+      return response.data.htmlContent;
+    } catch (error) {
+      // set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
 }));
 
 export const useAdminSurveyResponseStore = create((set) => ({

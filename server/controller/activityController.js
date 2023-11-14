@@ -1337,13 +1337,18 @@ export const getFeaturedActivity = async (req, res) => {
 
     const featuredActivity = await FeaturedActivity.findOne({
       activity: activityId,
-    });
+    }).populate("activity");
 
-    // If a featured activity exists, return it; otherwise, return nothing
+    // If a featured activity exists, return it
     if (featuredActivity) {
       return res.status(200).json(featuredActivity);
     } else {
-      return res.status(204).end(); // 204 No Content
+      return res.status(200).json({
+        activity: activity,
+        isFeatured: false,
+        showOnSpecificDates: false,
+        showOnDates: [],
+      }); 
     }
   } catch (error) {
     console.error(error);

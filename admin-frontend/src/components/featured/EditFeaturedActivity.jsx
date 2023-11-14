@@ -36,23 +36,19 @@ function EditFeaturedActivity() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
 
-  const getDefaultFeaturedActivity = () => ({
-    activity: activityId,
-    isFeatured: false,
-    showOnSpecificDates: false,
-    showOnDates: [],
-  });
+  // const getDefaultFeaturedActivity = () => ({
+  //   activity: activityId,
+  //   isFeatured: false,
+  //   showOnSpecificDates: false,
+  //   showOnDates: [],
+  // });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await getFeaturedActivity(activityId);
 
-        if (!res) {
-          setFeaturedActivity(getDefaultFeaturedActivity());
-        } else {
-          setFeaturedActivity(res);
-        }
+        setFeaturedActivity(res);
       } catch (error) {
         console.error(error);
       } finally {
@@ -141,7 +137,7 @@ function EditFeaturedActivity() {
       hasBackButton={true}
       breadcrumbNames={["Manage Featured Activities"]}
       breadcrumbLinks={["/featured"]}
-      currentBreadcrumbName={"Edit Featured Activity Settings"}
+      currentBreadcrumbName={`Edit Featured ${featuredActivity?.activity.title} Settings`}
     >
       <Typography
         alignItems={"center"}
@@ -155,7 +151,7 @@ function EditFeaturedActivity() {
           display: "flex",
         }}
       >
-        Edit Featured Activity Settings
+        Edit Featured {featuredActivity?.activity.title} Settings
       </Typography>
 
       {featuredActivity.isFeatured && !featuredActivity.showOnSpecificDates && (
@@ -202,105 +198,111 @@ function EditFeaturedActivity() {
             label="Show on Specific Dates"
           />
         )}
-        {featuredActivity.isFeatured && featuredActivity.showOnSpecificDates && (
-          <>
-            <Box py={2}>
-              <Box py={3}>
-                <LocalizationProvider dateAdapter={AdapterDayjs} locale="en">
-                  <FormControl>
-                    <DatePicker
-                      value={selectedDate}
-                      onChange={handleDateChange}
-                      renderInput={(startProps) => (
-                        <TextField {...startProps} />
-                      )}
-                      sx={{ marginRight: "12px" }}
-                      shouldDisableDate={(date) =>
-                        featuredActivity.showOnDates.includes(
-                          date.toISOString(),
-                        )
-                      }
-                    />
-                  </FormControl>
-                </LocalizationProvider>
+        {featuredActivity.isFeatured &&
+          featuredActivity.showOnSpecificDates && (
+            <>
+              <Box py={2}>
+                <Box py={3}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs} locale="en">
+                    <FormControl>
+                      <DatePicker
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        renderInput={(startProps) => (
+                          <TextField {...startProps} />
+                        )}
+                        sx={{ marginRight: "12px" }}
+                        shouldDisableDate={(date) =>
+                          featuredActivity.showOnDates.includes(
+                            date.toISOString(),
+                          )
+                        }
+                      />
+                    </FormControl>
+                  </LocalizationProvider>
 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleAddDate}
-                >
-                  Add Date
-                </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAddDate}
+                  >
+                    Add Date
+                  </Button>
+                </Box>
+                {featuredActivity.showOnDates.length > 0 ? (
+                  <>
+                    {/* Upcoming Dates */}
+                    {filterDates(featuredActivity.showOnDates).upcomingDates
+                      .length > 0 && (
+                      <Box mb={3}>
+                        <Stack direction="row" alignItems="center">
+                          <Typography variant="h6" color="textPrimary">
+                            Upcoming Dates
+                          </Typography>
+                          <DeleteIcon
+                            style={{ marginLeft: "8px", cursor: "pointer" }}
+                            onClick={() => handleClearDates("upcomingDates")}
+                          />
+                        </Stack>
+                        {filterDates(featuredActivity.showOnDates)
+                          .upcomingDates.sort((a, b) => a.localeCompare(b))
+                          .map((date) => (
+                            <Chip
+                              key={date}
+                              label={formatDisplayDate(date)}
+                              onDelete={() => handleRemoveDate(date)}
+                              style={{ marginRight: "8px", marginTop: "8px" }}
+                            />
+                          ))}
+                      </Box>
+                    )}
+                    {/* Past Dates */}
+                    {filterDates(featuredActivity.showOnDates).pastDates
+                      .length > 0 && (
+                      <>
+                        <Stack direction="row" alignItems="center">
+                          <Typography variant="h6" color="textPrimary">
+                            Past Dates
+                          </Typography>
+                          <DeleteIcon
+                            style={{ marginLeft: "8px", cursor: "pointer" }}
+                            onClick={() => handleClearDates("pastDates")}
+                          />
+                        </Stack>
+
+                        {filterDates(featuredActivity.showOnDates)
+                          .pastDates.sort((a, b) => a.localeCompare(b))
+                          .map((date) => (
+                            <Chip
+                              key={date}
+                              label={formatDisplayDate(date)}
+                              onDelete={() => handleRemoveDate(date)}
+                              style={{ marginRight: "8px", marginTop: "8px" }}
+                            />
+                          ))}
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <Typography variant="body2" color="textSecondary">
+                    Start adding dates.
+                  </Typography>
+                )}
               </Box>
-              {featuredActivity.showOnDates.length > 0 ? (
-                <>
-                  {/* Upcoming Dates */}
-                  {filterDates(featuredActivity.showOnDates).upcomingDates
-                    .length > 0 && (
-                    <Box mb={3}>
-                      <Stack direction="row" alignItems="center">
-                        <Typography variant="h6" color="textPrimary">
-                          Upcoming Dates
-                        </Typography>
-                        <DeleteIcon
-                          style={{ marginLeft: "8px", cursor: "pointer" }}
-                          onClick={() => handleClearDates("upcomingDates")}
-                        />
-                      </Stack>
-                      {filterDates(featuredActivity.showOnDates)
-                        .upcomingDates.sort((a, b) => a.localeCompare(b))
-                        .map((date) => (
-                          <Chip
-                            key={date}
-                            label={formatDisplayDate(date)}
-                            onDelete={() => handleRemoveDate(date)}
-                            style={{ marginRight: "8px", marginTop: "8px" }}
-                          />
-                        ))}
-                    </Box>
-                  )}
-                  {/* Past Dates */}
-                  {filterDates(featuredActivity.showOnDates).pastDates.length >
-                    0 && (
-                    <>
-                      <Stack direction="row" alignItems="center">
-                        <Typography variant="h6" color="textPrimary">
-                          Past Dates
-                        </Typography>
-                        <DeleteIcon
-                          style={{ marginLeft: "8px", cursor: "pointer" }}
-                          onClick={() => handleClearDates("pastDates")}
-                        />
-                      </Stack>
-
-                      {filterDates(featuredActivity.showOnDates)
-                        .pastDates.sort((a, b) => a.localeCompare(b))
-                        .map((date) => (
-                          <Chip
-                            key={date}
-                            label={formatDisplayDate(date)}
-                            onDelete={() => handleRemoveDate(date)}
-                            style={{ marginRight: "8px", marginTop: "8px" }}
-                          />
-                        ))}
-                    </>
-                  )}
-                </>
-              ) : (
-                <Typography variant="body2" color="textSecondary">
-                  Start adding dates.
-                </Typography>
-              )}
-            </Box>
-          </>
-        )}
+            </>
+          )}
       </Box>
 
       <Box
         marginTop={2}
         sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}
       >
-        <Button variant="contained" color="primary" onClick={handleSaveChanges} disabled={disableSaveChanges()}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSaveChanges}
+          disabled={disableSaveChanges()}
+        >
           Save Changes
         </Button>
       </Box>

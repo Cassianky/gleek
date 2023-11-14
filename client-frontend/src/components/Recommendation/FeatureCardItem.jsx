@@ -21,7 +21,7 @@ const FeatureCardItem = ({ activity }) => {
 
   let containerStyle = {
     position: "relative",
-    height: "15rem", // Default for extra-large screens
+    height: "20rem",
     width: "30rem",
     objectFit: "cover",
     borderTopLeftRadius: "4px",

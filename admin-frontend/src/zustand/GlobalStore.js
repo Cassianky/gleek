@@ -218,6 +218,7 @@ export const useFeaturedActivityStore = create((set) => ({
   getFeaturedActivity: async (activityId) => {
     try {
       const res = await AxiosConnect.get(`/activity/feature/${activityId}`);
+      console.log(res.data)
       set({
         featuredActivity: res.data,
         isLoadingFeaturedActivity: false,

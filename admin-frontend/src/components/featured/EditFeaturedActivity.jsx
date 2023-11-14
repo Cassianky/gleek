@@ -15,7 +15,10 @@ import {
 } from "@mui/material";
 import MainBodyContainer from "../common/MainBodyContainer";
 import InfoIcon from "@mui/icons-material/Info";
-import { useFeaturedActivityStore } from "../../zustand/GlobalStore";
+import {
+  useFeaturedActivityStore,
+  useSnackbarStore,
+} from "../../zustand/GlobalStore";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -25,7 +28,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 function EditFeaturedActivity() {
   const theme = useTheme();
   const { activityId } = useParams();
-  const { getFeaturedActivity } = useFeaturedActivityStore();
+  const { getFeaturedActivity, updateFeaturedActivity } =
+    useFeaturedActivityStore();
+  const { openSnackbar } = useSnackbarStore();
   const [featuredActivity, setFeaturedActivity] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -64,16 +69,21 @@ function EditFeaturedActivity() {
     }));
   };
 
+  const formatDisplayDate = (date) => {
+    // Display date as "YYYY-MM-DD"
+    return dayjs(date).format("YYYY-MM-DD");
+  };
+
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
   const handleAddDate = () => {
     if (selectedDate) {
+      // Store the date with timezone details
       handleInputChange("showOnDates", [
         ...featuredActivity.showOnDates,
-        selectedDate.format("YYYY-MM-DD"),
-        
+        selectedDate.toISOString(),
       ]);
       setSelectedDate(null);
     }
@@ -86,8 +96,14 @@ function EditFeaturedActivity() {
     );
   };
 
-  const handleSaveChanges = () => {
-    console.log("Saving changes:", featuredActivity);
+  const handleSaveChanges = async () => {
+    try {
+      console.log("Saving changes:", featuredActivity);
+      await updateFeaturedActivity(activityId, featuredActivity);
+      openSnackbar("Saved successfully", "success");
+    } catch (error) {
+      openSnackbar("Error occured when saving", "error");
+    }
   };
 
   if (isLoading) {
@@ -167,7 +183,7 @@ function EditFeaturedActivity() {
                 featuredActivity.showOnDates.map((date) => (
                   <Chip
                     key={date}
-                    label={date}
+                    label={formatDisplayDate(date)}
                     onDelete={() => handleRemoveDate(date)}
                     style={{ marginRight: "8px", marginTop: "8px" }}
                   />
@@ -186,9 +202,7 @@ function EditFeaturedActivity() {
                   renderInput={(startProps) => <TextField {...startProps} />}
                   sx={{ marginRight: "12px" }}
                   shouldDisableDate={(date) =>
-                    featuredActivity.showOnDates.includes(
-                      date.format("YYYY-MM-DD"),
-                    )
+                    featuredActivity.showOnDates.includes(date.toISOString())
                   }
                 />
               </FormControl>

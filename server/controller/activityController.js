@@ -1198,6 +1198,7 @@ export const updateFeaturedActivity = async (req, res) => {
     const activityId = req.params.activityId;
     const showOnDates = req.body.showOnDates;
     const isFeatured = req.body.isFeatured;
+    const showOnSpecificDates = req.body.showOnSpecificDates
 
     // Check if the activity with the given ID exists
     const activity = await ActivityModel.findById(activityId);
@@ -1213,7 +1214,7 @@ export const updateFeaturedActivity = async (req, res) => {
     if (featuredActivity) {
       // Update the existing FeaturedActivity record
       featuredActivity.isFeatured = isFeatured;
-      featuredActivity.showOnSpecificDates = Boolean(showOnDates);
+      featuredActivity.showOnSpecificDates = showOnSpecificDates;
       featuredActivity.showOnDates = showOnDates || [];
     } else {
       // Create a new FeaturedActivity object

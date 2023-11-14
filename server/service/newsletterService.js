@@ -17,8 +17,8 @@ export const sendNewsletter = async (newsletter, name, email) => {
         },
         newsletter.subject,
         newsletter.messageBody,
-        preSignedUrl
-      )
+        preSignedUrl,
+      ),
     );
   } catch (error) {
     throw new Error(error.message);

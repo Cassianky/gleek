@@ -81,11 +81,9 @@ const DraftNewsletterButton = ({ newsletterData }) => {
       // setMessageBody(
       //   "Greetings from Gleek! We're excited to share a specially curated selection of activities designed to promote employee wellness and sustainability within your organization.",
       // );
-      setEmailSubject(
-        "23rd STePS: Vote For IS4103-03 (Gleek)!",
-      );
+      setEmailSubject("23rd STePS: Vote For IS4103-03 (Gleek)!");
       setMessageBody(
-        "Greetings from Team Gleek! Do vote for us at <a href=\"https://uvents.nus.edu.sg/event/23rd-steps/vote\">this link</a> (under IS4103). Thank you!",
+        'Greetings from Team Gleek! Do vote for us at <a href="https://uvents.nus.edu.sg/event/23rd-steps/vote">this link</a> (under IS4103). Thank you!',
       );
     } else {
       setSelectedOption(selectedOptionValue);

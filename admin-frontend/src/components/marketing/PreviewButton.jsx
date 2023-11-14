@@ -9,7 +9,6 @@ import PreviewIcon from "@mui/icons-material/Preview";
 import Email from "@mui/icons-material/Email";
 import SendIcon from "@mui/icons-material/Send";
 
-
 import {
   Dialog,
   DialogTitle,
@@ -28,7 +27,7 @@ const PreviewButton = ({ newsletterData }) => {
   const { openSnackbar } = useSnackbarStore();
   const { getNewsletterPreview, testSendNewsletter } = useNewsletterStore();
   const [htmlContent, setHtmlContent] = useState("");
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   const handleDialogOpen = async (event) => {
     event.stopPropagation();
@@ -54,7 +53,7 @@ const PreviewButton = ({ newsletterData }) => {
   };
 
   const handleDialogClose = () => {
-    setEmail('');
+    setEmail("");
     setDialogOpen(false);
   };
 
@@ -65,16 +64,15 @@ const PreviewButton = ({ newsletterData }) => {
   const handleSendEmail = async () => {
     // Add logic to handle sending email with the entered email address
     try {
-      console.log('Sending email to:', email);
+      console.log("Sending email to:", email);
       setEmail(email.trim());
       const message = await testSendNewsletter(newsletterData, email);
-      setEmail('');
+      setEmail("");
       openSnackbar(message);
     } catch (error) {
       console.log(error);
       openSnackbar(error.message, "error");
     }
-    
   };
 
   return (
@@ -110,7 +108,12 @@ const PreviewButton = ({ newsletterData }) => {
               onChange={handleEmailChange}
               sx={{ width: "60%" }}
             />
-            <Button variant="contained" color="primary" onClick={handleSendEmail} startIcon={<SendIcon/>}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSendEmail}
+              startIcon={<SendIcon />}
+            >
               Send
             </Button>
           </Box>

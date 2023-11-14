@@ -4,14 +4,17 @@ import {
   bulkAddThemes,
   bulkDeleteActivityDraft,
   deleteActivityDraft,
+  getActivitiesWithFeatureStatus,
   getActivity,
   getAllActiveThemes,
   getAllActivities,
   getAllActivitiesForAdmin,
   getAllThemes,
+  getFeaturedActivity,
   getPreSignedImgs,
   rejectActivity,
   saveActivity,
+  updateFeaturedActivity,
   updateTheme,
 } from "../../controller/activityController.js";
 import { uploadS3ActivityImages } from "../../middleware/multer.js";
@@ -36,4 +39,7 @@ router.patch("/approveActivity/:activityId", approveActivity);
 router.patch("/rejectActivity/:activityId", rejectActivity);
 router.get("/getImages/:id", getPreSignedImgs);
 
+router.get("/feature/activities", getActivitiesWithFeatureStatus);
+router.post("/feature/:activityId", updateFeaturedActivity);
+router.get("/feature/:activityId", getFeaturedActivity);
 export default router;

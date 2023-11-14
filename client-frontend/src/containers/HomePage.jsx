@@ -94,7 +94,8 @@ const HomePage = () => {
     <>
       <Container elevation={0} maxWidth>
         <FeatureSection />
-        {<ImageSection />}
+        <ImageSection />
+
         <TestimonialSection />
       </Container>
     </>

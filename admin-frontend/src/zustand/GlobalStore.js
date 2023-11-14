@@ -10,7 +10,7 @@ export const updateCurrentActivity = (selectedActivity) => {
   }));
   console.log(
     "activity store current activity updated::",
-    useActivityStore.getState()
+    useActivityStore.getState(),
   );
 };
 
@@ -21,7 +21,7 @@ export const updateAllActivity = (newAllActivities) => {
   }));
   console.log(
     "activity store all activity updated::",
-    useActivityStore.getState()
+    useActivityStore.getState(),
   );
 };
 
@@ -136,7 +136,7 @@ export const useAdminStore = create((set) => ({
     try {
       const response = await AxiosConnect.post(
         "/gleekAdmin/register",
-        newAdmin
+        newAdmin,
       );
       const data = response.data;
       console.log(data);
@@ -188,12 +188,60 @@ export const useAdminStore = create((set) => ({
         `/gleekAdmin/resendVerificationEmail/`,
         {
           email: email,
-        }
+        },
       );
       return response;
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  },
+}));
+
+export const useFeaturedActivityStore = create((set) => ({
+  activities: null,
+  featuredActivity: null,
+  isLoadingFeaturedActivity: true,
+  getActivitiesWithFeatureStatus: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/activity/feature/activities");
+      set({
+        activities: response.data.publishedActivities,
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getFeaturedActivity: async (activityId) => {
+    try {
+      const res = await AxiosConnect.get(`/activity/feature/${activityId}`);
+      console.log(res.data);
+      set({
+        featuredActivity: res.data,
+        isLoadingFeaturedActivity: false,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  },
+  updateFeaturedActivity: async (activityId, updateFeaturedActivity) => {
+    try {
+      const res = await AxiosConnect.post(
+        `/activity/feature/${activityId}`,
+        updateFeaturedActivity,
+      );
+      set({
+        featuredActivity: res.data,
+        isLoadingFeaturedActivity: false,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
     }
   },
 }));
@@ -235,7 +283,7 @@ export const useActivityStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        `/activity/myActivities/${adminId}`
+        `/activity/myActivities/${adminId}`,
       );
       set({ activities: response.data.data });
       set({ isLoading: false });
@@ -247,7 +295,7 @@ export const useActivityStore = create((set) => ({
     try {
       const response = await AxiosConnect.postMultiPart(
         "/activity/addActivity",
-        newActivityData
+        newActivityData,
       );
       set({ newActivity: response.data.activity });
     } catch (error) {
@@ -259,7 +307,7 @@ export const useActivityStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        `/activity/viewActivity/${activityId}`
+        `/activity/viewActivity/${activityId}`,
       );
       set({ activityDetails: response.data.data });
       set({ isLoading: false });
@@ -271,7 +319,7 @@ export const useActivityStore = create((set) => ({
     try {
       const response = await AxiosConnect.postMultiPart(
         "/activity/saveActivity",
-        activityDraftData
+        activityDraftData,
       );
       set({ newActivity: response.data.activity });
     } catch (error) {
@@ -281,7 +329,7 @@ export const useActivityStore = create((set) => ({
   deleteActivity: async (activityId) => {
     try {
       const updatedActivities = await AxiosConnect.delete(
-        `/activity/deleteDraft/${activityId}`
+        `/activity/deleteDraft/${activityId}`,
       );
       set({ activities: updatedActivities.data.activity });
       set({ selectedTab: "draftTab" });
@@ -294,7 +342,7 @@ export const useActivityStore = create((set) => ({
     try {
       const updatedActivities = await AxiosConnect.delete(
         "/activity/bulkDelete",
-        activityIds
+        activityIds,
       );
       set({
         activities: updatedActivities.data.activity,
@@ -310,7 +358,7 @@ export const useActivityStore = create((set) => ({
       const updatedActivities = await AxiosConnect.patch(
         "/activity/approveActivity",
         activityId,
-        { adminId: adminId, markup: markup }
+        { adminId: adminId, markup: markup },
       );
       set({
         selectedActivityTab: "pendingApprovalTab",
@@ -326,7 +374,7 @@ export const useActivityStore = create((set) => ({
       const updatedActivities = await AxiosConnect.patch(
         "/activity/rejectActivity",
         activityId,
-        { rejectionReason: rejectionReason, adminId: adminId }
+        { rejectionReason: rejectionReason, adminId: adminId },
       );
       set({
         selectedActivityTab: "pendingApprovalTab",
@@ -450,7 +498,7 @@ export const useVendorStore = create((set) => ({
   vendorTypesFetcher: async () => {
     try {
       const response = await AxiosConnect.get(
-        "/gleek/vendor/getAllVendorTypes"
+        "/gleek/vendor/getAllVendorTypes",
       );
       const data = response.data;
       set({ vendorTypes: data.VendorTypeEnum });
@@ -475,7 +523,7 @@ export const useVendorStore = create((set) => ({
   hasActiveBookings: async (vendorId) => {
     try {
       const response = await AxiosConnect.get(
-        `/vendor/hasActiveBookings/${vendorId}`
+        `/vendor/hasActiveBookings/${vendorId}`,
       );
       return response.data;
     } catch (error) {
@@ -492,7 +540,7 @@ export const useVendorStore = create((set) => ({
         vendorId,
         {
           isDisabled: isDisabled,
-        }
+        },
       );
       const response = await AxiosConnect.get("/vendor/viewAllVendors");
       set({ vendors: response.data });
@@ -535,7 +583,7 @@ export const useClientStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        `/client/getClientDetails/${clientId}`
+        `/client/getClientDetails/${clientId}`,
       );
       set({ clientDetails: response.data });
       set({ isLoading: false });
@@ -546,7 +594,7 @@ export const useClientStore = create((set) => ({
   hasActiveBookings: async (clientId) => {
     try {
       const response = await AxiosConnect.get(
-        `/client/hasActiveBookings/${clientId}`
+        `/client/hasActiveBookings/${clientId}`,
       );
       return response.data;
     } catch (error) {
@@ -563,7 +611,7 @@ export const useClientStore = create((set) => ({
         clientId,
         {
           isDisabled: isDisabled,
-        }
+        },
       );
       const response = await AxiosConnect.get("/client/getAllClients");
       set({ clients: response.data });
@@ -605,10 +653,10 @@ export const useBookingStore = create((set) => ({
         {
           newStatus: "CONFIRMED",
           actionByUserType: "ADMIN",
-        }
+        },
       );
       const bookingsResponse = await AxiosConnect.get(
-        "/booking/getAllBookings"
+        "/booking/getAllBookings",
       );
       set({
         bookings: bookingsResponse.data.bookings.map((item) => ({
@@ -634,10 +682,10 @@ export const useBookingStore = create((set) => ({
           newStatus: "REJECTED",
           actionByUserType: "ADMIN",
           actionRemarks: rejectionReason,
-        }
+        },
       );
       const bookingsResponse = await AxiosConnect.get(
-        "/booking/getAllBookings"
+        "/booking/getAllBookings",
       );
       set({
         bookings: bookingsResponse.data.bookings.map((item) => ({
@@ -662,10 +710,10 @@ export const useBookingStore = create((set) => ({
           newStatus: "CANCELLED",
           actionByUserType: "ADMIN",
           actionRemarks: cancellationReason,
-        }
+        },
       );
       const bookingsResponse = await AxiosConnect.get(
-        "/booking/getAllBookings"
+        "/booking/getAllBookings",
       );
       set({
         bookings: bookingsResponse.data.bookings.map((item) => ({
@@ -689,10 +737,10 @@ export const useBookingStore = create((set) => ({
         {
           newStatus: "PAID",
           actionByUserType: "ADMIN",
-        }
+        },
       );
       const bookingsResponse = await AxiosConnect.get(
-        "/booking/getAllBookings"
+        "/booking/getAllBookings",
       );
       set({
         bookings: bookingsResponse.data.bookings.map((item) => ({
@@ -708,6 +756,20 @@ export const useBookingStore = create((set) => ({
       throw new Error(error.message);
     }
   },
+  getBookingSummaryPdf: async (id) => {
+    try {
+      const response = await AxiosConnect.post(
+        `/booking/downloadBookingSummaryUrl/${id}`,
+      );
+      window.open(
+        `http://localhost:5000/booking/downloadBookingSummaryPdf/${response.data}`,
+      );
+      return;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message);
+    }
+  },
 }));
 
 export const useNewsletterStore = create((set) => ({
@@ -717,7 +779,7 @@ export const useNewsletterStore = create((set) => ({
     try {
       set({ isLoading: true });
       const response = await AxiosConnect.get(
-        "/marketing/getAllScheduledNewsletters"
+        "/marketing/getAllScheduledNewsletters",
       );
       console.log(response);
       set({
@@ -737,10 +799,10 @@ export const useNewsletterStore = create((set) => ({
       set({ isLoading: true });
       const response = await AxiosConnect.post(
         "/marketing/saveScheduledNewsletter",
-        newsletterData
+        newsletterData,
       );
       const newslettersResponse = await AxiosConnect.get(
-        "/marketing/getAllScheduledNewsletters"
+        "/marketing/getAllScheduledNewsletters",
       );
       set({
         newsletters: newslettersResponse.data.map((item) => ({
@@ -762,10 +824,10 @@ export const useNewsletterStore = create((set) => ({
       const response = await AxiosConnect.patch(
         `/marketing/updateScheduledNewsletter`,
         newsletterId,
-        newsletterData
+        newsletterData,
       );
       const newslettersResponse = await AxiosConnect.get(
-        "/marketing/getAllScheduledNewsletters"
+        "/marketing/getAllScheduledNewsletters",
       );
       set({
         newsletters: newslettersResponse.data.map((item) => ({
@@ -785,10 +847,10 @@ export const useNewsletterStore = create((set) => ({
     try {
       set({ isLoading: true });
       const cancelResponse = await AxiosConnect.delete(
-        `/marketing/cancelScheduledNewsletter/${newsletterId}`
+        `/marketing/cancelScheduledNewsletter/${newsletterId}`,
       );
       const newslettersResponse = await AxiosConnect.get(
-        "/marketing/getAllScheduledNewsletters"
+        "/marketing/getAllScheduledNewsletters",
       );
       set({
         newsletters: newslettersResponse.data.map((item) => ({
@@ -809,10 +871,10 @@ export const useNewsletterStore = create((set) => ({
       // console.log("getNewsletterPreview", messageBody, preSignedPhoto);
       const response = await AxiosConnect.get(
         `/marketing/getNewsletterPreview/${encodeURIComponent(
-          messageBody
+          messageBody,
         )}/${encodeURIComponent(preSignedPhoto)}/${encodeURIComponent(
-          newsletterType
-        )}`
+          newsletterType,
+        )}`,
       );
 
       // set({ isLoading: false });
@@ -832,7 +894,7 @@ export const useNewsletterStore = create((set) => ({
         {
           newsletter: newsletter,
           email: email,
-        }
+        },
       );
       //set({ isLoading: false });
       return response.data.message;
@@ -890,7 +952,7 @@ export const useReviewStore = create((set) => ({
   toggleReviewVisibility: async (reviewId) => {
     try {
       const response = await AxiosConnect.get(
-        `/review/${reviewId}/toggleVisibility`
+        `/review/${reviewId}/toggleVisibility`,
       );
       const updatedReview = response.data;
 
@@ -953,7 +1015,7 @@ export const useTestimonialStore = create((set) => ({
       const response = await AxiosConnect.patch(
         `/testimonial`,
         testimonialId,
-        updateData
+        updateData,
       );
       console.log("updateTestimonialById", response.data);
       set({
@@ -969,7 +1031,7 @@ export const useTestimonialStore = create((set) => ({
   hasTestimonialForSurvey: async (surveyId) => {
     try {
       const response = await AxiosConnect.get(
-        `/testimonial/survey/${surveyId}`
+        `/testimonial/survey/${surveyId}`,
       );
       console.log("hasTestimonialForSurvey", response.data);
 
@@ -995,7 +1057,7 @@ export const useTestimonialStore = create((set) => ({
   deleteTestimonial: async (testimonialId) => {
     try {
       const response = await AxiosConnect.delete(
-        `/testimonial/${testimonialId}`
+        `/testimonial/${testimonialId}`,
       );
       console.log("deleteTestimonial", response.data);
     } catch (error) {
@@ -1006,7 +1068,7 @@ export const useTestimonialStore = create((set) => ({
   toggleTestimonialVisibility: async (testimonialId) => {
     try {
       const response = await AxiosConnect.post(
-        `/testimonial/${testimonialId}/toggleVisibility`
+        `/testimonial/${testimonialId}/toggleVisibility`,
       );
       const updatedTestimonial = response.data;
 
@@ -1085,7 +1147,7 @@ export const useChatStore = create((set) => ({
       (response) => {
         console.log(
           "after send message received data of message: ",
-          response.data
+          response.data,
         );
         socket.emit("new message", response.data);
         AxiosConnect.get("/chatroom/admin/fetchChats").then((response) => {
@@ -1095,10 +1157,10 @@ export const useChatStore = create((set) => ({
             (response) => {
               console.log("after send message set chat window");
               set({ currentChatroomMessages: response.data });
-            }
+            },
           );
         });
-      }
+      },
     );
   },
   retrieveAndSetAllChatRooms: () => {
@@ -1113,7 +1175,7 @@ export const useChatStore = create((set) => ({
         console.log(chatroomId);
         set({ currentChatroomMessages: response.data });
         socket.emit("join chat", chatroomId);
-      }
+      },
     );
   },
 }));

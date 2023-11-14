@@ -101,6 +101,7 @@ function EditFeaturedActivity() {
 
   const disableSaveChanges = () => {
     return (
+      featuredActivity?.isFeatured &&
       featuredActivity?.showOnSpecificDates &&
       featuredActivity?.showOnDates.length === 0
     );
@@ -167,7 +168,7 @@ function EditFeaturedActivity() {
           <AlertTitle>This activity is not featured.</AlertTitle>
         </Alert>
       )}
-      {featuredActivity.showOnSpecificDates && (
+      {featuredActivity.isFeatured && featuredActivity.showOnSpecificDates && (
         <Alert severity="info">
           <AlertTitle>
             This activity will be featured on specific days.
@@ -201,7 +202,7 @@ function EditFeaturedActivity() {
             label="Show on Specific Dates"
           />
         )}
-        {featuredActivity.showOnSpecificDates && (
+        {featuredActivity.isFeatured && featuredActivity.showOnSpecificDates && (
           <>
             <Box py={2}>
               <Box py={3}>

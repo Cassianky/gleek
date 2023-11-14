@@ -22,6 +22,7 @@ import pdf from "html-pdf";
 import fs from "fs";
 import path from "path";
 import Client from "../model/clientModel.js";
+import dayjs from "dayjs";
 
 // yt: this endpoint retrieves and returns PUBLISHED & PENDING APPROVAL activities only
 export const getAllActivities = async (req, res) => {
@@ -1192,6 +1193,7 @@ export const getActivityTitle = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 export const getActivitiesWithFeatureStatus = async (req, res) => {
   try {
     const activities = await ActivityModel.find()
@@ -1239,6 +1241,46 @@ export const getActivitiesWithFeatureStatus = async (req, res) => {
     res.status(200).json({
       publishedActivities: activitiesWithFeatureStatus,
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getFeaturedActivitiesToShowToday = async (req, res) => {
+  try {
+    const today = dayjs().startOf("day");
+
+    const featuredActivities = await FeaturedActivity.find({
+      isFeatured: true,
+    }).populate("activity");
+
+    const featuredActivitiesToShowToday = featuredActivities.filter(
+      (featuredActivity) => {
+        if (!featuredActivity.showOnSpecificDates) {
+          // If isFeatured and not shownOnSpecificDates, it can always be shown
+          return true;
+        }
+
+        // If isFeatured and shownOnSpecificDates, check if today's date is in the showOnDates array
+        const showOnDates = featuredActivity.showOnDates.map((date) =>
+          dayjs(date).startOf("day"),
+        );
+
+        return showOnDates.some((date) => date.isSame(today, "day"));
+      },
+    );
+    const activities = featuredActivitiesToShowToday.map((fa) => fa.activity);
+
+    // Prepare additional details for each activity
+    const preSignedPromises = activities.map(async (activity) => {
+      await prepareActivityMinimumPricePerPaxAndSingleImage(activity);
+    });
+
+    await Promise.all(preSignedPromises);
+
+    res.status(200).json(
+      activities,
+    );
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -22,13 +22,11 @@ const ImageSection = () => {
   return (
     <Container
       maxWidth="xl"
-      
       sx={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         paddingY: "5rem",
-
       }}
     >
       <Grid container spacing={3}>
@@ -95,8 +93,9 @@ const HomePage = () => {
   return (
     <>
       <Container elevation={0} maxWidth>
-        <FeatureSection/>
-        {<ImageSection />}
+        <FeatureSection />
+        <ImageSection />
+
         <TestimonialSection />
       </Container>
     </>

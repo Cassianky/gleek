@@ -275,3 +275,115 @@ export const createDisableOrEnableEmailOptions = (user, isDisabled) => {
   };
   return options;
 };
+
+export const createCustomEdmMailOptions = (
+  client,
+  subject,
+  messageBody,
+  preSignedUrl,
+) => {
+  try {
+    const greeting = `Hello, ${client.name}!`;
+    const signature = `Best Regards,<br/>Gleek Team`;
+    const to = client.email;
+
+    const htmlContent = `
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          background-color: #5c4b99;
+          color: #ffffff;
+          padding: 10px;
+          text-align: center;
+          border-radius: 5px 5px 0 0;
+        }
+        .content {
+          padding: 20px;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+        p {
+          margin-bottom: 10px;
+        }
+        .footer {
+          margin-top: 20px;
+          text-align: center;
+          font-size: 12px;
+          color: #555555;
+          background-color: #EAEAEA;
+          padding: 10px;
+          border-radius: 0 0 5px 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Gleek</h1>
+        </div>
+        <div class="content">
+          <p>${greeting}</p>
+          <img src="cid:newsletter-image" alt="Gleek Newsletter Image" />
+          <p>
+            ${messageBody}
+          </p>
+          <p>
+            ${signature}
+          </p>
+        </div>
+        <div class="footer">
+          <p>
+            If you no longer wish to receive emails from Gleek, you can
+            <a href="https://yourdomain.com/unsubscribe">unsubscribe here</a>.
+          </p>
+        </div>
+      </div>
+    </body>
+  </html>
+
+
+  `;
+
+    const attachments = [];
+    if (preSignedUrl !== undefined) {
+      // If preSignedUrl is not null, attach the image using preSignedUrl
+      attachments.push({
+        filename: "NewsletterImage.png",
+        href: preSignedUrl,
+        cid: "newsletter-image",
+      });
+    } else {
+      // If preSignedUrl is null, attach an image from the file path
+      attachments.push({
+        filename: "DefaultNewsletterImage.jpg",
+        path: "../server/assets/email/DefaultNewsletterImage.jpg",
+        cid: "newsletter-image",
+      });
+    }
+    const options = {
+      subject,
+      html: htmlContent,
+      attachments,
+      to,
+    };
+    return options;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};

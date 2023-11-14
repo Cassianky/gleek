@@ -18,6 +18,7 @@ import activityTestController from "./controller/activityTestController.js";
 import notificationRoutes from "./routes/notificationRoute.js";
 import chatroomRoutes from "./routes/chatroomRoute.js";
 import chatMessageRoutes from "./routes/chatMessageRoute.js";
+import marketingRoutes from "./routes/gleekAdmin/marketingRoute.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
 
@@ -57,6 +58,7 @@ app.use("/client", client);
 app.use("/booking", bookingRoutes);
 app.use("/survey", surveyRoutes);
 app.use("/review", reviewRoutes);
+app.use("/marketing", marketingRoutes);
 app.use("/testimonial", testimonialRoutes);
 app.use("/badge", badgeRoutes);
 

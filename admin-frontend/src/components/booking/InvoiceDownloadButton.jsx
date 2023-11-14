@@ -2,19 +2,26 @@ import React from "react";
 import DownloadIcon from "@mui/icons-material/Download";
 
 import { Button } from "@mui/material";
+import { useBookingStore } from "../../zustand/GlobalStore";
 
-const handleDownload = (event) => {
-  event.stopPropagation();
-  console.log("Download Invoice!");
-};
+const InvoiceDownloadButton = (data) => {
+   const { getBookingSummaryPdf } = useBookingStore();
 
-const InvoiceDownloadButton = () => {
-  return (
-    <Button variant="contained" color="primary" onClick={handleDownload}>
-      <DownloadIcon />
-      Invoice
-    </Button>
-  );
+   const handleDownload = async (event) => {
+      event.stopPropagation();
+      try {
+         await getBookingSummaryPdf(data.bookingId);
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
+   return (
+      <Button variant="contained" color="primary" onClick={handleDownload}>
+         <DownloadIcon />
+         Invoice
+      </Button>
+   );
 };
 
 export default InvoiceDownloadButton;

@@ -83,12 +83,12 @@ const EditThemeModal = ({
     }
     if (isChild) {
       found = allThemes?.find(
-        (t) => t?.name === parentTheme && currentTheme?.name != parentTheme
+        (t) => t?.name === parentTheme && currentTheme?.name != parentTheme,
       );
     } else {
       found = allThemes?.data?.find(
         (t) =>
-          t?.parent?.name === parentTheme && currentTheme?.name != parentTheme
+          t?.parent?.name === parentTheme && currentTheme?.name != parentTheme,
       );
     }
 

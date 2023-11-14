@@ -2,25 +2,25 @@ import { header } from "./header.js";
 import { footer } from "./footer.js";
 
 export const BookingSummaryVendor = (booking) => {
-  const getFormattedDate = (dateTime) => {
-    dateTime = new Date(dateTime);
+   const getFormattedDate = (dateTime) => {
+      dateTime = new Date(dateTime);
 
-    return dateTime.toLocaleDateString(undefined, {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
+      return dateTime.toLocaleDateString(undefined, {
+         day: "2-digit",
+         month: "short",
+         year: "numeric",
+      });
+   };
 
-  const getFormattedTime = (dateTime) => {
-    dateTime = new Date(dateTime);
-    return dateTime.toLocaleTimeString(undefined, {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
-  return ` 
+   const getFormattedTime = (dateTime) => {
+      dateTime = new Date(dateTime);
+      return dateTime.toLocaleTimeString(undefined, {
+         hour: "2-digit",
+         minute: "2-digit",
+         hour12: true,
+      });
+   };
+   return ` 
    <!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
    <head>
@@ -59,13 +59,13 @@ export const BookingSummaryVendor = (booking) => {
          >
                <div>
                   <span class="ft145"><b>Attn: ${
-                    booking.vendorId.companyName
+                     booking.vendorName
                   } </b> <br /><b>${booking.vendorId.companyEmail}</b><br />
                   ${booking.vendorId.companyAddress}<br />
                   Singapore, ${booking.vendorId.companyPostalCode}</span>
                <div>
                <div class="ft145"><p style="align:right;">${getFormattedDate(
-                 Date.now(),
+                  Date.now()
                )}</p></div>
          </div>
          <hr
@@ -92,13 +92,13 @@ export const BookingSummaryVendor = (booking) => {
                   <b>${booking.activityTitle}</b>
                   <ul style="padding-top: unset; line-height: 16px">
                     <li class="ft110">Date: ${getFormattedDate(
-                      booking.startDateTime,
+                       booking.startDateTime
                     )}</li>
                     <li class="ft110">Time: ${getFormattedTime(
-                      booking.startDateTime,
+                       booking.startDateTime
                     )} - ${getFormattedTime(booking.endDateTime)}</li>
                     <li class="ft110">Type: ${
-                      booking.activityId.activityType
+                       booking.activityId.activityType
                     }</li>
                     <li>Theme: ${booking.activityId.theme.name}</li>
                     <li>Sub-Theme: ${booking.activityId.subtheme[0].name}</li>
@@ -106,26 +106,35 @@ export const BookingSummaryVendor = (booking) => {
                   </ul>
                </th>
                <th class="ft113" style="width: 10%">${booking.totalPax}</th>
-               <th class="ft113" style="width: 15%">$${
-                 booking.basePricePerPax
-               }</th>
+               <th class="ft113" style="width: 15%">$${Math.round(
+                  booking.totalVendorAmount / booking.totalPax,
+                  2
+               )}</th>
                <th class="ft113" style="width: 15%; ">$${
-                 booking.totalCost > booking.basePricePerPax * booking.totalPax
-                   ? booking.weekendAddOnCost +
-                     booking.onlineAddOnCost +
-                     booking.offlineAddOnCost
-                   : 0
-               }<th>
-               <th class="ft113" style="width: 15%">$${
-                 booking.totalCost < booking.basePricePerPax * booking.totalPax
-                   ? -(
-                       booking.weekendAddOnCost +
+                  booking.vendorWeekendAddOnCost +
+                     booking.vendorOnlineAddOnCost +
+                     booking.vendorOfflineAddOnCost >
+                  0
+                     ? booking.weekendAddOnCost +
                        booking.onlineAddOnCost +
                        booking.offlineAddOnCost
-                     )
-                   : 0
+                     : 0
                }<th>
-               <th class="ft113" style="width: 15%">$${booking.totalCost}</th>
+               <th class="ft113" style="width: 15%">$${
+                  booking.vendorWeekendAddOnCost +
+                     booking.vendorOnlineAddOnCost +
+                     booking.vendorOfflineAddOnCost <
+                  0
+                     ? -(
+                          booking.weekendAddOnCost +
+                          booking.onlineAddOnCost +
+                          booking.offlineAddOnCost
+                       )
+                     : 0
+               }<th>
+               <th class="ft113" style="width: 15%">$${
+                  booking.totalVendorAmount
+               }</th>
             </tr>
          </table>
             <hr style="color: #FFDBC3; height: 2.5px; background-color: #5C4B99"/>
@@ -139,7 +148,7 @@ export const BookingSummaryVendor = (booking) => {
                "
             >
                <p class="ft15" style="color: #000;">
-                  <b>Total price: $${booking.totalCost}</b>
+                  <b>Total price: $${booking.totalVendorAmount}</b>
                </p>
             </div>
          </div>

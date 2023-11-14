@@ -1,8 +1,6 @@
 import express from "express";
 import { createBadge, updateBadge } from "../../controller/badgeController.js";
-import {
-    uploadS3BadgeImage
-} from "../../middleware/multer.js";
+import { uploadS3BadgeImage } from "../../middleware/multer.js";
 const router = express.Router();
 
 /*
@@ -14,7 +12,7 @@ router.post(
     { name: "image", maxCount: 1 },
     { name: "images", maxCount: 5 },
   ]),
-  createBadge
+  createBadge,
 );
 router.patch("/updateBadge/:id", updateBadge);
 export default router;

@@ -1,8 +1,5 @@
 import InfoIcon from "@mui/icons-material/Info";
-import {
-  Typography,
-  useTheme
-} from "@mui/material";
+import { Typography, useTheme } from "@mui/material";
 import React, { useEffect } from "react";
 import { useFeaturedActivityStore } from "../../zustand/GlobalStore";
 import MainBodyContainer from "../common/MainBodyContainer";
@@ -12,7 +9,8 @@ function ManageFeaturedActivities() {
   const theme = useTheme();
   // const { activities, getActivity, isLoading, pendingApprovalActivities } =
   //   useActivityStore();
-  const {activities, getActivitiesWithFeatureStatus} = useFeaturedActivityStore()
+  const { activities, getActivitiesWithFeatureStatus } =
+    useFeaturedActivityStore();
   useEffect(() => {
     const fetchData = async () => {
       await getActivitiesWithFeatureStatus();
@@ -52,7 +50,7 @@ function ManageFeaturedActivities() {
           Feature activities on the Gleek homepage for Clients to see
         </Typography>
       </div>
-      {activities && <FeaturedActivitiesTable activities={activities}/>}
+      {activities && <FeaturedActivitiesTable activities={activities} />}
     </MainBodyContainer>
   );
 }

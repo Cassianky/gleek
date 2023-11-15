@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
-import { useBookingStore, useSnackbarStore } from "../../zustand/GlobalStore";
+import {
+  useBookingStore,
+  useNewsletterStore,
+  useSnackbarStore,
+} from "../../zustand/GlobalStore";
 import PreviewIcon from "@mui/icons-material/Preview";
+import Email from "@mui/icons-material/Email";
+import SendIcon from "@mui/icons-material/Send";
 
 import {
   Dialog,
@@ -11,75 +17,110 @@ import {
   DialogActions,
   Button,
   Typography,
+  TextField,
+  Box,
 } from "@mui/material";
 
 const PreviewButton = ({ newsletterData }) => {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { openSnackbar } = useSnackbarStore();
-  const { updateBookingToPaid } = useBookingStore();
+  const { getNewsletterPreview, testSendNewsletter } = useNewsletterStore();
+  const [htmlContent, setHtmlContent] = useState("");
+  const [email, setEmail] = useState("");
 
-  const handleDialogOpen = (event) => {
+  const handleDialogOpen = async (event) => {
     event.stopPropagation();
-    setDialogOpen(true);
+    try {
+      // console.log("message?", newsletterData.messageBody);
+      // console.log("photo?", newsletterData.preSignedPhoto);
+      const preview = await getNewsletterPreview(
+        newsletterData.messageBody,
+        newsletterData.preSignedPhoto,
+        newsletterData.newsletterType,
+      );
+      // console.log(preview);
+      setHtmlContent(preview);
+      setDialogOpen(true);
+      // console.log("dialog set to Open");
+    } catch (error) {
+      console.log(error);
+      openSnackbar({
+        message: error.message,
+        type: "error",
+      });
+    }
   };
 
   const handleDialogClose = () => {
+    setEmail("");
     setDialogOpen(false);
   };
 
-  const handleConfirm = async (bookingId) => {
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleSendEmail = async () => {
+    // Add logic to handle sending email with the entered email address
     try {
-      const message = await updateBookingToPaid(bookingId);
+      console.log("Sending email to:", email);
+      setEmail(email.trim());
+      const message = await testSendNewsletter(newsletterData, email);
+      setEmail("");
       openSnackbar(message);
-      handleDialogClose();
     } catch (error) {
+      console.log(error);
       openSnackbar(error.message, "error");
     }
   };
 
   return (
     <div>
-      <Button
-        color="primary"
-        //   variant="contained"
-        onClick={handleDialogOpen}
-      >
+      <Button color="primary" onClick={handleDialogOpen}>
         <PreviewIcon />
       </Button>
 
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>Confirm Payment</DialogTitle>
-        {/* <DialogContent>
-          {confirmationDisplayDetails.map((detail, index) => (
-            <div key={index}>
-              <Typography>
-                <span
-                  style={{
-                    fontWeight: "bold",
-                    color: theme.palette.dark_purple.main,
-                  }}
-                >
-                  {detail.label}:{" "}
-                </span>
-                {detail.value}
-              </Typography>
-            </div>
-          ))}
-
-          <DialogContentText sx={{ pt: 2 }}>
-            Are you sure you want to mark this booking as paid?
-          </DialogContentText>
-        </DialogContent> */}
+        <DialogTitle
+          style={{
+            display: "flex",
+            alignItems: "center",
+            color: theme.palette.primary.main,
+          }}
+        >
+          <Email color="primary" style={{ marginRight: "8px" }} />
+          Preview Newsletter
+        </DialogTitle>
+        <DialogContent>
+          <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="space-evenly"
+            alignItems="center"
+            marginTop={4}
+          >
+            <TextField
+              label="Email Address"
+              variant="outlined"
+              value={email}
+              onChange={handleEmailChange}
+              sx={{ width: "60%" }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSendEmail}
+              startIcon={<SendIcon />}
+            >
+              Send
+            </Button>
+          </Box>
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={async () => await handleConfirm(newsletterData.id)}
-            color="primary"
-          >
-            Confirm
+            Close
           </Button>
         </DialogActions>
       </Dialog>

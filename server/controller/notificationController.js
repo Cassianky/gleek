@@ -110,7 +110,9 @@ export const createNotification = async (req, session) => {
           const booking = req.eventObj;
           newNotification.text = `Your booking for activity ${booking.activityId.title.toUpperCase()} 
               has been accepted by the vendor`;
-        } else if (req.notificationAction === NotificationAction.APPROVEBYADMIN) {
+        } else if (
+          req.notificationAction === NotificationAction.APPROVEBYADMIN
+        ) {
           const booking = req.eventObj;
           newNotification.text = `Your booking for activity ${booking.activityTitle.toUpperCase()} 
               has been accepted by the admin`;
@@ -118,7 +120,9 @@ export const createNotification = async (req, session) => {
           const booking = req.eventObj;
           newNotification.text = `Your booking for activity ${booking.activityId.title.toUpperCase()} 
               has been rejected by the vendor.`;
-        } else if (req.notificationAction === NotificationAction.REJECTBYADMIN) {
+        } else if (
+          req.notificationAction === NotificationAction.REJECTBYADMIN
+        ) {
           const booking = req.eventObj;
           newNotification.text = `Your booking for activity ${booking.activityTitle.toUpperCase()} 
               has been rejected by the admin.`;
@@ -126,21 +130,29 @@ export const createNotification = async (req, session) => {
           const booking = req.eventObj;
           newNotification.text = `Your booking for activity ${booking.activityId.title.toUpperCase()} 
               has been cancelled by the vendor.`;
-        } else if (req.notificationAction === NotificationAction.CANCELBYADMIN) {
+        } else if (
+          req.notificationAction === NotificationAction.CANCELBYADMIN
+        ) {
           const booking = req.eventObj;
           newNotification.text = `Your booking for activity ${booking.activityTitle.toUpperCase()} 
               has been cancelled by the admin.`;
-        } else if (req.notificationAction === NotificationAction.APPROVEUPDATEADMIN) {
+        } else if (
+          req.notificationAction === NotificationAction.APPROVEUPDATEADMIN
+        ) {
           const booking = req.eventObj;
           newNotification.text = `Client ${booking.clientId.name.toUpperCase()} booking for activity 
               ${booking.activityId.title.toUpperCase()} has been accepted by 
               vendor ${booking.vendorName.toUpperCase()}.`;
-        } else if (req.notificationAction === NotificationAction.REJECTUPDATEADMIN) {
+        } else if (
+          req.notificationAction === NotificationAction.REJECTUPDATEADMIN
+        ) {
           const booking = req.eventObj;
           newNotification.text = `Client ${booking.clientId.name.toUpperCase()} booking for activity 
               ${booking.activityId.title.toUpperCase()} has been rejected by 
               vendor ${booking.vendorName.toUpperCase()}.`;
-        } else if (req.notificationAction === NotificationAction.CANCELUPDATEADMIN) {
+        } else if (
+          req.notificationAction === NotificationAction.CANCELUPDATEADMIN
+        ) {
           const booking = req.eventObj;
           newNotification.text = `Client ${booking.clientId.name.toUpperCase()} booking for activity 
               ${booking.activityId.title.toUpperCase()} has been cancelled by 

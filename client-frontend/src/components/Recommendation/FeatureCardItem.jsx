@@ -4,8 +4,6 @@ import notFound from "../../assets/not_found.png";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-
-
 const FeatureCardItem = ({ activity }) => {
   const theme = useTheme();
   const accent = theme.palette.accent.main;

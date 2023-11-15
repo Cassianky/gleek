@@ -37,7 +37,7 @@ const NewslettersTable = ({ newsletters, status, additionalColumns }) => {
     {
       field: "scheduledTime",
       headerName: "Scheduled Time",
-      flex: 1,
+      flex: 1.2,
       sortable: false,
       renderCell: (params) => {
         const dateTimeOptions = {

@@ -24,6 +24,7 @@ import {
   NotificationEvent,
 } from "../util/notificationRelatedEnum.js";
 import { createNotification } from "./notificationController.js";
+import { InvoiceTemplate } from "../assets/templates/InvoiceTemplate.js";
 
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
@@ -1014,11 +1015,15 @@ export const getBookingSummaryPdfUrl = async (req, res) => {
       { path: "vendorId" },
       { path: "clientId" },
     ]);
-    const pdfContent =
-      userRole == "Vendor"
-        ? BookingSummaryVendor([booking])
-        : BookingSummaryClient([booking]);
 
+    let pdfContent;
+    if (userRole == "Vendor") {
+      pdfContent = BookingSummaryVendor(booking);
+    } else if (userRole == "Client") {
+      pdfContent = BookingSummaryClient([booking]);
+    } else {
+      pdfContent = InvoiceTemplate([booking]);
+    }
     const filename =
       userRole == "Vendor"
         ? "bookingSummary" + booking.vendorId.companyName + Date.now() + ".pdf"

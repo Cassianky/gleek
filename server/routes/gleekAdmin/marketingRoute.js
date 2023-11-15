@@ -4,18 +4,27 @@ import adminAuth from "../../middleware/adminAuth.js";
 import {
   cancelScheduledNewsletter,
   getAllScheduledNewsletters,
+  getPreview,
   saveScheduledNewsletter,
   sendCustomEdm,
+  testSendNewsletter,
   updateScheduledNewsletter,
 } from "../../controller/newsletterController.js";
+import { uploadS3NewsletterImage } from "../../middleware/multer.js";
 const router = express.Router();
 
 // /marketing/xxx
 router.post("/sendCustomEdm", adminAuth, sendCustomEdm);
-router.post("/saveScheduledNewsletter", adminAuth, saveScheduledNewsletter);
+router.post(
+  "/saveScheduledNewsletter",
+  adminAuth,
+  uploadS3NewsletterImage.single("image"),
+  saveScheduledNewsletter,
+);
 router.patch(
   "/updateScheduledNewsletter/:scheduledNewsletterId",
   adminAuth,
+  uploadS3NewsletterImage.single("image"),
   updateScheduledNewsletter,
 );
 router.delete(
@@ -28,5 +37,14 @@ router.get(
   adminAuth,
   getAllScheduledNewsletters,
 );
+
+// router.get("/getNewsletterPreview", adminAuth, getPreview);
+router.get(
+  "/getNewsletterPreview/:messageBody/:preSignedPhoto/:newsletterType",
+  adminAuth,
+  getPreview,
+);
+
+router.post("/testSendNewsletter", adminAuth, testSendNewsletter);
 
 export default router;

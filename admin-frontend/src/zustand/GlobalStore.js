@@ -198,6 +198,54 @@ export const useAdminStore = create((set) => ({
   },
 }));
 
+export const useFeaturedActivityStore = create((set) => ({
+  activities: null,
+  featuredActivity: null,
+  isLoadingFeaturedActivity: true,
+  getActivitiesWithFeatureStatus: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/activity/feature/activities");
+      set({
+        activities: response.data.publishedActivities,
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getFeaturedActivity: async (activityId) => {
+    try {
+      const res = await AxiosConnect.get(`/activity/feature/${activityId}`);
+      console.log(res.data);
+      set({
+        featuredActivity: res.data,
+        isLoadingFeaturedActivity: false,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  },
+  updateFeaturedActivity: async (activityId, updateFeaturedActivity) => {
+    try {
+      const res = await AxiosConnect.post(
+        `/activity/feature/${activityId}`,
+        updateFeaturedActivity,
+      );
+      set({
+        featuredActivity: res.data,
+        isLoadingFeaturedActivity: false,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  },
+}));
+
 export const useActivityStore = create((set) => ({
   activities: [],
   isLoading: false,
@@ -708,6 +756,20 @@ export const useBookingStore = create((set) => ({
       throw new Error(error.message);
     }
   },
+  getBookingSummaryPdf: async (id) => {
+    try {
+      const response = await AxiosConnect.post(
+        `/booking/downloadBookingSummaryUrl/${id}`,
+      );
+      window.open(
+        `http://localhost:5000/booking/downloadBookingSummaryPdf/${response.data}`,
+      );
+      return;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message);
+    }
+  },
 }));
 
 export const useNewsletterStore = create((set) => ({
@@ -719,6 +781,7 @@ export const useNewsletterStore = create((set) => ({
       const response = await AxiosConnect.get(
         "/marketing/getAllScheduledNewsletters",
       );
+      console.log(response);
       set({
         newsletters: response.data.map((item) => ({
           ...item,
@@ -801,6 +864,43 @@ export const useNewsletterStore = create((set) => ({
       set({ isLoading: false });
       console.error(error.message);
       throw new Error(error.message);
+    }
+  },
+  getNewsletterPreview: async (messageBody, preSignedPhoto, newsletterType) => {
+    try {
+      // console.log("getNewsletterPreview", messageBody, preSignedPhoto);
+      const response = await AxiosConnect.get(
+        `/marketing/getNewsletterPreview/${encodeURIComponent(
+          messageBody,
+        )}/${encodeURIComponent(preSignedPhoto)}/${encodeURIComponent(
+          newsletterType,
+        )}`,
+      );
+
+      // set({ isLoading: false });
+      return response.data.htmlContent;
+    } catch (error) {
+      // set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  testSendNewsletter: async (newsletter, email) => {
+    try {
+      //set({ isLoading: true });
+      console.log(email);
+      const response = await AxiosConnect.post(
+        "/marketing/testSendNewsletter",
+        {
+          newsletter: newsletter,
+          email: email,
+        },
+      );
+      //set({ isLoading: false });
+      return response.data.message;
+    } catch (error) {
+      const errorMessage = error.response.data.error;
+      throw new Error(errorMessage);
     }
   },
 }));

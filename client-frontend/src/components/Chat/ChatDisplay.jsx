@@ -12,9 +12,8 @@ import useChatStore from "../../zustand/ChatStore";
 import useGlobalStore from "../../zustand/GlobalStore";
 import { useEffect } from "react";
 
-const ChatDisplay = ({ messages }) => {
-  const { selectedChat, currentChatroomMessages, loadingMessage, user } =
-    useChatStore();
+const ChatDisplay = () => {
+  const { currentChatroomMessages, user } = useChatStore();
   const { role } = useGlobalStore();
 
   useEffect(() => {

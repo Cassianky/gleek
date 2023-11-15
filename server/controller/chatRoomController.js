@@ -1,5 +1,6 @@
 import ChatroomModel from "../model/chatRoomModel.js";
 import { Role } from "../util/roleEnum.js";
+import ChatRoomModel from "../model/chatRoomModel.js";
 
 //Fetch all chats for a user
 //route: GET /api/chat/
@@ -18,11 +19,6 @@ export const userFetchChats = async (req, res) => {
       .populate("vendor", "-password")
       .sort({ lastChatDate: -1 })
       .then(async (results) => {
-        // results = await User.populate(results, {
-        //     path: "latestMessage.sender",
-        //     select: "name pic email",
-        // });
-        console.log("final results::", results);
         res.status(200).send(results);
       });
   } catch (error) {
@@ -232,5 +228,36 @@ export const adminAccessChat = async (req, res) => {
       res.status(400);
       throw new Error(error.message);
     }
+  }
+};
+
+export const markSelectedChatAsRead = async (req, res) => {
+  let userRole = req.cookies.userRole;
+  userRole = userRole.toUpperCase();
+
+  console.log(userRole);
+  console.log(req.params.id);
+  console.log(req.user._id);
+
+  try {
+    const updatedChatroom = await ChatroomModel.findByIdAndUpdate(
+      { _id: req.params.id },
+      { latestMessageRead: true },
+    );
+
+    const updatedChatrooms = await ChatroomModel.find(
+      userRole === Role.CLIENT
+        ? { client: req.user._id }
+        : { vendor: req.user._id },
+    )
+      .populate("latestMessage")
+      .populate("client", "-password")
+      .populate("vendor", "-password")
+      .sort({ lastChatDate: -1 });
+
+    res.status(200).send(updatedChatrooms);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
   }
 };

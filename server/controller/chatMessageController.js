@@ -60,6 +60,7 @@ export const sendMessage = async (req, res) => {
       {
         latestMessage: message,
         lastChatDate: message.messageDate,
+        latestMessageRead: false,
       },
     );
     res.json(message);

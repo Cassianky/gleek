@@ -13,10 +13,10 @@ const ActivityCardItem = ({ activity }) => {
 
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery((theme) =>
-    theme.breakpoints.between("sm", "md"),
+    theme.breakpoints.between("sm", "md")
   );
   const isLargeScreen = useMediaQuery((theme) =>
-    theme.breakpoints.between("md", "lg"),
+    theme.breakpoints.between("md", "lg")
   );
   let containerStyle = {
     height: "15rem", // Default for extra-large screens
@@ -56,6 +56,7 @@ const ActivityCardItem = ({ activity }) => {
       borderTopRightRadius: "4px",
     };
   }
+
   return (
     <Paper
       display="flex"
@@ -118,12 +119,11 @@ const ActivityCardItem = ({ activity }) => {
           </Box>
           <Box display="flex" flexDirection="row">
             <Typography color={accent} variant="body2" mr={1}>
-              {/* {activity.rating.toFixed(1)} */}
-              {activity.rating == undefined ? 0 : activity.rating}
+              {activity.averageRating}
             </Typography>
             <Rating
               name="rating-read"
-              defaultValue={activity.rating}
+              defaultValue={activity.averageRating}
               precision={0.5}
               size="small"
               readOnly

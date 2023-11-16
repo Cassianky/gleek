@@ -340,7 +340,7 @@ function App() {
             path="/featured/:activityId"
             element={
               <ProtectedRoute>
-                <EditFeaturedActivity/>
+                <EditFeaturedActivity />
               </ProtectedRoute>
             }
           />

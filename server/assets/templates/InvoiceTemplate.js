@@ -2,81 +2,81 @@ import { header } from "./header.js";
 import { footer } from "./footer.js";
 
 export const InvoiceTemplate = (data) => {
-   const getFormattedDate = (dateTime) => {
-      dateTime = new Date(dateTime);
+  const getFormattedDate = (dateTime) => {
+    dateTime = new Date(dateTime);
 
-      return dateTime.toLocaleDateString(undefined, {
-         day: "2-digit",
-         month: "short",
-      });
-   };
+    return dateTime.toLocaleDateString(undefined, {
+      day: "2-digit",
+      month: "short",
+    });
+  };
 
-   const getFormattedTime = (dateTime) => {
-      dateTime = new Date(dateTime);
-      return dateTime.toLocaleTimeString(undefined, {
-         hour: "2-digit",
-         minute: "2-digit",
-         hour12: true,
-      });
-   };
-   let grandTotal = 0;
-   const getBookings = (data) => {
-      let htmlString = "";
+  const getFormattedTime = (dateTime) => {
+    dateTime = new Date(dateTime);
+    return dateTime.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+  let grandTotal = 0;
+  const getBookings = (data) => {
+    let htmlString = "";
 
-      data.forEach((booking) => {
-         htmlString += `
+    data.forEach((booking) => {
+      htmlString += `
             <tr>
                   <th class="ft113" style="width: 30%; text-align: left">
                      <b>${booking.activityTitle}</b>
                      <ul style="padding-top: unset; line-height: 16px">
                         <li class="ft110">Date: ${getFormattedDate(
-                           booking.startDateTime
+                          booking.startDateTime,
                         )}</li>
                         <li class="ft110">Time: ${getFormattedTime(
-                           booking.startDateTime
+                          booking.startDateTime,
                         )} - ${getFormattedTime(booking.endDateTime)}</li>
                         <li class="ft110">Type: ${
-                           booking.activityId.activityType
+                          booking.activityId.activityType
                         }</li>
                         <li>Theme: ${booking.activityId.theme.name}</li>
                         <li> Sub-Theme: ${
-                           booking.activityId.subtheme[0].name
+                          booking.activityId.subtheme[0].name
                         }</li>
                      </ul>
                   </th>
                   <th class="ft113" style="width: 10%">${booking.totalPax}</th>
                   <th class="ft113" style="width: 15%">$${
-                     booking.basePricePerPax
+                    booking.basePricePerPax
                   }</th>
                   <th class="ft113" style="width: 15%; ">$${
-                     booking.totalCost >
-                     booking.basePricePerPax * booking.totalPax
-                        ? booking.weekendAddOnCost +
+                    booking.totalCost >
+                    booking.basePricePerPax * booking.totalPax
+                      ? booking.weekendAddOnCost +
+                        booking.onlineAddOnCost +
+                        booking.offlineAddOnCost
+                      : 0
+                  }<th>
+                  <th class="ft113" style="width: 15%">$${
+                    booking.totalCost <
+                    booking.basePricePerPax * booking.totalPax
+                      ? -(
+                          booking.weekendAddOnCost +
                           booking.onlineAddOnCost +
                           booking.offlineAddOnCost
-                        : 0
+                        )
+                      : 0
                   }<th>
                   <th class="ft113" style="width: 15%">$${
-                     booking.totalCost <
-                     booking.basePricePerPax * booking.totalPax
-                        ? -(
-                             booking.weekendAddOnCost +
-                             booking.onlineAddOnCost +
-                             booking.offlineAddOnCost
-                          )
-                        : 0
-                  }<th>
-                  <th class="ft113" style="width: 15%">$${
-                     booking.totalCost
+                    booking.totalCost
                   }</th>
                </tr>
                `;
-         grandTotal += booking.totalCost;
-      });
-      return htmlString;
-   };
+      grandTotal += booking.totalCost;
+    });
+    return htmlString;
+  };
 
-   return ` 
+  return ` 
    <!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
    <head>
@@ -123,13 +123,13 @@ export const InvoiceTemplate = (data) => {
             >
                <div>
                   <span class="ft145"><b>Attn: ${
-                     data[0].billingPartyName
+                    data[0].billingPartyName
                   } </b> <br /><b>${data[0].billingEmail}</b><br />
                   ${data[0].billingAddress}<br />
                   Singapore, ${data[0].billingOfficePostalCode}</span>
                <div>
                <div class="ft145"><p style="align:right;">${getFormattedDate(
-                  Date.now()
+                 Date.now(),
                )}</p></div>
             </div>
             <hr

@@ -1,8 +1,6 @@
 import { Schedule, Star } from "@mui/icons-material";
-import HistoryToggleOff from '@mui/icons-material/HistoryToggleOff';
-import {
-  Chip
-} from "@mui/material";
+import HistoryToggleOff from "@mui/icons-material/HistoryToggleOff";
+import { Chip } from "@mui/material";
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
@@ -23,7 +21,6 @@ const FeaturedActivitiesTable = ({ activities }) => {
   const handleRowClick = async (activity) => {
     navigate(`/featured/${activity._id}`);
   };
-
 
   const columns = [];
 
@@ -62,7 +59,8 @@ const FeaturedActivitiesTable = ({ activities }) => {
       valueGetter: (params) => {
         return params.value.map((x) => x.name);
       },
-    }, {
+    },
+    {
       field: "featureStatus",
       headerName: "Featured Status",
       flex: 1,
@@ -70,7 +68,7 @@ const FeaturedActivitiesTable = ({ activities }) => {
         const featureStatus = params.value;
         let chipIcon;
         let chipColor;
-  
+
         switch (featureStatus) {
           case "Active":
             chipIcon = <Star />;
@@ -84,10 +82,10 @@ const FeaturedActivitiesTable = ({ activities }) => {
             chipIcon = <HistoryToggleOff />;
             chipColor = "default";
         }
-  
+
         return <Chip icon={chipIcon} label={featureStatus} color={chipColor} />;
-      }
-    }
+      },
+    },
   );
 
   return (

@@ -130,3 +130,32 @@ export const uploadS3BadgeImage = multer({
     }
   },
 });
+
+export const uploadS3NewsletterImage = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_S3_BUCKET,
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: (request, file, cb) => {
+      let fullPath = `newsletterImages/${
+        request.body.subject
+      }-${Date.now().toString()}-${uuidv4()}-${file.originalname}`;
+      cb(null, fullPath);
+    },
+    limits: { fileSize: 2000000 }, // In bytes: 2000000 bytes = 2 MB
+  }),
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype === "image/png" ||
+      file.mimetype === "image/jpeg" ||
+      file.mimetype === "image/jpg"
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      const err = new Error("Only .jpg .jpeg .png images are supported!");
+      err.name = "ExtensionError";
+      return cb(err);
+    }
+  },
+});

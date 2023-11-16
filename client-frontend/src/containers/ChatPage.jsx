@@ -51,7 +51,7 @@ const Chatpage = () => {
 
   useEffect(() => {
     if (
-      // if chat is not selected or doesn't match current chat
+      selectedChat === undefined ||
       selectedChat === null ||
       selectedChat._id !== newMsgReceived.chatRoom._id
     ) {

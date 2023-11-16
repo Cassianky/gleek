@@ -1106,22 +1106,54 @@ export const useNotificationStore = create((set) => ({
   notifications: [],
   unreadNotificationsCount: 0,
   loading: true,
-  retrieveAndSetAllNotifications: (adminCredentials) => {
+  retrieveAndSetAllNotifications: () => {
     set({ loading: true }),
-      AxiosConnect.getWithParams("/notification/adminAllNotifications", {
-        adminId: adminCredentials._id,
-        adminRole: adminCredentials.role,
-      }).then((body) => {
-        console.log(body.data.data);
-        const allNotifications = body.data.data;
-        set({ notifications: allNotifications });
-        let unreadCount = 0;
-        allNotifications.map((notification) => {
-          notification.read === false ? unreadCount++ : unreadCount;
+      AxiosConnect.get("/notification/adminAllNotifications")
+        .then((body) => {
+          const allNotifications = body.data.data;
+          set({ notifications: allNotifications });
+          let unreadCount = 0;
+          allNotifications.map((notification) => {
+            notification.read === false ? unreadCount++ : unreadCount;
+          });
+          set({ unreadNotificationsCount: unreadCount });
+          set({ loading: false });
+        })
+        .catch((error) => {
+          console.log("error in retrieveAndSetAllChatRooms: ", error);
         });
-        set({ unreadNotificationsCount: unreadCount });
-        set({ loading: false });
+  },
+  markAsRead: (notification) => {
+    AxiosConnect.patch(
+      "/notification/updateNotificationAsRead",
+      notification._id,
+    ).then((response) => {
+      set({ loading: true });
+      const allNotifications = response.data.data;
+      set({ notifications: allNotifications });
+      let unreadCount = 0;
+      allNotifications.map((notification) => {
+        notification.read === false ? unreadCount++ : unreadCount;
       });
+      set({ unreadNotificationsCount: unreadCount });
+      set({ loading: false });
+    });
+  },
+  deleteNotification: (notification) => {
+    AxiosConnect.patch(
+      "/notification/deleteNotification",
+      notification._id,
+    ).then((response) => {
+      set({ loading: true });
+      const allNotifications = response.data.data;
+      set({ notifications: allNotifications });
+      let unreadCount = 0;
+      allNotifications.map((notification) => {
+        notification.read === false ? unreadCount++ : unreadCount;
+      });
+      set({ unreadNotificationsCount: unreadCount });
+      set({ loading: false });
+    });
   },
 }));
 
@@ -1131,6 +1163,7 @@ export const useChatStore = create((set) => ({
   currentChatroomMessages: [],
   selectedChat: null,
   loadingMessage: false,
+  unreadChatroomCount: 0,
   setUser: (currentUser) => {
     set({ user: currentUser });
   },
@@ -1182,10 +1215,25 @@ export const useChatStore = create((set) => ({
   },
 
   retrieveAndSetAllChatRooms: () => {
-    AxiosConnect.get("/chatroom/admin/fetchChats").then((response) => {
-      console.log(response.data);
-      set({ allChatrooms: response.data });
-    });
+    AxiosConnect.get("/chatroom/admin/fetchChats")
+      .then((response) => {
+        const allChatroom = response.data;
+        set({ allChatrooms: allChatroom });
+        let unreadChatroomCount = 0;
+        allChatroom.map((chatroom) => {
+          if (
+            chatroom.latestMessage !== undefined &&
+            chatroom.latestMessage.senderRole !== "ADMIN" &&
+            chatroom.latestMessageRead === false
+          ) {
+            unreadChatroomCount++;
+          }
+        });
+        set({ unreadChatroomCount: unreadChatroomCount });
+      })
+      .catch((error) => {
+        console.log("error in retrieveAndSetAllChatRooms: ", error);
+      });
   },
   retrieveAndSetChatroomMessages: (chatroomId) => {
     AxiosConnect.get(`/chatMessage/admin/allMessages/${chatroomId}`).then(

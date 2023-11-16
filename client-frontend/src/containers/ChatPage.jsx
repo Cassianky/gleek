@@ -21,7 +21,8 @@ const Chatpage = () => {
   } = useChatStore();
   const { role } = useGlobalStore();
   const [socketConnected, setSocketConnected] = useState(false);
-  const [selectedChatCompare, setSelectedChatCompare] = useState(null);
+  const [newMsgReceived, setNewMsgReceived] = useState({});
+
   const userId =
     role === "Client"
       ? useClientStore.getState().client._id
@@ -43,21 +44,24 @@ const Chatpage = () => {
 
   useEffect(() => {
     socket.on("message received", (newMessageReceived) => {
-      console.log("in message received", newMessageReceived);
-      if (
-        !selectedChatCompare || // if chat is not selected or doesn't match current chat
-        selectedChatCompare._id !== newMessageReceived.chatRoom._id
-      ) {
-        retrieveAndSetAllChatRooms(role);
-      } else {
-        retrieveAndSetChatroomMessages(
-          role,
-          newMessageReceived.chatRoom._id,
-          socket,
-        );
-      }
+      console.log("in message received");
+      setNewMsgReceived(newMessageReceived);
     });
-  }, [currentChatroomMessages]);
+  }, []);
+
+  useEffect(() => {
+    if (
+      // if chat is not selected or doesn't match current chat
+      selectedChat === null ||
+      selectedChat._id !== newMsgReceived.chatRoom._id
+    ) {
+      console.log("different chat");
+      retrieveAndSetAllChatRooms(role);
+    } else if (selectedChat._id === newMsgReceived.chatRoom._id) {
+      console.log("same chat");
+      retrieveAndSetChatroomMessages(role, newMsgReceived.chatRoom._id);
+    }
+  }, [newMsgReceived]);
 
   return (
     <div style={{ width: "100%" }}>
@@ -70,11 +74,8 @@ const Chatpage = () => {
           padding: 3,
         }}
       >
-        <ChatList />
-        <ChatWindow
-          socket={socket}
-          setSelectedChatCompare={setSelectedChatCompare}
-        />
+        <ChatList socket={socket} />
+        <ChatWindow socket={socket} />
       </Box>
     </div>
   );

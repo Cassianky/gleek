@@ -119,7 +119,7 @@ const ActivityCardItem = ({ activity }) => {
           </Box>
           <Box display="flex" flexDirection="row">
             <Typography color={accent} variant="body2" mr={1}>
-              {activity.averageRating.toFixed(1)}
+              {activity.averageRating?.toFixed(1)}
             </Typography>
             <Rating
               name="rating-read"

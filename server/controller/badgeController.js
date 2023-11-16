@@ -39,7 +39,7 @@ export const createBadge = async (req, res) => {
       [{ ...newBadge, badgeImage: fileS3Location }],
       {
         session: session,
-      },
+      }
     );
 
     const createdBadge = await newBadgeCreated[0].save();
@@ -60,12 +60,12 @@ export const createBadge = async (req, res) => {
     const updatedBadge = await BadgeModel.findByIdAndUpdate(
       createdBadge._id,
       { images: imagesPathArr },
-      { new: true, session },
+      { new: true, session }
     );
 
     // Upon successful creation of badge, create a corresponding badge record for each client
     const clients = await ClientModel.find({ status: "APPROVED" }).session(
-      session,
+      session
     );
 
     for (const client of clients) {
@@ -95,6 +95,8 @@ export const createBadge = async (req, res) => {
         }
       });
 
+      console.log(sdgSet);
+
       if (
         createdBadge.sdgBadgeType === "GOLD" ||
         createdBadge.sdgBadgeType === "SILVER"
@@ -111,7 +113,7 @@ export const createBadge = async (req, res) => {
             ],
             {
               session: session,
-            },
+            }
           );
 
           const createdBadgeRecord = await newBadgeRecord[0].save({ session });
@@ -140,7 +142,7 @@ export const createBadge = async (req, res) => {
             ],
             {
               session: session,
-            },
+            }
           );
 
           const createdBadgeRecord = await newBadgeRecord[0].save({ session });
@@ -164,7 +166,7 @@ export const createBadge = async (req, res) => {
                 bookingCount: completedBookingsCount,
               },
             ],
-            { session: session },
+            { session: session }
           );
 
           const createdBadgeRecord = await newBadgeRecord[0].save();
@@ -211,7 +213,7 @@ export const updateBadge = async (req, res) => {
     const updatedBadge = await BadgeModel.findByIdAndUpdate(
       badgeId,
       updatedBadgeData,
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     );
 
     if (!updatedBadge) {

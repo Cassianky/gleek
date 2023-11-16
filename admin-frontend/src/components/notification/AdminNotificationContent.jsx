@@ -39,7 +39,6 @@ const timeCalculator = (givenDate) => {
 
 const AdminNotificationContent = ({ notification }) => {
   const { retrieveAndSetAllNotifications } = useNotificationStore();
-  const adminCredentials = useAdminStore((state) => state.admin);
   let calculatedTime = timeCalculator(notification.createdDate);
   const [isPopperOpen, setPopperOpen] = useState(false);
   const [popperAnchorEl, setPopperAnchorEl] = useState(null);
@@ -63,13 +62,13 @@ const AdminNotificationContent = ({ notification }) => {
       "/notification/updateNotificationAsRead",
       notification._id,
     );
-    retrieveAndSetAllNotifications(adminCredentials);
+    retrieveAndSetAllNotifications();
     handleClosePopper();
   };
 
   const handleDelete = () => {
     AxiosConnect.patch("/notification/deleteNotification", notification._id),
-      retrieveAndSetAllNotifications(adminCredentials);
+      retrieveAndSetAllNotifications();
     handleClosePopper();
   };
 

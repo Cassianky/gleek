@@ -39,6 +39,7 @@ import {
 } from "@mui/icons-material";
 import ChatIcon from "@mui/icons-material/Chat";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import useChatStore from "../zustand/ChatStore";
 
 function NavBar(props) {
   const { authenticated, client, logoutClient } = useClientStore();
@@ -54,9 +55,12 @@ function NavBar(props) {
   const { getCartItems, newCartItem, cartItems, cartItemsToCheckOut } =
     useCartStore();
   const { role, setRole } = useGlobalStore();
-  const { unreadNotificationsCount } = useNotificationStore();
+  const { retrieveAndSetAllNotifications, unreadNotificationsCount } =
+    useNotificationStore();
+  const { retrieveAndSetAllChatRooms, unreadChatroomCount } = useChatStore();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorE2, setAnchorE2] = React.useState(null);
+  const [fixedRole, setFixedRole] = useState(null);
 
   const open = Boolean(anchorEl);
   const open2 = Boolean(anchorE2);
@@ -121,6 +125,15 @@ function NavBar(props) {
   useEffect(() => {
     fetchCart();
   }, [newCartItem, client, cartItemsToCheckOut]);
+
+  useEffect(() => {
+    setFixedRole(role);
+    console.log(fixedRole);
+    if (fixedRole !== null) {
+      retrieveAndSetAllChatRooms(fixedRole);
+      retrieveAndSetAllNotifications(fixedRole);
+    }
+  }, [fixedRole, role, unreadChatroomCount, retrieveAndSetAllChatRooms]);
 
   const fetchCart = async () => {
     try {
@@ -272,7 +285,9 @@ function NavBar(props) {
                 color="accent"
                 sx={{ marginRight: "8px" }}
               >
-                <ChatIcon />
+                <Badge badgeContent={unreadChatroomCount} color="error">
+                  <ChatIcon />
+                </Badge>
               </IconButton>
               <IconButton
                 onClick={() => {
@@ -474,7 +489,9 @@ function NavBar(props) {
                 color="accent"
                 sx={{ marginRight: "8px" }}
               >
-                <ChatIcon />
+                <Badge badgeContent={unreadChatroomCount} color="error">
+                  <ChatIcon />
+                </Badge>
               </IconButton>
               <IconButton
                 onClick={() => {

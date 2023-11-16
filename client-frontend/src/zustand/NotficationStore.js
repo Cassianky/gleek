@@ -12,16 +12,20 @@ export const useNotificationStore = create((set) => ({
       {
         userRole: role,
       },
-    ).then((body) => {
-      console.log(body.data.data);
-      const allNotifications = body.data.data;
-      set({ notifications: allNotifications });
-      let unreadCount = 0;
-      allNotifications.map((notification) => {
-        notification.read === false ? unreadCount++ : unreadCount;
+    )
+      .then((body) => {
+        console.log(body.data.data);
+        const allNotifications = body.data.data;
+        set({ notifications: allNotifications });
+        let unreadCount = 0;
+        allNotifications.map((notification) => {
+          notification.read === false ? unreadCount++ : unreadCount;
+        });
+        set({ unreadNotificationsCount: unreadCount });
+        set({ loading: false });
+      })
+      .catch((error) => {
+        console.log("error in retrieveAndSetAllNotifications: ", error);
       });
-      set({ unreadNotificationsCount: unreadCount });
-      set({ loading: false });
-    });
   },
 }));

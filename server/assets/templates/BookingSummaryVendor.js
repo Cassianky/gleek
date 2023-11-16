@@ -59,7 +59,7 @@ export const BookingSummaryVendor = (booking) => {
          >
                <div>
                   <span class="ft145"><b>Attn: ${
-                    booking.vendorId.companyName
+                    booking.vendorName
                   } </b> <br /><b>${booking.vendorId.companyEmail}</b><br />
                   ${booking.vendorId.companyAddress}<br />
                   Singapore, ${booking.vendorId.companyPostalCode}</span>
@@ -106,18 +106,25 @@ export const BookingSummaryVendor = (booking) => {
                   </ul>
                </th>
                <th class="ft113" style="width: 10%">${booking.totalPax}</th>
-               <th class="ft113" style="width: 15%">$${
-                 booking.basePricePerPax
-               }</th>
+               <th class="ft113" style="width: 15%">$${Math.round(
+                 booking.totalVendorAmount / booking.totalPax,
+                 2,
+               )}</th>
                <th class="ft113" style="width: 15%; ">$${
-                 booking.totalCost > booking.basePricePerPax * booking.totalPax
+                 booking.vendorWeekendAddOnCost +
+                   booking.vendorOnlineAddOnCost +
+                   booking.vendorOfflineAddOnCost >
+                 0
                    ? booking.weekendAddOnCost +
                      booking.onlineAddOnCost +
                      booking.offlineAddOnCost
                    : 0
                }<th>
                <th class="ft113" style="width: 15%">$${
-                 booking.totalCost < booking.basePricePerPax * booking.totalPax
+                 booking.vendorWeekendAddOnCost +
+                   booking.vendorOnlineAddOnCost +
+                   booking.vendorOfflineAddOnCost <
+                 0
                    ? -(
                        booking.weekendAddOnCost +
                        booking.onlineAddOnCost +
@@ -125,7 +132,9 @@ export const BookingSummaryVendor = (booking) => {
                      )
                    : 0
                }<th>
-               <th class="ft113" style="width: 15%">$${booking.totalCost}</th>
+               <th class="ft113" style="width: 15%">$${
+                 booking.totalVendorAmount
+               }</th>
             </tr>
          </table>
             <hr style="color: #FFDBC3; height: 2.5px; background-color: #5C4B99"/>
@@ -139,7 +148,7 @@ export const BookingSummaryVendor = (booking) => {
                "
             >
                <p class="ft15" style="color: #000;">
-                  <b>Total price: $${booking.totalCost}</b>
+                  <b>Total price: $${booking.totalVendorAmount}</b>
                </p>
             </div>
          </div>

@@ -29,6 +29,9 @@ const chatroomSchema = mongoose.Schema({
   lastChatDate: {
     type: Date,
   },
+  latestMessageRead: {
+    type: Boolean,
+  },
 });
 
 const ChatroomModel = mongoose.model("Chatroom", chatroomSchema, "chatrooms");

@@ -39,7 +39,8 @@ const timeCalculator = (givenDate) => {
 };
 
 const NotificationContent = ({ notification }) => {
-  const { retrieveAndSetAllNotifications } = useNotificationStore();
+  const { retrieveAndSetAllNotifications, markAsRead, deleteNotification } =
+    useNotificationStore();
   const { role } = useGlobalStore();
   const rolePath = role.toLowerCase();
   let calculatedTime = timeCalculator(notification.createdDate);
@@ -61,23 +62,13 @@ const NotificationContent = ({ notification }) => {
   };
 
   const handleMarkAsRead = () => {
-    console.log(
-      `/notification/${rolePath}/updateNotificationAsRead/${notification._id}`,
-    );
-    AxiosConnect.patch(
-      `/notification/${rolePath}/updateNotificationAsRead/${notification._id}`,
-    );
+    markAsRead(rolePath, notification);
     retrieveAndSetAllNotifications(role);
     handleClosePopper();
   };
 
   const handleDelete = () => {
-    console.log(
-      `/notification/${rolePath}/deleteNotification/${notification._id}`,
-    );
-    AxiosConnect.patch(
-      `/notification/${rolePath}/deleteNotification/${notification._id}`,
-    );
+    deleteNotification(rolePath, notification);
     retrieveAndSetAllNotifications(role);
     handleClosePopper();
   };

@@ -1,3 +1,5 @@
+import { NewsletterTemplate } from "../assets/templates/NewsletterTemplate.js";
+
 export const createClientWelcomeMailOptions = (client) => {
   try {
     const text = `Hello, ${client.name}!`;
@@ -274,4 +276,47 @@ export const createDisableOrEnableEmailOptions = (user, isDisabled) => {
     text: message,
   };
   return options;
+};
+
+export const createCustomEdmMailOptions = (
+  client,
+  subject,
+  messageBody,
+  preSignedUrl,
+) => {
+  try {
+    const to = client.email;
+    const htmlContent = NewsletterTemplate({
+      recipientName: client.name,
+      messageBody: messageBody,
+      forEmail: true,
+    });
+
+    const attachments = [];
+    if (preSignedUrl !== undefined) {
+      // If preSignedUrl is not null, attach the image using preSignedUrl
+      attachments.push({
+        filename: "NewsletterImage.png",
+        href: preSignedUrl,
+        cid: "newsletter-image",
+      });
+    } else {
+      // If preSignedUrl is null, attach an image from the file path
+      attachments.push({
+        filename: "DefaultNewsletterImage.jpg",
+        path: "../server/assets/email/DefaultNewsletterImage.jpg",
+        cid: "newsletter-image",
+      });
+    }
+    const options = {
+      subject,
+      html: htmlContent,
+      attachments,
+      to,
+    };
+    return options;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
 };

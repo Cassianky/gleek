@@ -18,6 +18,7 @@ import activityTestController from "./controller/activityTestController.js";
 import notificationRoutes from "./routes/notificationRoute.js";
 import chatroomRoutes from "./routes/chatroomRoute.js";
 import chatMessageRoutes from "./routes/chatMessageRoute.js";
+import marketingRoutes from "./routes/gleekAdmin/marketingRoute.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
 
@@ -57,6 +58,7 @@ app.use("/client", client);
 app.use("/booking", bookingRoutes);
 app.use("/survey", surveyRoutes);
 app.use("/review", reviewRoutes);
+app.use("/marketing", marketingRoutes);
 app.use("/testimonial", testimonialRoutes);
 app.use("/badge", badgeRoutes);
 
@@ -125,27 +127,37 @@ io.on("connection", (socket) => {
   });
 
   socket.on("new message", (newMessageReceived) => {
-    console.log("socket on new message received::", newMessageReceived);
+    console.log(
+      "socket on new message received::",
+      newMessageReceived.messageContent
+    );
     let uniqueId;
     if (newMessageReceived.senderRole === "CLIENT") {
       if (newMessageReceived.chatRoom.admin === false) {
+        console.log("client send vendor receive");
         uniqueId = "VENDOR" + newMessageReceived.chatRoom.vendor;
       } else {
+        console.log("client send admin receive");
         uniqueId = "Admin";
       }
     } else if (newMessageReceived.senderRole === "VENDOR") {
       if (newMessageReceived.chatRoom.admin === false) {
+        console.log("vendor send client receive");
         uniqueId = "CLIENT" + newMessageReceived.chatRoom.client;
       } else {
+        console.log("vendor send admin receive");
         uniqueId = "Admin";
       }
     } else {
       if (newMessageReceived.chatRoom.client === null) {
+        console.log("admin send vendor receive");
         uniqueId = "VENDOR" + newMessageReceived.chatRoom.vendor;
       } else {
+        console.log("admin send client receive");
         uniqueId = "CLIENT" + newMessageReceived.chatRoom.client;
       }
     }
+    console.log("unique id to be sent: ", uniqueId);
     socket.to(uniqueId).emit("message received", newMessageReceived);
   });
 

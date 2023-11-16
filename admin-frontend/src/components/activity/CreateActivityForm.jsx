@@ -88,11 +88,13 @@ const StyledSubmitButton = styled(Button)`
 
 const errorTextPricePerPax = "Please fill in Price per Pax!";
 const errorTextEndInterval = "Please fill in end interval!";
+const errorPricePerPaxOrder = "Price Per Pax must be in descending order!";
 
 const CreateActivityForm = ({ themes, theme, vendors, admin, activity }) => {
   const navigate = useNavigate();
-  const { createActivity, saveActivity } = useActivityStore();
+  const { saveActivity } = useActivityStore();
   const { openSnackbar } = useSnackbarStore();
+  const [priceOrderError, setPriceOrderError] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(
     activity?.theme?._id ?? null,
   );
@@ -455,7 +457,15 @@ const CreateActivityForm = ({ themes, theme, vendors, admin, activity }) => {
         }
       });
       setPricingRangeError(errors);
-      if (!hasErrors) {
+      let isNonAscending = true;
+      for (let i = 0; i < pricingRanges.length - 1; i++) {
+        if (pricingRanges[i].pricePerPax < pricingRanges[i + 1].pricePerPax) {
+          isNonAscending = false;
+          break;
+        }
+      }
+      setPriceOrderError(!isNonAscending);
+      if (!hasErrors && isNonAscending) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
     } else if (activeStep === 2) {
@@ -1686,7 +1696,22 @@ const CreateActivityForm = ({ themes, theme, vendors, admin, activity }) => {
                                 width={"25%"}
                                 sx={{ fontSize: "1rem" }}
                               >
-                                Price Per Pax
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                  }}
+                                >
+                                  Price Per Pax
+                                  {priceOrderError && (
+                                    <Typography
+                                      fontSize="0.7rem"
+                                      color={theme.palette.error.main}
+                                    >
+                                      {errorPricePerPaxOrder}
+                                    </Typography>
+                                  )}
+                                </div>
                               </TableCell>
                               <TableCell
                                 width={"25%"}

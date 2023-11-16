@@ -4,11 +4,7 @@ import {
   NotificationEvent,
 } from "../util/notificationRelatedEnum.js";
 import { Role } from "../util/roleEnum.js";
-import ActivityModel from "../model/activityModel.js";
-import ClientModel from "../model/clientModel.js";
 import VendorModel from "../model/vendorModel.js";
-import AdminModel from "../model/adminModel.js";
-import BookingModel from "../model/bookingModel.js";
 import notificationModel from "../model/notificationModel.js";
 
 export const getAdminNotifications = async (req, res) => {
@@ -32,7 +28,6 @@ export const getNonAdminNotifications = async (req, res) => {
         ? Role.VENDOR
         : Role.CLIENT;
     const recipientId = req.user._id;
-    console.log("receipient role, ", role);
 
     const allNotifications = await NotificationModel.find({
       recipient: recipientId,
@@ -49,7 +44,7 @@ export const getNonAdminNotifications = async (req, res) => {
 
 export const createNotification = async (req, session) => {
   try {
-    console.log("req in notification creation controller:", req);
+    console.log("req in notification creation controller:");
 
     const newNotification = new NotificationModel({
       senderRole: req.senderRole,
@@ -83,7 +78,6 @@ export const createNotification = async (req, session) => {
         break;
 
       case NotificationEvent.ACTIVITY:
-        console.log("activity requesting approval::", req.eventObj);
         const activityVendor = await VendorModel.findById(req.sender).exec();
         newNotification.title = "Activity Notification";
         if (req.notificationAction === NotificationAction.CREATE) {
@@ -104,13 +98,67 @@ export const createNotification = async (req, session) => {
         }
         break;
 
-      // case NotificationEvent.BOOKING:
-      //     const bookingEvent = BookingModel.findById(req.eventId).populate("client").populate("activity");
-      //     newNotification.title = "Booking Notification";
-      //     newNotification.text =
-      //         `A booking for activity ${bookingEvent.activity.title} is ${req.notificationAction.toLowerCase()}ed by
-      //         ${req.senderRole}.`;
-      //     break;
+      case NotificationEvent.BOOKING:
+        newNotification.title = "Booking Notification";
+        if (req.notificationAction === NotificationAction.REQUEST) {
+          const booking = req.eventObj;
+          newNotification.text = `${
+            booking.clientId.name
+          } is requesting to book ${booking.activityId.title.toUpperCase()} 
+              by ${booking.vendorId.companyName.toUpperCase()}.`;
+        } else if (req.notificationAction === NotificationAction.APPROVE) {
+          const booking = req.eventObj;
+          newNotification.text = `Your booking for activity ${booking.activityId.title.toUpperCase()} 
+              has been accepted by the vendor`;
+        } else if (
+          req.notificationAction === NotificationAction.APPROVEBYADMIN
+        ) {
+          const booking = req.eventObj;
+          newNotification.text = `Your booking for activity ${booking.activityTitle.toUpperCase()} 
+              has been accepted by the admin`;
+        } else if (req.notificationAction === NotificationAction.REJECT) {
+          const booking = req.eventObj;
+          newNotification.text = `Your booking for activity ${booking.activityId.title.toUpperCase()} 
+              has been rejected by the vendor.`;
+        } else if (
+          req.notificationAction === NotificationAction.REJECTBYADMIN
+        ) {
+          const booking = req.eventObj;
+          newNotification.text = `Your booking for activity ${booking.activityTitle.toUpperCase()} 
+              has been rejected by the admin.`;
+        } else if (req.notificationAction === NotificationAction.CANCEL) {
+          const booking = req.eventObj;
+          newNotification.text = `Your booking for activity ${booking.activityId.title.toUpperCase()} 
+              has been cancelled by the vendor.`;
+        } else if (
+          req.notificationAction === NotificationAction.CANCELBYADMIN
+        ) {
+          const booking = req.eventObj;
+          newNotification.text = `Your booking for activity ${booking.activityTitle.toUpperCase()} 
+              has been cancelled by the admin.`;
+        } else if (
+          req.notificationAction === NotificationAction.APPROVEUPDATEADMIN
+        ) {
+          const booking = req.eventObj;
+          newNotification.text = `Client ${booking.clientId.name.toUpperCase()} booking for activity 
+              ${booking.activityId.title.toUpperCase()} has been accepted by 
+              vendor ${booking.vendorName.toUpperCase()}.`;
+        } else if (
+          req.notificationAction === NotificationAction.REJECTUPDATEADMIN
+        ) {
+          const booking = req.eventObj;
+          newNotification.text = `Client ${booking.clientId.name.toUpperCase()} booking for activity 
+              ${booking.activityId.title.toUpperCase()} has been rejected by 
+              vendor ${booking.vendorName.toUpperCase()}.`;
+        } else if (
+          req.notificationAction === NotificationAction.CANCELUPDATEADMIN
+        ) {
+          const booking = req.eventObj;
+          newNotification.text = `Client ${booking.clientId.name.toUpperCase()} booking for activity 
+              ${booking.activityId.title.toUpperCase()} has been cancelled by 
+              vendor ${booking.vendorName.toUpperCase()}.`;
+        }
+        break;
     }
 
     console.log("new notification after save:", newNotification);
@@ -123,8 +171,6 @@ export const createNotification = async (req, session) => {
 
 export const updateNotificationAsRead = async (req, res) => {
   try {
-    console.log("_id", req.params.id);
-
     const updatedNotification = await notificationModel.findByIdAndUpdate(
       { _id: req.params.id },
       { read: true },
@@ -132,8 +178,23 @@ export const updateNotificationAsRead = async (req, res) => {
 
     console.log(updatedNotification);
 
+    const role =
+      req.cookies.userRole.toUpperCase() === Role.VENDOR
+        ? Role.VENDOR
+        : Role.CLIENT;
+
+    const recipientId = req.user._id;
+    console.log("In update notification read:");
+    console.log(role);
+    console.log(req.user._id);
+
+    const allNotifications = await NotificationModel.find({
+      recipient: recipientId,
+      $and: [{ recipientRole: role }],
+    }).sort({ createdDate: -1 });
+
     res.status(200).json({
-      message: "Notification successfully marked as read",
+      data: allNotifications,
     });
   } catch (error) {
     console.log("notification error", error);
@@ -143,12 +204,62 @@ export const updateNotificationAsRead = async (req, res) => {
 
 export const deleteNotification = async (req, res) => {
   try {
-    console.log("_id", req.params.id);
-
     await notificationModel.findByIdAndDelete(req.params.id);
 
+    const role =
+      req.cookies.userRole.toUpperCase() === Role.VENDOR
+        ? Role.VENDOR
+        : Role.CLIENT;
+
+    const recipientId = req.user._id;
+    console.log("In delete notification read:");
+    console.log(role);
+    console.log(req.user._id);
+
+    const allNotifications = await NotificationModel.find({
+      recipient: recipientId,
+      $and: [{ recipientRole: role }],
+    }).sort({ createdDate: -1 });
+
     res.status(200).json({
-      message: "Notification successfully deleted",
+      data: allNotifications,
+    });
+  } catch (error) {
+    console.log("notification error", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const adminUpdateNotificationAsRead = async (req, res) => {
+  try {
+    const updatedNotification = await notificationModel.findByIdAndUpdate(
+      { _id: req.params.id },
+      { read: true },
+    );
+
+    const allNotifications = await NotificationModel.find({
+      recipientRole: Role.ADMIN,
+    }).sort({ createdDate: -1 });
+
+    res.status(200).json({
+      data: allNotifications,
+    });
+  } catch (error) {
+    console.log("notification error", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const adminDeleteNotification = async (req, res) => {
+  try {
+    await notificationModel.findByIdAndDelete(req.params.id);
+
+    const allNotifications = await NotificationModel.find({
+      recipientRole: Role.ADMIN,
+    }).sort({ createdDate: -1 });
+
+    res.status(200).json({
+      data: allNotifications,
     });
   } catch (error) {
     console.log("notification error", error);

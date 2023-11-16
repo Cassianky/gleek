@@ -1,26 +1,30 @@
-import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
+import DeleteIcon from "@mui/icons-material/Delete";
+import React, { useState } from "react";
+
 import {
-  TextField,
+  Box,
   Button,
-  Typography,
   FormControl,
-  InputLabel,
+  FormGroup,
   FormHelperText,
   Grid,
+  IconButton,
+  ImageList,
+  ImageListItem,
+  ImageListItemBar,
+  InputLabel,
   MenuItem,
   Select,
-  FormGroup,
-  Box,
-  Dialog,
-  DialogTitle,
-  DialogActions,
   Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { Fragment, useCallback, useRef } from "react";
 import Paper from "@mui/material/Paper";
-import { ImageConfig } from "../../utils/ImageConfig";
+import { useRef } from "react";
 import AxiosConnect from "../../utils/AxiosConnect";
+import ImageAndFileUpload from "./ImageAndFileUpload";
+import { ImageConfig } from "../../utils/ImageConfig";
 
 const StyledContainer = styled(Paper)`
   padding: 20px;
@@ -47,8 +51,18 @@ export const CustomBox = styled(Box)`
   }
 `;
 
+const DeleteIconButton = styled(IconButton)`
+  background-color: white;
+  border-radius: 50%;
+  left: 5px;
+  top: 5px;
+`;
+
 const CreateBadgeForm = (theme) => {
   const inputRef = useRef(null);
+  const [badgeImages, setBadgeImages] = useState([]);
+  const [imageListToEdit, setImageListToEdit] = useState([]);
+
   const [formData, setFormData] = useState({
     name: "",
     badgeType: "",
@@ -186,6 +200,15 @@ const CreateBadgeForm = (theme) => {
     }));
   };
 
+  const handleRemoveImage = (image) => {
+    setImageListToEdit((oldState) =>
+      oldState.filter((item) => item.src !== image.src)
+    );
+    const updatedList = [...badgeImages];
+    updatedList.splice(badgeImages.indexOf(image.file), 1);
+    setBadgeImages(updatedList);
+  };
+
   const wrapperRef = useRef(null);
 
   const [open, setOpen] = useState();
@@ -212,6 +235,7 @@ const CreateBadgeForm = (theme) => {
         badgeImagePreview: URL.createObjectURL(selectedFile), // Store the URL of the selected image
         badgeImage: selectedFile, // Store the URL of the selected image
       }));
+
       // Clear the input value
       inputRef.current.value = ""; // Use the ref to clear the input value
     }
@@ -239,11 +263,15 @@ const CreateBadgeForm = (theme) => {
     if (formData.badgeImage) {
       formDataN.append("image", formData.badgeImage);
     }
-    if (!formData.badgeImage) {
-      console.error("No file has been attached");
-      return;
+
+    // if (!formData.badgeImage) {
+    //   console.error("No file has been attached");
+    //   return;
+    // }
+    for (let i = 0; i < badgeImages.length; i++) {
+      formDataN.append("images", badgeImages[i]);
     }
-    const responseStatus = await AxiosConnect.post(
+    const responseStatus = await AxiosConnect.postMultiPart(
       "/badge/createBadge",
       formDataN
     );
@@ -529,6 +557,82 @@ const CreateBadgeForm = (theme) => {
                     />
                   </Box>
                 </CustomBox>
+              </FormGroup>
+            </Grid>
+          </Grid>
+        </StyledContainer>
+        <StyledContainer elevation={3}>
+          <Grid container spacing={2} alignItems="left" justifyContent="left">
+            <Grid item xs={12}>
+              <Typography
+                // color={theme.palette.primary.main}
+                paddingTop={2}
+                component="div"
+                fontSize={"1.25rem"}
+              >
+                Badge Description Images
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <ImageList>
+                {/* {existingImageList?.map((image, index) => {
+                  return (
+                    <ImageListItem key={index}>
+                      <img src={image} loading="lazy" />
+                      <ImageListItemBar
+                        sx={{
+                          background: "none",
+                        }}
+                        position="top"
+                        actionIcon={
+                          <DeleteIconButton
+                            sx={{
+                              backgroundColor: "white",
+                              color: "#D32F2F",
+                            }}
+                            onClick={() => handleRemoveExistingImage(image)}
+                          >
+                            <DeleteIcon />
+                          </DeleteIconButton>
+                        }
+                        actionPosition="left"
+                      />
+                    </ImageListItem>
+                  );
+                })} */}
+                {imageListToEdit?.map((image, index) => {
+                  return (
+                    <ImageListItem key={index}>
+                      <img src={image.src} loading="lazy" />
+                      <ImageListItemBar
+                        sx={{ background: "none" }}
+                        position="top"
+                        actionIcon={
+                          <DeleteIconButton
+                            sx={{ backgroundColor: "white", color: "#D32F2F" }}
+                            onClick={() => handleRemoveImage(image)}
+                          >
+                            <DeleteIcon />
+                          </DeleteIconButton>
+                        }
+                        actionPosition="left"
+                      />
+                    </ImageListItem>
+                  );
+                })}
+              </ImageList>
+            </Grid>
+            <Grid item xs={12}>
+              <FormGroup>
+                <ImageAndFileUpload
+                  limit={4}
+                  name={"idk"}
+                  size={5000000}
+                  setActivityImages={setBadgeImages}
+                  activityImages={badgeImages}
+                  setImageListToEdit={setImageListToEdit}
+                  // existingImageList={existingImageList}
+                />
               </FormGroup>
             </Grid>
           </Grid>

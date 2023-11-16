@@ -77,13 +77,19 @@ const EditThemeModal = ({
     let error = "";
     let found = "";
     let isChild = false;
+
     if (currentTheme?.parent) {
       isChild = true;
     }
     if (isChild) {
-      found = allThemes?.find((t) => t?.name === parentTheme);
+      found = allThemes?.find(
+        (t) => t?.name === parentTheme && currentTheme?.name != parentTheme,
+      );
     } else {
-      found = allThemes?.data?.find((t) => t?.parent?.name === parentTheme);
+      found = allThemes?.data?.find(
+        (t) =>
+          t?.parent?.name === parentTheme && currentTheme?.name != parentTheme,
+      );
     }
 
     if (found) {

@@ -32,8 +32,12 @@ import AdminChatpage from "./components/Chat/AdminChatPage";
 import ManageTestimonials from "./components/testimonial/ManageTestimonials.jsx";
 import TestimonialDetails from "./components/testimonial/TestimonialDetails.jsx";
 import VendorDetails from "./components/vendor/VendorDetails";
+import ManageNewsletters from "./components/marketing/ManageNewsletters";
+import ViewMailingLists from "./components/marketing/ViewMailingLists";
 import Badges from "./components/badges/Badges.jsx";
 import CreateBadgePage from "./components/badges/CreateBadgePage.jsx";
+import ManageFeaturedActivities from "./components/featured/ManageFeaturedActivities.jsx";
+import EditFeaturedActivity from "./components/featured/EditFeaturedActivity.jsx";
 
 function App() {
   return (
@@ -283,6 +287,60 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreateBadgePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/newsletters"
+            element={
+              <ProtectedRoute>
+                <ManageNewsletters />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/badges"
+            element={
+              <ProtectedRoute>
+                <Badges />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/mailingLists"
+            element={
+              <ProtectedRoute>
+                <ViewMailingLists />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/createBadge"
+            element={
+              <ProtectedRoute>
+                <CreateBadgePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/featured"
+            element={
+              <ProtectedRoute>
+                <ManageFeaturedActivities />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/featured/:activityId"
+            element={
+              <ProtectedRoute>
+                <EditFeaturedActivity />
               </ProtectedRoute>
             }
           />

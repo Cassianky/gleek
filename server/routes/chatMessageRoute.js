@@ -17,6 +17,7 @@ router
 router.route("/admin/allMessages/:chatroomId").get(allMessages);
 router.route("/client/sendMessage").post(clientVerifyToken, sendMessage);
 router.route("/vendor/sendMessage").post(vendorVerifyToken, sendMessage);
+
 router.route("/admin/sendMessage").post(sendMessage);
 
 export default router;

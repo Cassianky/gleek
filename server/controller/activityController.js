@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import ActivityModel from "../model/activityModel.js";
 import ActivityPricingRulesModel from "../model/activityPricingRules.js";
 import ApprovalStatusChangeLog from "../model/approvalStatusChangeLog.js";
+import FeaturedActivity from "../model/featuredActivityModel.js";
 import ThemeModel from "../model/themeModel.js";
 import {
   findMinimumPricePerPax,
@@ -21,6 +22,7 @@ import pdf from "html-pdf";
 import fs from "fs";
 import path from "path";
 import Client from "../model/clientModel.js";
+import dayjs from "dayjs";
 
 // yt: this endpoint retrieves and returns PUBLISHED & PENDING APPROVAL activities only
 export const getAllActivities = async (req, res) => {
@@ -321,8 +323,6 @@ export const saveActivity = async (req, res) => {
       modifiedDate: Date.now(),
     };
 
-    console.log("linked vendor: ", req.user);
-
     activity["weekendPricing"] = {
       amount: parsedWeekend?.amount,
       isDiscount: parsedWeekend?.isDiscount,
@@ -379,7 +379,6 @@ export const saveActivity = async (req, res) => {
           },
         );
         savedActivity = rejectDraft;
-        console.log("New saved activity", savedActivity);
       }
       // submit
     } else if (activityId) {
@@ -475,7 +474,6 @@ export const saveActivity = async (req, res) => {
     console.log("Saved Activity is: ", savedActivity);
 
     const processedS3ImageUrlToBeKept = [];
-    console.log("updatedImageList yoo", updatedImageList);
 
     if (updatedImageList !== undefined && updatedImageList.length > 0) {
       for (let i = 0; i < updatedImageList.length; i++) {
@@ -898,9 +896,46 @@ const findAllThemes = async () => {
   return parentThemes;
 };
 
+const findAllActiveThemes = async () => {
+  const themes = await ThemeModel.find({ status: "Active" }).populate("parent");
+
+  const parentThemesWithChildren = {};
+
+  themes.forEach((theme) => {
+    const parentId = theme.parent ? theme.parent._id.toString() : null;
+    if (!parentThemesWithChildren[parentId]) {
+      if (theme.parent?.status === "Active") {
+        parentThemesWithChildren[parentId] = {
+          parent: theme.parent,
+          children: [],
+        };
+      }
+    }
+    if (theme.parent?.status === "Active") {
+      parentThemesWithChildren[parentId].children.push(theme);
+    }
+  });
+  const parentThemes = Object.values(parentThemesWithChildren);
+  return parentThemes;
+};
+
 export const getAllThemes = async (req, res) => {
   try {
     const parentThemes = await findAllThemes();
+    res.status(200).json({
+      data: parentThemes,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: `Themes cannot be added: ${error.message}`,
+    });
+  }
+};
+
+export const getAllActiveThemes = async (req, res) => {
+  try {
+    const parentThemes = await findAllActiveThemes();
     res.status(200).json({
       data: parentThemes,
     });
@@ -1156,6 +1191,166 @@ export const getActivityTitle = async (req, res) => {
     res.status(200).json(foundActivity.title);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getActivitiesWithFeatureStatus = async (req, res) => {
+  try {
+    const activities = await ActivityModel.find()
+      .populate("linkedVendor")
+      .populate("theme")
+      .populate("subtheme");
+
+    const publishedActivities = activities.filter((row) => {
+      return (
+        row.approvalStatus === "Published" &&
+        row.isDraft === false &&
+        row.disabled === false
+      );
+    });
+
+    const activitiesWithFeatureStatus = await Promise.all(
+      publishedActivities.map(async (activity) => {
+        const featuredActivity = await FeaturedActivity.findOne({
+          activity: activity._id,
+        });
+
+        let featureStatus = "Inactive";
+
+        if (featuredActivity) {
+          if (
+            featuredActivity.isFeatured &&
+            !featuredActivity.showOnSpecificDates
+          ) {
+            featureStatus = "Active";
+          } else if (
+            featuredActivity.isFeatured &&
+            featuredActivity.showOnSpecificDates
+          ) {
+            featureStatus = "Sometimes Active";
+          }
+        }
+
+        return {
+          ...activity.toObject(),
+          featureStatus,
+        };
+      }),
+    );
+
+    res.status(200).json({
+      publishedActivities: activitiesWithFeatureStatus,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getFeaturedActivitiesToShowToday = async (req, res) => {
+  try {
+    const today = dayjs().startOf("day");
+
+    const featuredActivities = await FeaturedActivity.find({
+      isFeatured: true,
+    }).populate("activity");
+
+    const featuredActivitiesToShowToday = featuredActivities.filter(
+      (featuredActivity) => {
+        if (!featuredActivity.showOnSpecificDates) {
+          // If isFeatured and not shownOnSpecificDates, it can always be shown
+          return true;
+        }
+
+        // If isFeatured and shownOnSpecificDates, check if today's date is in the showOnDates array
+        const showOnDates = featuredActivity.showOnDates.map((date) =>
+          dayjs(date).startOf("day"),
+        );
+
+        return showOnDates.some((date) => date.isSame(today, "day"));
+      },
+    );
+    const activities = featuredActivitiesToShowToday.map((fa) => fa.activity);
+
+    // Prepare additional details for each activity
+    const preSignedPromises = activities.map(async (activity) => {
+      await prepareActivityMinimumPricePerPaxAndSingleImage(activity);
+    });
+
+    await Promise.all(preSignedPromises);
+
+    res.status(200).json(activities);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const updateFeaturedActivity = async (req, res) => {
+  try {
+    const activityId = req.params.activityId;
+    const showOnDates = req.body.showOnDates;
+    const isFeatured = req.body.isFeatured;
+    const showOnSpecificDates = req.body.showOnSpecificDates;
+
+    // Check if the activity with the given ID exists
+    const activity = await ActivityModel.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ error: "Activity not found" });
+    }
+
+    let featuredActivity = await FeaturedActivity.findOne({
+      activity: activityId,
+    });
+
+    if (featuredActivity) {
+      // Update the existing FeaturedActivity record
+      featuredActivity.isFeatured = isFeatured;
+      featuredActivity.showOnSpecificDates = showOnSpecificDates;
+      featuredActivity.showOnDates = showOnDates || [];
+    } else {
+      // Create a new FeaturedActivity object
+      featuredActivity = new FeaturedActivity({
+        activity: activityId,
+        isFeatured,
+        showOnSpecificDates: showOnSpecificDates,
+        showOnDates: showOnDates || [],
+      });
+    }
+
+    const savedFeaturedActivity = await featuredActivity.save();
+
+    return res.status(200).json(savedFeaturedActivity);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getFeaturedActivity = async (req, res) => {
+  try {
+    const activityId = req.params.activityId;
+    const activity = await ActivityModel.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ error: "Activity not found" });
+    }
+
+    const featuredActivity = await FeaturedActivity.findOne({
+      activity: activityId,
+    }).populate("activity");
+
+    // If a featured activity exists, return it
+    if (featuredActivity) {
+      return res.status(200).json(featuredActivity);
+    } else {
+      return res.status(200).json({
+        activity: activity,
+        isFeatured: false,
+        showOnSpecificDates: false,
+        showOnDates: [],
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 

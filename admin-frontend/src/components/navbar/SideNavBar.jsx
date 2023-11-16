@@ -16,6 +16,7 @@ const activityManagementList = [
   { "Activity Approvals": "/viewPublishedActivities" },
   { "View My Activities": "/viewActivityDrafts" },
   { "Activity Themes": "/activityThemes" },
+  { "Featured Activities": "/featured" },
 ];
 const userManagementList = [
   { "Admin Team": "/adminTeam" },
@@ -30,6 +31,10 @@ const surveyManagementList = [
   { "View Submitted Surveys": "/surveys" },
   { "Manage Reviews": "/reviews" },
   { "Manage Testimonials": "/testimonials" },
+];
+const marketingManagementList = [
+  { "Manage Newsletters": "/newsletters" },
+  { "View Mailing Lists": "/mailingLists" },
 ];
 const badgeManagementList = [{ "View Badges": "/badges" }];
 
@@ -47,7 +52,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
   const navigate = useNavigate();
   const selectedItem = useSelectedNavItemStore((state) => state.selectedItem);
   const setSelectedItem = useSelectedNavItemStore(
-    (state) => state.setSelectedItem
+    (state) => state.setSelectedItem,
   );
   const handleItemClick = async (item, link) => {
     navigate(link);
@@ -89,7 +94,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
                     onClick={() =>
                       handleItemClick(
                         Object.keys(item)[0],
-                        item[Object.keys(item)[0]]
+                        item[Object.keys(item)[0]],
                       )
                     }
                   >
@@ -118,7 +123,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
                     onClick={() =>
                       handleItemClick(
                         Object.keys(item)[0],
-                        item[Object.keys(item)[0]]
+                        item[Object.keys(item)[0]],
                       )
                     }
                   >
@@ -164,6 +169,30 @@ const SideNavBar = ({ isSidebarOpen }) => {
           </Box>
           <List>
             {surveyManagementList.map((item, index) => (
+              <StyledLink to={item[Object.keys(item)[0]]} key={index}>
+                <ListItem key={Object.keys(item)[0]} disablePadding>
+                  <ListItemButton
+                    selected={selectedItem === Object.keys(item)[0]}
+                    onClick={() => handleItemClick(Object.keys(item)[0])}
+                  >
+                    <ListItemText primary={Object.keys(item)[0]} />
+                  </ListItemButton>
+                </ListItem>
+              </StyledLink>
+            ))}
+          </List>
+          <Divider />
+          <Box sx={{ paddingLeft: 2, paddingTop: 2 }}>
+            <Typography
+              fontWeight={700}
+              color={theme.palette.primary.main}
+              fontSize={20}
+            >
+              Marketing Management
+            </Typography>
+          </Box>
+          <List>
+            {marketingManagementList.map((item, index) => (
               <StyledLink to={item[Object.keys(item)[0]]} key={index}>
                 <ListItem key={Object.keys(item)[0]} disablePadding>
                   <ListItemButton

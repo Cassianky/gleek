@@ -92,7 +92,7 @@ const ViewActiveBookings = () => {
       flex: 1,
       sortable: false,
       renderCell: (params) => {
-        return <InvoiceDownloadButton />;
+        return <InvoiceDownloadButton bookingId={params.row._id} />;
       },
     },
     {

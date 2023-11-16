@@ -171,8 +171,6 @@ export const createNotification = async (req, session) => {
 
 export const updateNotificationAsRead = async (req, res) => {
   try {
-    // console.log("_id", req.params.id);
-
     const updatedNotification = await notificationModel.findByIdAndUpdate(
       { _id: req.params.id },
       { read: true },
@@ -180,8 +178,23 @@ export const updateNotificationAsRead = async (req, res) => {
 
     console.log(updatedNotification);
 
+    const role =
+      req.cookies.userRole.toUpperCase() === Role.VENDOR
+        ? Role.VENDOR
+        : Role.CLIENT;
+
+    const recipientId = req.user._id;
+    console.log("In update notification read:");
+    console.log(role);
+    console.log(req.user._id);
+
+    const allNotifications = await NotificationModel.find({
+      recipient: recipientId,
+      $and: [{ recipientRole: role }],
+    }).sort({ createdDate: -1 });
+
     res.status(200).json({
-      message: "Notification successfully marked as read",
+      data: allNotifications,
     });
   } catch (error) {
     console.log("notification error", error);
@@ -191,12 +204,62 @@ export const updateNotificationAsRead = async (req, res) => {
 
 export const deleteNotification = async (req, res) => {
   try {
-    // console.log("_id", req.params.id);
-
     await notificationModel.findByIdAndDelete(req.params.id);
 
+    const role =
+      req.cookies.userRole.toUpperCase() === Role.VENDOR
+        ? Role.VENDOR
+        : Role.CLIENT;
+
+    const recipientId = req.user._id;
+    console.log("In delete notification read:");
+    console.log(role);
+    console.log(req.user._id);
+
+    const allNotifications = await NotificationModel.find({
+      recipient: recipientId,
+      $and: [{ recipientRole: role }],
+    }).sort({ createdDate: -1 });
+
     res.status(200).json({
-      message: "Notification successfully deleted",
+      data: allNotifications,
+    });
+  } catch (error) {
+    console.log("notification error", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const adminUpdateNotificationAsRead = async (req, res) => {
+  try {
+    const updatedNotification = await notificationModel.findByIdAndUpdate(
+      { _id: req.params.id },
+      { read: true },
+    );
+
+    const allNotifications = await NotificationModel.find({
+      recipientRole: Role.ADMIN,
+    }).sort({ createdDate: -1 });
+
+    res.status(200).json({
+      data: allNotifications,
+    });
+  } catch (error) {
+    console.log("notification error", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const adminDeleteNotification = async (req, res) => {
+  try {
+    await notificationModel.findByIdAndDelete(req.params.id);
+
+    const allNotifications = await NotificationModel.find({
+      recipientRole: Role.ADMIN,
+    }).sort({ createdDate: -1 });
+
+    res.status(200).json({
+      data: allNotifications,
     });
   } catch (error) {
     console.log("notification error", error);

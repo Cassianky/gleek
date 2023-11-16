@@ -17,6 +17,7 @@ const useBlockoutStore = create((set) => ({
 
       set({ isLoadingactivitiesWithBlockouts: false, activitiesWithBlockouts });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -30,6 +31,7 @@ const useBlockoutStore = create((set) => ({
 
       set({ isLoadingBlockoutsForActivity: false, blockoutsForActivity });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -56,6 +58,7 @@ const useBlockoutStore = create((set) => ({
         activitiesWithBlockouts: activities,
       });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -73,6 +76,7 @@ const useBlockoutStore = create((set) => ({
       const blockoutsForActivity = response.data.blockedTimeslots;
       set({ isLoadingBlockoutsForActivity: false, blockoutsForActivity });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -91,6 +95,7 @@ const useBlockoutStore = create((set) => ({
       const blockoutsForActivity = response.data.blockedTimeslots;
       set({ isLoadingBlockoutsForActivity: false, blockoutsForActivity });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },

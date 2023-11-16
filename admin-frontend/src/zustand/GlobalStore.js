@@ -58,6 +58,7 @@ export const useAdminStore = create((set) => ({
       return true;
     } catch (error) {
       console.log(error);
+      console.log(error.message);
       setTimeout(() => {
         set({
           adminError: error,
@@ -193,6 +194,54 @@ export const useAdminStore = create((set) => ({
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  },
+}));
+
+export const useFeaturedActivityStore = create((set) => ({
+  activities: null,
+  featuredActivity: null,
+  isLoadingFeaturedActivity: true,
+  getActivitiesWithFeatureStatus: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/activity/feature/activities");
+      set({
+        activities: response.data.publishedActivities,
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getFeaturedActivity: async (activityId) => {
+    try {
+      const res = await AxiosConnect.get(`/activity/feature/${activityId}`);
+      console.log(res.data);
+      set({
+        featuredActivity: res.data,
+        isLoadingFeaturedActivity: false,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  },
+  updateFeaturedActivity: async (activityId, updateFeaturedActivity) => {
+    try {
+      const res = await AxiosConnect.post(
+        `/activity/feature/${activityId}`,
+        updateFeaturedActivity,
+      );
+      set({
+        featuredActivity: res.data,
+        isLoadingFeaturedActivity: false,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
     }
   },
 }));
@@ -351,6 +400,16 @@ export const useThemeStore = create((set) => ({
       console.error(error);
     }
   },
+  getActiveThemes: async () => {
+    try {
+      set({ isThemeLoading: true });
+      const response = await AxiosConnect.get("/activity/getActiveThemes");
+      set({ themes: response.data });
+      set({ isThemeLoading: false });
+    } catch (error) {
+      console.error(error);
+    }
+  },
   addThemes: async (themes, status) => {
     const data = { themes, status };
     try {
@@ -413,22 +472,22 @@ export const useVendorStore = create((set) => ({
   },
   updateVendor: async (id, payload) => {
     try {
-      set(() => ({ isLoading: true }));
+      set(() => ({ isVendorLoading: true }));
       await AxiosConnect.patch("/vendor/updateVendor", id, payload);
       const response = await AxiosConnect.get("/vendor/viewAllVendors");
       set({ vendors: response.data });
-      set(() => ({ isLoading: false }));
+      set(() => ({ isVendorLoading: false }));
     } catch (error) {
       console.error(error);
     }
   },
   createVendor: async (vendorData) => {
     try {
-      set({ isLoading: true });
+      set({ isVendorLoading: true });
       const response = await AxiosConnect.post("/vendor/addVendor", vendorData);
       set({ vendor: response.data });
       setTimeout(() => {
-        set({ isLoading: false });
+        set({ isVendorLoading: false });
       }, 500);
       return true;
     } catch (error) {
@@ -447,16 +506,50 @@ export const useVendorStore = create((set) => ({
       console.error(error);
     }
   },
-  vendorDetails: {},
+  // vendorDetails: {},
   getVendorDetails: async (vendorId) => {
     try {
-      set({ isLoading: true });
-      console.log("vendorId", vendorId);
+      set({ isVendorLoading: true });
+      console.log("loading get vendor details vendorId", vendorId);
       const response = await AxiosConnect.get(`/vendor/viewVendor/${vendorId}`);
-      set({ vendorDetails: response.data });
-      set({ isLoading: false });
+      console.log(response);
+      set({ vendor: response.data });
+      set({ isVendorLoading: false });
+    } catch (error) {
+      set({ isVendorLoading: false });
+      console.error(error);
+    }
+  },
+  hasActiveBookings: async (vendorId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/vendor/hasActiveBookings/${vendorId}`,
+      );
+      return response.data;
     } catch (error) {
       console.error(error);
+      throw new Error(error.message);
+    }
+  },
+  toggleIsDisabled: async (vendorId, isDisabled) => {
+    try {
+      set(() => ({ isVendorLoading: true }));
+      console.log(vendorId);
+      const toggleResponse = await AxiosConnect.patch(
+        "/vendor/toggleVendorIsDisabled",
+        vendorId,
+        {
+          isDisabled: isDisabled,
+        },
+      );
+      const response = await AxiosConnect.get("/vendor/viewAllVendors");
+      set({ vendors: response.data });
+      set(() => ({ isVendorLoading: false }));
+      return toggleResponse.data.message;
+    } catch (error) {
+      set(() => ({ isVendorLoading: false }));
+      console.error(error.message);
+      throw new Error(error.message);
     }
   },
 }));
@@ -496,6 +589,38 @@ export const useClientStore = create((set) => ({
       set({ isLoading: false });
     } catch (error) {
       console.error(error);
+    }
+  },
+  hasActiveBookings: async (clientId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/client/hasActiveBookings/${clientId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  },
+  toggleIsDisabled: async (clientId, isDisabled) => {
+    try {
+      set(() => ({ isLoading: true }));
+      console.log(clientId);
+      const toggleResponse = await AxiosConnect.patch(
+        "/client/toggleClientIsDisabled",
+        clientId,
+        {
+          isDisabled: isDisabled,
+        },
+      );
+      const response = await AxiosConnect.get("/client/getAllClients");
+      set({ clients: response.data });
+      set(() => ({ isLoading: false }));
+      return toggleResponse.data.message;
+    } catch (error) {
+      set(() => ({ isLoading: false }));
+      console.error(error.message);
+      throw new Error(error.message);
     }
   },
 }));
@@ -631,6 +756,153 @@ export const useBookingStore = create((set) => ({
       throw new Error(error.message);
     }
   },
+  getBookingSummaryPdf: async (id) => {
+    try {
+      const response = await AxiosConnect.post(
+        `/booking/downloadBookingSummaryUrl/${id}`,
+      );
+      window.open(
+        `http://localhost:5000/booking/downloadBookingSummaryPdf/${response.data}`,
+      );
+      return;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message);
+    }
+  },
+}));
+
+export const useNewsletterStore = create((set) => ({
+  newsletters: [],
+  isLoading: false,
+  getAllScheduledNewsletters: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get(
+        "/marketing/getAllScheduledNewsletters",
+      );
+      console.log(response);
+      set({
+        newsletters: response.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+    }
+  },
+  saveScheduledNewsletter: async (newsletterData) => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.post(
+        "/marketing/saveScheduledNewsletter",
+        newsletterData,
+      );
+      const newslettersResponse = await AxiosConnect.get(
+        "/marketing/getAllScheduledNewsletters",
+      );
+      set({
+        newsletters: newslettersResponse.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return response.data.message;
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  updateScheduledNewsletter: async (newsletterId, newsletterData) => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.patch(
+        `/marketing/updateScheduledNewsletter`,
+        newsletterId,
+        newsletterData,
+      );
+      const newslettersResponse = await AxiosConnect.get(
+        "/marketing/getAllScheduledNewsletters",
+      );
+      set({
+        newsletters: newslettersResponse.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return response.data.message;
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  cancelScheduledNewsletter: async (newsletterId) => {
+    try {
+      set({ isLoading: true });
+      const cancelResponse = await AxiosConnect.delete(
+        `/marketing/cancelScheduledNewsletter/${newsletterId}`,
+      );
+      const newslettersResponse = await AxiosConnect.get(
+        "/marketing/getAllScheduledNewsletters",
+      );
+      set({
+        newsletters: newslettersResponse.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+      return cancelResponse.data.message;
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  getNewsletterPreview: async (messageBody, preSignedPhoto, newsletterType) => {
+    try {
+      // console.log("getNewsletterPreview", messageBody, preSignedPhoto);
+      const response = await AxiosConnect.get(
+        `/marketing/getNewsletterPreview/${encodeURIComponent(
+          messageBody,
+        )}/${encodeURIComponent(preSignedPhoto)}/${encodeURIComponent(
+          newsletterType,
+        )}`,
+      );
+
+      // set({ isLoading: false });
+      return response.data.htmlContent;
+    } catch (error) {
+      // set({ isLoading: false });
+      console.error(error.message);
+      throw new Error(error.message);
+    }
+  },
+  testSendNewsletter: async (newsletter, email) => {
+    try {
+      //set({ isLoading: true });
+      console.log(email);
+      const response = await AxiosConnect.post(
+        "/marketing/testSendNewsletter",
+        {
+          newsletter: newsletter,
+          email: email,
+        },
+      );
+      //set({ isLoading: false });
+      return response.data.message;
+    } catch (error) {
+      const errorMessage = error.response.data.error;
+      throw new Error(errorMessage);
+    }
+  },
 }));
 
 export const useAdminSurveyResponseStore = create((set) => ({
@@ -697,6 +969,122 @@ export const useReviewStore = create((set) => ({
         return {
           ...state,
           reviews: updatedReviews,
+          isLoading: false,
+        };
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+}));
+
+export const useTestimonialStore = create((set) => ({
+  testimonials: [],
+  testimonial: null,
+  isLoading: true,
+  getAllTestimonials: async () => {
+    try {
+      const response = await AxiosConnect.get(`/testimonial/`);
+      console.log("getAllTestimonials", response.data);
+      set({
+        testimonials: response.data,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  getTestimonialById: async (testimonialId) => {
+    try {
+      const response = await AxiosConnect.get(`/testimonial/${testimonialId}`);
+      console.log("getTestimonialById", response.data);
+      set({
+        testimonial: response.data.testimonial,
+        isLoading: false,
+      });
+      return response.data.testimonial;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  updateTestimonialById: async (testimonialId, updateData) => {
+    try {
+      const response = await AxiosConnect.patch(
+        `/testimonial`,
+        testimonialId,
+        updateData,
+      );
+      console.log("updateTestimonialById", response.data);
+      set({
+        testimonial: response.data.testimonial,
+        isLoading: false,
+      });
+      return response.data.testimonial;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  hasTestimonialForSurvey: async (surveyId) => {
+    try {
+      const response = await AxiosConnect.get(
+        `/testimonial/survey/${surveyId}`,
+      );
+      console.log("hasTestimonialForSurvey", response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  createTestimonialForSurvey: async (surveyId) => {
+    try {
+      const response = await AxiosConnect.post(`/testimonial/create`, {
+        surveyId,
+      });
+      console.log("createTestimonialForSurvey", response.data);
+
+      return response.data.testimonial;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  deleteTestimonial: async (testimonialId) => {
+    try {
+      const response = await AxiosConnect.delete(
+        `/testimonial/${testimonialId}`,
+      );
+      console.log("deleteTestimonial", response.data);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+  toggleTestimonialVisibility: async (testimonialId) => {
+    try {
+      const response = await AxiosConnect.post(
+        `/testimonial/${testimonialId}/toggleVisibility`,
+      );
+      const updatedTestimonial = response.data;
+
+      set((state) => {
+        const updatedTestimonials = state.testimonials.map((t) => {
+          if (t._id === updatedTestimonial._id) {
+            return {
+              ...t,
+              hidden: updatedTestimonial.hidden,
+            };
+          }
+          return t;
+        });
+        return {
+          ...state,
+          testimonials: updatedTestimonials,
           isLoading: false,
         };
       });

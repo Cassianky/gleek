@@ -16,6 +16,7 @@ const activityManagementList = [
   { "Activity Approvals": "/viewPublishedActivities" },
   { "View My Activities": "/viewActivityDrafts" },
   { "Activity Themes": "/activityThemes" },
+  { "Featured Activities": "/featured" },
 ];
 const userManagementList = [
   { "Admin Team": "/adminTeam" },
@@ -29,7 +30,13 @@ const bookingManagementList = [
 const surveyManagementList = [
   { "View Submitted Surveys": "/surveys" },
   { "Manage Reviews": "/reviews" },
+  { "Manage Testimonials": "/testimonials" },
 ];
+const marketingManagementList = [
+  { "Manage Newsletters": "/newsletters" },
+  { "View Mailing Lists": "/mailingLists" },
+];
+const badgeManagementList = [{ "View Badges": "/badges" }];
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -162,6 +169,54 @@ const SideNavBar = ({ isSidebarOpen }) => {
           </Box>
           <List>
             {surveyManagementList.map((item, index) => (
+              <StyledLink to={item[Object.keys(item)[0]]} key={index}>
+                <ListItem key={Object.keys(item)[0]} disablePadding>
+                  <ListItemButton
+                    selected={selectedItem === Object.keys(item)[0]}
+                    onClick={() => handleItemClick(Object.keys(item)[0])}
+                  >
+                    <ListItemText primary={Object.keys(item)[0]} />
+                  </ListItemButton>
+                </ListItem>
+              </StyledLink>
+            ))}
+          </List>
+          <Divider />
+          <Box sx={{ paddingLeft: 2, paddingTop: 2 }}>
+            <Typography
+              fontWeight={700}
+              color={theme.palette.primary.main}
+              fontSize={20}
+            >
+              Marketing Management
+            </Typography>
+          </Box>
+          <List>
+            {marketingManagementList.map((item, index) => (
+              <StyledLink to={item[Object.keys(item)[0]]} key={index}>
+                <ListItem key={Object.keys(item)[0]} disablePadding>
+                  <ListItemButton
+                    selected={selectedItem === Object.keys(item)[0]}
+                    onClick={() => handleItemClick(Object.keys(item)[0])}
+                  >
+                    <ListItemText primary={Object.keys(item)[0]} />
+                  </ListItemButton>
+                </ListItem>
+              </StyledLink>
+            ))}
+          </List>
+          <Divider />
+          <Box sx={{ paddingLeft: 2, paddingTop: 2 }}>
+            <Typography
+              fontWeight={700}
+              color={theme.palette.primary.main}
+              fontSize={20}
+            >
+              Badge Management
+            </Typography>
+          </Box>
+          <List>
+            {badgeManagementList.map((item, index) => (
               <StyledLink to={item[Object.keys(item)[0]]} key={index}>
                 <ListItem key={Object.keys(item)[0]} disablePadding>
                   <ListItemButton

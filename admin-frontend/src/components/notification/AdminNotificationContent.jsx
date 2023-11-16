@@ -61,16 +61,15 @@ const AdminNotificationContent = ({ notification }) => {
   const handleMarkAsRead = () => {
     AxiosConnect.patch(
       "/notification/updateNotificationAsRead",
-      "",
-      notification,
+      notification._id,
     );
     retrieveAndSetAllNotifications(adminCredentials);
     handleClosePopper();
   };
 
   const handleDelete = () => {
-    AxiosConnect.patch("/notification/deleteNotification", "", notification);
-    retrieveAndSetAllNotifications(adminCredentials);
+    AxiosConnect.patch("/notification/deleteNotification", notification._id),
+      retrieveAndSetAllNotifications(adminCredentials);
     handleClosePopper();
   };
 

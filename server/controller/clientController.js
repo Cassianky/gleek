@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { validationResult } from "express-validator";
 import Client from "../model/clientModel.js";
+import { getAllBookingsForClientService } from "../service/bookingService.js";
 import Consent from "../model/consentModel.js";
 import jwt from "jsonwebtoken";
 import {
@@ -18,6 +19,7 @@ import sendMail from "../util/sendMail.js";
 import { s3GetImages } from "../service/s3ImageServices.js";
 import {
   createClientWelcomeMailOptions,
+  createDisableOrEnableEmailOptions,
   createResendVerifyEmailOptions,
   createResetPasswordEmailOptions,
   createVerifyEmailOptions,
@@ -28,6 +30,7 @@ import {
   NotificationEvent,
 } from "../util/notificationRelatedEnum.js";
 import { createNotification } from "./notificationController.js";
+import ClientModel from "../model/clientModel.js";
 
 const secret = process.env.JWT_SECRET_ClIENT;
 
@@ -185,6 +188,12 @@ export const postLogin = async (req, res) => {
         return res
           .status(400)
           .send({ msg: "Your Client registration has been rejected." });
+      }
+
+      if (client.isDisabled) {
+        return res.status(400).send({
+          msg: "Your account has been disabled. Please contact admin for assistance.",
+        });
       }
 
       if (client.photo) {
@@ -525,5 +534,51 @@ export const resetPasswordRedirect = async (req, res) => {
     res.status(200).redirect("http://localhost:3001/client/resetPassword");
   } catch (cookieError) {
     return res.status(500).send("Error setting cookie");
+  }
+};
+
+export const hasActiveBookings = async (req, res) => {
+  try {
+    const clientId = req.params.id;
+    const bookings = await getAllBookingsForClientService(clientId);
+    const hasActiveBookings = bookings.some((booking) =>
+      ["PENDING_CONFIRMATION", "CONFIRMED", "PENDING_PAYMENT"].includes(
+        booking.status,
+      ),
+    );
+    res.status(200).json(hasActiveBookings);
+  } catch (err) {
+    res.status(500).json({
+      message: "Server Error! Unable to check if client has active bookings.",
+      error: err.message,
+    });
+  }
+};
+
+export const toggleClientIsDisabled = async (req, res) => {
+  try {
+    const clientId = req.params.id;
+    const { isDisabled } = req.body;
+    const client = await ClientModel.findByIdAndUpdate(
+      clientId,
+      {
+        isDisabled: isDisabled,
+      },
+      { new: true },
+    );
+    const message = isDisabled
+      ? "Client disabled successfully!"
+      : "Client enabled successfully!";
+
+    sendMail(createDisableOrEnableEmailOptions(client, isDisabled));
+    res.status(200).json({
+      client: client,
+      message: message,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Server Error! Unable to update client.",
+      error: err.message,
+    });
   }
 };

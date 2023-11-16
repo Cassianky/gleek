@@ -20,6 +20,7 @@ const useBookmarkStore = create((set) => ({
 
       set({ isLoadingBookmarks: false, activityBookmarks, vendorBookmarks });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -34,6 +35,7 @@ const useBookmarkStore = create((set) => ({
       const currentBookmark = response.data;
       set({ currentBookmark });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -46,6 +48,7 @@ const useBookmarkStore = create((set) => ({
       console.log("store", currentBookmark);
       set({ currentBookmark });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -60,6 +63,7 @@ const useBookmarkStore = create((set) => ({
       const currentBookmark = response.data;
       set({ currentBookmark });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -71,6 +75,7 @@ const useBookmarkStore = create((set) => ({
       const currentBookmark = response.data;
       set({ currentBookmark });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -89,6 +94,7 @@ const useBookmarkStore = create((set) => ({
         ),
       }));
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },
@@ -108,6 +114,7 @@ const useBookmarkStore = create((set) => ({
         ),
       }));
     } catch (error) {
+      console.error(error);
       throw error;
     }
   },

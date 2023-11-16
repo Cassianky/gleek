@@ -33,7 +33,7 @@ const AdminNotificationPage = () => {
       >
         All Notifications
       </Typography>
-      {loading ? ( // Show circular progress if loading
+      {loading ? (
         <CircularProgress />
       ) : (
         <AdminNotificationList notifications={notifications} />

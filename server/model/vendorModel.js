@@ -73,7 +73,7 @@ const vendorSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  disabled: {
+  isDisabled: {
     type: Boolean,
     default: false,
   },

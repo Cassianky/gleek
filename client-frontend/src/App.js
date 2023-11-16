@@ -17,7 +17,9 @@ import HomePage from "./containers/HomePage";
 import LoginPage from "./containers/LoginPage";
 import SocketConnection from "./utils/SocketConnection";
 import MyBookings from "./containers/Client/Booking/MyBookings";
+import MyBadges from "./containers/Client/Badge/MyBadges";
 import BookingsDetails from "./containers/Client/Booking/BookingsDetails";
+import ClientDetails from "./containers/Client/Badge/ClientDetails";
 
 import VendorProtectedRoute from "./components/Routes/VendorProtectedRoute";
 import VendorDetails from "./containers/Client/Activity/VendorDetails";
@@ -45,6 +47,8 @@ import useClientStore from "./zustand/ClientStore";
 import useVendorStore from "./zustand/VendorStore";
 import PendingSurveys from "./containers/Client/Survey/PendingSurveys";
 import ChatPage from "./containers/ChatPage";
+import DashboardPage from "./containers/Vendor/Dashboard/DashboardPage";
+import NotificationPage from "./containers/NotificationPage";
 import LeaderBoardMainPage from "./containers/Client/Leaderboard/LeaderBoardMainPage";
 
 function App() {
@@ -213,6 +217,24 @@ function App() {
                   }
                />
                <Route
+                  exact
+                  path="/myBadges"
+                  element={
+                     <ClientProtectedRoute>
+                        <MyBadges />
+                     </ClientProtectedRoute>
+                  }
+               />
+               <Route
+                  exact
+                  path="/client/:id"
+                  element={
+                     <ClientProtectedRoute>
+                        <ClientDetails />
+                     </ClientProtectedRoute>
+                  }
+               />
+               <Route
                   path="/login"
                   element={
                      <LoginPage
@@ -247,6 +269,15 @@ function App() {
                />
                <Route
                   exact
+                  path="/client/notifications"
+                  element={
+                     <ClientProtectedRoute>
+                        <NotificationPage />
+                     </ClientProtectedRoute>
+                  }
+               />
+               <Route
+                  exact
                   path="/client/leaderboard"
                   element={
                      //  <ClientProtectedRoute>
@@ -272,6 +303,7 @@ function App() {
                   path="/vendor/register"
                   element={<VendorRegisterPage />}
                />
+               <Route path="/vendor/dashboard" element={<DashboardPage />} />
                <Route path="/error" element={<ErrorPage />} />
                <Route
                   path="/vendor/activities"
@@ -404,6 +436,15 @@ function App() {
                   element={
                      <VendorProtectedRoute>
                         <ChatPage />
+                     </VendorProtectedRoute>
+                  }
+               />
+               <Route
+                  exact
+                  path="/vendor/notifications"
+                  element={
+                     <VendorProtectedRoute>
+                        <NotificationPage />
                      </VendorProtectedRoute>
                   }
                />

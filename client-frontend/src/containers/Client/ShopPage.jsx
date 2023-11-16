@@ -49,7 +49,7 @@ const ShopPage = (props) => {
   const secondary = theme.palette.secondary.main;
   const accent = theme.palette.accent.main;
   const tertiary = theme.palette.tertiary.main;
-
+  const primary = theme.palette.primary.main;
   const itemsPerPage = 24;
 
   const totalItems = activities.length;
@@ -63,8 +63,15 @@ const ShopPage = (props) => {
       await getThemes();
       await getPriceInterval();
     };
-    fetchData();
-  }, []);
+    if (!themes) {
+      console.log("TEST");
+      fetchData();
+    }
+    if (!minPriceValue && !maxPriceValue) {
+      console.log("TEST1213");
+      fetchData();
+    }
+  }, [getPriceInterval, getThemes]);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -354,7 +361,7 @@ const ShopPage = (props) => {
           flexDirection="row"
           bgcolor={tertiary}
           justifyContent="space-between"
-          boxShadow={1}
+          boxShadow={2}
           p={2}
         >
           <Typography color={accent} variant="h6">

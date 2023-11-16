@@ -83,10 +83,11 @@ const NestedCheckboxList = (props) => {
       setParentChecked(newParentChecked);
 
       const newChildChecked = [...childChecked];
-      newChildChecked[index] = newChildChecked[index].map(
-        () => newParentChecked[index],
-      );
-
+      if (newChildChecked.length > 0) {
+        newChildChecked[index] = newChildChecked[index].map(
+          () => newParentChecked[index],
+        );
+      }
       setChildChecked(newChildChecked);
     }
   };

@@ -3,6 +3,7 @@ import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import CloseIcon from "@mui/icons-material/Close";
+import ToggleIsDisabledButton from "../common/ToggleIsDisabledButton";
 import { Badge, Tab, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import {
@@ -111,20 +112,37 @@ const ClientsTable = ({ clients, updateClient }) => {
     });
   }
   if (selectedTab === "approvedTab") {
-    columns.push({
-      field: "approvedDate",
-      headerName: "Approved Date",
-      flex: 1,
-      valueFormatter: (params) => {
-        const date = new Date(params.value);
-        const formattedDate = date.toLocaleDateString(undefined, {
-          day: "2-digit",
-          month: "2-digit",
-          year: "2-digit",
-        });
-        return formattedDate;
+    columns.push(
+      {
+        field: "approvedDate",
+        headerName: "Approved Date",
+        flex: 1,
+        valueFormatter: (params) => {
+          const date = new Date(params.value);
+          const formattedDate = date.toLocaleDateString(undefined, {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          });
+          return formattedDate;
+        },
       },
-    });
+      {
+        field: "isDisabled",
+        headerName: "Disable/Enable",
+        flex: 1,
+        renderCell: (params) => {
+          return (
+            <ToggleIsDisabledButton
+              isDisabled={params.row.isDisabled}
+              userId={params.row._id}
+              userType="client"
+              userName={params.row.name}
+            />
+          );
+        },
+      },
+    );
   }
 
   return (

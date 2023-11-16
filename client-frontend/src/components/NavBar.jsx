@@ -15,6 +15,7 @@ import {
   Avatar,
   ListItemIcon,
   ListItemText,
+  Badge,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
@@ -28,13 +29,16 @@ import useVendorStore from "../zustand/VendorStore.js";
 import useShopStore from "../zustand/ShopStore.js";
 import useSnackbarStore from "../zustand/SnackbarStore.js";
 import useCartStore from "../zustand/CartStore.js";
+import { useNotificationStore } from "../zustand/NotficationStore";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
+import MilitaryTechOutlinedIcon from "@mui/icons-material/MilitaryTechOutlined";
 import {
   BookmarkBorderOutlined,
   LogoutOutlined,
   Person2Outlined,
 } from "@mui/icons-material";
 import ChatIcon from "@mui/icons-material/Chat";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 function NavBar(props) {
   const { authenticated, client, logoutClient } = useClientStore();
@@ -50,6 +54,7 @@ function NavBar(props) {
   const { getCartItems, newCartItem, cartItems, cartItemsToCheckOut } =
     useCartStore();
   const { role, setRole } = useGlobalStore();
+  const { unreadNotificationsCount } = useNotificationStore();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorE2, setAnchorE2] = React.useState(null);
 
@@ -250,7 +255,7 @@ function NavBar(props) {
               <IconButton
                 onClick={searchOnClick}
                 sx={{ marginLeft: "5px" }}
-                color="tertiary"
+                color="secondary"
                 aria-label="search"
               >
                 <SearchIcon />
@@ -268,6 +273,20 @@ function NavBar(props) {
                 sx={{ marginRight: "8px" }}
               >
                 <ChatIcon />
+              </IconButton>
+              <IconButton
+                onClick={() => {
+                  navigate("/client/notifications");
+                }}
+                disableRipple
+                disableFocusRipple
+                aria-label="chat"
+                color="accent"
+                sx={{ marginRight: "8px" }}
+              >
+                <Badge badgeContent={unreadNotificationsCount} color="error">
+                  <NotificationsIcon />
+                </Badge>
               </IconButton>
               <IconButton
                 onClick={() => {
@@ -399,6 +418,17 @@ function NavBar(props) {
                   </ListItemIcon>
                   <ListItemText>Post-Event Surveys</ListItemText>
                 </MenuItem>
+                <MenuItem
+                  sx={{ px: "32px" }}
+                  onClick={() => {
+                    navigate("/myBadges");
+                  }}
+                >
+                  <ListItemIcon>
+                    <MilitaryTechOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText>My Badges</ListItemText>
+                </MenuItem>
                 <MenuItem sx={{ px: "32px" }} onClick={logout}>
                   <ListItemIcon>
                     <LogoutOutlined />
@@ -447,6 +477,20 @@ function NavBar(props) {
                 <ChatIcon />
               </IconButton>
               <IconButton
+                onClick={() => {
+                  navigate("/vendor/notifications");
+                }}
+                disableRipple
+                disableFocusRipple
+                aria-label="chat"
+                color="accent"
+                sx={{ marginRight: "8px" }}
+              >
+                <Badge badgeContent={unreadNotificationsCount} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
                 id="icon-button"
                 aria-controls={open2 ? "authenticated-menu" : undefined}
                 aria-haspopup="true"
@@ -488,6 +532,14 @@ function NavBar(props) {
                   }}
                 >
                   Vendor Profile Settings
+                </MenuItem>
+                <MenuItem
+                  sx={{ px: "32px" }}
+                  onClick={() => {
+                    navigate("/vendor/dashboard");
+                  }}
+                >
+                  Dashboard
                 </MenuItem>
                 <MenuItem
                   sx={{ px: "32px" }}

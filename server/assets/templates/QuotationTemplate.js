@@ -1,25 +1,25 @@
 import { header } from "./header.js";
 import { footer } from "./footer.js";
 export const QuotationTemplate = (booking) => {
-   const getFormattedDate = (dateTime) => {
-      dateTime = new Date(dateTime);
+  const getFormattedDate = (dateTime) => {
+    dateTime = new Date(dateTime);
 
-      return dateTime.toLocaleDateString(undefined, {
-         day: "2-digit",
-         month: "short",
-         year: "numeric",
-      });
-   };
+    return dateTime.toLocaleDateString(undefined, {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
-   const getFormattedTime = (dateTime) => {
-      dateTime = new Date(dateTime);
-      return dateTime.toLocaleTimeString(undefined, {
-         hour: "2-digit",
-         minute: "2-digit",
-         hour12: true,
-      });
-   };
-   return ` 
+  const getFormattedTime = (dateTime) => {
+    dateTime = new Date(dateTime);
+    return dateTime.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+  return ` 
    <!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
    <head>
@@ -58,13 +58,13 @@ export const QuotationTemplate = (booking) => {
          >
                <div>
                   <span class="ft145"><b>Attn: ${
-                     booking.client.name
+                    booking.client.name
                   } </b> <br /><b>${booking.client.companyName}</b><br />
                   ${booking.client.officeAddress}<br />
                   Singapore, ${booking.client.officePostalCode}</span>
                <div>
                <div class="ft145"><p style="align:right;">${getFormattedDate(
-                  Date.now()
+                 Date.now(),
                )}</p></div>
          </div>
          <hr
@@ -94,33 +94,33 @@ export const QuotationTemplate = (booking) => {
                      <li>Theme: ${booking.theme.name}</li>
                      <li> Sub-Theme: ${booking.subtheme[0].name}</li> 
                      <li class="ft110">Date: ${getFormattedDate(
-                        booking.selectedDate
+                       booking.selectedDate,
                      )}</li>
                      <li class="ft110">Time: ${getFormattedTime(
-                        booking.time.split("-")[0]
+                       booking.time.split("-")[0],
                      )} - ${getFormattedTime(booking.time.split("-")[1])}</li>
                      <li> Comments : ${booking.comments}</li> 
                   </ul>
                </th>
                <th class="ft113" style="width: 10%">${booking.totalPax}</th>
                <th class="ft113" style="width: 15%">$${(
-                  booking.basePrice / booking.totalPax
+                 booking.basePrice / booking.totalPax
                ).toFixed(2)}</th>
                <th class="ft113" style="width: 15%; ">$${
-                  booking.totalCost > booking.basePrice
-                     ? booking.weekendAddOnCost +
-                       booking.onlineAddOnCost +
-                       booking.offlineAddOnCost
-                     : 0
+                 booking.totalCost > booking.basePrice
+                   ? booking.weekendAddOnCost +
+                     booking.onlineAddOnCost +
+                     booking.offlineAddOnCost
+                   : 0
                }<th>
                <th class="ft113" style="width: 15%">$${
-                  booking.totalCost < booking.basePrice
-                     ? -(
-                          booking.weekendAddOnCost +
-                          booking.onlineAddOnCost +
-                          booking.offlineAddOnCost
-                       )
-                     : 0
+                 booking.totalCost < booking.basePrice
+                   ? -(
+                       booking.weekendAddOnCost +
+                       booking.onlineAddOnCost +
+                       booking.offlineAddOnCost
+                     )
+                   : 0
                }<th>
                <th class="ft113" style="width: 15%">$${booking.totalCost}</th>
             </tr>

@@ -129,7 +129,7 @@ const useBookingStore = create((set) => ({
    getBookingSummaryPdf: async (id) => {
       try {
          const response = await AxiosConnect.post(
-            `/gleek/booking/downloadBookingSummaryUrl/${id}`
+            `/gleek/booking//downloadBookingSummaryUrl/${id}`
          );
          window.open(
             `http://localhost:5000/gleek/booking/downloadBookingSummaryPdf/${response.data}`

@@ -24,7 +24,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import MessageParser from "./ChatBot/MessageParser";
 import ActionProvider from "./ChatBot/ActionProvider";
 import Options from "./ChatBot/Options";
-import { config } from "chai";
+import OptionsWithState from "./ChatBot/OptionsWithState";
+import ChatOptions from "./ChatBot/ChatOptions";
 
 const CustomSnackbar = () => {
   const { isOpen, message, type, closeSnackbar } = useSnackbarStore();
@@ -56,15 +57,7 @@ const Layout = ({ children }) => {
   const { vendorAuthenticated } = useVendorStore();
   const [showBot, setShowBot] = useState(false);
 
-  const options = {
-    0: [
-      "1a) About Gleek",
-      "1b) My Account Settings",
-      "1c) Checkout Process",
-      "1d) Loyalty Program",
-      "1e) Shopping for Activities",
-    ],
-  };
+  const options = ChatOptions;
 
   const toggleBot = () => {
     setShowBot(!showBot);
@@ -83,7 +76,7 @@ const Layout = ({ children }) => {
       createChatBotMessage(
         `Type option (e.g., 1a). Else type 'help' to be redirected to chat with an Admin.`,
         {
-          delay: 3500,
+          delay: 2500,
         }
       ),
     ],
@@ -98,14 +91,24 @@ const Layout = ({ children }) => {
       },
     },
     state: {
-      step: 0,
+      step: ["0"],
       client: client,
     },
     widgets: [
       {
         widgetName: "options0",
         widgetFunc: (props) => <Options {...props} />,
-        props: { options: options["0"] },
+        props: {
+          options: Object.entries(options[0]).map(
+            ([key, value]) => value.label
+          ),
+        },
+      },
+      {
+        widgetName: "options1",
+        widgetFunc: (props) => <OptionsWithState {...props} />,
+        props: { stepOptions: 1 },
+        mapStateToProps: ["step"],
       },
     ],
     customComponents: {

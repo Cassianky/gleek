@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import useChatStore from "../../zustand/ChatStore";
 import useGlobalStore from "../../zustand/GlobalStore";
+import ChatOptions from "./ChatOptions";
 
 class ActionProvider {
   constructor(
@@ -19,15 +20,7 @@ class ActionProvider {
     this.navigate = useNavigate();
     this.setDirectChatAccess = useChatStore().setDirectChatAccess;
     this.role = useGlobalStore().role;
-    this.options = {
-      0: {
-        "1a": "1a) About Gleek",
-        "1b": "1b) My Account Settings",
-        "1c": "1c) Checkout Process",
-        "1d": "1d) Loyalty Program",
-        "1e": "1e) Shopping for Activities",
-      },
-    };
+    this.options = ChatOptions;
   }
 
   help = () => {
@@ -50,20 +43,103 @@ class ActionProvider {
     this.setChatbotMessage(message);
   };
 
-  step0 = (input) => {
+  returnMain = () => {
+    const message = this.createChatBotMessage(
+      `Return to Main Menu: You may want to know more about:`,
+      {
+        widget: "options0",
+        delay: 1500,
+      }
+    );
+    this.setChatbotMessageForReturn(message);
+  };
+
+  returnToStep1 = () => {
+    const message = this.createChatBotMessage(`Return to Previous Menu:`, {
+      widget: `options1`,
+      delay: 1500,
+    });
+    this.setChatbotMessageForReturn(message);
+  };
+
+  step1 = (input) => {
     input = input.toLowerCase();
     const message = this.createChatBotMessage(
-      `Great! You have picked ${input}, ${this.options[0][input]}`
+      `Great! You have picked ${this.options[0][input].label}`
+    );
+    this.setChatbotMessage(message);
+  };
+
+  step1Options = (input) => {
+    input = input.toLowerCase();
+    const message = this.createChatBotMessage(
+      `Here are more options for ${this.options[0][input].label}`,
+      {
+        widget: "options1",
+        delay: 1500,
+      }
     );
     this.setChatbotMessage(message, input);
   };
 
-  setChatbotMessage = (message, step) => {
+  other = () => {
+    const message = this.createChatBotMessage(
+      "Type 'return' for previous menu. Require more help? Type 'help' for chat with Admin.",
+      {
+        delay: 2500,
+      }
+    );
+    this.setChatbotMessage(message);
+  };
+
+  step2 = (input, step) => {
+    input = input.toLowerCase();
     console.log(step);
+    let answers = this.options;
+    for (let i = 0; i <= step.length; i++) {
+      if (i === 0) {
+        answers = answers[step[i]];
+      }
+      if (answers[step[i]]) {
+        answers = answers[step[i]];
+        answers = answers.options;
+      }
+    }
+    const message = this.createChatBotMessage(
+      `Great! You have picked ${answers[input].label}`
+    );
+    this.setChatbotMessage(message, input);
+  };
+
+  step2Answers = (input, step) => {
+    input = input.toLowerCase();
+    console.log(step);
+    let answers = this.options;
+    for (let i = 0; i <= step.length; i++) {
+      if (i === 0) {
+        answers = answers[step[i]];
+      }
+      if (answers[step[i]]) {
+        answers = answers[step[i]];
+        answers = answers.options;
+      }
+    }
+
+    answers = answers[input]["answers"];
+
+    for (const answer of answers) {
+      const message = this.createChatBotMessage(answer, {
+        delay: 1500,
+      });
+      this.setChatbotMessage(message);
+    }
+  };
+
+  setChatbotMessage = (message, step) => {
     if (step) {
       this.setState((state) => ({
         ...state,
-        step: step,
+        step: [...state.step, step],
         messages: [...state.messages, message],
       }));
     } else {
@@ -72,6 +148,14 @@ class ActionProvider {
         messages: [...state.messages, message],
       }));
     }
+  };
+
+  setChatbotMessageForReturn = (message) => {
+    this.setState((state) => ({
+      ...state,
+      step: state.step.slice(0, -1),
+      messages: [...state.messages, message],
+    }));
   };
 }
 

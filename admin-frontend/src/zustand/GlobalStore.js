@@ -1110,7 +1110,6 @@ export const useNotificationStore = create((set) => ({
     set({ loading: true }),
       AxiosConnect.get("/notification/adminAllNotifications")
         .then((body) => {
-          console.log(body.data.data);
           const allNotifications = body.data.data;
           set({ notifications: allNotifications });
           let unreadCount = 0;
@@ -1123,6 +1122,38 @@ export const useNotificationStore = create((set) => ({
         .catch((error) => {
           console.log("error in retrieveAndSetAllChatRooms: ", error);
         });
+  },
+  markAsRead: (notification) => {
+    AxiosConnect.patch(
+      "/notification/updateNotificationAsRead",
+      notification._id,
+    ).then((response) => {
+      set({ loading: true });
+      const allNotifications = response.data.data;
+      set({ notifications: allNotifications });
+      let unreadCount = 0;
+      allNotifications.map((notification) => {
+        notification.read === false ? unreadCount++ : unreadCount;
+      });
+      set({ unreadNotificationsCount: unreadCount });
+      set({ loading: false });
+    });
+  },
+  deleteNotification: (notification) => {
+    AxiosConnect.patch(
+      "/notification/deleteNotification",
+      notification._id,
+    ).then((response) => {
+      set({ loading: true });
+      const allNotifications = response.data.data;
+      set({ notifications: allNotifications });
+      let unreadCount = 0;
+      allNotifications.map((notification) => {
+        notification.read === false ? unreadCount++ : unreadCount;
+      });
+      set({ unreadNotificationsCount: unreadCount });
+      set({ loading: false });
+    });
   },
 }));
 

@@ -133,7 +133,13 @@ function NavBar(props) {
       retrieveAndSetAllChatRooms(fixedRole);
       retrieveAndSetAllNotifications(fixedRole);
     }
-  }, [fixedRole, role, unreadChatroomCount, retrieveAndSetAllChatRooms]);
+  }, [
+    fixedRole,
+    role,
+    unreadChatroomCount,
+    retrieveAndSetAllChatRooms,
+    retrieveAndSetAllNotifications,
+  ]);
 
   const fetchCart = async () => {
     try {

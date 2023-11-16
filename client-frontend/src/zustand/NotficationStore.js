@@ -14,7 +14,6 @@ export const useNotificationStore = create((set) => ({
       },
     )
       .then((body) => {
-        console.log(body.data.data);
         const allNotifications = body.data.data;
         set({ notifications: allNotifications });
         let unreadCount = 0;

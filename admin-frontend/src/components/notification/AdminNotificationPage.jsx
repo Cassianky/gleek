@@ -32,11 +32,7 @@ const AdminNotificationPage = () => {
       >
         All Notifications
       </Typography>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <AdminNotificationList notifications={notifications} />
-      )}
+      {loading ? <CircularProgress /> : <AdminNotificationList />}
     </MainBodyContainer>
   );
 };

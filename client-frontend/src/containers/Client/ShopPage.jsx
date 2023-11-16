@@ -327,7 +327,7 @@ const ShopPage = (props) => {
     setRatingValue(0);
   };
   return (
-    <Grid container spacing={5} p={5}>
+    <Grid container spacing={5} px={5} mt={1}>
       {/* Left Column */}
       <Grid item xs={12} sm={12} md={12} lg={3}>
         <Button variant="contained" fullWidth onClick={clearAllFilters}>

@@ -140,11 +140,6 @@ export const submitSurveyForBooking = async (req, res) => {
       );
       await review.save();
 
-      const updateActivity = await ActivityModel.findById(booking.activityId);
-
-      updateActivity.reviews.push({ _id: review._id });
-      await updateActivity.save();
-
       const reviewAnalysis = getSentiment(comment);
       const newReviewSentiment = {
         activity: booking.activityId,
@@ -154,7 +149,13 @@ export const submitSurveyForBooking = async (req, res) => {
         keywords: reviewAnalysis.keyWords,
       };
       const reviewSentiment = new ReviewSentimentModel(newReviewSentiment);
-      reviewSentiment.save();
+      review.reviewSentiment = reviewSentiment._id;
+      await reviewSentiment.save();
+      await review.save();
+      const updateActivity = await ActivityModel.findById(booking.activityId);
+
+      updateActivity.reviews.push({ _id: review._id });
+      await updateActivity.save();
     }
 
     await Booking.findByIdAndUpdate(

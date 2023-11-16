@@ -19,6 +19,7 @@ const useShopStore = create((set) => ({
       const response = await AxiosConnect.get(
         `/gleek/shop/viewActivity/${activityId}`
       );
+      console.log(response.data.data);
       set({ currentActivity: response.data.data });
       set({ currentActivityLoading: false });
     } catch (error) {

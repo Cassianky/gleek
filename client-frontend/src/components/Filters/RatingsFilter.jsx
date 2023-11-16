@@ -33,6 +33,11 @@ const RatingsFilter = ({ handleChange, ratingValue }) => {
           precision={0.5}
           readOnly
           size="medium"
+          sx={{
+            "& .MuiRating-iconFilled": {
+              color: "#5C4B99",
+            },
+          }}
         />
         <TextField
           id="outlined-number"

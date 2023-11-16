@@ -47,6 +47,7 @@ import "./styles.css";
 import Holidays from "date-holidays";
 import VendorChatButton from "../../components/Chat/VendorChatButton";
 import useClientStore from "../../zustand/ClientStore";
+import ActivityReview from "../../components/ActivityReview";
 
 const ActivityDetailsPage = () => {
   const {
@@ -1144,28 +1145,13 @@ const ActivityDetailsPage = () => {
               ))}
             </Box>
           </Grid>
-          <Grid item xs={12} sm={12} md={8} lg={8}>
-            <Box
-              boxShadow={2}
-              borderRadius={2}
-              width="100%"
-              bgcolor="white"
-              p={3}
-            >
-              <Typography>No Ratings yet</Typography>
-            </Box>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={12}
-            md={6}
-            lg={6}
-            display="flex"
-            justifyContent="center"
-            flexDirection="row"
-          ></Grid>
         </Grid>
+      )}
+      {!currentActivityLoading && (
+        <ActivityReview
+          reviews={currentActivity.reviews}
+          averageRating={currentActivity.averageRating}
+        />
       )}
     </Box>
   );

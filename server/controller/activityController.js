@@ -118,7 +118,31 @@ export const getActivity = async (req, res) => {
       .populate("activityPricingRules")
       .populate("linkedVendor")
       .populate("theme")
-      .populate("subtheme");
+      .populate("subtheme")
+      .populate({
+        path: "reviews",
+        select: "-booking",
+        populate: [
+          { path: "client", select: "_id photo preSignedPhoto name" },
+          { path: "reviewSentiment" },
+        ],
+      });
+
+    if (foundActivity.reviews.length > 0 && foundActivity.reviews) {
+      const totalRatings = foundActivity.reviews.reduce(
+        (sum, review) => sum + review.rating,
+        0
+      );
+      foundActivity.averageRating = totalRatings / foundActivity.reviews.length;
+    } else {
+      foundActivity.averageRating = 0;
+    }
+
+    for (const review of foundActivity.reviews) {
+      let preSignedPhoto = await s3GetImages(review.client.photo);
+      review.client.preSignedPhoto = preSignedPhoto;
+    }
+
     let preSignedUrlArr = await s3GetImages(foundActivity.images);
     foundActivity.preSignedImages = preSignedUrlArr;
     console.log("each push:", foundActivity.preSignedImages);

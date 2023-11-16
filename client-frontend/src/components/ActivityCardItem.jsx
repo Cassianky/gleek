@@ -127,6 +127,11 @@ const ActivityCardItem = ({ activity }) => {
               precision={0.5}
               size="small"
               readOnly
+              sx={{
+                "& .MuiRating-iconFilled": {
+                  color: "#5C4B99",
+                },
+              }}
             />
           </Box>
         </Box>

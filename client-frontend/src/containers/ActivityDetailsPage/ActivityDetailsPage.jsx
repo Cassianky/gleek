@@ -373,8 +373,17 @@ const ActivityDetailsPage = () => {
                   <VendorProfileItem vendor={currentActivity?.linkedVendor} />
                 )}
               </Box>
-
-              <ActivityBookmarkButton activityId={activityId} />
+              <span
+                style={{
+                  width: "50%",
+                  // position: "absolute",
+                  display: "flex",
+                  justifyContent: "right",
+                }}
+              >
+                <VendorChatButton />
+                <ActivityBookmarkButton activityId={activityId} />
+              </span>
             </Box>
           </Grid>
           <Grid

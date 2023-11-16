@@ -105,7 +105,7 @@ export const createBadge = async (req, res) => {
               {
                 badge: createdBadge,
                 client: client,
-                isCompleted: sdgSet.size > createdBadge.sdgThreshold,
+                isCompleted: sdgSet.size >= createdBadge.sdgThreshold,
                 sdgCount: sdgSet.size,
               },
             ],
@@ -160,7 +160,7 @@ export const createBadge = async (req, res) => {
                 badge: createdBadge,
                 client: client,
                 isCompleted:
-                  completedBookingsCount > createdBadge.bookingThreshold,
+                  completedBookingsCount >= createdBadge.bookingThreshold,
                 bookingCount: completedBookingsCount,
               },
             ],

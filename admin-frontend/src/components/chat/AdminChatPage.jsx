@@ -18,7 +18,7 @@ const AdminChatpage = () => {
     retrieveAndSetChatroomMessages,
   } = useChatStore();
   const [socketConnected, setSocketConnected] = useState(false);
-  const [selectedChatCompare, setSelectedChatCompare] = useState(null);
+  const [newMsgReceived, setNewMsgReceived] = useState({});
 
   useEffect(() => {
     retrieveAndSetAllChatRooms();
@@ -35,17 +35,24 @@ const AdminChatpage = () => {
 
   useEffect(() => {
     socket.on("message received", (newMessageReceived) => {
-      console.log("in message received", newMessageReceived);
-      if (
-        !selectedChatCompare || // if chat is not selected or doesn't match current chat
-        selectedChatCompare._id !== newMessageReceived.chatRoom._id
-      ) {
-        retrieveAndSetAllChatRooms("Admin");
-      } else {
-        retrieveAndSetChatroomMessages(newMessageReceived.chatRoom._id, socket);
-      }
+      console.log("in message received: ", newMessageReceived);
+      setNewMsgReceived(newMessageReceived);
     });
-  }, [currentChatroomMessages]);
+  }, []);
+
+  useEffect(() => {
+    if (
+      // if chat is not selected or doesn't match current chat
+      selectedChat === null ||
+      selectedChat._id !== newMsgReceived.chatRoom._id
+    ) {
+      console.log("different chat");
+      retrieveAndSetAllChatRooms("Admin");
+    } else if (selectedChat._id === newMsgReceived.chatRoom._id) {
+      console.log("same chat");
+      retrieveAndSetChatroomMessages(newMsgReceived.chatRoom._id);
+    }
+  }, [newMsgReceived]);
 
   return (
     <MainBodyContainer
@@ -64,11 +71,8 @@ const AdminChatpage = () => {
             padding: 3,
           }}
         >
-          <AdminChatList />
-          <AdminChatWindow
-            socket={socket}
-            setSelectedChatCompare={setSelectedChatCompare}
-          />
+          <AdminChatList socket={socket} />
+          <AdminChatWindow socket={socket} />
         </Box>
       </div>
     </MainBodyContainer>

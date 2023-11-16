@@ -4,6 +4,10 @@ import ChatroomModel from "../model/chatRoomModel.js";
 
 export const allMessages = async (req, res) => {
   try {
+    console.log(
+      "Message controller:: Chatroom id of messages: ",
+      req.params.chatroomId,
+    );
     const messages = await ChatMessageModel.find({
       chatRoom: req.params.chatroomId,
     })

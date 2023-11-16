@@ -11,7 +11,7 @@ import { Avatar, CircularProgress, Tooltip } from "@mui/material";
 import { useChatStore } from "../../zustand/GlobalStore";
 import { useEffect } from "react";
 
-const AdminChatDisplay = ({ messages }) => {
+const AdminChatDisplay = () => {
   const { selectedChat, currentChatroomMessages, loadingMessage, user } =
     useChatStore();
   const role = "Admin";

@@ -1134,7 +1134,10 @@ export const useChatStore = create((set) => ({
   setUser: (currentUser) => {
     set({ user: currentUser });
   },
-  setSelectedChat: (chatSelected) => {
+  setSelectedChat: (chatSelected, socket) => {
+    if (chatSelected !== null) {
+      socket.emit("join chat", chatSelected._id);
+    }
     set({ selectedChat: chatSelected });
   },
   sendMessage: (messageContent, chatroomId, socket) => {
@@ -1163,18 +1166,32 @@ export const useChatStore = create((set) => ({
       },
     );
   },
+
+  setChatroomMarkAsRead: (chatroomId) => {
+    console.log("in marking chatroom as read");
+    const params = {
+      userRole: "Admin",
+    };
+    AxiosConnect.getWithParams(
+      `/chatroom/admin/markChatroomAsRead/${chatroomId}`,
+      params,
+    ).then((response) => {
+      console.log(response.data);
+      set({ allChatrooms: response.data });
+    });
+  },
+
   retrieveAndSetAllChatRooms: () => {
     AxiosConnect.get("/chatroom/admin/fetchChats").then((response) => {
       console.log(response.data);
       set({ allChatrooms: response.data });
     });
   },
-  retrieveAndSetChatroomMessages: (chatroomId, socket) => {
+  retrieveAndSetChatroomMessages: (chatroomId) => {
     AxiosConnect.get(`/chatMessage/admin/allMessages/${chatroomId}`).then(
       (response) => {
         console.log(chatroomId);
         set({ currentChatroomMessages: response.data });
-        socket.emit("join chat", chatroomId);
       },
     );
   },

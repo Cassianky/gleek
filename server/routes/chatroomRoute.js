@@ -5,6 +5,7 @@ import {
   userAccessChat,
   adminAccessChat,
   markSelectedChatAsRead,
+  adminMarkSelectedChatAsRead,
 } from "../controller/chatRoomController.js";
 import { verifyToken as clientVerifyToken } from "./../middleware/clientAuth.js";
 import { verifyToken as vendorVerifyToken } from "./../middleware/vendorAuth.js";
@@ -18,7 +19,6 @@ router.route("/admin/accessChat").post(adminAuth, adminAccessChat);
 router.route("/client/fetchChats").get(clientVerifyToken, userFetchChats);
 router.route("/vendor/fetchChats").get(vendorVerifyToken, userFetchChats);
 router.route("/admin/fetchChats").get(adminAuth, adminFetchChats);
-
 router
   .route("/client/markChatroomAsRead/:id")
   .get(clientVerifyToken, markSelectedChatAsRead);
@@ -27,6 +27,6 @@ router
   .get(vendorVerifyToken, markSelectedChatAsRead);
 router
   .route("/admin/markChatroomAsRead/:id")
-  .get(adminAuth, markSelectedChatAsRead);
+  .get(adminAuth, adminMarkSelectedChatAsRead);
 
 export default router;

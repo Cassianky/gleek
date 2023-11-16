@@ -56,13 +56,9 @@ const Chatpage = () => {
       selectedChat._id !== newMsgReceived.chatRoom._id
     ) {
       console.log("different chat");
-      // console.log("selectedChat id: ", selectedChat);
-      // console.log("newMessageReceived: ", newMsgReceived.chatRoom);
       retrieveAndSetAllChatRooms(role);
     } else if (selectedChat._id === newMsgReceived.chatRoom._id) {
       console.log("same chat");
-      // console.log("selectedChat id: ", selectedChat);
-      // console.log("newMessageReceived: ", newMsgReceived.chatRoom);
       retrieveAndSetChatroomMessages(role, newMsgReceived.chatRoom._id);
     }
   }, [newMsgReceived]);

@@ -232,6 +232,7 @@ export const adminAccessChat = async (req, res) => {
 };
 
 export const markSelectedChatAsRead = async (req, res) => {
+  console.log(req.data);
   let userRole = req.cookies.userRole;
   userRole = userRole.toUpperCase();
 
@@ -250,6 +251,29 @@ export const markSelectedChatAsRead = async (req, res) => {
         ? { client: req.user._id }
         : { vendor: req.user._id },
     )
+      .populate("latestMessage")
+      .populate("client", "-password")
+      .populate("vendor", "-password")
+      .sort({ lastChatDate: -1 });
+
+    res.status(200).send(updatedChatrooms);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+};
+
+export const adminMarkSelectedChatAsRead = async (req, res) => {
+  console.log(req.params.id);
+  console.log(req.user._id);
+
+  try {
+    const updatedChatroom = await ChatroomModel.findByIdAndUpdate(
+      { _id: req.params.id },
+      { latestMessageRead: true },
+    );
+
+    const updatedChatrooms = await ChatroomModel.find({ admin: true })
       .populate("latestMessage")
       .populate("client", "-password")
       .populate("vendor", "-password")

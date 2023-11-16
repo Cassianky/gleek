@@ -28,6 +28,7 @@ import LastPageIcon from "@mui/icons-material/LastPage";
 import useBookingStore from "../../../zustand/BookingStore";
 import useClientStore from "../../../zustand/ClientStore";
 import useShopStore from "../../../zustand/ShopStore";
+import { useNavigate } from "react-router-dom";
 
 export const LeaderBoardMainPage = (props) => {
    const theme = useTheme();
@@ -105,6 +106,7 @@ export default function CustomPaginationActionsTable() {
    const [leaderboardData, setLeaderboardData] = useState([]);
    const { themes, getThemes } = useShopStore();
    const theme = useTheme();
+   const navigate = useNavigate();
 
    const getRankedRows = (data) => {
       data.sort().reverse();
@@ -146,6 +148,11 @@ export default function CustomPaginationActionsTable() {
       }
    };
 
+   const handleRowClick = (id) => {
+      console.log(id);
+      navigate(`/client/${id}`);
+   };
+
    useEffect(() => {
       const fetchData = async () => {
          let data = await getLeaderboard();
@@ -174,13 +181,22 @@ export default function CustomPaginationActionsTable() {
    const getRowStyle = (index) => {
       switch (index) {
          case 1:
-            return { backgroundColor: "rgba(255, 215, 0, 0.5)" }; // Golden for first
+            return {
+               backgroundColor: "rgba(255, 215, 0, 0.3)",
+               cursor: "pointer",
+            }; // Golden for first
          case 2:
-            return { backgroundColor: "rgba(192, 192, 192, 0.5)" }; // Silver for second
+            return {
+               backgroundColor: "rgba(192, 192, 192, 0.3)",
+               cursor: "pointer",
+            }; // Silver for second
          case 3:
-            return { backgroundColor: "rgba(205, 133, 63, 0.5)" }; // Bronze for third
+            return {
+               backgroundColor: "rgba(205, 133, 63, 0.3)",
+               cursor: "pointer",
+            }; // Bronze for third
          default:
-            return { backgroundColor: "transparent" }; // Default styling for other rows
+            return { backgroundColor: "transparent", cursor: "pointer" }; // Default styling for other rows
       }
    };
 
@@ -298,7 +314,10 @@ export default function CustomPaginationActionsTable() {
                           )
                         : filteredRows
                      ).map((row) => (
-                        <TableRow key={row.name} style={getRowStyle(row.rank)}>
+                        <TableRow
+                           key={row.name}
+                           onClick={() => handleRowClick(row._id)}
+                           style={getRowStyle(row.rank)}>
                            <TableCell style={{ width: "20%" }} align="center">
                               <Typography
                                  fontSize={"1rem"}

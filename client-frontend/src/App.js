@@ -280,9 +280,9 @@ function App() {
                   exact
                   path="/client/leaderboard"
                   element={
-                     //  <ClientProtectedRoute>
-                     <LeaderBoardMainPage />
-                     //  </ClientProtectedRoute>
+                     <ClientProtectedRoute>
+                        <LeaderBoardMainPage />
+                     </ClientProtectedRoute>
                   }
                />
                {/* Vendor routes */}

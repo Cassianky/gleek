@@ -10,10 +10,14 @@ const useChatStore = create((set) => ({
   loadingMessage: false,
   directChatAccess: false,
   directVendorChatAccess: false,
+  unreadChatroomCount: 0,
   setUser: (currentUser) => {
     set({ user: currentUser });
   },
-  setSelectedChat: (chatSelected) => {
+  setSelectedChat: (chatSelected, socket) => {
+    if (chatSelected !== null) {
+      socket.emit("join chat", chatSelected._id);
+    }
     set({ selectedChat: chatSelected });
   },
   setDirectChatAccess: (boolean) => {
@@ -54,6 +58,21 @@ const useChatStore = create((set) => ({
       },
     );
   },
+  setChatroomMarkAsRead: (chatroomId, role) => {
+    console.log("in marking chatroom as read");
+    const params = {
+      userRole: role,
+    };
+    AxiosConnect.getWithParams(
+      role === "Client"
+        ? `/chatroom/client/markChatroomAsRead/${chatroomId}`
+        : `/chatroom/vendor/markChatroomAsRead/${chatroomId}`,
+      params,
+    ).then((response) => {
+      console.log(response.data);
+      set({ allChatrooms: response.data });
+    });
+  },
   retrieveAndSetAllChatRooms: (role) => {
     const params = {
       userRole: role,
@@ -63,10 +82,25 @@ const useChatStore = create((set) => ({
         ? "/chatroom/client/fetchChats"
         : "/chatroom/vendor/fetchChats",
       params,
-    ).then((response) => {
-      console.log(response.data);
-      set({ allChatrooms: response.data });
-    });
+    )
+      .then((response) => {
+        const allChatroom = response.data;
+        set({ allChatrooms: allChatroom });
+        let unreadChatroomCount = 0;
+        allChatroom.map((chatroom) => {
+          if (
+            chatroom.latestMessage !== undefined &&
+            chatroom.latestMessage.senderRole !== role.toUpperCase() &&
+            chatroom.latestMessageRead === false
+          ) {
+            unreadChatroomCount++;
+          }
+        });
+        set({ unreadChatroomCount: unreadChatroomCount });
+      })
+      .catch((error) => {
+        console.log("error in retrieveAndSetAllChatRooms: ", error);
+      });
   },
   retrieveAndAccessChatroom: (role, recipientRole, recipientId, socket) => {
     const params = {
@@ -99,15 +133,13 @@ const useChatStore = create((set) => ({
         console.log(error);
       });
   },
-  retrieveAndSetChatroomMessages: (role, chatroomId, socket) => {
+  retrieveAndSetChatroomMessages: (role, chatroomId) => {
     AxiosConnect.get(
       role === "Client"
         ? `/chatMessage/client/allMessages/${chatroomId}`
         : `/chatMessage/vendor/allMessages/${chatroomId}`,
     ).then((response) => {
-      console.log(response.data);
       set({ currentChatroomMessages: response.data });
-      socket.emit("join chat", chatroomId);
     });
   },
 }));

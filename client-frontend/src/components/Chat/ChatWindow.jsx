@@ -7,7 +7,7 @@ import { getSenderName } from "../../utils/ChatLogics";
 import ChatDisplay from "./ChatDisplay";
 import useShopStore from "../../zustand/ShopStore";
 
-const ChatWindow = ({ socket, setSelectedChatCompare }) => {
+const ChatWindow = ({ socket }) => {
   const {
     selectedChat,
     directChatAccess,
@@ -44,7 +44,9 @@ const ChatWindow = ({ socket, setSelectedChatCompare }) => {
   };
 
   const fetchMessages = () => {
-    console.log(selectedChat);
+    // console.log(selectedChat);
+    // console.log(directChatAccess);
+    // console.log(directVendorChatAccess);
     if (selectedChat !== null) {
       retrieveAndSetChatroomMessages(role, selectedChat._id, socket);
     } else if (directChatAccess) {
@@ -73,7 +75,6 @@ const ChatWindow = ({ socket, setSelectedChatCompare }) => {
 
   useEffect(() => {
     fetchMessages();
-    setSelectedChatCompare(selectedChat);
   }, [selectedChat, directChatAccess]);
 
   return (

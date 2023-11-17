@@ -13,9 +13,8 @@ const NotificationPage = () => {
   const theme = useTheme();
 
   useEffect(() => {
-    // Fetch notifications when the component mounts
     retrieveAndSetAllNotifications(role);
-  }, []);
+  }, [retrieveAndSetAllNotifications]);
 
   return (
     <div>
@@ -29,11 +28,7 @@ const NotificationPage = () => {
       >
         All Notifications
       </Typography>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <NotificationList notifications={notifications} />
-      )}
+      {loading ? <CircularProgress /> : <NotificationList />}
     </div>
   );
 };

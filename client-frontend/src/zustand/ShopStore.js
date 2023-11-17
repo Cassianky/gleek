@@ -30,7 +30,7 @@ const useShopStore = create((set) => ({
   getThemes: async () => {
     try {
       const response = await AxiosConnect.get("/gleek/shop/getAllThemes");
-      set({ themes: response.data.data.slice(1) });
+      set({ themes: response.data.data.slice(0) });
     } catch (error) {
       console.error(error);
     }

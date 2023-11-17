@@ -1112,7 +1112,7 @@ export const getActivitiesWithFilters = async (req, res) => {
 
     if (filter.minRatings > 0) {
       activities = activities.filter(
-        (activity) => activity.averageRating > filter.minRatings
+        (activity) => activity.averageRating >= filter.minRatings
       );
     }
 

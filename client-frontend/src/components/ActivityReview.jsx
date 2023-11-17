@@ -14,10 +14,11 @@ import {
   Chip,
   TextField,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme, lighten } from "@mui/material/styles";
 import ReviewProfile from "./ReviewProfile";
 import { convertISOtoDate } from "../utils/TimeFormatter";
+import Pagination from "@mui/material/Pagination";
 
 const ActivityReview = ({ reviews, averageRating }) => {
   const theme = useTheme();
@@ -26,9 +27,12 @@ const ActivityReview = ({ reviews, averageRating }) => {
   const tertiary = theme.palette.tertiary.main;
   const primaryLighter = lighten(theme.palette.primary.main, 0.4);
   const tertiaryLighter = lighten(theme.palette.tertiary.main, 0.4);
-
-  let filteredReviews = reviews;
-
+  const [filter, setFilter] = useState({ rating: 0, words: [] });
+  const [filteredReviews, setFilteredReviews] = useState([...reviews]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState("Most Recent");
+  const reviewsPerPage = 10;
+  let chipMap = new Map();
   let chipOptions = [];
 
   for (const review of reviews) {
@@ -37,38 +41,113 @@ const ActivityReview = ({ reviews, averageRating }) => {
         (keyword) =>
           keyword.sentiment === "POSITIVE" || keyword.sentiment === "NEGATIVE"
       )
-      .forEach((keyword) =>
-        chipOptions.push({ word: keyword.word, sentiment: keyword.sentiment })
-      );
+      .forEach(function (keyword) {
+        if (chipMap.has(keyword)) {
+          let value = chipMap.get(keyword).count;
+          chipMap.set(keyword.word, {
+            sentiment: keyword.sentiment,
+            count: value + 1,
+          });
+        } else {
+          chipMap.set(keyword.word, { sentiment: keyword.sentiment, count: 1 });
+        }
+      });
   }
 
-  const [chips, setChips] = useState([]);
-  const [newChip, setNewChip] = useState("");
+  // Sorting the Map entries in descending order based on the count
+  chipOptions = Array.from(chipMap.entries())
+    .map(([key, value]) => ({
+      key,
+      value,
+    }))
+    .sort((a, b) => a.value.count - b.value.count);
 
-  const handleChipClick = (chip) => {
-    // Add chip to the chips array
-    setChips([...chips, chip]);
-    // Clear the input field
-    setNewChip("");
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
   };
+
+  useEffect(() => {
+    let tempFiltered = reviews;
+
+    if (filter.rating > 0) {
+      // Filter by rating
+      tempFiltered = tempFiltered.filter(
+        (review) => review.rating >= filter.rating
+      );
+    }
+
+    if (filter.words.length > 0) {
+      // Filter by words
+      tempFiltered = tempFiltered.filter((review) => {
+        const keywords = review.reviewSentiment.keywords.map(
+          (keyword) => keyword.word
+        );
+        return filter.words.some((word) => keywords.includes(word));
+      });
+    }
+
+    tempFiltered = tempFiltered.sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
+    setSortBy("Most Recent");
+
+    setCurrentPage(1); // Reset to the first page when filters change
+    // Update the state with the filtered array
+    setFilteredReviews(tempFiltered);
+  }, [filter.rating, filter.words, reviews]);
 
   const handleChipDelete = (chipToDelete) => {
     // Remove the selected chip from the chips array
-    setChips((prevChips) => prevChips.filter((chip) => chip !== chipToDelete));
+    setFilter((prevFilter) => {
+      return {
+        ...prevFilter,
+        words: prevFilter.words.filter((chip) => chip !== chipToDelete),
+      };
+    });
   };
-
-  const handleChange = (event) => {
-    // Update the input field as the user types
-    setNewChip(event.target.value);
-  };
-
   const handleClick = (value) => {
-    if (!chips.includes(value)) {
-      setChips([...chips, value]);
+    if (!filter.words.includes(value)) {
+      setFilter((prevFilter) => {
+        return { ...prevFilter, words: [...prevFilter.words, value] };
+      });
     }
   };
+  const handleRatingsChange = (event) => {
+    const value = event.target.value;
+    setFilter((prevFilter) => {
+      return { ...prevFilter, rating: value };
+    });
+  };
 
-  return filteredReviews.length > 0 ? (
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = filteredReviews.slice(
+    indexOfFirstReview,
+    indexOfLastReview
+  );
+
+  const handleChange = (event) => {
+    setSortBy(event.target.value);
+    let sortedReviews = [...filteredReviews];
+    if (event.target.value === "Most Recent") {
+      sortedReviews = sortedReviews.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+    } else if (event.target.value === "Oldest") {
+      sortedReviews = sortedReviews.sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
+    } else if (event.target.value === "From Most Highly Rated") {
+      sortedReviews = sortedReviews.sort((a, b) => b.rating - a.rating);
+    } else if (event.target.value === "From Lowest Rated") {
+      sortedReviews = sortedReviews.sort((a, b) => a.rating - b.rating);
+    }
+
+    setFilteredReviews(sortedReviews);
+    setCurrentPage(1); // Reset to the first page when sorting changes
+  };
+
+  return reviews.length > 0 ? (
     <Box>
       <Typography ml={5} mb={2} color={accent} variant="h5" fontWeight="700">
         Ratings
@@ -107,29 +186,36 @@ const ActivityReview = ({ reviews, averageRating }) => {
             Filter reviews by
           </Typography>
           <Box mt={1} display="flex" flexDirection="column">
-            <Box>
+            <Grid container spacing={2}>
               {chipOptions.map((chip, index) => {
                 return (
-                  <Chip
-                    key={index}
-                    label={chip.word}
-                    variant="outlined"
-                    onClick={() => handleClick(chip.word)}
-                    color={chip.sentiment === "POSITIVE" ? "success" : "error"}
-                  />
+                  <Grid item key={index}>
+                    <Chip
+                      label={`${chip.key} (${chip.value.count})`}
+                      variant="outlined"
+                      onClick={() => handleClick(chip.key)}
+                      color={
+                        chip.value.sentiment === "POSITIVE"
+                          ? "success"
+                          : "error"
+                      }
+                    />
+                  </Grid>
                 );
               })}
-            </Box>
-            <Typography
-              mt={2}
-              color={accent}
-              fontWeight={700}
-              variant="caption"
-            >
-              Selected Values:
-            </Typography>
+            </Grid>
+            {filter.words.length > 0 && (
+              <Typography
+                mt={2}
+                color={accent}
+                fontWeight={700}
+                variant="caption"
+              >
+                Selected Values:
+              </Typography>
+            )}
             <Box mt={1}>
-              {chips.map((chip, index) => (
+              {filter.words.map((chip, index) => (
                 <Chip
                   key={index}
                   label={chip}
@@ -152,11 +238,13 @@ const ActivityReview = ({ reviews, averageRating }) => {
               variant="subtitle1"
               mr={2}
             >
-              {averageRating.toFixed(1)}
+              {Number(filter.rating).toFixed(1)}
             </Typography>
             <Rating
               name="rating-read"
               precision={0.5}
+              value={filter.rating}
+              onChange={handleRatingsChange}
               size="small"
               sx={{
                 "& .MuiRating-iconFilled": {
@@ -182,38 +270,51 @@ const ActivityReview = ({ reviews, averageRating }) => {
               <Select
                 labelId="sort-by-label"
                 id="sort-by-select"
-                // value={sortBy}
+                value={sortBy}
                 label="Sort By"
-                // onChange={handleChange}
+                onChange={handleChange}
               >
-                <MenuItem value={"Newest First"}>Newest First</MenuItem>
-                <MenuItem value={"Price High to Low"}>
-                  Price High to Low
+                <MenuItem value={"Most Recent"}>Most Recent</MenuItem>
+                <MenuItem value={"Oldest"}>Oldest</MenuItem>
+                <MenuItem value={"From Most Highly Rated"}>
+                  From Most Highly Rated
                 </MenuItem>
-                <MenuItem value={"Price Low to High"}>
-                  Price Low to High
+                <MenuItem value={"From Lowest Rated"}>
+                  From Lowest Rated
                 </MenuItem>
               </Select>
             </FormControl>
           </Box>
-          {reviews.map((review, index) => {
+          {currentReviews.map((review, index) => {
             return (
-              <Box key={index} bgcolor={tertiaryLighter} p={2} borderRadius={2}>
+              <Box
+                key={index}
+                mb={5}
+                bgcolor={tertiaryLighter}
+                p={2}
+                borderRadius={2}
+              >
                 <Box display="flex" flexDirection="column">
                   <ReviewProfile client={review.client} />
-                  <Rating
-                    name="rating-read"
-                    defaultValue={review.rating}
-                    precision={0.5}
-                    size="small"
-                    readOnly
-                    sx={{
-                      "& .MuiRating-iconFilled": {
-                        color: "#5C4B99",
-                      },
-                      marginTop: 2,
-                    }}
-                  />
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    mt={1}
+                  >
+                    <Rating
+                      name="rating-read"
+                      value={review.rating}
+                      precision={0.5}
+                      size="small"
+                      readOnly
+                      sx={{
+                        "& .MuiRating-iconFilled": {
+                          color: "#5C4B99",
+                        },
+                      }}
+                    />
+                  </Box>
                   <Typography mt={2}>{review.comment}</Typography>
                   <Typography mt={2} color="grey" variant="caption">
                     {convertISOtoDate(review.date)}
@@ -222,6 +323,14 @@ const ActivityReview = ({ reviews, averageRating }) => {
               </Box>
             );
           })}
+          <Pagination
+            count={Math.ceil(filteredReviews.length / reviewsPerPage)}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+            size="small"
+            sx={{ marginTop: 2 }}
+          />
         </Grid>
       </Grid>
     </Box>

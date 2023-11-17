@@ -72,6 +72,7 @@ const ShopPage = (props) => {
       console.log("TEST1213");
       fetchData();
     }
+    console.log(themes);
   }, [getPriceInterval, getThemes]);
 
   const handlePageChange = (newPage) => {

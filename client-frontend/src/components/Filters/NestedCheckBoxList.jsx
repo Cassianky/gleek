@@ -39,8 +39,8 @@ const NestedCheckboxList = (props) => {
       setParentChecked(Array(parentThemes.length).fill(false));
       setChildChecked(
         parentThemes.map((parentTheme) =>
-          Array(parentTheme.children.length).fill(false),
-        ),
+          Array(parentTheme.children.length).fill(false)
+        )
       );
       setIsLoading(false);
     }
@@ -85,7 +85,7 @@ const NestedCheckboxList = (props) => {
       const newChildChecked = [...childChecked];
       if (newChildChecked.length > 0) {
         newChildChecked[index] = newChildChecked[index].map(
-          () => newParentChecked[index],
+          () => newParentChecked[index]
         );
       }
       setChildChecked(newChildChecked);
@@ -104,7 +104,7 @@ const NestedCheckboxList = (props) => {
       // Update parent checkbox based on child checkboxes
       const newParentChecked = [...parentChecked];
       newParentChecked[parentIndex] = newChildChecked[parentIndex].every(
-        (isChecked) => isChecked,
+        (isChecked) => isChecked
       );
       setParentChecked(newParentChecked);
     }

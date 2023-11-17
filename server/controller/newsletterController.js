@@ -27,8 +27,8 @@ export const sendCustomEdm = async (req, res) => {
           email: "yowyiying@gmail.com",
         },
         "Custome EDM Subject",
-        "Custome EDM COntente lorem ipsum test test lkdfjvlerjlksdnflkjdfla ;sadf",
-      ),
+        "Custome EDM COntente lorem ipsum test test lkdfjvlerjlksdnflkjdfla ;sadf"
+      )
     );
     res.status(200).json({ message: "Email sent" });
   } catch (err) {
@@ -91,7 +91,7 @@ export const updateScheduledNewsletter = async (req, res) => {
     await ScheduledNewsletterModel.findByIdAndUpdate(
       scheduledNewsletterId,
       newsletterData,
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     );
     return res.status(200).json({ message: "Scheduled newsletter updated!" });
   } catch (err) {
@@ -164,8 +164,9 @@ export const getPreview = async (req, res) => {
 
 export const testSendNewsletter = async (req, res) => {
   try {
-    const { newsletter, email } = req.body;
-    await sendNewsletter(newsletter, "", email);
+    const { newsletter } = req.body;
+    const admin = req.user;
+    await sendNewsletter(newsletter, admin.name, admin.email);
     res.status(200).json({ message: "Email sent" });
   } catch (error) {
     console.log("thrown error", error);
@@ -196,7 +197,7 @@ cron.schedule("* * * * *", async () => {
         await sendNewsletter(
           scheduledNewsletter,
           "Yiying",
-          "yowyiying@gmail.com",
+          "yowyiying@gmail.com"
         );
         // console.log("Sending due email...");
         // const preSignedUrl =
@@ -219,7 +220,7 @@ cron.schedule("* * * * *", async () => {
           scheduledNewsletter._id,
           {
             status: "SENT",
-          },
+          }
         );
       } catch (error) {
         console.error(`Error sending scheduled email: ${error.message}`);
@@ -228,7 +229,7 @@ cron.schedule("* * * * *", async () => {
           {
             status: "FAILED",
             errorLog: error.message,
-          },
+          }
         );
       }
     });

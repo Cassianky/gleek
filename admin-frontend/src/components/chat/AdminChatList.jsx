@@ -6,8 +6,13 @@ import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 
 const AdminChatList = ({ socket }) => {
-  const { allChatrooms, selectedChat, setSelectedChat, setChatroomMarkAsRead } =
-    useChatStore();
+  const {
+    loading,
+    allChatrooms,
+    selectedChat,
+    setSelectedChat,
+    setChatroomMarkAsRead,
+  } = useChatStore();
   const [selectedChatroomId, setSelectedChatroomId] = useState(null);
 
   const onSelectChatroom = (chatroom) => {
@@ -68,7 +73,9 @@ const AdminChatList = ({ socket }) => {
         overflow="scroll"
         borderRadius="8px"
       >
-        {allChatrooms.length > 0 ? (
+        {loading ? (
+          <AdminChatLoading />
+        ) : allChatrooms.length > 0 ? (
           <Stack spacing={2} width={{ md: "100%" }} height={{ md: "100%" }}>
             {allChatrooms.map((chatroom) => (
               <Box
@@ -122,7 +129,7 @@ const AdminChatList = ({ socket }) => {
             ))}
           </Stack>
         ) : (
-          <AdminChatLoading />
+          "No chats currently."
         )}
       </Box>
     </Box>

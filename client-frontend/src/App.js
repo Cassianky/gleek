@@ -52,406 +52,403 @@ import NotificationPage from "./containers/NotificationPage";
 import LeaderBoardMainPage from "./containers/Client/Leaderboard/LeaderBoardMainPage";
 
 function App() {
-   const { isLoading, clientError, login } = useClientStore();
-   const { isLoadingVendor, vendorError, loginVendor } = useVendorStore();
-   return (
-      <div>
-         <SocketConnection />
-         <Layout>
-            <Routes>
-               <Route path="/" element={<HomePage />} />
-               <Route
-                  path="/settings"
-                  element={
-                     <ClientProtectedRoute>
-                        <Navigate to="/settings/profile" />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/settings/profile"
-                  element={
-                     <ClientProtectedRoute>
-                        <AccountDetails />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/settings/picture"
-                  element={
-                     <ClientProtectedRoute>
-                        <ProfilePicture />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/settings/privacy"
-                  element={
-                     <ClientProtectedRoute>
-                        <Privacy />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/settings/password"
-                  element={
-                     <ClientProtectedRoute>
-                        <PasswordChange />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/client/verifyEmail"
-                  element={
-                     <ClientProtectedRoute>
-                        <VerifyEmail />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/client/verifyEmail/:token"
-                  element={
-                     <ClientProtectedRoute>
-                        <VerifyEmail />
-                     </ClientProtectedRoute>
-                  }
-               />
+  const { isLoading, clientError, login } = useClientStore();
+  const { isLoadingVendor, vendorError, loginVendor } = useVendorStore();
+  return (
+    <div>
+      <SocketConnection />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/settings"
+            element={
+              <ClientProtectedRoute>
+                <Navigate to="/settings/profile" />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/profile"
+            element={
+              <ClientProtectedRoute>
+                <AccountDetails />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/picture"
+            element={
+              <ClientProtectedRoute>
+                <ProfilePicture />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/privacy"
+            element={
+              <ClientProtectedRoute>
+                <Privacy />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/password"
+            element={
+              <ClientProtectedRoute>
+                <PasswordChange />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            path="/client/verifyEmail"
+            element={
+              <ClientProtectedRoute>
+                <VerifyEmail />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            path="/client/verifyEmail/:token"
+            element={
+              <ClientProtectedRoute>
+                <VerifyEmail />
+              </ClientProtectedRoute>
+            }
+          />
 
-               <Route
-                  path="/bookmarks"
-                  element={
-                     <ClientProtectedRoute>
-                        <MyBookmarks />
-                     </ClientProtectedRoute>
-                  }
-               />
+          <Route
+            path="/bookmarks"
+            element={
+              <ClientProtectedRoute>
+                <MyBookmarks />
+              </ClientProtectedRoute>
+            }
+          />
 
-               <Route
-                  path="/cart"
-                  element={
-                     <ClientProtectedRoute>
-                        <CartPage />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/shop"
-                  element={
-                     <ClientProtectedRoute>
-                        <ShopPage />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/shop/activity/:activityId"
-                  element={
-                     <ClientProtectedRoute>
-                        <ActivityDetailsPage />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/shop/vendor/:id"
-                  element={
-                     <ClientProtectedRoute>
-                        <VendorDetails />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/cart/checkout"
-                  element={
-                     <ClientProtectedRoute>
-                        <CheckoutPage />
-                     </ClientProtectedRoute>
-                  }
-               />
+          <Route
+            path="/cart"
+            element={
+              <ClientProtectedRoute>
+                <CartPage />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            path="/shop"
+            element={
+              <ClientProtectedRoute>
+                <ShopPage />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            path="/shop/activity/:activityId"
+            element={
+              <ClientProtectedRoute>
+                <ActivityDetailsPage />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/shop/vendor/:id"
+            element={
+              <ClientProtectedRoute>
+                <VendorDetails />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/cart/checkout"
+            element={
+              <ClientProtectedRoute>
+                <CheckoutPage />
+              </ClientProtectedRoute>
+            }
+          />
 
-               <Route
-                  exact
-                  path="/booking/:bookingId/survey/edit"
-                  element={
-                     <ClientProtectedRoute>
-                        <FillSurvey />
-                     </ClientProtectedRoute>
-                  }
-               />
+          <Route
+            exact
+            path="/booking/:bookingId/survey/edit"
+            element={
+              <ClientProtectedRoute>
+                <FillSurvey />
+              </ClientProtectedRoute>
+            }
+          />
 
-               <Route
-                  exact
-                  path="/booking/:bookingId/survey/view"
-                  element={
-                     <ClientProtectedRoute>
-                        <ViewSurvey />
-                     </ClientProtectedRoute>
-                  }
-               />
+          <Route
+            exact
+            path="/booking/:bookingId/survey/view"
+            element={
+              <ClientProtectedRoute>
+                <ViewSurvey />
+              </ClientProtectedRoute>
+            }
+          />
 
-               <Route
-                  exact
-                  path="/surveys"
-                  element={
-                     <ClientProtectedRoute>
-                        <PendingSurveys />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/bookings"
-                  element={
-                     <ClientProtectedRoute>
-                        <MyBookings />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/booking/:bookingId"
-                  element={
-                     <ClientProtectedRoute>
-                        <BookingsDetails />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/myBadges"
-                  element={
-                     <ClientProtectedRoute>
-                        <MyBadges />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/client/:id"
-                  element={
-                     <ClientProtectedRoute>
-                        <ClientDetails />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/login"
-                  element={
-                     <LoginPage
-                        loading={isLoading}
-                        error={clientError}
-                        title="Client Login"
-                        registerLink="/register"
-                        forgotPasswordLink="/client/forgotPassword"
-                        loginMethod={login}
-                     />
-                  }
-               />
-               <Route path="/register" element={<RegisterPage />} />
-               <Route
-                  exact
-                  path="client/resetPassword"
-                  element={<ResetPassword />}
-               />
-               <Route
-                  exact
-                  path="/client/forgotPassword"
-                  element={<ForgotPassword />}
-               />
-               <Route
-                  exact
-                  path="/client/chats"
-                  element={
-                     <ClientProtectedRoute>
-                        <ChatPage />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/client/notifications"
-                  element={
-                     <ClientProtectedRoute>
-                        <NotificationPage />
-                     </ClientProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/client/leaderboard"
-                  element={
-                     <ClientProtectedRoute>
-                        <LeaderBoardMainPage />
-                     </ClientProtectedRoute>
-                  }
-               />
-               {/* Vendor routes */}
-               <Route
-                  path="/vendor/login"
-                  element={
-                     <LoginPage
-                        loading={isLoadingVendor}
-                        error={vendorError}
-                        title="Vendor Login"
-                        registerLink="/vendor/register"
-                        forgotPasswordLink="/vendor/forgotPassword"
-                        loginMethod={loginVendor}
-                     />
-                  }
-               />
-               <Route
-                  path="/vendor/register"
-                  element={<VendorRegisterPage />}
-               />
-               <Route path="/vendor/dashboard" element={<DashboardPage />} />
-               <Route path="/error" element={<ErrorPage />} />
-               <Route
-                  path="/vendor/activities"
-                  element={
-                     <VendorProtectedRoute>
-                        <ActivitiesPage />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/bookings"
-                  element={
-                     <VendorProtectedRoute>
-                        <BookingsPage />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/createActivity"
-                  element={
-                     <VendorProtectedRoute>
-                        <CreateActivityPage />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/editActivityDraft/:activityId"
-                  element={
-                     <VendorProtectedRoute>
-                        <EditActivityDraftPage />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/settings"
-                  element={
-                     <VendorProtectedRoute>
-                        <Navigate to="/vendor/settings/profile" />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/settings/profile"
-                  element={
-                     <VendorProtectedRoute>
-                        <AccountDetailsVendor />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/settings/picture"
-                  element={
-                     <VendorProtectedRoute>
-                        <ProfilePictureVendor />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/settings/password"
-                  element={
-                     <VendorProtectedRoute>
-                        <PasswordChangeVendor />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/verifyEmail/:token"
-                  element={
-                     <VendorProtectedRoute>
-                        <VerifyEmailVendor />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/verifyEmail"
-                  element={
-                     <VendorProtectedRoute>
-                        <VerifyEmailVendor />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/vendor/settings/termsAndConditons"
-                  element={
-                     <VendorProtectedRoute>
-                        <PrivacyVendor />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/vendor/forgotPassword"
-                  element={<VendorForgotPassword />}
-               />
-               <Route
-                  exact
-                  path="/vendor/resetPassword"
-                  element={<VendorResetPassword />}
-               />
-               <Route
-                  exact
-                  path="/vendor/blockout"
-                  element={
-                     <VendorProtectedRoute>
-                        <BlockoutDashboard />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/vendor/activity/:activityId/blockout"
-                  element={
-                     <VendorProtectedRoute>
-                        <BlockoutSingleActivity />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/vendor/blockout/create/mass"
-                  element={
-                     <VendorProtectedRoute>
-                        <BlockoutMultipleActivities />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/vendor/chats"
-                  element={
-                     <VendorProtectedRoute>
-                        <ChatPage />
-                     </VendorProtectedRoute>
-                  }
-               />
-               <Route
-                  exact
-                  path="/vendor/notifications"
-                  element={
-                     <VendorProtectedRoute>
-                        <NotificationPage />
-                     </VendorProtectedRoute>
-                  }
-               />
-            </Routes>
-         </Layout>
-      </div>
-   );
+          <Route
+            exact
+            path="/surveys"
+            element={
+              <ClientProtectedRoute>
+                <PendingSurveys />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/bookings"
+            element={
+              <ClientProtectedRoute>
+                <MyBookings />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/booking/:bookingId"
+            element={
+              <ClientProtectedRoute>
+                <BookingsDetails />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/myBadges"
+            element={
+              <ClientProtectedRoute>
+                <MyBadges />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/client/:id"
+            element={
+              <ClientProtectedRoute>
+                <ClientDetails />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <LoginPage
+                loading={isLoading}
+                error={clientError}
+                title="Client Login"
+                registerLink="/register"
+                forgotPasswordLink="/client/forgotPassword"
+                loginMethod={login}
+              />
+            }
+          />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            exact
+            path="client/resetPassword"
+            element={<ResetPassword />}
+          />
+          <Route
+            exact
+            path="/client/forgotPassword"
+            element={<ForgotPassword />}
+          />
+          <Route
+            exact
+            path="/client/chats"
+            element={
+              <ClientProtectedRoute>
+                <ChatPage />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/client/notifications"
+            element={
+              <ClientProtectedRoute>
+                <NotificationPage />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/client/leaderboard"
+            element={
+              <ClientProtectedRoute>
+                <LeaderBoardMainPage />
+              </ClientProtectedRoute>
+            }
+          />
+          {/* Vendor routes */}
+          <Route
+            path="/vendor/login"
+            element={
+              <LoginPage
+                loading={isLoadingVendor}
+                error={vendorError}
+                title="Vendor Login"
+                registerLink="/vendor/register"
+                forgotPasswordLink="/vendor/forgotPassword"
+                loginMethod={loginVendor}
+              />
+            }
+          />
+          <Route path="/vendor/register" element={<VendorRegisterPage />} />
+          <Route path="/vendor/dashboard" element={<DashboardPage />} />
+          <Route path="/error" element={<ErrorPage />} />
+          <Route
+            path="/vendor/activities"
+            element={
+              <VendorProtectedRoute>
+                <ActivitiesPage />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/bookings"
+            element={
+              <VendorProtectedRoute>
+                <BookingsPage />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/createActivity"
+            element={
+              <VendorProtectedRoute>
+                <CreateActivityPage />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/editActivityDraft/:activityId"
+            element={
+              <VendorProtectedRoute>
+                <EditActivityDraftPage />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/settings"
+            element={
+              <VendorProtectedRoute>
+                <Navigate to="/vendor/settings/profile" />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/settings/profile"
+            element={
+              <VendorProtectedRoute>
+                <AccountDetailsVendor />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/settings/picture"
+            element={
+              <VendorProtectedRoute>
+                <ProfilePictureVendor />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/settings/password"
+            element={
+              <VendorProtectedRoute>
+                <PasswordChangeVendor />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/verifyEmail/:token"
+            element={
+              <VendorProtectedRoute>
+                <VerifyEmailVendor />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/verifyEmail"
+            element={
+              <VendorProtectedRoute>
+                <VerifyEmailVendor />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendor/settings/termsAndConditons"
+            element={
+              <VendorProtectedRoute>
+                <PrivacyVendor />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/vendor/forgotPassword"
+            element={<VendorForgotPassword />}
+          />
+          <Route
+            exact
+            path="/vendor/resetPassword"
+            element={<VendorResetPassword />}
+          />
+          <Route
+            exact
+            path="/vendor/blockout"
+            element={
+              <VendorProtectedRoute>
+                <BlockoutDashboard />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/vendor/activity/:activityId/blockout"
+            element={
+              <VendorProtectedRoute>
+                <BlockoutSingleActivity />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/vendor/blockout/create/mass"
+            element={
+              <VendorProtectedRoute>
+                <BlockoutMultipleActivities />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/vendor/chats"
+            element={
+              <VendorProtectedRoute>
+                <ChatPage />
+              </VendorProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/vendor/notifications"
+            element={
+              <VendorProtectedRoute>
+                <NotificationPage />
+              </VendorProtectedRoute>
+            }
+          />
+        </Routes>
+      </Layout>
+    </div>
+  );
 }
 
 export default App;

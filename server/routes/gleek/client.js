@@ -1,10 +1,12 @@
 import express from "express";
 import {
+  getClientPreferredActivityTypes,
   getConsentSettings,
   postChangePassword,
   postResetPassword,
   resendVerifyEmail,
   updateClientAccountDetails,
+  updateClientPreferredActivityTypes,
   updateConsentSettings,
   updateProfilePicture,
   verifyEmail,
@@ -38,5 +40,17 @@ router.get("/verifyEmail/:token", verifyEmail);
 // Verify Email Resend
 router.get("/resendVerifyEmail", verifyToken, resendVerifyEmail);
 router.post("/resetPassword", verifyToken, postResetPassword);
+
+// Update activity type preferences
+router.get(
+  "/getPreferredActivityTypes",
+  verifyToken,
+  getClientPreferredActivityTypes
+);
+router.patch(
+  "/updatePreferredActivityTypes",
+  verifyToken,
+  updateClientPreferredActivityTypes
+);
 
 export default router;

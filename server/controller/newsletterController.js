@@ -5,6 +5,7 @@ import ScheduledNewsletterModel from "../model/scheduledNewsletterModel.js";
 import cron from "node-cron";
 import { NewsletterTemplate } from "../assets/templates/NewsletterTemplate.js";
 import { sendNewsletter } from "../service/newsletterService.js";
+import { PersonalisedNewsletterTemplate } from "../assets/templates/PersonalisedNewsletterTemplate.js";
 
 export const sendCustomEdm = async (req, res) => {
   try {
@@ -146,12 +147,20 @@ export const getPreview = async (req, res) => {
     const { messageBody, preSignedPhoto, newsletterType } = req.params;
     console.log(messageBody, preSignedPhoto, newsletterType);
     const admin = req.user;
-    const htmlContent = NewsletterTemplate({
-      recipientName: admin.name,
-      messageBody: messageBody,
-      preSignedPhoto: preSignedPhoto,
-      forEmail: false,
-    });
+    const htmlContent =
+      newsletterType === "CUSTOM"
+        ? NewsletterTemplate({
+            recipientName: admin.name,
+            messageBody: messageBody,
+            preSignedPhoto: preSignedPhoto,
+            forEmail: false,
+          })
+        : PersonalisedNewsletterTemplate({
+            recipientName: admin.name,
+            messageBody: messageBody,
+            preSignedPhoto: preSignedPhoto,
+            forEmail: false,
+          });
     res.status(200).json({ htmlContent });
   } catch (err) {
     console.log(err);
@@ -166,7 +175,7 @@ export const testSendNewsletter = async (req, res) => {
   try {
     const { newsletter } = req.body;
     const admin = req.user;
-    await sendNewsletter(newsletter, admin.name, admin.email);
+    await sendNewsletter(newsletter, admin);
     res.status(200).json({ message: "Email sent" });
   } catch (error) {
     console.log("thrown error", error);
@@ -181,9 +190,6 @@ export const testSendNewsletter = async (req, res) => {
 cron.schedule("* * * * *", async () => {
   try {
     const currentTimestamp = Date.now();
-    // console.log(
-    //   `Cron job running at: ${new Date(currentTimestamp).toLocaleString()}`,
-    // );
 
     // Find scheduled emails that are due to be sent
     const scheduledNewslettersDue = await ScheduledNewsletterModel.find({
@@ -194,28 +200,17 @@ cron.schedule("* * * * *", async () => {
     // Send the due emails
     scheduledNewslettersDue.forEach(async (scheduledNewsletter) => {
       try {
-        await sendNewsletter(
-          scheduledNewsletter,
-          "Yiying",
-          "yowyiying@gmail.com"
-        );
-        // console.log("Sending due email...");
-        // const preSignedUrl =
-        //   scheduledNewsletter.photo &&
-        //   (await s3GetImages(scheduledNewsletter.photo));
-        // //console.log("presigned url", preSignedUrl);
+        await sendNewsletter(scheduledNewsletter, {
+          name: "Yiying",
+          email: "yowyiying@gmail.com",
+          preferredActivityTypes: {
+            WORKSHOP: true,
+            TALKS: true,
+            LEARNING_JOURNEY: false,
+            POPUP: true,
+          },
+        });
 
-        // await sendMail(
-        //   createCustomEdmMailOptions(
-        //     {
-        //       name: "Yiying",
-        //       email: "yowyiying@gmail.com",
-        //     },
-        //     scheduledNewsletter.subject,
-        //     scheduledNewsletter.messageBody,
-        //     preSignedUrl,
-        //   ),
-        // );
         await ScheduledNewsletterModel.findByIdAndUpdate(
           scheduledNewsletter._id,
           {

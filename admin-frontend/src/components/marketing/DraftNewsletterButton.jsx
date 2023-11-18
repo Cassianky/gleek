@@ -21,7 +21,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
   DialogActions,
   Button,
   FormControlLabel,
@@ -41,21 +40,6 @@ const DraftNewsletterButton = ({ newsletterData }) => {
   const { openSnackbar } = useSnackbarStore();
   const { saveScheduledNewsletter, updateScheduledNewsletter } =
     useNewsletterStore();
-
-  // const [selectedOption, setSelectedOption] = useState(
-  //   newsletterData === undefined ? "CUSTOM" : newsletterData.newsletterType,
-  // );
-  // const [selectedDateTime, setSelectedDateTime] = useState(
-  //   newsletterData === undefined
-  //     ? dayjs()
-  //     : dayjs(newsletterData.scheduledTime),
-  // );
-  // const [emailSubject, setEmailSubject] = useState(
-  //   newsletterData === undefined ? "" : newsletterData.subject ?? "",
-  // );
-  // const [messageBody, setMessageBody] = useState(
-  //   newsletterData === undefined ? "" : newsletterData.messageBody ?? "",
-  // );
 
   const [selectedOption, setSelectedOption] = useState("CUSTOM");
   const [selectedDateTime, setSelectedDateTime] = useState(dayjs());

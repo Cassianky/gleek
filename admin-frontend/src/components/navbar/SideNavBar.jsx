@@ -37,6 +37,7 @@ const marketingManagementList = [
   { "View Mailing Lists": "/mailingLists" },
 ];
 const badgeManagementList = [{ "View Badges": "/badges" }];
+const dataAnalayticsList = [{ Dashboard: "/dashboard" }];
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -52,7 +53,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
   const navigate = useNavigate();
   const selectedItem = useSelectedNavItemStore((state) => state.selectedItem);
   const setSelectedItem = useSelectedNavItemStore(
-    (state) => state.setSelectedItem,
+    (state) => state.setSelectedItem
   );
   const handleItemClick = async (item, link) => {
     navigate(link);
@@ -94,7 +95,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
                     onClick={() =>
                       handleItemClick(
                         Object.keys(item)[0],
-                        item[Object.keys(item)[0]],
+                        item[Object.keys(item)[0]]
                       )
                     }
                   >
@@ -123,7 +124,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
                     onClick={() =>
                       handleItemClick(
                         Object.keys(item)[0],
-                        item[Object.keys(item)[0]],
+                        item[Object.keys(item)[0]]
                       )
                     }
                   >
@@ -217,6 +218,30 @@ const SideNavBar = ({ isSidebarOpen }) => {
           </Box>
           <List>
             {badgeManagementList.map((item, index) => (
+              <StyledLink to={item[Object.keys(item)[0]]} key={index}>
+                <ListItem key={Object.keys(item)[0]} disablePadding>
+                  <ListItemButton
+                    selected={selectedItem === Object.keys(item)[0]}
+                    onClick={() => handleItemClick(Object.keys(item)[0])}
+                  >
+                    <ListItemText primary={Object.keys(item)[0]} />
+                  </ListItemButton>
+                </ListItem>
+              </StyledLink>
+            ))}
+          </List>
+          <Divider />
+          <Box sx={{ paddingLeft: 2, paddingTop: 2 }}>
+            <Typography
+              fontWeight={700}
+              color={theme.palette.primary.main}
+              fontSize={20}
+            >
+              Data Analytics
+            </Typography>
+          </Box>
+          <List>
+            {dataAnalayticsList.map((item, index) => (
               <StyledLink to={item[Object.keys(item)[0]]} key={index}>
                 <ListItem key={Object.keys(item)[0]} disablePadding>
                   <ListItemButton

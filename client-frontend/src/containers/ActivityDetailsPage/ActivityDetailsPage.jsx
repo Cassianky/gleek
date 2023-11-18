@@ -47,6 +47,7 @@ import "./styles.css";
 import Holidays from "date-holidays";
 import VendorChatButton from "../../components/Chat/VendorChatButton";
 import useClientStore from "../../zustand/ClientStore";
+import ActivityReview from "../../components/ActivityReview";
 
 const ActivityDetailsPage = () => {
   const {
@@ -165,7 +166,7 @@ const ActivityDetailsPage = () => {
   const calculateWeekendAddOn = (
     selectedDate,
     weekendPricing,
-    totalBasePrice,
+    totalBasePrice
   ) => {
     if (
       weekendPricing.amount !== null &&
@@ -216,19 +217,19 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-      totalBasePrice,
+      totalBasePrice
     );
 
     const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing,
-      totalBasePrice,
+      totalBasePrice
     );
 
     const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing,
-      totalBasePrice,
+      totalBasePrice
     );
 
     const totalPriceCalculated =
@@ -249,17 +250,17 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-      totalBasePrice,
+      totalBasePrice
     );
     const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing,
-      totalBasePrice,
+      totalBasePrice
     );
     const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing,
-      totalBasePrice,
+      totalBasePrice
     );
     let activityPricingRule;
     for (const pricingRule of currentActivity?.activityPricingRules) {
@@ -308,15 +309,15 @@ const ActivityDetailsPage = () => {
     try {
       const weekendAddOn = calculateWeekendAddOn(
         selectedDate,
-        currentActivity.weekendPricing,
+        currentActivity.weekendPricing
       );
       const onlineAddOn = calculateOnlineAddOn(
         location,
-        currentActivity.offlinePricing,
+        currentActivity.offlinePricing
       );
       const offlineAddOn = calculateOfflineAddOn(
         location,
-        currentActivity.onlinePricing,
+        currentActivity.onlinePricing
       );
 
       const bookingData = {
@@ -499,7 +500,7 @@ const ActivityDetailsPage = () => {
                           format="DD/MM/YYYY"
                           minDate={dayjs().add(
                             currentActivity?.bookingNotice,
-                            "days",
+                            "days"
                           )}
                           shouldDisableDate={shouldDisableDate}
                           sx={{ marginRight: "12px" }}
@@ -657,7 +658,7 @@ const ActivityDetailsPage = () => {
                                   ? "-"
                                   : ""}
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                                 %
                               </Typography>
@@ -680,7 +681,7 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                               </Typography>
                             </Box>
@@ -701,7 +702,7 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
-                                  2,
+                                  2
                                 )}
                                 %
                               </Typography>
@@ -1139,35 +1140,18 @@ const ActivityDetailsPage = () => {
                   mt={1}
                 >
                   <GppGoodIcon color="primary" />
-                  <Typography sx={{ marginLeft: "5px" }}>
-                    {sdg.split(" ")[0]}
-                  </Typography>
+                  <Typography sx={{ marginLeft: "5px" }}>{sdg}</Typography>
                 </Box>
               ))}
             </Box>
           </Grid>
-          <Grid item xs={12} sm={12} md={8} lg={8}>
-            <Box
-              boxShadow={2}
-              borderRadius={2}
-              width="100%"
-              bgcolor="white"
-              p={3}
-            >
-              <Typography>No Ratings yet</Typography>
-            </Box>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={12}
-            md={6}
-            lg={6}
-            display="flex"
-            justifyContent="center"
-            flexDirection="row"
-          ></Grid>
         </Grid>
+      )}
+      {!currentActivityLoading && (
+        <ActivityReview
+          reviews={currentActivity.reviews}
+          averageRating={currentActivity.averageRating}
+        />
       )}
     </Box>
   );

@@ -28,7 +28,7 @@ import SubmittedSurveys from "./components/survey/SubmittedSurveys";
 import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
 import ActivityReviews from "./components/review/ActivityReviews";
 import ManageReviewsForActivity from "./components/review/ManageReviewsForActivity";
-import AdminChatpage from "./components/Chat/AdminChatPage";
+import AdminChatpage from "./components/chat/AdminChatPage";
 import ManageTestimonials from "./components/testimonial/ManageTestimonials.jsx";
 import TestimonialDetails from "./components/testimonial/TestimonialDetails.jsx";
 import VendorDetails from "./components/vendor/VendorDetails";
@@ -39,6 +39,7 @@ import CreateBadgePage from "./components/badges/CreateBadgePage.jsx";
 import ManageFeaturedActivities from "./components/featured/ManageFeaturedActivities.jsx";
 import EditFeaturedActivity from "./components/featured/EditFeaturedActivity.jsx";
 import DashboardPage from "./components/analytics/DashboardPage.jsx";
+import ScheduledTaskDemo from "./components/ScheduledTaskDemo";
 
 function App() {
   return (
@@ -351,6 +352,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/scheduledTaskDemo"
+            element={
+              <ProtectedRoute>
+                <ScheduledTaskDemo />
               </ProtectedRoute>
             }
           />

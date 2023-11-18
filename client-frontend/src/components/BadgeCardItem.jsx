@@ -42,10 +42,10 @@ const BadgeCardItem = ({ badge }) => {
 
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery((theme) =>
-    theme.breakpoints.between("sm", "md"),
+    theme.breakpoints.between("sm", "md")
   );
   const isLargeScreen = useMediaQuery((theme) =>
-    theme.breakpoints.between("md", "lg"),
+    theme.breakpoints.between("md", "lg")
   );
   let containerStyleUncompleted = {
     height: "15rem", // Default for extra-large screens
@@ -123,7 +123,7 @@ const BadgeCardItem = ({ badge }) => {
           badge.bookingCount
             ? (badge.bookingCount / badge.badge.bookingThreshold) * 100
             : (badge.sdgCount / badge.badge.sdgThreshold) * 100,
-          100,
+          100
         )
       : 0;
 
@@ -133,7 +133,7 @@ const BadgeCardItem = ({ badge }) => {
           badge.bookingCount || badge.sdgCount,
           badge.bookingCount
             ? badge.badge.bookingThreshold
-            : badge.badge.sdgThreshold,
+            : badge.badge.sdgThreshold
         )
       : 0;
   return (
@@ -203,11 +203,11 @@ const BadgeCardItem = ({ badge }) => {
               badge.bookingCount
                 ? Math.min(
                     (badge.bookingCount / badge.badge.bookingThreshold) * 100,
-                    100,
+                    100
                   )
                 : Math.min(
                     (badge.sdgCount / badge.badge.sdgThreshold) * 100,
-                    100,
+                    100
                   )
             }
           />

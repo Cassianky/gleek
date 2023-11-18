@@ -118,7 +118,32 @@ export const getActivity = async (req, res) => {
       .populate("activityPricingRules")
       .populate("linkedVendor")
       .populate("theme")
-      .populate("subtheme");
+      .populate("subtheme")
+      .populate({
+        path: "reviews",
+        match: { hidden: false },
+        select: "-booking",
+        populate: [
+          { path: "client", select: "_id photo preSignedPhoto name" },
+          { path: "reviewSentiment" },
+        ],
+      });
+
+    if (foundActivity.reviews.length > 0 && foundActivity.reviews) {
+      const totalRatings = foundActivity.reviews.reduce(
+        (sum, review) => sum + review.rating,
+        0
+      );
+      foundActivity.averageRating = totalRatings / foundActivity.reviews.length;
+    } else {
+      foundActivity.averageRating = 0;
+    }
+
+    for (const review of foundActivity.reviews) {
+      let preSignedPhoto = await s3GetImages(review.client.photo);
+      review.client.preSignedPhoto = preSignedPhoto;
+    }
+
     let preSignedUrlArr = await s3GetImages(foundActivity.images);
     foundActivity.preSignedImages = preSignedUrlArr;
     console.log("each push:", foundActivity.preSignedImages);
@@ -1048,12 +1073,29 @@ export const getActivitiesWithFilters = async (req, res) => {
     query.disabled = false;
     query.approvalStatus = "Published";
 
-    const activities = await ActivityModel.find(query)
+    let activities = await ActivityModel.find(query)
       .populate("activityPricingRules")
-      .populate("linkedVendor");
+      .populate("linkedVendor")
+      .populate({
+        path: "reviews",
+        match: { hidden: false },
+        select: "-booking",
+      });
+
+    function findAverageRating(activity) {
+      if (activity.reviews && activity.reviews.length > 0) {
+        const totalRatings = activity.reviews.reduce(
+          (sum, review) => sum + review.rating,
+          0
+        );
+        return totalRatings / activity.reviews.length;
+      } else {
+        return 0;
+      }
+    }
 
     // Create a function to find the minimum price per pax for each activity
-    async function findMinimumPricePerPax(activity) {
+    function findMinimumPricePerPax(activity) {
       let minPricePerPax = Infinity;
       for (const pricingRule of activity.activityPricingRules) {
         if (pricingRule.clientPrice < minPricePerPax) {
@@ -1065,13 +1107,16 @@ export const getActivitiesWithFilters = async (req, res) => {
 
     // Populate the minimum price per pax for each activity
     for (const activity of activities) {
-      activity.minimumPricePerPax = await findMinimumPricePerPax(activity);
+      activity.minimumPricePerPax = findMinimumPricePerPax(activity);
+      activity.averageRating = findAverageRating(activity);
       activity.preSignedImages = await s3GetImages(activity.images);
     }
-    // console.log(
-    //   "********************************************************************************"
-    // );
-    // console.log(activities);
+
+    if (filter.minRatings > 0) {
+      activities = activities.filter(
+        (activity) => activity.averageRating >= filter.minRatings
+      );
+    }
 
     return res.status(200).json({
       success: true,

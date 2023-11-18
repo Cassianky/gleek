@@ -51,7 +51,7 @@ const VendorRegisterPage = () => {
     vendorType: "",
     vendorDetails: "",
     customCompanyType: "",
-    // Client consent
+    // Vendor consent
     acceptTermsAndConditions: false,
     brandNames: [],
     companySocials: {},

@@ -116,6 +116,13 @@ const activitySchema = new mongoose.Schema({
       ref: "BlockedTimeslot",
     },
   ],
+  averageRating: { type: Number },
+  reviews: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
   rejectedDraft: { type: mongoose.Schema.Types.ObjectId, ref: "Activity" },
   parent: { type: mongoose.Schema.Types.ObjectId, ref: "Activity" },
 });

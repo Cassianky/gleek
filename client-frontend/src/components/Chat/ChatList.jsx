@@ -6,16 +6,29 @@ import { getSenderName } from "../../utils/ChatLogics";
 import useGlobalStore from "../../zustand/GlobalStore";
 import dayjs from "dayjs";
 
-const ChatList = () => {
-  const { allChatrooms, selectedChat, setSelectedChat } = useChatStore();
+const ChatList = ({ socket }) => {
+  const {
+    loading,
+    allChatrooms,
+    selectedChat,
+    setSelectedChat,
+    setChatroomMarkAsRead,
+  } = useChatStore();
   const { role } = useGlobalStore();
   const [selectedChatroomId, setSelectedChatroomId] = useState(null);
 
   const onSelectChatroom = (chatroom) => {
     console.log("selectedChatroom", chatroom);
-    console.log("currentChatroom state", selectedChat);
+    if (
+      chatroom.latestMessage !== undefined &&
+      chatroom.latestMessage.senderRole !== role.toUpperCase() &&
+      chatroom.latestMessageRead === false
+    ) {
+      setChatroomMarkAsRead(chatroom._id, role);
+    }
+
     if (selectedChat === null || chatroom._id !== selectedChat._id) {
-      setSelectedChat(chatroom);
+      setSelectedChat(chatroom, socket);
       setSelectedChatroomId(chatroom._id);
     } else {
       setSelectedChat(null);
@@ -59,11 +72,13 @@ const ChatList = () => {
         bgcolor="#F8F8F8"
         width={{ md: "100%" }}
         height="100vh"
-        overflow-y="scroll"
+        overflow="scroll"
         borderRadius="8px"
       >
-        {allChatrooms.length > 0 ? (
-          <Stack spacing={2} width={{ md: "100%" }}>
+        {loading ? (
+          <ChatLoading />
+        ) : allChatrooms.length > 0 ? (
+          <Stack spacing={2} width={{ md: "100%" }} height={{ md: "100%" }}>
             {allChatrooms.map((chatroom) => (
               <Box
                 onClick={() => onSelectChatroom(chatroom)}
@@ -76,7 +91,14 @@ const ChatList = () => {
                   py: 2,
                 }}
                 backgroundColor={
-                  selectedChatroomId === chatroom._id ? "#38B2AC" : "#E8E8E8"
+                  selectedChatroomId === chatroom._id
+                    ? "#38B2AC"
+                    : chatroom.latestMessage !== undefined &&
+                      chatroom.latestMessage.senderRole !==
+                        role.toUpperCase() &&
+                      chatroom.latestMessageRead === false
+                    ? "#CDCBCB"
+                    : "#E8E8E8"
                 }
                 color={selectedChatroomId === chatroom.id ? "white" : "black"}
                 key={chatroom._id}
@@ -114,7 +136,7 @@ const ChatList = () => {
             ))}
           </Stack>
         ) : (
-          <ChatLoading />
+          "Select a vendor or admin to start chatting."
         )}
       </Box>
     </Box>

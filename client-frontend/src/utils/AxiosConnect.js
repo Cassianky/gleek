@@ -69,8 +69,6 @@ AxiosConnect.postMultiPart = (command, req) => {
 };
 
 AxiosConnect.getWithParams = (command, params) => {
-  console.log(uri + command);
-  console.log(params);
   const options = {
     method: "GET",
     url: uri + command,

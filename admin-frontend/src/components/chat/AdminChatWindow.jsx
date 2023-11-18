@@ -5,7 +5,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getSenderName } from "../../utils/AdminChatLogics";
 import AdminChatDisplay from "./AdminChatDisplay";
 
-const AdminChatWindow = ({ socket, setSelectedChatCompare }) => {
+const AdminChatWindow = ({ socket }) => {
   const {
     selectedChat,
     setSelectedChat,
@@ -45,7 +45,6 @@ const AdminChatWindow = ({ socket, setSelectedChatCompare }) => {
 
   useEffect(() => {
     fetchMessages();
-    setSelectedChatCompare(selectedChat);
   }, [selectedChat]);
 
   return (

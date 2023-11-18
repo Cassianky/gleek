@@ -13,7 +13,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
+  CircularProgress,
   DialogActions,
   Button,
   Typography,
@@ -23,26 +23,23 @@ import {
 
 const PreviewButton = ({ newsletterData }) => {
   const theme = useTheme();
+
+  const [isLoading, setIsLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const { openSnackbar } = useSnackbarStore();
   const { getNewsletterPreview, testSendNewsletter } = useNewsletterStore();
   const [htmlContent, setHtmlContent] = useState("");
-  const [email, setEmail] = useState("");
 
   const handleDialogOpen = async (event) => {
     event.stopPropagation();
     try {
-      // console.log("message?", newsletterData.messageBody);
-      // console.log("photo?", newsletterData.preSignedPhoto);
       const preview = await getNewsletterPreview(
         newsletterData.messageBody,
         newsletterData.preSignedPhoto,
         newsletterData.newsletterType,
       );
-      // console.log(preview);
       setHtmlContent(preview);
       setDialogOpen(true);
-      // console.log("dialog set to Open");
     } catch (error) {
       console.log(error);
       openSnackbar({
@@ -53,21 +50,15 @@ const PreviewButton = ({ newsletterData }) => {
   };
 
   const handleDialogClose = () => {
-    setEmail("");
-    setDialogOpen(false);
+        setDialogOpen(false);
   };
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
 
   const handleSendEmail = async () => {
-    // Add logic to handle sending email with the entered email address
     try {
-      console.log("Sending email to:", email);
-      setEmail(email.trim());
-      const message = await testSendNewsletter(newsletterData, email);
-      setEmail("");
+      setIsLoading(true);
+      const message = await testSendNewsletter(newsletterData);
+      setIsLoading(false);
       openSnackbar(message);
     } catch (error) {
       console.log(error);
@@ -101,21 +92,21 @@ const PreviewButton = ({ newsletterData }) => {
             alignItems="center"
             marginTop={4}
           >
-            <TextField
-              label="Email Address"
-              variant="outlined"
-              value={email}
-              onChange={handleEmailChange}
-              sx={{ width: "60%" }}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSendEmail}
-              startIcon={<SendIcon />}
-            >
-              Send
-            </Button>
+            {
+              isLoading ? (
+                <CircularProgress color="primary" />
+              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSendEmail}
+                  startIcon={<SendIcon />}
+                >
+                  Send Me
+                </Button>
+              )
+            }
+            
           </Box>
         </DialogContent>
         <DialogActions>

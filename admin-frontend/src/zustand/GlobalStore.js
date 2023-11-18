@@ -905,6 +905,27 @@ export const useNewsletterStore = create((set) => ({
   },
 }));
 
+export const useMailingListStore = create((set) => ({
+  mailingLists: [],
+  isLoading: false,
+  getMailingLists: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/marketing/getMailingLists");
+      set({
+        mailingLists: response.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+    }
+  },
+}));
+
 export const useAdminSurveyResponseStore = create((set) => ({
   survey: null,
   surveys: [],
@@ -1169,7 +1190,7 @@ export const useNotificationStore = create((set) => ({
   markAsRead: (notification) => {
     AxiosConnect.patch(
       "/notification/updateNotificationAsRead",
-      notification._id,
+      notification._id
     ).then((response) => {
       set({ loading: true });
       const allNotifications = response.data.data;
@@ -1185,7 +1206,7 @@ export const useNotificationStore = create((set) => ({
   deleteNotification: (notification) => {
     AxiosConnect.patch(
       "/notification/deleteNotification",
-      notification._id,
+      notification._id
     ).then((response) => {
       set({ loading: true });
       const allNotifications = response.data.data;
@@ -1250,7 +1271,7 @@ export const useChatStore = create((set) => ({
     };
     AxiosConnect.getWithParams(
       `/chatroom/admin/markChatroomAsRead/${chatroomId}`,
-      params,
+      params
     ).then((response) => {
       console.log(response.data);
       set({ allChatrooms: response.data });
@@ -1283,7 +1304,7 @@ export const useChatStore = create((set) => ({
       (response) => {
         console.log(chatroomId);
         set({ currentChatroomMessages: response.data });
-      },
+      }
     );
   },
 }));

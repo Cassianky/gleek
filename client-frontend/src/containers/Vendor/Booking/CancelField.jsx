@@ -1,6 +1,5 @@
 import { useTheme } from "@emotion/react";
 import { useState } from "react";
-
 import {
   Button,
   Dialog,
@@ -27,22 +26,7 @@ const CancelField = ({ bookingData }) => {
 
   const handleDialogOpen = (event) => {
     event.stopPropagation();
-    const today = Date.now();
-    const bookingDate = new Date(bookingData.startDateTime);
-    const timeDifference = bookingDate - today;
-    console.log(timeDifference);
-    let canCancel = true;
-    if (timeDifference >= 0 && timeDifference <= 14 * 24 * 60 * 60 * 1000) {
-      canCancel = false;
-    }
-    if (!canCancel) {
-      openSnackbar(
-        "Cannot cancel less than 14 days before event start. Please contact admin to cancel!",
-        "error",
-      );
-    } else {
-      setDialogOpen(canCancel);
-    }
+    setDialogOpen(true);
   };
 
   const handleDialogClose = () => {
@@ -50,7 +34,6 @@ const CancelField = ({ bookingData }) => {
   };
 
   const handleConfirmCancel = async (bookingId) => {
-    console.log(bookingId);
     try {
       const message = await cancelBooking(bookingId, reason);
       openSnackbar(message);
@@ -70,7 +53,7 @@ const CancelField = ({ bookingData }) => {
     {
       label: "Timeslot",
       value: `${convertISOtoTime(
-        bookingData.startDateTime,
+        bookingData.startDateTime
       )} - ${convertISOtoTime(bookingData.endDateTime)}`,
     },
     { label: "Total Cost", value: `$${bookingData.totalCost}` },

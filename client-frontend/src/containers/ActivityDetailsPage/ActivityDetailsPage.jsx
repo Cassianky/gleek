@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
   FormControl,
-  FormHelperText,
+  Alert,
   Select,
   MenuItem,
   InputLabel,
@@ -351,6 +351,15 @@ const ActivityDetailsPage = () => {
 
   return (
     <Box>
+      {client?.status !== "APPROVED" && (
+          <Alert severity="warning">
+            Your account is pending review.
+            <p>
+              Booking functionality will be limited, but you can still browse
+              activities.
+            </p>
+          </Alert>
+        )}
       {currentActivityLoading && (
         <Box display="flex" justifyContent="center">
           <CircularProgress sx={{ margin: "auto" }} />
@@ -788,7 +797,8 @@ const ActivityDetailsPage = () => {
                       selectedDate === null ||
                       pax.length === 0 ||
                       location.length === 0 ||
-                      time.length === 0
+                      time.length === 0 ||
+                      client.status !== "APPROVED"
                     }
                     color="secondary"
                     style={{ color: "white" }}

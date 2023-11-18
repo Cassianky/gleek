@@ -39,6 +39,7 @@ import ManageFeaturedActivities from "./components/featured/ManageFeaturedActivi
 import EditFeaturedActivity from "./components/featured/EditFeaturedActivity.jsx";
 import DashboardPage from "./components/analytics/DashboardPage.jsx";
 import ScheduledTaskDemo from "./components/ScheduledTaskDemo";
+import VendorDetails from "./components/vendor/VendorDetails";
 
 function App() {
   return (
@@ -110,7 +111,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
+          <Route
             exact
             path="/viewVendor/:vendorId"
             element={
@@ -118,7 +119,7 @@ function App() {
                 <VendorDetails />
               </ProtectedRoute>
             }
-          /> */}
+          />
           <Route
             exact
             path="/addVendor"

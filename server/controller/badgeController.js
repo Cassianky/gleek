@@ -10,6 +10,8 @@ import {
 } from "../util/notificationRelatedEnum.js";
 import { Role } from "../util/roleEnum.js";
 import { createNotification } from "./notificationController.js";
+import sendMail from "../util/sendMail.js";
+import { clientBadgeMailOptions } from "../util/sendMailOptions.js";
 
 const sendBadgeNotification = async (clientId, badgeRecord, session) => {
    try {
@@ -23,6 +25,16 @@ const sendBadgeNotification = async (clientId, badgeRecord, session) => {
          eventObj: badgeRecord,
       };
       await createNotification(notificationReq, session);
+   } catch (err) {
+      console.log(err);
+      throw err;
+   }
+};
+
+const sendBadgeMail = async (client, badgeRecord, imageUrl) => {
+   try {
+      const options = clientBadgeMailOptions(client, badgeRecord, imageUrl[0]);
+      await sendMail(options);
    } catch (err) {
       console.log(err);
       throw err;
@@ -59,13 +71,13 @@ export const createBadge = async (req, res) => {
             errors: [{ msg: "Badge Name already exists!" }],
          });
       }
+      const preSignedImage = await s3GetImages([fileS3Location]);
       const newBadgeCreated = await BadgeModel.create(
          [{ ...newBadge, badgeImage: fileS3Location }],
          {
             session: session,
          }
       );
-
       const createdBadge = await newBadgeCreated[0].save();
 
       const imagesPathArr = [];
@@ -148,6 +160,11 @@ export const createBadge = async (req, res) => {
                      createdBadgeRecord,
                      session
                   );
+                  await sendBadgeMail(
+                     client,
+                     createdBadgeRecord,
+                     preSignedImage
+                  );
                }
             } else {
                await session.abortTransaction();
@@ -187,6 +204,11 @@ export const createBadge = async (req, res) => {
                      createdBadgeRecord,
                      session
                   );
+                  await sendBadgeMail(
+                     client,
+                     createdBadgeRecord,
+                     preSignedImage
+                  );
                }
             } else {
                await session.abortTransaction();
@@ -219,6 +241,11 @@ export const createBadge = async (req, res) => {
                      clientId,
                      createdBadgeRecord,
                      session
+                  );
+                  await sendBadgeMail(
+                     client,
+                     createdBadgeRecord,
+                     preSignedImage
                   );
                }
             } else {

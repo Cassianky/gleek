@@ -8,6 +8,7 @@ import {
 } from "../util/notificationRelatedEnum.js";
 import { Role } from "../util/roleEnum.js";
 import { createNotification } from "./notificationController.js";
+import { clientBadgeMailOptions } from "../util/sendMailOptions.js";
 
 const sendBadgeNotification = async (badgeRecord, session) => {
    try {
@@ -21,6 +22,16 @@ const sendBadgeNotification = async (badgeRecord, session) => {
          eventObj: badgeRecord,
       };
       await createNotification(notificationReq, session);
+   } catch (err) {
+      console.log(err);
+      throw err;
+   }
+};
+
+const sendBadgeMail = async (client, badgeRecord, imageUrl) => {
+   try {
+      const options = clientBadgeMailOptions(client, badgeRecord, imageUrl[0]);
+      await sendMail(options);
    } catch (err) {
       console.log(err);
       throw err;
@@ -128,6 +139,9 @@ export const updateAllBadgeRecords = async (req, res) => {
             });
 
             for (const badgeRecord of badgeRecords) {
+               const preSignedImage = await s3GetImages(
+                  badgeRecord.badge.badgeImage
+               );
                if (
                   badgeRecord.badge.sdgBadgeType === "GOLD" ||
                   badgeRecord.badge.sdgBadgeType === "SILVER"
@@ -140,7 +154,7 @@ export const updateAllBadgeRecords = async (req, res) => {
                   if (sdgSet.size >= badgeRecord.badge.sdgThreshold) {
                      badgeRecord.isCompleted = true;
                      await sendBadgeNotification(badgeRecord, session);
-                     console.log(notificationReq);
+                     await sendBadgeMail(client, badgeRecord, preSignedImage);
                   }
 
                   badgeRecord.save();
@@ -154,6 +168,7 @@ export const updateAllBadgeRecords = async (req, res) => {
                      badgeRecord.isCompleted = true;
                      // console.log(badgeRecord);
                      await sendBadgeNotification(badgeRecord, session);
+                     await sendBadgeMail(client, badgeRecord, preSignedImage);
                   }
 
                   badgeRecord.save();
@@ -167,6 +182,7 @@ export const updateAllBadgeRecords = async (req, res) => {
                      badgeRecord.isCompleted = true;
                      // console.log(badgeRecord);
                      await sendBadgeNotification(badgeRecord, session);
+                     await sendBadgeMail(client, badgeRecord, preSignedImage);
                   }
 
                   badgeRecord.save();

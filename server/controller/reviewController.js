@@ -25,6 +25,35 @@ export const getAllReviews = async (req, res) => {
   }
 };
 
+export const getAllReviewsForVendor = async (req, res) => {
+  try {
+    const vendor = req.user;
+    const reviews = await ReviewModel.find()
+      .populate({
+        path: "client",
+        select: "-password",
+      })
+      .populate({
+        path: "activity",
+      })
+      .populate({
+        path: "booking",
+      });
+
+    const reviewsForVendor = reviews.filter((review) => {
+      return review.activity.linkedVendor.toString() === vendor._id.toString();
+    });
+
+    res.status(200).json(reviewsForVendor);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server Error! Unable to get reviews.",
+      error: error.message,
+    });
+  }
+};
+
 export const getAllReviewsForActivity = async (req, res) => {
   try {
     const activityId = req.params.activityId;

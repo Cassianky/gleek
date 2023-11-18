@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, SvgIcon } from "@mui/material";
+import { Card, CardContent, CardHeader } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import Chart from "./chart/RevenueChartInstance";
@@ -7,6 +7,14 @@ const RevenueChart = ({ data }) => {
   const theme = useTheme();
   const font = theme.typography.fontFamily;
   const options = {
+    toolbox: {
+      feature: {
+        saveAsImage: { show: true },
+        magicType: {
+          type: ["stack"],
+        },
+      },
+    },
     legend: { textStyle: { fontFamily: font } },
     tooltip: {},
     xAxis: {
@@ -62,17 +70,6 @@ const RevenueChart = ({ data }) => {
       }}
     >
       <CardHeader
-        action={
-          <Button
-            color="inherit"
-            size="small"
-            startIcon={
-              <SvgIcon fontSize="small">{/* <ArrowPathIcon /> */}</SvgIcon>
-            }
-          >
-            Sync
-          </Button>
-        }
         title="Revenue"
         style={{ color: theme.palette.primary.main }}
       />

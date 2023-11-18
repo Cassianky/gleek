@@ -6,6 +6,7 @@ import "./loadEnvironment.js";
 import gleekRoutes from "./routes/gleek/gleek.js";
 import activityRoutes from "./routes/gleekAdmin/activityRoute.js";
 import gleekAdminRoutes from "./routes/gleekAdmin/gleekAdmin.js";
+import analyticsRoutes from "./routes/gleekAdmin/analyticsRoute.js";
 import gleekVendorRoutes from "./routes/gleekVendor/gleekVendor.js";
 import vendorRoutes from "./routes/gleekAdmin/vendorRoute.js";
 import surveyRoutes from "./routes/gleekAdmin/surveyRoute.js";
@@ -61,6 +62,7 @@ app.use("/review", reviewRoutes);
 app.use("/marketing", marketingRoutes);
 app.use("/testimonial", testimonialRoutes);
 app.use("/badge", badgeRoutes);
+app.use("/dashboard", analyticsRoutes);
 
 /**
  * For Client application

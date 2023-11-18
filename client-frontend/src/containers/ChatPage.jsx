@@ -50,16 +50,20 @@ const Chatpage = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      // if chat is not selected or doesn't match current chat
-      selectedChat === null ||
-      selectedChat._id !== newMsgReceived.chatRoom._id
-    ) {
-      console.log("different chat");
-      retrieveAndSetAllChatRooms(role);
-    } else if (selectedChat._id === newMsgReceived.chatRoom._id) {
-      console.log("same chat");
-      retrieveAndSetChatroomMessages(role, newMsgReceived.chatRoom._id);
+    try {
+      if (
+        selectedChat === undefined ||
+        selectedChat === null ||
+        selectedChat._id !== newMsgReceived.chatRoom._id
+      ) {
+        console.log("different chat");
+        retrieveAndSetAllChatRooms(role);
+      } else if (selectedChat._id === newMsgReceived.chatRoom._id) {
+        console.log("same chat");
+        retrieveAndSetChatroomMessages(role, newMsgReceived.chatRoom._id);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }, [newMsgReceived]);
 

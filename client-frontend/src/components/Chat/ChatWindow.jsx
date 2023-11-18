@@ -51,11 +51,13 @@ const ChatWindow = ({ socket }) => {
       retrieveAndSetChatroomMessages(role, selectedChat._id, socket);
     } else if (directChatAccess) {
       console.log("in direct admin");
+      console.log(directChatAccess);
       setDirectChatAccess(false);
       retrieveAndAccessChatroom(role, "Admin", null, socket);
       retrieveAndSetAllChatRooms(role);
     } else if (directVendorChatAccess) {
       console.log("in direct vendor");
+      console.log(directVendorChatAccess);
       setDirectVendorChatAccess(false);
       if (currentActivity.adminCreated === undefined) {
         retrieveAndAccessChatroom(

@@ -12,7 +12,11 @@ import {
   useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useAdminStore, useNotificationStore } from "../../zustand/GlobalStore";
+import {
+  useAdminStore,
+  useChatStore,
+  useNotificationStore,
+} from "../../zustand/GlobalStore";
 import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -26,7 +30,9 @@ const HomePageNavBar = ({ toggleSidebar }) => {
   const settings = ["Profile", "Account", "Dashboard", "Logout"];
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { authenticated, admin, logout, login } = useAdminStore();
-  const { unreadNotificationsCount } = useNotificationStore();
+  const { unreadNotificationsCount, retrieveAndSetAllNotifications } =
+    useNotificationStore();
+  const { unreadChatroomCount, retrieveAndSetAllChatRooms } = useChatStore();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -64,6 +70,12 @@ const HomePageNavBar = ({ toggleSidebar }) => {
       children: initials,
     };
   };
+
+  useEffect(() => {
+    retrieveAndSetAllChatRooms();
+    retrieveAndSetAllNotifications();
+  }, [retrieveAndSetAllChatRooms, retrieveAndSetAllNotifications]);
+
   return (
     <AppBar
       position="fixed"
@@ -87,7 +99,9 @@ const HomePageNavBar = ({ toggleSidebar }) => {
               <AccessAlarmIcon onClick={handleManualCompleteBookingsUpdate} />
             </IconButton>
             <IconButton size="large" color="inherit">
-              <ChatIcon onClick={handleChatClick} />
+              <Badge badgeContent={unreadChatroomCount} color="error">
+                <ChatIcon onClick={handleChatClick} />
+              </Badge>
             </IconButton>
             <IconButton
               size="large"

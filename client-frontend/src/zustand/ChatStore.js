@@ -10,6 +10,7 @@ const useChatStore = create((set) => ({
   loadingMessage: false,
   directChatAccess: false,
   directVendorChatAccess: false,
+  unreadChatroomCount: 0,
   setUser: (currentUser) => {
     set({ user: currentUser });
   },
@@ -81,9 +82,25 @@ const useChatStore = create((set) => ({
         ? "/chatroom/client/fetchChats"
         : "/chatroom/vendor/fetchChats",
       params,
-    ).then((response) => {
-      set({ allChatrooms: response.data });
-    });
+    )
+      .then((response) => {
+        const allChatroom = response.data;
+        set({ allChatrooms: allChatroom });
+        let unreadChatroomCount = 0;
+        allChatroom.map((chatroom) => {
+          if (
+            chatroom.latestMessage !== undefined &&
+            chatroom.latestMessage.senderRole !== role.toUpperCase() &&
+            chatroom.latestMessageRead === false
+          ) {
+            unreadChatroomCount++;
+          }
+        });
+        set({ unreadChatroomCount: unreadChatroomCount });
+      })
+      .catch((error) => {
+        console.log("error in retrieveAndSetAllChatRooms: ", error);
+      });
   },
   retrieveAndAccessChatroom: (role, recipientRole, recipientId, socket) => {
     const params = {

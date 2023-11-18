@@ -6,7 +6,6 @@ import MainBodyContainer from "../common/MainBodyContainer";
 import { useTheme } from "@emotion/react";
 
 const AdminNotificationPage = () => {
-  const adminCredentials = useAdminStore((state) => state.admin);
   const { notifications, loading, retrieveAndSetAllNotifications } =
     useNotificationStore();
 
@@ -14,7 +13,7 @@ const AdminNotificationPage = () => {
 
   useEffect(() => {
     // Fetch notifications when the component mounts
-    retrieveAndSetAllNotifications(adminCredentials);
+    retrieveAndSetAllNotifications();
   }, []);
 
   return (
@@ -33,11 +32,7 @@ const AdminNotificationPage = () => {
       >
         All Notifications
       </Typography>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <AdminNotificationList notifications={notifications} />
-      )}
+      {loading ? <CircularProgress /> : <AdminNotificationList />}
     </MainBodyContainer>
   );
 };

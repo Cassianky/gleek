@@ -49,6 +49,7 @@ import PendingSurveys from "./containers/Client/Survey/PendingSurveys";
 import ChatPage from "./containers/ChatPage";
 import DashboardPage from "./containers/Vendor/Dashboard/DashboardPage";
 import NotificationPage from "./containers/NotificationPage";
+import LeaderBoardMainPage from "./containers/Client/Leaderboard/LeaderBoardMainPage";
 
 function App() {
   const { isLoading, clientError, login } = useClientStore();
@@ -272,6 +273,15 @@ function App() {
             element={
               <ClientProtectedRoute>
                 <NotificationPage />
+              </ClientProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/client/leaderboard"
+            element={
+              <ClientProtectedRoute>
+                <LeaderBoardMainPage />
               </ClientProtectedRoute>
             }
           />

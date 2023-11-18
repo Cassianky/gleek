@@ -226,13 +226,13 @@ const DraftNewsletterButton = ({ newsletterData }) => {
               {selectedOption === "CUSTOM" && (
                 <Typography fontSize={"0.875rem"} color="primary">
                   This option allows you to create your own newsletter to be
-                  sent out to subcribers of the xxx mailing list.
+                  sent out to clients who agree to receive newsletters from Gleek admins.
                 </Typography>
               )}
               {selectedOption === "PERSONALISED" && (
                 <Typography fontSize={"0.875rem"} color="primary">
-                  This option allows you to send out newsletters to subscribers
-                  of the xxx mailing list with a curated list of activities
+                  This option allows you to send out newsletters to clients 
+                  who agree to receive personalised activity recommendations from Gleek 
                   based on client preferences.
                 </Typography>
               )}

@@ -98,11 +98,6 @@ export const createBadge = async (req, res) => {
          { images: imagesPathArr },
          { new: true, session }
       );
-      const updatedBadge = await BadgeModel.findByIdAndUpdate(
-         createdBadge._id,
-         { images: imagesPathArr },
-         { new: true, session }
-      );
 
       // Upon successful creation of badge, create a corresponding badge record for each client
       const clients = await ClientModel.find({ status: "APPROVED" }).session(

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import MainBodyContainer from "../common/MainBodyContainer";
 import AdminChatList from "./AdminChatList";
 import AdminChatWindow from "./AdminChatWindow";
@@ -65,7 +65,7 @@ const AdminChatpage = () => {
       breadcrumbLinks={[]}
       currentBreadcrumbName={"All Chats"}
     >
-      <div style={{ width: "96%" }}>
+      <Container maxWidth="xl">
         <Box
           sx={{
             display: "flex",
@@ -78,7 +78,7 @@ const AdminChatpage = () => {
           <AdminChatList socket={socket} />
           <AdminChatWindow socket={socket} />
         </Box>
-      </div>
+      </Container>
     </MainBodyContainer>
   );
 };

@@ -1,10 +1,12 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import useChatStore from "../../zustand/ChatStore";
 import ChatLoading from "./ChatLoading";
 import { getSenderName } from "../../utils/ChatLogics";
 import useGlobalStore from "../../zustand/GlobalStore";
 import dayjs from "dayjs";
+import { useTheme } from "@mui/material/styles";
+import styled from "@emotion/styled";
 
 const ChatList = ({ socket }) => {
   const {
@@ -16,6 +18,10 @@ const ChatList = ({ socket }) => {
   } = useChatStore();
   const { role } = useGlobalStore();
   const [selectedChatroomId, setSelectedChatroomId] = useState(null);
+
+  const theme = useTheme();
+  const secondary = theme.palette.secondary.main;
+  const primary = theme.palette.primary.main;
 
   const onSelectChatroom = (chatroom) => {
     console.log("selectedChatroom", chatroom);
@@ -42,43 +48,43 @@ const ChatList = ({ socket }) => {
       : setSelectedChatroomId(selectedChat._id);
   }, [selectedChat, selectedChatroomId]);
 
+  const StyledBox = styled(Box)`
+    padding: 10px;
+    padding-top: 6px;
+    border-radius: 10px;
+    border: 1px solid rgb(159, 145, 204);
+    box-shadow: 3px 3px 0px 0px rgb(159, 145, 204, 40%);
+  `;
+
   return (
-    <Box
+    <StyledBox
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDirection="column"
       alignItems="center"
-      padding={2}
       bgcolor="white"
       width={{ md: "30.5%" }}
-      height="100vh"
-      borderRadius="8px"
-      border="1px solid #000"
+      height="90vh"
     >
-      <Box
-        paddingBottom={1}
-        paddingLeft={3}
-        fontSize={{ xs: "28px", md: "30px" }}
-        display="flex"
-        width="100%"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Typography variant="h4">My Chats</Typography>
-      </Box>
+    
       <Box
         display="flex"
         flexDirection="column"
         padding={3}
-        bgcolor="#F8F8F8"
         width={{ md: "100%" }}
-        height="100vh"
-        overflow="scroll"
+        height="100%"
+        overflowY="scroll"
         borderRadius="8px"
       >
         {loading ? (
           <ChatLoading />
         ) : allChatrooms.length > 0 ? (
-          <Stack spacing={2} width={{ md: "100%" }} height={{ md: "100%" }}>
+          <Stack
+            spacing={2}
+            padding={1}
+            width={{ md: "100%" }}
+            height={{ md: "100%" }}
+            style={{ maxHeight: "100%", overflow: "auto" }}
+          >
             {allChatrooms.map((chatroom) => (
               <Box
                 onClick={() => onSelectChatroom(chatroom)}
@@ -92,7 +98,7 @@ const ChatList = ({ socket }) => {
                 }}
                 backgroundColor={
                   selectedChatroomId === chatroom._id
-                    ? "#38B2AC"
+                    ? primary
                     : chatroom.latestMessage !== undefined &&
                       chatroom.latestMessage.senderRole !==
                         role.toUpperCase() &&
@@ -139,7 +145,7 @@ const ChatList = ({ socket }) => {
           "Select a vendor or admin to start chatting."
         )}
       </Box>
-    </Box>
+    </StyledBox>
   );
 };
 

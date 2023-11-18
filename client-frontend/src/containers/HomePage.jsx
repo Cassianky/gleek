@@ -21,7 +21,7 @@ const ImageSection = () => {
 
   return (
     <Container
-      maxWidth="xl"
+      maxWidth="lg"
       sx={{
         display: "flex",
         justifyContent: "center",

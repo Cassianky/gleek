@@ -26,6 +26,8 @@ import ActionProvider from "./ChatBot/ActionProvider";
 import Options from "./ChatBot/Options";
 import OptionsWithState from "./ChatBot/OptionsWithState";
 import ChatOptions from "./ChatBot/ChatOptions";
+import ActivityDetailsRecent from "./ChatBot/ActivityDetailsRecent";
+import ActivityDetailsTop from "./ChatBot/ActivityDetailsTop";
 
 const CustomSnackbar = () => {
   const { isOpen, message, type, closeSnackbar } = useSnackbarStore();
@@ -109,6 +111,20 @@ const Layout = ({ children }) => {
         widgetFunc: (props) => <OptionsWithState {...props} />,
         props: { stepOptions: 1 },
         mapStateToProps: ["step"],
+      },
+      {
+        widgetName: "options2",
+        widgetFunc: (props) => <OptionsWithState {...props} />,
+        props: { stepOptions: 2 },
+        mapStateToProps: ["step"],
+      },
+      {
+        widgetName: "topFiveActivities",
+        widgetFunc: (props) => <ActivityDetailsTop {...props} />,
+      },
+      {
+        widgetName: "recentFiveActivities",
+        widgetFunc: (props) => <ActivityDetailsRecent {...props} />,
       },
     ],
     customComponents: {

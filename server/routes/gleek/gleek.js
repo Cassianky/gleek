@@ -11,6 +11,7 @@ import surveyRoutes from "./survey.js";
 import testimonialRoutes from "./testimonial.js";
 import cartRoutes from "./cart.js";
 import badgeRoutes from "./badge.js";
+import chatBotRoutes from "./chatbot.js";
 import { userRouter } from "../../controller/gleekUserRouterController.js";
 const router = express.Router();
 
@@ -44,4 +45,6 @@ router.use("/survey", surveyRoutes);
 router.use("/testimonial", testimonialRoutes);
 // /gleek/badge
 router.use("/badge", badgeRoutes);
+// /gleek/chatbot
+router.use("/chatbot", chatBotRoutes);
 export default router;

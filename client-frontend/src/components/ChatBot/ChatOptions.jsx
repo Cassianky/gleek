@@ -130,6 +130,20 @@ const ChatOptions = {
         },
         "2d": {
           label: "2d) Can you provide me some recommended activities?",
+          options: {
+            "3a": {
+              label: "3a) Hottest Activities (Top 5 Booked Activities) ",
+              answers: [
+                "Navigate to the Shops page and apply filters or enter a search value.",
+              ],
+            },
+            "3b": {
+              label: "3b) Top 5 Newly Added Activities",
+              answers: [
+                "Most activities on Gleek are related to sustainability and wellness themes. You can apply customised filers on the themes for a more personalised search experience",
+              ],
+            },
+          },
         },
       },
     },

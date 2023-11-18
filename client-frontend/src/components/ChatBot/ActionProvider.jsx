@@ -51,7 +51,7 @@ class ActionProvider {
         delay: 1500,
       }
     );
-    this.setChatbotMessageForReturn(message);
+    this.setChatbotMessageForReturnMain(message);
   };
 
   returnToStep1 = () => {
@@ -60,6 +60,26 @@ class ActionProvider {
       delay: 1500,
     });
     this.setChatbotMessageForReturn(message);
+  };
+
+  other = () => {
+    const message = this.createChatBotMessage(
+      "Type 'return' for previous menu. Require more help? Type 'help' for chat with Admin.",
+      {
+        delay: 2500,
+      }
+    );
+    this.setChatbotMessage(message);
+  };
+
+  otherEnd = () => {
+    const message = this.createChatBotMessage(
+      "Type 'return' for previous menu. Type 'main menu' to return to Main Menu. Require more help? Type 'help' for chat with Admin.",
+      {
+        delay: 2500,
+      }
+    );
+    this.setChatbotMessage(message);
   };
 
   step1 = (input) => {
@@ -80,16 +100,6 @@ class ActionProvider {
       }
     );
     this.setChatbotMessage(message, input);
-  };
-
-  other = () => {
-    const message = this.createChatBotMessage(
-      "Type 'return' for previous menu. Require more help? Type 'help' for chat with Admin.",
-      {
-        delay: 2500,
-      }
-    );
-    this.setChatbotMessage(message);
   };
 
   step2 = (input, step) => {
@@ -135,6 +145,59 @@ class ActionProvider {
     }
   };
 
+  step3 = (input, step) => {
+    input = input.toLowerCase();
+    console.log(step);
+    let answers = this.options;
+    for (let i = 0; i <= step.length; i++) {
+      if (i === 0) {
+        answers = answers[step[i]];
+      }
+      if (answers[step[i]]) {
+        answers = answers[step[i]];
+        answers = answers.options;
+      }
+    }
+    const message = this.createChatBotMessage(
+      `Great! You have picked ${answers[input].label}`
+    );
+    this.setChatbotMessage(message, input);
+  };
+
+  step3Options = (input, step) => {
+    input = input.toLowerCase();
+    const message = this.createChatBotMessage(
+      `Here are more options for ${this.options[0]["1e"].options[input]?.label}`,
+      {
+        widget: "options2",
+        delay: 1500,
+      }
+    );
+    this.setChatbotMessage(message, input);
+  };
+
+  step3a = (input) => {
+    const message = this.createChatBotMessage(
+      `Here are the top 5 booked activities`,
+      {
+        widget: "topFiveActivities",
+        delay: 1500,
+      }
+    );
+    this.setChatbotMessage(message, input);
+  };
+
+  step3b = (input) => {
+    const message = this.createChatBotMessage(
+      `Here are the recent 5 booked activities:`,
+      {
+        widget: "recentFiveActivities",
+        delay: 1500,
+      }
+    );
+    this.setChatbotMessage(message, input);
+  };
+
   setChatbotMessage = (message, step) => {
     if (step) {
       this.setState((state) => ({
@@ -154,6 +217,14 @@ class ActionProvider {
     this.setState((state) => ({
       ...state,
       step: state.step.slice(0, -1),
+      messages: [...state.messages, message],
+    }));
+  };
+
+  setChatbotMessageForReturnMain = (message) => {
+    this.setState((state) => ({
+      ...state,
+      step: state.step.slice(0, 1),
       messages: [...state.messages, message],
     }));
   };

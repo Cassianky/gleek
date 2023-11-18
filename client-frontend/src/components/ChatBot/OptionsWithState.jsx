@@ -16,23 +16,19 @@ const OptionsWithState = ({ stepOptions, step }) => {
 
   useEffect(() => {
     let result = ChatOptions;
-    console.log("Step options" + step);
+
     if (result) {
       for (let i = 0; i <= stepOptions; i++) {
-        if (result[step[i]]) {
+        if (result[step[i]]?.hasOwnProperty("options")) {
+          result = result[step[i]].options;
+        } else if (result[step[i]]) {
           result = result[step[i]];
         }
       }
-      console.log(result);
-      if (result.options) {
-        console.log(result);
-        // Update local state with options
-        setOptions(
-          Object.entries(result.options).map(([key, value]) => value.label)
-        );
-      }
+
+      setOptions(Object.entries(result).map(([key, value]) => value.label));
     }
-  }, [stepOptions, step]);
+  }, [stepOptions]);
 
   return (
     <Paper elevation={3}>

@@ -1,19 +1,21 @@
 import styled from "@emotion/styled";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import CancelIcon from "@mui/icons-material/Cancel";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import EventBusyIcon from "@mui/icons-material/EventBusy";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
-import ConfirmField from "./ConfirmField";
-import CancelField from "./CancelField";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import { Badge, Box, Tab, Tabs, Typography, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import useBookingStore from "../../../zustand/BookingStore";
 import useSnackbarStore from "../../../zustand/SnackbarStore";
 import BookingsMonthView from "./BookingsMonthView";
 import BookingsTable from "./BookingsTable";
+import CancelField from "./CancelField";
+import ConfirmField from "./ConfirmField";
 import DetailsField from "./DetailsField";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 
 const StyledPage = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.grey[50],
@@ -37,15 +39,23 @@ const BookingsPage = () => {
   const { openSnackbar } = useSnackbarStore();
 
   const pendingBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "PENDING_CONFIRMATION",
+    (booking) => booking.status === "PENDING_CONFIRMATION"
   ).length;
 
   const completedAndPaidBadgeNumber = bookings.filter((booking) =>
-    ["PAID", "PENDING_PAYMENT"].includes(booking.status),
+    ["PAID", "PENDING_PAYMENT"].includes(booking.status)
   ).length;
 
   const confirmedBadgeNumber = bookings.filter(
-    (booking) => booking.status === "CONFIRMED",
+    (booking) => booking.status === "CONFIRMED"
+  ).length;
+
+  const cancelledBadgeNumber = bookings.filter(
+    (booking) => booking.status === "CANCELLED"
+  ).length;
+
+  const rejectedBadgeNumber = bookings.filter(
+    (booking) => booking.status === "REJECTED"
   ).length;
 
   useEffect(() => {
@@ -132,7 +142,56 @@ const BookingsPage = () => {
       flex: 1,
       sortable: false,
       renderCell: (params) => {
-        return <CancelField bookingData={params.row} />;
+        const today = Date.now();
+        const bookingDate = new Date(params.row?.startDateTime);
+        const timeDifference = bookingDate - today;
+        let canCancel = true;
+        if (timeDifference >= 0 && timeDifference <= 14 * 24 * 60 * 60 * 1000) {
+          canCancel = false;
+        }
+        return canCancel && <CancelField bookingData={params.row} />;
+      },
+    },
+  ];
+
+  const cancelledAdditionalColumns = [
+    {
+      field: "details",
+      renderHeader: () => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.secondary.main }}
+          >
+            Cancellation Details
+          </Typography>
+        );
+      },
+      flex: 2,
+      sortable: false,
+      renderCell: (params) => {
+        return <DetailsField params={params.row} />;
+      },
+    },
+  ];
+
+  const rejectedAdditionalColumns = [
+    {
+      field: "details",
+      renderHeader: () => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.secondary.main }}
+          >
+            Rejection Details
+          </Typography>
+        );
+      },
+      flex: 2,
+      sortable: false,
+      renderCell: (params) => {
+        return <DetailsField params={params.row} />;
       },
     },
   ];
@@ -201,6 +260,30 @@ const BookingsPage = () => {
             value="confirmed"
             label="Confirmed"
           />
+          <Tab
+            icon={
+              <StyledBadge
+                color={currentTab === "cancelled" ? "error" : "unselected"}
+                badgeContent={cancelledBadgeNumber}
+              >
+                <EventBusyIcon />
+              </StyledBadge>
+            }
+            value="cancelled"
+            label="Cancelled"
+          />
+          <Tab
+            icon={
+              <StyledBadge
+                color={currentTab === "rejected" ? "error" : "unselected"}
+                badgeContent={rejectedBadgeNumber}
+              >
+                <CancelIcon />
+              </StyledBadge>
+            }
+            value="rejected"
+            label="Rejected"
+          />
         </Tabs>
       </Box>
       <Box sx={{ paddingLeft: 2, paddingRight: 2 }}>
@@ -217,6 +300,7 @@ const BookingsPage = () => {
             allBookings={bookings}
             status={["PENDING_CONFIRMATION"]}
             additionalColumns={pendingConfirmationAdditionalColumns}
+            canCancel={false}
           />
         )}
         {currentTab === "completedAndPaid" && (
@@ -224,6 +308,7 @@ const BookingsPage = () => {
             allBookings={bookings}
             status={["PAID", "PENDING_PAYMENT"]}
             additionalColumns={completedAndPaidAdditionalColumns}
+            canCancel={false}
           />
         )}
         {currentTab === "confirmed" && (
@@ -231,6 +316,23 @@ const BookingsPage = () => {
             allBookings={bookings}
             status={["CONFIRMED"]}
             additionalColumns={confirmedAdditionalColumns}
+            canCancel={true}
+          />
+        )}
+        {currentTab === "cancelled" && (
+          <BookingsTable
+            allBookings={bookings}
+            status={["CANCELLED"]}
+            additionalColumns={cancelledAdditionalColumns}
+            canCancel={false}
+          />
+        )}
+        {currentTab === "rejected" && (
+          <BookingsTable
+            allBookings={bookings}
+            status={["REJECTED"]}
+            additionalColumns={rejectedAdditionalColumns}
+            canCancel={false}
           />
         )}
       </Box>

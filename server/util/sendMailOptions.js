@@ -320,3 +320,17 @@ export const createCustomEdmMailOptions = (
     return err;
   }
 };
+
+export const sendVendorUnreadChatReminders = (vendorInfo) => {
+  //vendorInfo: {name:companyName, email:companyEmail}
+  const message = `Hello ${vendorInfo.name}! 
+  This is a gentle update that you have some unread messages from client(s), thank you!`;
+
+  const options = {
+    to: vendorInfo.email,
+    subject: "Gleek: You have unread chat messages from clients.",
+    text: message,
+  };
+
+  return options;
+};

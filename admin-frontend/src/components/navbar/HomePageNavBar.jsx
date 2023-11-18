@@ -55,12 +55,6 @@ const HomePageNavBar = ({ toggleSidebar }) => {
     setAnchorElUser(null);
   };
 
-  const handleManualCompleteBookingsUpdate = () => {
-    AxiosConnect.post("/booking/updateCompletedBookings").then((response) => {
-      console.log(response);
-    });
-  };
-
   const stringAvatar = () => {
     const initials = admin.name[0].toUpperCase();
     return {
@@ -95,9 +89,14 @@ const HomePageNavBar = ({ toggleSidebar }) => {
         </Link>
         {authenticated ? (
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton size="large" color="inherit">
-              <AccessAlarmIcon onClick={handleManualCompleteBookingsUpdate} />
-            </IconButton>
+            <Link
+              to="/scheduledTaskDemo"
+              style={{ all: "unset", cursor: "pointer" }}
+            >
+              <IconButton size="large" color="inherit">
+                <AccessAlarmIcon />
+              </IconButton>
+            </Link>
             <IconButton size="large" color="inherit">
               <Badge badgeContent={unreadChatroomCount} color="error">
                 <ChatIcon onClick={handleChatClick} />

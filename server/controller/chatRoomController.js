@@ -1,9 +1,10 @@
 import ChatroomModel from "../model/chatRoomModel.js";
 import { Role } from "../util/roleEnum.js";
 import ChatRoomModel from "../model/chatRoomModel.js";
+import cron from "node-cron";
+import sendMail from "../util/sendMail.js";
+import { sendVendorUnreadChatReminders } from "../util/sendMailOptions.js";
 
-//Fetch all chats for a user
-//route: GET /api/chat/
 export const userFetchChats = async (req, res) => {
   let userRole = req.cookies.userRole;
   userRole = userRole.toUpperCase();
@@ -27,8 +28,6 @@ export const userFetchChats = async (req, res) => {
   }
 };
 
-//Fetch all chats for an admin
-//route: GET /api/chat/
 export const adminFetchChats = async (req, res) => {
   try {
     ChatroomModel.find({ admin: true })
@@ -163,8 +162,6 @@ export const userAccessChat = async (req, res) => {
   }
 };
 
-//Create or fetch chat for an admin
-//route: POST /api/chat/
 export const adminAccessChat = async (req, res) => {
   //User is initiator of chat
   let { recipientId, recipientRole } = req.body;
@@ -180,11 +177,7 @@ export const adminAccessChat = async (req, res) => {
   if (recipientRole === Role.CLIENT) {
     console.log("in admin access chat recipient role is client");
     isChat = await ChatroomModel.find({
-      $and: [
-        { admin: true },
-        //recipient of chat
-        { client: recipientId },
-      ],
+      $and: [{ admin: true }, { client: recipientId }],
     })
       .populate("client", "-password")
       .populate("latestMessage");
@@ -285,3 +278,55 @@ export const adminMarkSelectedChatAsRead = async (req, res) => {
     throw new Error(error.message);
   }
 };
+
+export const sendUnreadChatVendorReminder = async (req, res) => {
+  try {
+    const allUnreadChatrooms = await ChatroomModel.find({
+      latestMessageRead: false,
+    })
+      .populate("latestMessage", "senderRole")
+      .populate("vendor", "companyName companyEmail");
+
+    let emailList = [];
+
+    allUnreadChatrooms.map((chatroom) => {
+      if (
+        chatroom.vendor !== null &&
+        chatroom.latestMessage.senderRole !== "VENDOR"
+      ) {
+        const vendorEmail = chatroom.vendor.companyEmail;
+        console.log(chatroom);
+        // Check if the email is not already in the emailsList
+        if (!emailList.includes(chatroom.vendor)) {
+          emailList.push(chatroom.vendor);
+        }
+      }
+    });
+    console.log(emailList);
+
+    emailList.map(async (vendor) => {
+      const vendorInfo = {
+        name: vendor.companyName,
+        email: vendor.companyEmail,
+      };
+      console.log(vendorInfo);
+      await sendMail(sendVendorUnreadChatReminders(vendorInfo));
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server Error, unable to update send email reminder.",
+      error: error.message,
+    });
+  }
+};
+
+cron.schedule("0 0 0 * * *", async () => {
+  try {
+    await sendUnreadChatVendorReminder();
+    console.log(
+      "Scheduled daily task to send vendor with unread chat email reminders completed successfully",
+    );
+  } catch (error) {
+    console.error("Error in scheduled task:", error);
+  }
+});

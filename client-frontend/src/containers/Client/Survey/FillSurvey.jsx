@@ -28,6 +28,8 @@ const StyledPaper = styled(Paper)`
 `;
 
 function FillSurvey() {
+  const [loading, setLoading] = useState(false);
+
   const { bookingId } = useParams();
 
   const {
@@ -91,13 +93,6 @@ function FillSurvey() {
     getSurvey();
   }, []);
 
-  // const handleFieldChange = (field, value) => {
-  //   setSurveyData({
-  //     ...surveyData,
-  //     [field]: value,
-  //   });
-  // };
-
   const handleFieldChange = (name, value) => {
     setSurveyData((prevData) => ({
       ...prevData,
@@ -150,11 +145,12 @@ function FillSurvey() {
     return false;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
+      setLoading(true);
       console.log(surveyData);
       console.log(reviewData);
-      submitSurveyForBooking(
+      await submitSurveyForBooking(
         bookingId,
         surveyData,
         reviewData,
@@ -492,9 +488,13 @@ function FillSurvey() {
                   disableButton()
                 }
               >
-                {surveyData?.status === "SUBMITTED"
-                  ? "You have submitted this survey"
-                  : "Submit"}
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : surveyData?.status === "SUBMITTED" ? (
+                  "You have submitted this survey"
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </Grid>
           </Grid>

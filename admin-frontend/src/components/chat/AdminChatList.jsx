@@ -4,6 +4,8 @@ import AdminChatLoading from "./AdminChatLoading";
 import { getSenderName } from "../../utils/AdminChatLogics";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
+import { useTheme } from "@mui/material/styles";
+import styled from "@emotion/styled";
 
 const AdminChatList = ({ socket }) => {
   const {
@@ -14,6 +16,10 @@ const AdminChatList = ({ socket }) => {
     setChatroomMarkAsRead,
   } = useChatStore();
   const [selectedChatroomId, setSelectedChatroomId] = useState(null);
+
+  const theme = useTheme();
+  const secondary = theme.palette.secondary.main;
+  const primary = theme.palette.primary.main;
 
   const onSelectChatroom = (chatroom) => {
     console.log("selectedChatroom", chatroom);
@@ -40,43 +46,43 @@ const AdminChatList = ({ socket }) => {
       : setSelectedChatroomId(selectedChat._id);
   }, [selectedChat, selectedChatroomId]);
 
+  const StyledBox = styled(Box)`
+    padding: 10px;
+    padding-top: 6px;
+    border-radius: 10px;
+    border: 1px solid rgb(159, 145, 204);
+    box-shadow: 3px 3px 0px 0px rgb(159, 145, 204, 40%);
+  `;
+
   return (
-    <Box
+    <StyledBox
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDirection="column"
       alignItems="center"
       padding={2}
       bgcolor="white"
-      width={{ md: "26.5%" }}
+      width={{ md: "30%" }}
       height="75vh"
-      borderRadius="8px"
-      border="1px solid #000"
     >
-      <Box
-        paddingBottom={1}
-        paddingLeft={3}
-        fontSize={{ xs: "28px", md: "30px" }}
-        display="flex"
-        width="100%"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Typography variant="h4">My Chats</Typography>
-      </Box>
       <Box
         display="flex"
         flexDirection="column"
         padding={3}
-        bgcolor="#F8F8F8"
-        width={{ md: "90%" }}
-        height="100vh"
-        overflow="scroll"
+        width={{ md: "100%" }}
+        height="100%"
+        overflowY="scroll"
         borderRadius="8px"
       >
         {loading ? (
           <AdminChatLoading />
         ) : allChatrooms.length > 0 ? (
-          <Stack spacing={2} width={{ md: "100%" }} height={{ md: "100%" }}>
+          <Stack
+            spacing={2}
+            padding={1}
+            width={{ md: "100%" }}
+            height={{ md: "100%" }}
+            style={{ maxHeight: "100%", overflow: "auto" }}
+          >
             {allChatrooms.map((chatroom) => (
               <Box
                 onClick={() => onSelectChatroom(chatroom)}
@@ -90,7 +96,7 @@ const AdminChatList = ({ socket }) => {
                 }}
                 backgroundColor={
                   selectedChatroomId === chatroom._id
-                    ? "#38B2AC"
+                    ? primary
                     : chatroom.latestMessage !== undefined &&
                       chatroom.latestMessage.senderRole !== "ADMIN" &&
                       chatroom.latestMessageRead === false
@@ -132,7 +138,7 @@ const AdminChatList = ({ socket }) => {
           "No chats currently."
         )}
       </Box>
-    </Box>
+    </StyledBox>
   );
 };
 

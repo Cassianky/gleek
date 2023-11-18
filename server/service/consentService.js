@@ -1,9 +1,10 @@
 import Consent from "../model/consentModel.js";
+import VendorConsentModel from "../model/vendorConsentModel.js";
 
 export const createClientConsent = async (
   clientId,
   acceptTermsAndConditions,
-  session,
+  session
 ) => {
   const consentData = {
     client: clientId,
@@ -18,13 +19,14 @@ export const updateConsent = async (clientId, updateData) => {
   const updatedConsent = await Consent.findOneAndUpdate(
     { client: clientId },
     {
-      receiveMarketing: updateData.receiveMarketing,
-      receiveEmails: updateData.receiveEmails,
+      receivePersonalisedRecommendations:
+        updateData.receivePersonalisedRecommendations,
+      receiveAdminNewsletters: updateData.receiveAdminNewsletters,
       lastUpdated: Date.now(),
     },
     {
       new: true,
-    },
+    }
   );
 
   return updatedConsent;
@@ -38,18 +40,18 @@ export const getClientConsent = async (clientId) => {
 export const createVendorConsent = async (
   vendorId,
   acceptTermsAndConditions,
-  session,
+  session
 ) => {
   const consentData = {
     vendor: vendorId,
     acceptTermsAndConditions,
     lastUpdated: Date.now(),
   };
-  const create = await Consent.create([consentData], session);
+  const create = await VendorConsentModel.create([consentData], session);
   return create[0];
 };
 
 export const getVendorConsent = async (vendorId) => {
-  const vendorConsent = await Consent.findOne({ vendor: vendorId });
+  const vendorConsent = await VendorConsentModel.findOne({ vendor: vendorId });
   return vendorConsent;
 };

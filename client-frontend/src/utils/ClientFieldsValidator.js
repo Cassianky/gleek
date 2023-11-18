@@ -51,8 +51,11 @@ export const validator = (formData, fieldName) => {
         formData[fieldName],
         formData.password,
         errors,
-        fieldName,
+        fieldName
       );
+      break;
+    case "preferredActivityTypes":
+      validateSelectedActivityTypes(formData[fieldName], errors, fieldName);
       break;
     default:
   }
@@ -117,5 +120,13 @@ export const validatePassword = (data, errors, fieldName) => {
 export const validatePasswordVerify = (data, password, errors, fieldName) => {
   if (password !== data) {
     errors[fieldName] = `Password does not match!`;
+  }
+};
+
+export const validateSelectedActivityTypes = (data, errors, fieldName) => {
+  const selectedTypes = Object.values(data);
+
+  if (!selectedTypes.includes(true)) {
+    errors[fieldName] = `At least one activity type must be selected`;
   }
 };

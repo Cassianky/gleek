@@ -19,15 +19,15 @@ function PendingSurveys() {
     useBookingStore();
   const { openSnackbar } = useSnackbarStore();
   useEffect(() => {
-    try {
-      const get = async () => {
+    const get = async () => {
+      try {
         await getBookingsWithPendingSurvey();
-      };
+      } catch (error) {
+        openSnackbar("An error occurred.", "error");
+      }
+    };
 
-      get();
-    } catch (error) {
-      openSnackbar("An error occurred.", "error");
-    }
+    get();
   }, []);
 
   return (

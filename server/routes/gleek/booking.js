@@ -15,7 +15,6 @@ const router = express.Router();
 
 // Get bookings with pending survey
 router.get("/pendingSurvey", verifyToken, getBookingsWithPendingSurvey);
-router.get("/pendingSurvey", verifyToken, getBookingsWithPendingSurvey);
 
 // Booking
 router.get(

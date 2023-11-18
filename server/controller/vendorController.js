@@ -135,7 +135,7 @@ export const postRegister = async (req, res) => {
     // Encrypt the user's password and save it to the database
     await encryptUserPassword(createdVendor, newVendor.password);
 
-    // Create the Consent model and link to Vendor
+    // Create the VendorConsent model and link to Vendor
     await createVendorConsent(
       createdVendor.id,
       acceptTermsAndConditions,

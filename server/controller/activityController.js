@@ -121,6 +121,7 @@ export const getActivity = async (req, res) => {
       .populate("subtheme")
       .populate({
         path: "reviews",
+        match: { hidden: false },
         select: "-booking",
         populate: [
           { path: "client", select: "_id photo preSignedPhoto name" },
@@ -1077,6 +1078,7 @@ export const getActivitiesWithFilters = async (req, res) => {
       .populate("linkedVendor")
       .populate({
         path: "reviews",
+        match: { hidden: false },
         select: "-booking",
       });
 

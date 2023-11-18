@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import { Box,Container } from "@mui/material";
 import ChatList from "../components/Chat/ChatList";
 import ChatWindow from "../components/Chat/ChatWindow";
 import useChatStore from "../zustand/ChatStore";
@@ -68,20 +68,21 @@ const Chatpage = () => {
   }, [newMsgReceived]);
 
   return (
-    <div style={{ width: "100%" }}>
+    <Container maxWidth="xl">
       <Box
         sx={{
           display: "flex",
           width: 1,
-          height: "50rem",
+          minHeight: "60rem",
           justifyContent: "space-between",
-          padding: 3,
+          paddingX: 8,
+          paddingTop: 8
         }}
       >
         <ChatList socket={socket} />
         <ChatWindow socket={socket} />
       </Box>
-    </div>
+    </Container>
   );
 };
 

@@ -202,7 +202,7 @@ const CreateBadgeForm = (theme) => {
 
   const handleRemoveImage = (image) => {
     setImageListToEdit((oldState) =>
-      oldState.filter((item) => item.src !== image.src),
+      oldState.filter((item) => item.src !== image.src)
     );
     const updatedList = [...badgeImages];
     updatedList.splice(badgeImages.indexOf(image.file), 1);
@@ -273,7 +273,7 @@ const CreateBadgeForm = (theme) => {
     }
     const responseStatus = await AxiosConnect.postMultiPart(
       "/badge/createBadge",
-      formDataN,
+      formDataN
     );
 
     console.log(responseStatus);
@@ -406,7 +406,7 @@ const CreateBadgeForm = (theme) => {
                         <MenuItem key={value} value={value}>
                           {value}
                         </MenuItem>
-                      ),
+                      )
                     )}
                   </Select>
                   {errorData.sdg && (

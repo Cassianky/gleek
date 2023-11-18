@@ -58,7 +58,7 @@ const ClientDetails = () => {
   const primary = theme.palette.primary.main;
 
   const completedBadgesCount = clientProfileBadges.filter(
-    (badge) => badge.isCompleted,
+    (badge) => badge.isCompleted
   ).length;
   const totalBadgesCount = clientProfileBadges.length;
 

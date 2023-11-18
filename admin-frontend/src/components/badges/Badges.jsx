@@ -21,6 +21,7 @@ import {
 import MainBodyContainer from "../common/MainBodyContainer";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
+import AxiosConnect from "../../utils/AxiosConnect";
 
 // import ReviewActivityTable from "./ReviewActivityTable";
 function Badges() {
@@ -28,22 +29,27 @@ function Badges() {
   const theme = useTheme();
 
   const { openSnackbar } = useSnackbarStore();
-  const { activities, getActivity, isLoading, pendingApprovalActivities } =
-    useActivityStore();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await getActivity();
-    };
-    fetchData();
-  }, [getActivity]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     await getActivity();
+  //   };
+  //   fetchData();
+  // }, [getActivity]);
 
   const handleCreateButtonClick = () => {
     navigate("/createBadge");
   };
-  if (isLoading) {
-    return <CircularProgress />;
-  }
+
+  const handleUpdateAllBadgeRecords = async () => {
+    const responseStatus = await AxiosConnect.post(
+      "/badge/updateAllBadgeRecords"
+    );
+  };
+
+  // if (isLoading) {
+  //   return <CircularProgress />;
+  // }
   return (
     <MainBodyContainer
       hasBackButton={false}
@@ -61,29 +67,55 @@ function Badges() {
         >
           Manage Badges
         </Typography>
-        <Button
-          variant="contained"
-          color="light_purple"
-          onClick={handleCreateButtonClick}
-          style={{
-            paddingLeft: 2,
-            justifyContent: "center",
-            paddingRight: 6,
-          }}
-        >
-          <Typography
+        <Box display="flex" flexDirection="row">
+          <Button
+            variant="contained"
+            color="light_purple"
+            onClick={handleCreateButtonClick}
             style={{
-              display: "flex",
-              alignItems: "center",
+              paddingLeft: 2,
+              justifyContent: "center",
+              paddingRight: 6,
+              marginRight: 10,
             }}
-            component="div"
-            color="white"
-            fontSize={"0.875rem"}
           >
-            <AddIcon fontSize="small" />
-            Create Badge
-          </Typography>
-        </Button>
+            <Typography
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+              component="div"
+              color="white"
+              fontSize={"0.875rem"}
+            >
+              <AddIcon fontSize="small" />
+              Create Badge
+            </Typography>
+          </Button>
+          <Button
+            variant="contained"
+            color="light_purple"
+            onClick={handleUpdateAllBadgeRecords}
+            style={{
+              paddingLeft: 2,
+              justifyContent: "center",
+              paddingRight: 6,
+            }}
+          >
+            <Typography
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+              component="div"
+              color="white"
+              fontSize={"0.875rem"}
+            >
+              <AddIcon fontSize="small" />
+              Update All Badge Records
+            </Typography>
+          </Button>
+        </Box>
       </Box>
       {/* {activities && <ReviewActivityTable activities={activities} />} */}
     </MainBodyContainer>

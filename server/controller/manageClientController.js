@@ -1,6 +1,7 @@
 import Client from "../model/clientModel.js";
 import sendMail from "../util/sendMail.js";
 import { createRegistrationApprovalEmailOptions } from "../util/sendMailOptions.js";
+import cron from "node-cron";
 
 export const getAllClients = async (req, res) => {
   try {
@@ -40,3 +41,40 @@ export const getClientDetails = async (req, res) => {
     return res.status(500).send("Server Error");
   }
 };
+
+export const deleteAllRejectedClientAfterThirtyDays = async (req, res) => {
+  try {
+    // Calculate the date 30 days ago
+    const dateThirtyDaysAgo = new Date();
+    dateThirtyDaysAgo.setDate(dateThirtyDaysAgo.getDate() - 30);
+
+    console.log(dateThirtyDaysAgo);
+
+    const rejectedClientsToBeDelete = await Client.find({
+      status: "REJECTED",
+      approvedDate: { $lte: dateThirtyDaysAgo },
+    });
+
+    console.log(rejectedClientsToBeDelete);
+
+    for (const client of rejectedClientsToBeDelete) {
+      await Client.findByIdAndDelete(client._id);
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Server Error, unable to delete clients rejected 30 days ago.",
+      error: error.message,
+    });
+  }
+};
+
+cron.schedule("0 0 0 * * *", async () => {
+  try {
+    await deleteAllRejectedClientAfterThirtyDays();
+    console.log(
+      "Scheduled daily task to delete rejected client(s) from 30 days ago",
+    );
+  } catch (error) {
+    console.error("Error in scheduled task:", error);
+  }
+});

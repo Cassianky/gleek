@@ -286,7 +286,6 @@ export const createCustomEdmMailOptions = (
   preSignedUrl
 ) => {
   try {
-    console.log("Creating custom newsletter mail options");
     const to = client.email;
     const htmlContent = NewsletterTemplate({
       recipientName: client.name,
@@ -331,7 +330,6 @@ export const createPersonalisedNewsletterMailOptions = (
   activities
 ) => {
   try {
-    console.log("Creating personalised newsletter mail options");
     const to = client.email;
     const htmlContent = PersonalisedNewsletterTemplate({
       recipientName: client.name,

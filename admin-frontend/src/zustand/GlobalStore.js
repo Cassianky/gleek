@@ -904,6 +904,27 @@ export const useNewsletterStore = create((set) => ({
   },
 }));
 
+export const useMailingListStore = create((set) => ({
+  mailingLists: [],
+  isLoading: false,
+  getMailingLists: async () => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get("/marketing/getMailingLists");
+      set({
+        mailingLists: response.data.map((item) => ({
+          ...item,
+          id: item._id,
+        })),
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      console.error(error.message);
+    }
+  },
+}));
+
 export const useAdminSurveyResponseStore = create((set) => ({
   survey: null,
   surveys: [],

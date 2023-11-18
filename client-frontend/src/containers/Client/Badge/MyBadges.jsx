@@ -77,7 +77,7 @@ const MyBadges = () => {
   }));
 
   const completedBadgesCount = badges.filter(
-    (badge) => badge.isCompleted,
+    (badge) => badge.isCompleted
   ).length;
   const totalBadgesCount = badges.length;
 

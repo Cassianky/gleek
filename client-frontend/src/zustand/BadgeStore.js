@@ -22,17 +22,17 @@ const useBadgeStore = create((set) => ({
     try {
       set({ isLoadingBadges: true });
       const response = await AxiosConnect.get(
-        `/gleek/badge/getAllBadgeRecordsForClient`,
+        `/gleek/badge/getAllBadgeRecordsForClient`
       );
       const data = response.data;
       console.log(data);
       const badges = data.badgeRecords;
 
       const completedBadges = badges.filter(
-        (badge) => badge.isCompleted === true,
+        (badge) => badge.isCompleted === true
       );
       const uncompletedBadges = badges.filter(
-        (badge) => badge.isCompleted === false,
+        (badge) => badge.isCompleted === false
       );
 
       set({
@@ -49,7 +49,7 @@ const useBadgeStore = create((set) => ({
     try {
       set({ isLoadingClientProfile: true });
       const response = await AxiosConnect.get(
-        `/gleek/badge/getClientProfile/${clientId}`,
+        `/gleek/badge/getClientProfile/${clientId}`
       );
       const data = response.data;
       console.log(data);

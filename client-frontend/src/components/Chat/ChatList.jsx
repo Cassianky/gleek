@@ -7,8 +7,13 @@ import useGlobalStore from "../../zustand/GlobalStore";
 import dayjs from "dayjs";
 
 const ChatList = ({ socket }) => {
-  const { allChatrooms, selectedChat, setSelectedChat, setChatroomMarkAsRead } =
-    useChatStore();
+  const {
+    loading,
+    allChatrooms,
+    selectedChat,
+    setSelectedChat,
+    setChatroomMarkAsRead,
+  } = useChatStore();
   const { role } = useGlobalStore();
   const [selectedChatroomId, setSelectedChatroomId] = useState(null);
 
@@ -67,11 +72,13 @@ const ChatList = ({ socket }) => {
         bgcolor="#F8F8F8"
         width={{ md: "100%" }}
         height="100vh"
-        overflow-y="scroll"
+        overflow="scroll"
         borderRadius="8px"
       >
-        {allChatrooms.length > 0 ? (
-          <Stack spacing={2} width={{ md: "100%" }}>
+        {loading ? (
+          <ChatLoading />
+        ) : allChatrooms.length > 0 ? (
+          <Stack spacing={2} width={{ md: "100%" }} height={{ md: "100%" }}>
             {allChatrooms.map((chatroom) => (
               <Box
                 onClick={() => onSelectChatroom(chatroom)}
@@ -129,7 +136,7 @@ const ChatList = ({ socket }) => {
             ))}
           </Stack>
         ) : (
-          <ChatLoading />
+          "Select a vendor or admin to start chatting."
         )}
       </Box>
     </Box>

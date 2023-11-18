@@ -40,6 +40,7 @@ import {
 import ChatIcon from "@mui/icons-material/Chat";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import useChatStore from "../zustand/ChatStore";
+import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 
 function NavBar(props) {
   const { authenticated, client, logoutClient } = useClientStore();
@@ -158,7 +159,12 @@ function NavBar(props) {
       <AppBar position="static" elevation={0} bgcolor={primary}>
         <Box
           id="boxLivesForever"
-          sx={{ height: "auto", position: "absolute", top: "58px", right: 0 }}
+          sx={{
+            height: "auto",
+            position: "absolute",
+            top: "58px",
+            right: 0,
+          }}
         ></Box>
         {!authenticated && !vendorAuthenticated && (
           <Box
@@ -281,6 +287,18 @@ function NavBar(props) {
               </IconButton>
             </Box>
             <Box>
+              <IconButton
+                onClick={() => {
+                  navigate("/client/leaderboard");
+                }}
+                disableRipple
+                disableFocusRipple
+                aria-label="chat"
+                color="accent"
+                sx={{ marginRight: "8px" }}
+              >
+                <LeaderboardIcon />
+              </IconButton>
               <IconButton
                 onClick={() => {
                   navigate("/client/chats");

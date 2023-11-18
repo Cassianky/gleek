@@ -1,4 +1,5 @@
 import Consent from "../model/consentModel.js";
+import VendorConsentModel from "../model/vendorConsentModel.js";
 
 export const createClientConsent = async (
   clientId,
@@ -45,11 +46,11 @@ export const createVendorConsent = async (
     acceptTermsAndConditions,
     lastUpdated: Date.now(),
   };
-  const create = await Consent.create([consentData], session);
+  const create = await VendorConsentModel.create([consentData], session);
   return create[0];
 };
 
 export const getVendorConsent = async (vendorId) => {
-  const vendorConsent = await Consent.findOne({ vendor: vendorId });
+  const vendorConsent = await VendorConsentModel.findOne({ vendor: vendorId });
   return vendorConsent;
 };

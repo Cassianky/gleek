@@ -28,6 +28,9 @@ import {
 } from "../util/notificationRelatedEnum.js";
 import { createNotification } from "./notificationController.js";
 import { disableVendorActivities } from "../service/activityService.js";
+import Client from "../model/clientModel.js";
+import cron from "node-cron";
+import { deleteAllRejectedClientAfterThirtyDays } from "./manageClientController.js";
 
 const secret = process.env.JWT_SECRET_VENDOR;
 
@@ -132,7 +135,7 @@ export const postRegister = async (req, res) => {
     // Encrypt the user's password and save it to the database
     await encryptUserPassword(createdVendor, newVendor.password);
 
-    // Create the Consent model and link to Vendor
+    // Create the VendorConsent model and link to Vendor
     await createVendorConsent(
       createdVendor.id,
       acceptTermsAndConditions,
@@ -651,3 +654,40 @@ export const toggleVendorIsDisabled = async (req, res) => {
     });
   }
 };
+
+export const deleteAllRejectedVendorAfterThirtyDays = async (req, res) => {
+  try {
+    // Calculate the date 30 days ago
+    const dateThirtyDaysAgo = new Date();
+    dateThirtyDaysAgo.setDate(dateThirtyDaysAgo.getDate() - 30);
+
+    console.log(dateThirtyDaysAgo);
+
+    const rejectedVendorsToBeDelete = await VendorModel.find({
+      status: "REJECTED",
+      approvedDate: { $lte: dateThirtyDaysAgo },
+    });
+
+    console.log(rejectedVendorsToBeDelete);
+
+    for (const vendor of rejectedVendorsToBeDelete) {
+      await VendorModel.findByIdAndDelete(vendor._id);
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Server Error, unable to delete clients rejected 30 days ago.",
+      error: error.message,
+    });
+  }
+};
+
+cron.schedule("0 0 0 * * *", async () => {
+  try {
+    await deleteAllRejectedVendorAfterThirtyDays();
+    console.log(
+      "Scheduled daily task to delete rejected vendor(s) from 30 days ago",
+    );
+  } catch (error) {
+    console.error("Error in scheduled task:", error);
+  }
+});

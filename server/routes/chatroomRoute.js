@@ -6,6 +6,7 @@ import {
   adminAccessChat,
   markSelectedChatAsRead,
   adminMarkSelectedChatAsRead,
+  sendUnreadChatVendorReminder,
 } from "../controller/chatRoomController.js";
 import { verifyToken as clientVerifyToken } from "./../middleware/clientAuth.js";
 import { verifyToken as vendorVerifyToken } from "./../middleware/vendorAuth.js";
@@ -29,4 +30,9 @@ router
   .route("/admin/markChatroomAsRead/:id")
   .get(adminAuth, adminMarkSelectedChatAsRead);
 
+router.post(
+  "/admin/sendUnreadChatVendorReminder",
+  adminAuth,
+  sendUnreadChatVendorReminder,
+);
 export default router;

@@ -11,7 +11,7 @@ const router = express.Router();
 router.get(
   "/getAllBadgeRecordsForClient",
   verifyToken,
-  getAllBadgeRecordsForClient,
+  getAllBadgeRecordsForClient
 );
 router.get("/getClientProfile/:id", getClientProfile);
 export default router;

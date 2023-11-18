@@ -1,0 +1,14 @@
+.react-chatbot-kit-chat-container {
+  position: absolute !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  z-index: 1;
+}
+
+.react-chatbot-kit-user-chat-message {
+  margin-right: 10px;
+}
+
+.react-chatbot-kit-chat-inner-container {
+  box-shadow: 0px 2px 7px -1px rgba(0, 0, 0, 0.75);
+}

@@ -2,6 +2,7 @@ import {
   getAllClients,
   updateClient,
   getClientDetails,
+  deleteAllRejectedClientAfterThirtyDays,
 } from "../../controller/manageClientController.js";
 import express from "express";
 import adminAuth from "../../middleware/adminAuth.js";
@@ -16,5 +17,10 @@ router.patch("/update/:id", adminAuth, updateClient);
 router.get("/getClientDetails/:clientId", adminAuth, getClientDetails);
 router.get("/hasActiveBookings/:id", adminAuth, hasActiveBookings);
 router.patch("/toggleClientIsDisabled/:id", adminAuth, toggleClientIsDisabled);
+router.post(
+  "/deleteRejectedClientAfterThirtyDays",
+  adminAuth,
+  deleteAllRejectedClientAfterThirtyDays,
+);
 
 export default router;

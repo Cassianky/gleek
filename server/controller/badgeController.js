@@ -95,6 +95,8 @@ export const createBadge = async (req, res) => {
         }
       });
 
+      console.log(sdgSet);
+
       if (
         createdBadge.sdgBadgeType === "GOLD" ||
         createdBadge.sdgBadgeType === "SILVER"

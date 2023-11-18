@@ -446,7 +446,7 @@ export const clientBadgeMailOptions = (client, badge, imageUrl) => {
         </div>
         <div class="content">
           <p>${text}</p>
-          <img src="cid:earned-badge-image" alt="Welcome to Gleek!" />
+          <img src="cid:earned-badge-image" alt="New Badge!" />
           <p>
             Congratualions on earning a new Badge!
           </p>
@@ -468,6 +468,181 @@ export const clientBadgeMailOptions = (client, badge, imageUrl) => {
                cid: "earned-badge-image",
             },
          ],
+         to,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+export const BookingSummaryClientMailOptions = (
+   client,
+   imageUrl,
+   pdfFilePath
+) => {
+   try {
+      const text = `Hello, ${client.name}!`;
+      const subject = `${client.name}, You have made a new Booking!`;
+      const to = client.email;
+
+      const htmlContent = `
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          background-color: #5c4b99;
+          color: #ffffff;
+          padding: 10px;
+          text-align: center;
+          border-radius: 5px 5px 0 0;
+        }
+        .content {
+          padding: 20px;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+        p {
+          margin-bottom: 10px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Gleek</h1>
+        </div>
+        <div class="content">
+          <p>${text}</p>
+          <img src="cid:activity-image" alt="New booking!" />
+          <p>
+            You have made a new booking! Your booking summary has been attached with this email.
+          </p>
+        </div>
+      </div>
+    </body>
+  </html>
+
+
+  `;
+
+      const options = {
+         subject,
+         html: htmlContent,
+         attachments: [
+            {
+               filename: "activity.png",
+               path: imageUrl,
+               cid: "activity-image",
+            },
+            {
+               filename: "BookingSummary.pdf",
+               path: pdfFilePath,
+               contentType: "application/pdf",
+            },
+         ],
+         to,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+export const BookingSummaryVendorMailOptions = (
+   vendor,
+   imageUrl,
+   pdfFilePath
+) => {
+   try {
+      const text = `Hello, ${vendor.companyName}!`;
+      const subject = `${vendor.companyName}, You have a new Booking!`;
+      const to = vendor.companyEmail;
+
+      const htmlContent = `
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          background-color: #5c4b99;
+          color: #ffffff;
+          padding: 10px;
+          text-align: center;
+          border-radius: 5px 5px 0 0;
+        }
+        .content {
+          padding: 20px;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+        p {
+          margin-bottom: 10px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Gleek</h1>
+        </div>
+        <div class="content">
+          <p>${text}</p>
+          <img src="cid:activity-image" alt="New booking!" />
+          <p>
+            You have a new booking! Your booking summary has been attached with this email.
+          </p>
+        </div>
+      </div>
+    </body>
+  </html>
+
+
+  `;
+
+      const options = {
+         subject,
+         html: htmlContent,
+         attachments: [
+            {
+               filename: "activity.png",
+               path: imageUrl,
+               cid: "activity-image",
+            },
+            {
+               filename: "BookingSummary.pdf",
+               path: pdfFilePath,
+               contentType: "application/pdf",
+            },
+         ],
+
          to,
       };
       return options;

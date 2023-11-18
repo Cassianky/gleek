@@ -36,6 +36,7 @@ function ManageReviewsForActivity() {
     try {
       await toggleReviewVisibility(reviewId);
       console.log("after handle toggle", reviews);
+      openSnackbar("Toggled review visibility", "success");
     } catch (error) {
       console.error(error);
       openSnackbar("An error occurred", "error");

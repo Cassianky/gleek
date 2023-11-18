@@ -25,6 +25,7 @@ import {
 } from "../util/notificationRelatedEnum.js";
 import { createNotification } from "./notificationController.js";
 import { InvoiceTemplate } from "../assets/templates/InvoiceTemplate.js";
+import cron from "node-cron";
 
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
@@ -728,14 +729,6 @@ export const cancelBooking = async (req, res) => {
   }
 };
 
-// PATCH /booking/updateBookingStatus/:id
-// Takes request body of:
-// {
-//   "newStatus" : "REJECTED",
-//   "actionByUserType": "ADMIN",
-//   "actionRemarks" : "rejection or cancellation reason" (optional, no need if new status is CONFIRMED)
-// }
-
 export const updateBookingStatus = async (req, res) => {
   try {
     const bookingId = req.params.id;
@@ -865,48 +858,49 @@ export const getAllBookingsByActivityId = async (req, res) => {
 };
 
 // POST /booking/updateCompletedBookings
-export const updateCompletedBookings = async (req, res) => {
-  try {
-    const currentDate = new Date();
-    //Find bookings of "confirmed" status and date passed current date
-    const confirmedBookingsToUpdate = await BookingModel.find({
-      status: "CONFIRMED",
-      endDateTime: { $lt: currentDate },
-    });
-
-    if (confirmedBookingsToUpdate.length > 0) {
-      console.log("In condition to update bookings");
-      // Update the status of each booking to "PENDING_PAYMENT"
-      confirmedBookingsToUpdate.map(async (booking) => {
-        const newActionHistory = {
-          newStatus: "PENDING_PAYMENT",
-          actionByUserType: "ADMIN",
-          actionByUserName: "SCHEDULED UPDATE",
-          actionTimestamp: new Date(),
-          actionRemarks: "SCHEDULED UPDATE OF COMPLETED CONFIRMED BOOKINGS",
-        };
-        booking.status = "PENDING_PAYMENT";
-        booking.actionHistory.push(newActionHistory);
-        await booking.save();
+export const updateCompletedBookingsStatusFromConfirmedToPendingPayment =
+  async (req, res) => {
+    try {
+      const currentDate = new Date();
+      //Find bookings of "confirmed" status and date passed current date
+      const confirmedBookingsToUpdate = await BookingModel.find({
+        status: "CONFIRMED",
+        endDateTime: { $lt: currentDate },
       });
 
-      console.log(confirmedBookingsToUpdate);
+      if (confirmedBookingsToUpdate.length > 0) {
+        console.log("In condition to update bookings");
+        // Update the status of each booking to "PENDING_PAYMENT"
+        confirmedBookingsToUpdate.map(async (booking) => {
+          const newActionHistory = {
+            newStatus: "PENDING_PAYMENT",
+            actionByUserType: "ADMIN",
+            actionByUserName: "SCHEDULED UPDATE",
+            actionTimestamp: new Date(),
+            actionRemarks: "SCHEDULED UPDATE OF COMPLETED CONFIRMED BOOKINGS",
+          };
+          booking.status = "PENDING_PAYMENT";
+          booking.actionHistory.push(newActionHistory);
+          await booking.save();
+        });
 
-      res.status(200).json({
-        message: "Bookings updated.",
-        data: confirmedBookingsToUpdate,
-      });
-    } else {
-      console.log("No bookings to update.");
-      res.status(200).json({
-        message: "No bookings to update.",
-      });
+        console.log(confirmedBookingsToUpdate);
+
+        res.status(200).json({
+          message: "Bookings updated.",
+          data: confirmedBookingsToUpdate,
+        });
+      } else {
+        console.log("No bookings to update.");
+        res.status(200).json({
+          message: "No bookings to update.",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating bookings:", error);
+      res.status(500).json({ error: "Server error", message: error.message });
     }
-  } catch (error) {
-    console.error("Error updating bookings:", error);
-    res.status(500).json({ error: "Server error", message: error.message });
-  }
-};
+  };
 
 //Generate the PDF for the Client And Send Email
 export const sendBookingSummaryEmailClient = async (data, email) => {
@@ -1079,3 +1073,14 @@ export const getBookingSummaryPdf = async (req, res) => {
     }
   });
 };
+
+cron.schedule("0 0 0 * * *", async () => {
+  try {
+    await updateCompletedBookingsStatusFromConfirmedToPendingPayment();
+    console.log(
+      "Scheduled daily task to update completed booking(s) status from Confirmed to Pending Payment",
+    );
+  } catch (error) {
+    console.error("Error in scheduled task:", error);
+  }
+});

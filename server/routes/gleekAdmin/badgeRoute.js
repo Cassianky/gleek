@@ -15,7 +15,7 @@ router.post(
     { name: "image", maxCount: 1 },
     { name: "images", maxCount: 5 },
   ]),
-  createBadge
+  createBadge,
 );
 router.patch("/updateBadge/:id", adminAuth, updateBadge);
 router.post("/updateAllBadgeRecords", adminAuth, updateAllBadgeRecords);

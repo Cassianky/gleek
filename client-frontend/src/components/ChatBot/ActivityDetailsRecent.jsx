@@ -20,7 +20,7 @@ const ActivityDetailsRecent = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await AxiosConnect.get(
-        "/gleek/chatbot/get5MostRecentActivities"
+        "/gleek/chatbot/get5MostRecentActivities",
       );
       setActivities(response.data.recentActivities);
     };
@@ -48,7 +48,7 @@ const ActivityDetailsRecent = () => {
             onClick={(event) => {
               event.preventDefault();
               const clickedActivity = activities.find(
-                (item) => item._id.toString() === activity._id.toString()
+                (item) => item._id.toString() === activity._id.toString(),
               );
               navigate(`/shop/activity/${activity._id.toString()}`);
             }}

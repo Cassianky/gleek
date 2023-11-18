@@ -19,7 +19,7 @@ const ActivityDetailsTop = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await AxiosConnect.get(
-        "/gleek/chatbot/getTop5BookedActivities"
+        "/gleek/chatbot/getTop5BookedActivities",
       );
       setActivities(response.data.topActivities);
     };

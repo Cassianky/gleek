@@ -43,7 +43,7 @@ function Badges() {
 
   const handleUpdateAllBadgeRecords = async () => {
     const responseStatus = await AxiosConnect.post(
-      "/badge/updateAllBadgeRecords"
+      "/badge/updateAllBadgeRecords",
     );
   };
 

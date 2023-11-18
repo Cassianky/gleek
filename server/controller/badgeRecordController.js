@@ -14,7 +14,7 @@ export const getAllBadgeRecordsForClient = async (req, res) => {
 
     for (const badgeRecord of badgeRecords) {
       badgeRecord.badge.badgePreSignedImage = await s3GetImages(
-        badgeRecord.badge.badgeImage
+        badgeRecord.badge.badgeImage,
       );
     }
 
@@ -34,7 +34,7 @@ export const getClientProfile = async (req, res) => {
   try {
     console.log(req.params.id);
     const client = await ClientModel.findById(req.params.id).select(
-      "-password"
+      "-password",
     );
 
     if (client.photo) {
@@ -50,7 +50,7 @@ export const getClientProfile = async (req, res) => {
 
     for (const badgeRecord of badgeRecords) {
       badgeRecord.badge.badgePreSignedImage = await s3GetImages(
-        badgeRecord.badge.badgeImage
+        badgeRecord.badge.badgeImage,
       );
     }
 
@@ -75,7 +75,7 @@ export const updateAllBadgeRecords = async (req, res) => {
       }).populate("badge");
 
       badgeRecords = badgeRecords.filter(
-        (record) => record.isCompleted === false
+        (record) => record.isCompleted === false,
       );
       if (badgeRecords.length > 0) {
         const clientId = client._id;

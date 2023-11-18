@@ -41,6 +41,7 @@
     "natural": "^6.8.0",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.5",
+    "socket.io": "^4.7.2",
     "spelling-corrector": "^3.0.0",
     "stemmer": "^2.0.1",
     "stopword": "^2.0.8",

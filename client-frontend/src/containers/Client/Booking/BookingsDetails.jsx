@@ -57,7 +57,6 @@ const BookingsDetails = () => {
     getBookingForClient(bookingId);
   }, [bookingId]);
 
-
   const isSurveyClosed = () => {
     console.log(currentBooking?.isSurveySubmitted);
     console.log(currentBooking?.status);

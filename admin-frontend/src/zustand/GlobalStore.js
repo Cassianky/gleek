@@ -1116,6 +1116,49 @@ export const useTestimonialStore = create((set) => ({
   },
 }));
 
+export const useAnalyticsStore = create((set) => ({
+  pendingBookings: [],
+  isLoading: false,
+  currentBooking: null,
+  reviews: null,
+  activityDetails: null,
+  profitPerMonth: null,
+  sentiments: null,
+  getDashboard: async () => {
+    try {
+      set({ isLoading: true });
+      const reviewResponse = await AxiosConnect.get(
+        "/dashboard/bookingReviews"
+      );
+      const sentiment = await AxiosConnect.get("/dashboard/sentiments");
+      set({
+        sentiments: sentiment.data,
+      });
+      set({
+        reviews: reviewResponse.data,
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
+  calculateAdminProfit: async (start, end) => {
+    try {
+      set({ isLoading: true });
+      const response = await AxiosConnect.get(
+        `/dashboard/activityDetails?start=${start}&end=${end}`
+      );
+      set({
+        activityDetails: response.data.activityByRevenue,
+        profitPerMonth: response.data.profitPerMonth,
+      });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
+}));
+
 export const useImageUploadTestStore = create((set) => ({
   testActivities: [],
   setTestActivities: (newActivityList) => {

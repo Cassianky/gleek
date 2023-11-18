@@ -109,33 +109,15 @@ export const createNotification = async (req, session) => {
         } else if (req.notificationAction === NotificationAction.APPROVE) {
           const booking = req.eventObj;
           newNotification.text = `Your booking for activity ${booking.activityId.title.toUpperCase()} 
-              has been accepted by the vendor`;
-        } else if (
-          req.notificationAction === NotificationAction.APPROVEBYADMIN
-        ) {
-          const booking = req.eventObj;
-          newNotification.text = `Your booking for activity ${booking.activityTitle.toUpperCase()} 
-              has been accepted by the admin`;
+              has been approved.`;
         } else if (req.notificationAction === NotificationAction.REJECT) {
           const booking = req.eventObj;
           newNotification.text = `Your booking for activity ${booking.activityId.title.toUpperCase()} 
-              has been rejected by the vendor.`;
-        } else if (
-          req.notificationAction === NotificationAction.REJECTBYADMIN
-        ) {
-          const booking = req.eventObj;
-          newNotification.text = `Your booking for activity ${booking.activityTitle.toUpperCase()} 
-              has been rejected by the admin.`;
+              has been rejected.`;
         } else if (req.notificationAction === NotificationAction.CANCEL) {
           const booking = req.eventObj;
-          newNotification.text = `Your booking for activity ${booking.activityId.title.toUpperCase()} 
-              has been cancelled by the vendor.`;
-        } else if (
-          req.notificationAction === NotificationAction.CANCELBYADMIN
-        ) {
-          const booking = req.eventObj;
-          newNotification.text = `Your booking for activity ${booking.activityTitle.toUpperCase()} 
-              has been cancelled by the admin.`;
+          newNotification.text = `Booking for activity ${booking.activityId.title.toUpperCase()} 
+              has been cancelled.`;
         } else if (
           req.notificationAction === NotificationAction.APPROVEUPDATEADMIN
         ) {
@@ -154,9 +136,15 @@ export const createNotification = async (req, session) => {
           req.notificationAction === NotificationAction.CANCELUPDATEADMIN
         ) {
           const booking = req.eventObj;
-          newNotification.text = `Client ${booking.clientId.name.toUpperCase()} booking for activity 
+          if (req.senderRole === "VENDOR") {
+            newNotification.text = `Client ${booking.clientId.name.toUpperCase()} booking for activity 
               ${booking.activityId.title.toUpperCase()} has been cancelled by 
               vendor ${booking.vendorName.toUpperCase()}.`;
+          } else {
+            newNotification.text = `Client ${booking.clientId.name.toUpperCase()} booking for activity 
+              ${booking.activityId.title.toUpperCase()} has been cancelled by 
+              client.`;
+          }
         }
         break;
     }

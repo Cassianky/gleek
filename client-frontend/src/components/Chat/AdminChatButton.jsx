@@ -25,7 +25,7 @@ const AdminChatButton = () => {
           fontSize: "3rem",
           position: "absolute",
           bottom: 24,
-          right: 24,
+          right: 80,
           backgroundColor: "#9F91CC",
           borderRadius: "50%",
           padding: "10px",

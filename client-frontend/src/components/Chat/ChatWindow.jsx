@@ -7,7 +7,7 @@ import { getSenderName } from "../../utils/ChatLogics";
 import ChatDisplay from "./ChatDisplay";
 import useShopStore from "../../zustand/ShopStore";
 
-const ChatWindow = ({ socket, setSelectedChatCompare }) => {
+const ChatWindow = ({ socket }) => {
   const {
     selectedChat,
     directChatAccess,
@@ -44,16 +44,20 @@ const ChatWindow = ({ socket, setSelectedChatCompare }) => {
   };
 
   const fetchMessages = () => {
-    console.log(selectedChat);
+    // console.log(selectedChat);
+    // console.log(directChatAccess);
+    // console.log(directVendorChatAccess);
     if (selectedChat !== null) {
       retrieveAndSetChatroomMessages(role, selectedChat._id, socket);
     } else if (directChatAccess) {
       console.log("in direct admin");
+      console.log(directChatAccess);
       setDirectChatAccess(false);
       retrieveAndAccessChatroom(role, "Admin", null, socket);
       retrieveAndSetAllChatRooms(role);
     } else if (directVendorChatAccess) {
       console.log("in direct vendor");
+      console.log(directVendorChatAccess);
       setDirectVendorChatAccess(false);
       if (currentActivity.adminCreated === undefined) {
         retrieveAndAccessChatroom(
@@ -73,7 +77,6 @@ const ChatWindow = ({ socket, setSelectedChatCompare }) => {
 
   useEffect(() => {
     fetchMessages();
-    setSelectedChatCompare(selectedChat);
   }, [selectedChat, directChatAccess]);
 
   return (

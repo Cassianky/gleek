@@ -29,7 +29,6 @@ const PreviewButton = ({ newsletterData }) => {
   const { openSnackbar } = useSnackbarStore();
   const { getNewsletterPreview, testSendNewsletter } = useNewsletterStore();
   const [htmlContent, setHtmlContent] = useState("");
-  // const [email, setEmail] = useState("");
 
   const handleDialogOpen = async (event) => {
     event.stopPropagation();
@@ -51,7 +50,7 @@ const PreviewButton = ({ newsletterData }) => {
   };
 
   const handleDialogClose = () => {
-    setDialogOpen(false);
+        setDialogOpen(false);
   };
 
 

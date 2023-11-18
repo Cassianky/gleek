@@ -5,7 +5,7 @@ import {
   deleteBooking,
   getAllBookingsByActivityId,
   updateBookingStatus,
-  updateCompletedBookings,
+  updateCompletedBookingsStatusFromConfirmedToPendingPayment,
   getBookingSummaryPdf,
   getBookingSummaryPdfUrl,
 } from "../../controller/bookingController.js";
@@ -18,16 +18,20 @@ router.get("/getAllBookings", adminAuth, getAllBookings);
 router.get("/getBookingById/:id", adminAuth, getBookingById);
 router.get(
   "/getAllBookingsByActivityId/:activityId",
-  getAllBookingsByActivityId,
+  getAllBookingsByActivityId
 );
 router.delete("/deleteBooking/:id", adminAuth, deleteBooking);
 router.patch("/updateBookingStatus/:id", adminAuth, updateBookingStatus);
-router.post("/updateCompletedBookings", adminAuth, updateCompletedBookings);
+router.post(
+  "/updateCompletedBookings",
+  adminAuth,
+  updateCompletedBookingsStatusFromConfirmedToPendingPayment
+);
 
 router.post(
   "/downloadBookingSummaryUrl/:id",
   adminAuth,
-  getBookingSummaryPdfUrl,
+  getBookingSummaryPdfUrl
 );
 
 router.get("/downloadBookingSummaryPdf/:path", adminAuth, getBookingSummaryPdf);

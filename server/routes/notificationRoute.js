@@ -5,6 +5,8 @@ import {
   updateNotificationAsRead,
   updateAllNotificationsAsRead,
   deleteNotification,
+  adminUpdateNotificationAsRead,
+  adminDeleteNotification,
 } from "../controller/notificationController.js";
 
 import { verifyToken as clientVerifyToken } from "./../middleware/clientAuth.js";
@@ -18,11 +20,11 @@ Note: This file contains the /client router
 const router = express.Router();
 
 router.get("/adminAllNotifications", adminAuth, getAdminNotifications);
-router.patch("/deleteNotification/:id", adminAuth, deleteNotification);
+router.patch("/deleteNotification/:id", adminAuth, adminDeleteNotification);
 router.patch(
   "/updateNotificationAsRead/:id",
   adminAuth,
-  updateNotificationAsRead,
+  adminUpdateNotificationAsRead,
 );
 
 router.get(

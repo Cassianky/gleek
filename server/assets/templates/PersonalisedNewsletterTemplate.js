@@ -62,6 +62,7 @@ export const PersonalisedNewsletterTemplate = ({
         <div>
           <h3>${activity.title}</h3>
           <p>${activity.description}</p>
+          <a href="${BASE_URL}/shop/activity/${activity._id}" target="_blank">View more details</a>
         </div>
       </div>
     `;
@@ -175,7 +176,7 @@ export const PersonalisedNewsletterTemplate = ({
         <div class="footer">
           <p>
             If you no longer wish to receive emails from Gleek, you can
-            <a href="https://yourdomain.com/unsubscribe">unsubscribe here</a>.
+            <a href=${BASE_URL}/settings/privacy>unsubscribe here</a>.
           </p>
         </div>
       </div>

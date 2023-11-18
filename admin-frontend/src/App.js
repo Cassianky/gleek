@@ -110,7 +110,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
+          <Route
             exact
             path="/viewVendor/:vendorId"
             element={
@@ -118,7 +118,7 @@ function App() {
                 <VendorDetails />
               </ProtectedRoute>
             }
-          /> */}
+          />
           <Route
             exact
             path="/addVendor"

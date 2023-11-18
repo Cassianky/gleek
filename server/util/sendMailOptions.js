@@ -1,4 +1,5 @@
 import { NewsletterTemplate } from "../assets/templates/NewsletterTemplate.js";
+import { PersonalisedNewsletterTemplate } from "../assets/templates/PersonalisedNewsletterTemplate.js";
 
 export const createClientWelcomeMailOptions = (client) => {
   try {
@@ -282,7 +283,7 @@ export const createCustomEdmMailOptions = (
   client,
   subject,
   messageBody,
-  preSignedUrl,
+  preSignedUrl
 ) => {
   try {
     const to = client.email;
@@ -307,6 +308,67 @@ export const createCustomEdmMailOptions = (
         path: "../server/assets/email/DefaultNewsletterImage.jpg",
         cid: "newsletter-image",
       });
+    }
+    const options = {
+      subject,
+      html: htmlContent,
+      attachments,
+      to,
+    };
+    return options;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+export const createPersonalisedNewsletterMailOptions = (
+  client,
+  subject,
+  messageBody,
+  preSignedUrl,
+  activities
+) => {
+  try {
+    const to = client.email;
+    const htmlContent = PersonalisedNewsletterTemplate({
+      recipientName: client.name,
+      messageBody: messageBody,
+      forEmail: true,
+      activities: activities,
+    });
+
+    const attachments = [];
+    if (preSignedUrl !== undefined) {
+      // If preSignedUrl is not null, attach the image using preSignedUrl
+      attachments.push({
+        filename: "NewsletterImage.png",
+        href: preSignedUrl,
+        cid: "newsletter-image",
+      });
+    } else {
+      // If preSignedUrl is null, attach an image from the file path
+      attachments.push({
+        filename: "DefaultNewsletterImage.jpg",
+        path: "../server/assets/email/DefaultNewsletterImage.jpg",
+        cid: "newsletter-image",
+      });
+    }
+
+    for (const activity of activities) {
+      if (activity.preSignedActivityImage) {
+        attachments.push({
+          filename: `${activity.title}_image.png`,
+          href: activity.preSignedActivityImage,
+          cid: `${activity._id}-image`,
+        });
+      } else {
+        attachments.push({
+          filename: "ActivitySampleImage.jpg",
+          path: "../server/assets/email/ActivitySampleImage.jpg",
+          cid: `${activity._id}-image`,
+        });
+      }
     }
     const options = {
       subject,

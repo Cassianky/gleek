@@ -6,8 +6,7 @@ export const NewsletterTemplate = ({
   preSignedPhoto,
   forEmail,
 }) => {
-  // const greeting = `Hello, ${recipientName}!`;
-  const greeting = `Hello!`;
+  const greeting = `Hello, ${recipientName}!`;
   const signature = `Best Regards,<br/>Gleek Team`;
   const defaultImagePath = "../server/assets/email/DefaultNewsletterImage.jpg";
   const imageBuffer = fs.readFileSync(defaultImagePath);

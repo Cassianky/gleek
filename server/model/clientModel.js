@@ -29,6 +29,28 @@ const clientSchema = new mongoose.Schema({
   emergencyContactNumber: { type: String, required: false },
   photo: { type: String, required: false },
   preSignedPhoto: { type: String, required: false },
+  preferredActivityTypes: {
+    WORKSHOP: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    TALKS: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    LEARNING_JOURNEY: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    POPUP: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
   status: {
     type: String,
     enum: ["PENDING", "APPROVED", "REJECTED"],

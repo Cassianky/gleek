@@ -1129,7 +1129,7 @@ cron.schedule("0 0 0 * * *", async () => {
   try {
     await updateCompletedBookingsStatusFromConfirmedToPendingPayment();
     console.log(
-      "Scheduled daily task to update completed booking(s) status from Confirmed to Pending Payment",
+      "Scheduled daily task to update completed booking(s) status from Confirmed to Pending Payment"
     );
   } catch (error) {
     console.error("Error in scheduled task:", error);

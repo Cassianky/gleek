@@ -1,40 +1,13 @@
-import sendMail from "../util/sendMail.js";
-import { createCustomEdmMailOptions } from "../util/sendMailOptions.js";
 import { s3GetImages } from "../service/s3ImageServices.js";
 import ScheduledNewsletterModel from "../model/scheduledNewsletterModel.js";
 import cron from "node-cron";
 import { NewsletterTemplate } from "../assets/templates/NewsletterTemplate.js";
-import { sendNewsletter } from "../service/newsletterService.js";
-
-export const sendCustomEdm = async (req, res) => {
-  try {
-    // const { subject, html, attachments, to } = req.body;
-    // const mailOptions = {
-    // from: "Gleek <" + process.env.EMAIL_USER + ">",
-    // to,
-    // subject,
-    // html,
-    // attachments,
-    // };
-    // const info = await transporter.sendMail(mailOptions);
-    // res.status(200).json({ message: "Email sent", info });
-    // Get mailing list (array of client) from database, then send mail to each email
-
-    sendMail(
-      createCustomEdmMailOptions(
-        {
-          name: "Yiying",
-          email: "yowyiying@gmail.com",
-        },
-        "Custome EDM Subject",
-        "Custome EDM COntente lorem ipsum test test lkdfjvlerjlksdnflkjdfla ;sadf",
-      ),
-    );
-    res.status(200).json({ message: "Email sent" });
-  } catch (err) {
-    console.log(err);
-  }
-};
+import {
+  getCustomNewslettersMailingList,
+  getPersonalisedNewslettersMailingList,
+  sendNewsletter,
+} from "../service/newsletterService.js";
+import { PersonalisedNewsletterTemplate } from "../assets/templates/PersonalisedNewsletterTemplate.js";
 
 export const saveScheduledNewsletter = async (req, res) => {
   try {
@@ -91,7 +64,7 @@ export const updateScheduledNewsletter = async (req, res) => {
     await ScheduledNewsletterModel.findByIdAndUpdate(
       scheduledNewsletterId,
       newsletterData,
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     );
     return res.status(200).json({ message: "Scheduled newsletter updated!" });
   } catch (err) {
@@ -146,12 +119,20 @@ export const getPreview = async (req, res) => {
     const { messageBody, preSignedPhoto, newsletterType } = req.params;
     console.log(messageBody, preSignedPhoto, newsletterType);
     const admin = req.user;
-    const htmlContent = NewsletterTemplate({
-      recipientName: admin.name,
-      messageBody: messageBody,
-      preSignedPhoto: preSignedPhoto,
-      forEmail: false,
-    });
+    const htmlContent =
+      newsletterType === "CUSTOM"
+        ? NewsletterTemplate({
+            recipientName: admin.name,
+            messageBody: messageBody,
+            preSignedPhoto: preSignedPhoto,
+            forEmail: false,
+          })
+        : PersonalisedNewsletterTemplate({
+            recipientName: admin.name,
+            messageBody: messageBody,
+            preSignedPhoto: preSignedPhoto,
+            forEmail: false,
+          });
     res.status(200).json({ htmlContent });
   } catch (err) {
     console.log(err);
@@ -164,8 +145,9 @@ export const getPreview = async (req, res) => {
 
 export const testSendNewsletter = async (req, res) => {
   try {
-    const { newsletter, email } = req.body;
-    await sendNewsletter(newsletter, "", email);
+    const { newsletter } = req.body;
+    const admin = req.user;
+    await sendNewsletter(newsletter, admin);
     res.status(200).json({ message: "Email sent" });
   } catch (error) {
     console.log("thrown error", error);
@@ -180,9 +162,6 @@ export const testSendNewsletter = async (req, res) => {
 cron.schedule("* * * * *", async () => {
   try {
     const currentTimestamp = Date.now();
-    // console.log(
-    //   `Cron job running at: ${new Date(currentTimestamp).toLocaleString()}`,
-    // );
 
     // Find scheduled emails that are due to be sent
     const scheduledNewslettersDue = await ScheduledNewsletterModel.find({
@@ -193,42 +172,30 @@ cron.schedule("* * * * *", async () => {
     // Send the due emails
     scheduledNewslettersDue.forEach(async (scheduledNewsletter) => {
       try {
-        await sendNewsletter(
-          scheduledNewsletter,
-          "Yiying",
-          "yowyiying@gmail.com",
-        );
-        // console.log("Sending due email...");
-        // const preSignedUrl =
-        //   scheduledNewsletter.photo &&
-        //   (await s3GetImages(scheduledNewsletter.photo));
-        // //console.log("presigned url", preSignedUrl);
+        const mailingList =
+          scheduledNewsletter.newsletterType === "CUSTOM"
+            ? await getCustomNewslettersMailingList()
+            : await getPersonalisedNewslettersMailingList();
 
-        // await sendMail(
-        //   createCustomEdmMailOptions(
-        //     {
-        //       name: "Yiying",
-        //       email: "yowyiying@gmail.com",
-        //     },
-        //     scheduledNewsletter.subject,
-        //     scheduledNewsletter.messageBody,
-        //     preSignedUrl,
-        //   ),
-        // );
+        for (let i = 0; i < mailingList.length; i++) {
+          const recipient = mailingList[i].client;
+          await sendNewsletter(scheduledNewsletter, recipient);
+        }
+
         await ScheduledNewsletterModel.findByIdAndUpdate(
           scheduledNewsletter._id,
           {
             status: "SENT",
-          },
+          }
         );
       } catch (error) {
-        console.error(`Error sending scheduled email: ${error.message}`);
+        console.error(`Error: ${error.message}`);
         await ScheduledNewsletterModel.findByIdAndUpdate(
           scheduledNewsletter._id,
           {
             status: "FAILED",
             errorLog: error.message,
-          },
+          }
         );
       }
     });

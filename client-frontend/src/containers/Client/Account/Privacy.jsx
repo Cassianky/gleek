@@ -92,24 +92,24 @@ function Privacy(props) {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={!!settings.receiveMarketing}
+                  checked={!!settings.receivePersonalisedRecommendations}
                   onChange={handleCheckboxChange}
-                  name="receiveMarketing"
+                  name="receivePersonalisedRecommendations"
                   color="primary"
                 />
               }
-              label="I agree to receive marketing updates from Gleek via email."
+              label="I agree to receive personalised activity recommendations from Gleek via email."
             />
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={!!settings.receiveEmails}
+                  checked={!!settings.receiveAdminNewsletters}
                   onChange={handleCheckboxChange}
-                  name="receiveEmails"
+                  name="receiveAdminNewsletters"
                   color="primary"
                 />
               }
-              label="I agree to receive email updates from Gleek."
+              label="I agree to receive newsletters from Gleek admins via email."
             />
             <FormControlLabel
               control={

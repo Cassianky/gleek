@@ -5,16 +5,12 @@ const consentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Client",
   },
-  vendor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Vendor",
-  },
-  receiveEmails: {
+  receiveAdminNewsletters: {
     type: Boolean,
     required: true,
     default: true,
   },
-  receiveMarketing: {
+  receivePersonalisedRecommendations: {
     type: Boolean,
     required: true,
     default: true,

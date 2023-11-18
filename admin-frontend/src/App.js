@@ -39,6 +39,7 @@ import ManageFeaturedActivities from "./components/featured/ManageFeaturedActivi
 import EditFeaturedActivity from "./components/featured/EditFeaturedActivity.jsx";
 import DashboardPage from "./components/analytics/DashboardPage.jsx";
 import ScheduledTaskDemo from "./components/ScheduledTaskDemo";
+import VendorDetails from "./components/vendor/VendorDetails";
 
 function App() {
   return (

@@ -1,11 +1,9 @@
 import express from "express";
 import {
-    calculateAdminProfit,
-    calculateAdminSurveyReviewSentiment
+  calculateAdminProfit,
+  calculateAdminSurveyReviewSentiment,
 } from "../../controller/dashboardController.js";
-import {
-    getAllReviews
-} from "../../controller/reviewController.js";
+import { getAllReviews } from "../../controller/reviewController.js";
 
 const router = express.Router();
 router.get("/bookingReviews", getAllReviews);

@@ -283,7 +283,7 @@ export const createCustomEdmMailOptions = (
   client,
   subject,
   messageBody,
-  preSignedUrl
+  preSignedUrl,
 ) => {
   try {
     const to = client.email;
@@ -327,7 +327,7 @@ export const createPersonalisedNewsletterMailOptions = (
   subject,
   messageBody,
   preSignedUrl,
-  activities
+  activities,
 ) => {
   try {
     const to = client.email;

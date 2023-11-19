@@ -42,7 +42,7 @@ const DashboardPage = () => {
 
   const handleOpen = (activity) => {
     const filteredReviews = reviews.filter(
-      (review) => review?.activity?._id === activity?.activity?._id
+      (review) => review?.activity?._id === activity?.activity?._id,
     );
     setActivityReviews(filteredReviews);
     setActivity(activity);
@@ -62,7 +62,7 @@ const DashboardPage = () => {
       const sortedKeys = Object.keys(rev.activityByRevenue).sort(
         (a, b) =>
           rev.activityByRevenue[b].totalBookings -
-          rev.activityByRevenue[a].totalBookings
+          rev.activityByRevenue[a].totalBookings,
       );
 
       if (sortedKeys.length > 0) {
@@ -82,7 +82,7 @@ const DashboardPage = () => {
       const sortedKeys = Object.keys(rev.activityByRevenue).sort(
         (a, b) =>
           rev.activityByRevenue[b].totalRevenue -
-          rev.activityByRevenue[a].totalRevenue
+          rev.activityByRevenue[a].totalRevenue,
       );
 
       if (sortedKeys.length > 0) {
@@ -133,14 +133,14 @@ const DashboardPage = () => {
             <Grid item xs={3} sx={{ paddingRight: 2 }}>
               <OverviewCard
                 difference={data?.confirmedPendingPaidBookingsRevenue?.difference?.toFixed(
-                  2
+                  2,
                 )}
                 positive={
                   data?.confirmedPendingPaidBookingsRevenue?.difference > 0
                 }
                 sx={{ height: "100%" }}
                 value={data?.confirmedPendingPaidBookingsRevenue?.value?.toFixed(
-                  2
+                  2,
                 )}
                 title="Revenue"
                 icon={<MonetizationOnIcon fontSize="medium" />}

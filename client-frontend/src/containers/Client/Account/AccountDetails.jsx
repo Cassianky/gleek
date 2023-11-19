@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, Typography, Grid, FormControlLabel, Checkbox } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Grid,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
 import AccountSidebar from "./AccountSidebar";
 import useClientStore from "../../../zustand/ClientStore";
 import useSnackbarStore from "../../../zustand/SnackbarStore";
 import { validator } from "../../../utils/ClientFieldsValidator";
 import { ActivityTypeEnum } from "../../../utils/TypeEnum";
-
 
 function AccountDetails(props) {
   const { client, updateAccount, clientError } = useClientStore();
@@ -46,7 +53,6 @@ function AccountDetails(props) {
   };
 
   const handleActivityTypeChange = (activityType) => {
-
     setFormData((prevData) => ({
       ...prevData,
       preferredActivityTypes: {
@@ -324,18 +330,18 @@ function AccountDetails(props) {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-          {Object.keys(formData.preferredActivityTypes).map((key) => (
-          <FormControlLabel
-            key={key}
-            control={
-              <Checkbox
-                checked={formData.preferredActivityTypes[key]}
-                onClick={() => handleActivityTypeChange(key)}
+            {Object.keys(formData.preferredActivityTypes).map((key) => (
+              <FormControlLabel
+                key={key}
+                control={
+                  <Checkbox
+                    checked={formData.preferredActivityTypes[key]}
+                    onClick={() => handleActivityTypeChange(key)}
+                  />
+                }
+                label={ActivityTypeEnum[key]}
               />
-            }
-            label={ActivityTypeEnum[key]}
-          />
-        ))}
+            ))}
           </Grid>
           <Grid item xs={12}>
             <Typography color="error" variant="caption">

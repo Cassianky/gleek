@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "@emotion/react";
-import { useMailingListStore, useSnackbarStore } from "../../zustand/GlobalStore";
+import {
+  useMailingListStore,
+  useSnackbarStore,
+} from "../../zustand/GlobalStore";
 import InfoIcon from "@mui/icons-material/Info";
 import MailingListsTable from "./MailingListsTable";
-import EmailIcon from '@mui/icons-material/Email';import {
-  Badge, CircularProgress, Tabs, Tab,
+import EmailIcon from "@mui/icons-material/Email";
+import {
+  Badge,
+  CircularProgress,
+  Tabs,
+  Tab,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -32,7 +39,6 @@ const ViewMailingLists = () => {
     setCurrentTab(newVal);
   };
 
-
   return (
     <MainBodyContainer
       hasBackButton={false}
@@ -50,23 +56,19 @@ const ViewMailingLists = () => {
         View Mailing Lists
       </Typography>
       <div style={{ display: "flex", alignItems: "center" }}>
-          <InfoIcon fontSize="small" sx={{ color: "#9F91CC" }} />
-          <Typography color="#9F91CC">
-            View clients who are subscribed to the mailing lists.
-          </Typography>
-        </div>
+        <InfoIcon fontSize="small" sx={{ color: "#9F91CC" }} />
+        <Typography color="#9F91CC">
+          View clients who are subscribed to the mailing lists.
+        </Typography>
+      </div>
       <Tabs value={currentTab} onChange={handleChange} centered>
         <Tab
-          icon={
-              <EmailIcon />
-          }
+          icon={<EmailIcon />}
           value="adminNewslettersMailingList"
           label="Admin Newsletters"
         />
         <Tab
-          icon={
-              <EmailIcon />
-          }
+          icon={<EmailIcon />}
           value="personalisedNewslettersMailingList"
           label="Personalised Recommendations"
         />
@@ -76,16 +78,16 @@ const ViewMailingLists = () => {
       ) : (
         <>
           {currentTab === "adminNewslettersMailingList" && (
-             <MailingListsTable
-                mailingLists={mailingLists}
-                receiveNewsletterType= {currentTab}
-              />
+            <MailingListsTable
+              mailingLists={mailingLists}
+              receiveNewsletterType={currentTab}
+            />
           )}
           {currentTab === "personalisedNewslettersMailingList" && (
             <MailingListsTable
-            mailingLists={mailingLists}
-            receiveNewsletterType= {currentTab}
-          />
+              mailingLists={mailingLists}
+              receiveNewsletterType={currentTab}
+            />
           )}
         </>
       )}

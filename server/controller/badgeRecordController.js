@@ -164,7 +164,8 @@ export const getAllBadgeRecords = async (req, res) => {
         msg: "Params is undefined!",
       });
     }
-    const badgeRecords = await BadgeRecordModel.find({
+    let badgeRecords = [];
+    badgeRecords = await BadgeRecordModel.find({
       badge: req.params.id,
     }).populate({
       path: "client",

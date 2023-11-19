@@ -18,6 +18,7 @@ const CreateBadgePage = () => {
 
   useEffect(() => {
     getAllBadgeRecords(badgeId);
+    console.log("TET");
   }, []);
 
   return (

@@ -29,7 +29,6 @@ const BadgesTable = ({ badges }) => {
 
       if (responseStatus) {
         openSnackbar("Badge Deletion was successful!", "success");
-        navigate(-1);
       }
     } catch (error) {
       const errorMessage = error?.response?.data?.msg;

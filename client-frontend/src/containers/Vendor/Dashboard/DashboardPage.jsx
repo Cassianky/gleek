@@ -103,6 +103,9 @@ const DashboardPage = () => {
   const calculateBookingReviewRatio = () => {
     const ratio =
       selectedActivity.numberOfReviews / selectedActivity.numberOfBookings;
+    if (isNaN(ratio)) {
+      return 0;
+    }
     return ratio?.toFixed(2);
   };
 
@@ -279,11 +282,9 @@ const DashboardPage = () => {
                         style={{ color: theme.palette.primary.main }}
                       />
                       <CardContent sx={{ paddingTop: 0 }}>
-                        {isNaN(calculateBookingReviewRatio())
-                          ? ""
-                          : calculateBookingReviewRatio()}
+                        {calculateBookingReviewRatio()}
                         {calculateBookingReviewRatio() < 0.5 &&
-                          !isNaN(calculateBookingReviewRatio()) && (
+                          selectedActivity.numberOfBookings > 0 && (
                             <Alert
                               severity="warning"
                               action={
@@ -300,7 +301,7 @@ const DashboardPage = () => {
                             </Alert>
                           )}
                         {calculateBookingReviewRatio() > 0.5 &&
-                          !isNaN(calculateBookingReviewRatio()) && (
+                          selectedActivity.numberOfBookings > 0 && (
                             <Alert severity="info">
                               Your booking to review ratio is good.
                             </Alert>

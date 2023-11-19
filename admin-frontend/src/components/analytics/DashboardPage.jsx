@@ -329,7 +329,7 @@ const DashboardPage = () => {
                           </Typography>
 
                           {calculateBookingReviewRatio() < 0.5 &&
-                            selectedActivity.numberOfReviews > 0 && (
+                            selectedActivity.numberOfBookings > 0 && (
                               <Alert
                                 severity="warning"
                                 action={
@@ -346,7 +346,7 @@ const DashboardPage = () => {
                               </Alert>
                             )}
                           {calculateBookingReviewRatio() > 0.5 &&
-                            selectedActivity.numberOfReviews > 0 && (
+                            selectedActivity.numberOfBookings > 0 && (
                               <Alert severity="info">
                                 Your booking to review ratio is good.
                               </Alert>

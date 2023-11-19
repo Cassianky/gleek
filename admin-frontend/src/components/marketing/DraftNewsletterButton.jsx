@@ -21,7 +21,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
   DialogActions,
   Button,
   FormControlLabel,
@@ -42,21 +41,6 @@ const DraftNewsletterButton = ({ newsletterData }) => {
   const { saveScheduledNewsletter, updateScheduledNewsletter } =
     useNewsletterStore();
 
-  // const [selectedOption, setSelectedOption] = useState(
-  //   newsletterData === undefined ? "CUSTOM" : newsletterData.newsletterType,
-  // );
-  // const [selectedDateTime, setSelectedDateTime] = useState(
-  //   newsletterData === undefined
-  //     ? dayjs()
-  //     : dayjs(newsletterData.scheduledTime),
-  // );
-  // const [emailSubject, setEmailSubject] = useState(
-  //   newsletterData === undefined ? "" : newsletterData.subject ?? "",
-  // );
-  // const [messageBody, setMessageBody] = useState(
-  //   newsletterData === undefined ? "" : newsletterData.messageBody ?? "",
-  // );
-
   const [selectedOption, setSelectedOption] = useState("CUSTOM");
   const [selectedDateTime, setSelectedDateTime] = useState(dayjs());
   const [emailSubject, setEmailSubject] = useState("");
@@ -75,15 +59,11 @@ const DraftNewsletterButton = ({ newsletterData }) => {
       selectedOptionValue === "PERSONALISED" &&
       newsletterData === undefined
     ) {
-      // setEmailSubject(
-      //   "Elevate Employee Wellbeing & Sustainability with Our Featured Picks!",
-      // );
-      // setMessageBody(
-      //   "Greetings from Gleek! We're excited to share a specially curated selection of activities designed to promote employee wellness and sustainability within your organization.",
-      // );
-      setEmailSubject("23rd STePS: Vote For IS4103-03 (Gleek)!");
+      setEmailSubject(
+        "Elevate Employee Wellbeing & Sustainability with Our Featured Picks!",
+      );
       setMessageBody(
-        'Greetings from Team Gleek! Do vote for us at <a href="https://uvents.nus.edu.sg/event/23rd-steps/vote">this link</a> (under IS4103). Thank you!',
+        "Greetings from Gleek! We're excited to share a specially curated selection of activities designed to promote employee wellness and sustainability within your organization.",
       );
     } else {
       setSelectedOption(selectedOptionValue);
@@ -246,13 +226,13 @@ const DraftNewsletterButton = ({ newsletterData }) => {
               {selectedOption === "CUSTOM" && (
                 <Typography fontSize={"0.875rem"} color="primary">
                   This option allows you to create your own newsletter to be
-                  sent out to subcribers of the xxx mailing list.
+                  sent out to clients who agree to receive newsletters from Gleek admins.
                 </Typography>
               )}
               {selectedOption === "PERSONALISED" && (
                 <Typography fontSize={"0.875rem"} color="primary">
-                  This option allows you to send out newsletters to subscribers
-                  of the xxx mailing list with a curated list of activities
+                  This option allows you to send out newsletters to clients 
+                  who agree to receive personalised activity recommendations from Gleek 
                   based on client preferences.
                 </Typography>
               )}

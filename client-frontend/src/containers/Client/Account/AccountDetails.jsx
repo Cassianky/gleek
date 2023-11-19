@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, Typography, Grid, Alert } from "@mui/material";
+import { Box, TextField, Button, Typography, Grid, FormControlLabel, Checkbox } from "@mui/material";
 import AccountSidebar from "./AccountSidebar";
 import useClientStore from "../../../zustand/ClientStore";
 import useSnackbarStore from "../../../zustand/SnackbarStore";
 import { validator } from "../../../utils/ClientFieldsValidator";
+import { ActivityTypeEnum } from "../../../utils/TypeEnum";
+
 
 function AccountDetails(props) {
   const { client, updateAccount, clientError } = useClientStore();
   const { openSnackbar, closeSnackbar } = useSnackbarStore();
   const [formData, setFormData] = useState(client);
+
   const [errorData, setErrorData] = useState({
     password: "",
     email: "",
@@ -24,6 +27,7 @@ function AccountDetails(props) {
     billingOfficePostalCode: "",
     phoneNumber: "",
     passwordVerify: "",
+    preferredActivityTypes: "",
   });
 
   const handleChange = (event) => {
@@ -38,6 +42,17 @@ function AccountDetails(props) {
     setErrorData((prevData) => ({
       ...prevData,
       [name]: errors[name] || "",
+    }));
+  };
+
+  const handleActivityTypeChange = (activityType) => {
+
+    setFormData((prevData) => ({
+      ...prevData,
+      preferredActivityTypes: {
+        ...prevData.preferredActivityTypes,
+        [activityType]: !prevData.preferredActivityTypes[activityType],
+      },
     }));
   };
 
@@ -58,9 +73,12 @@ function AccountDetails(props) {
   };
 
   useEffect(() => {
-    console.log(client);
-  }, []);
-
+    const errors = validator(formData, "preferredActivityTypes");
+    setErrorData((prevData) => ({
+      ...prevData,
+      preferredActivityTypes: errors.preferredActivityTypes || "",
+    }));
+  }, [formData.preferredActivityTypes]);
   return (
     <Box
       display="flex"
@@ -299,6 +317,30 @@ function AccountDetails(props) {
               helperText={errorData.billingEmail}
               error={!!errorData.billingEmail}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography color="primary" variant="h7">
+              Interested Activity Types
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+          {Object.keys(formData.preferredActivityTypes).map((key) => (
+          <FormControlLabel
+            key={key}
+            control={
+              <Checkbox
+                checked={formData.preferredActivityTypes[key]}
+                onClick={() => handleActivityTypeChange(key)}
+              />
+            }
+            label={ActivityTypeEnum[key]}
+          />
+        ))}
+          </Grid>
+          <Grid item xs={12}>
+            <Typography color="error" variant="caption">
+              {errorData.preferredActivityTypes}
+            </Typography>
           </Grid>
         </Grid>
 

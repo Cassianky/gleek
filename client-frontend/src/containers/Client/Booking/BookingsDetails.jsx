@@ -56,9 +56,6 @@ const BookingsDetails = () => {
   useEffect(() => {
     getBookingForClient(bookingId);
   }, [bookingId]);
-  useEffect(() => {
-    getBookingForClient(bookingId);
-  }, [bookingId]);
 
   const isSurveyClosed = () => {
     console.log(currentBooking?.isSurveySubmitted);
@@ -401,8 +398,9 @@ const BookingsDetails = () => {
               >
                 View Submitted Survey
               </Button>
-            ) : currentBooking?.status === "CONFIRMED" ||
-              currentBooking?.status === "PAID" ? (
+            ) : !currentBooking?.isSurveySubmitted &&
+              (currentBooking?.status === "PENDING_PAYMENT" ||
+                currentBooking?.status === "PAID") ? (
               <Button
                 variant="contained"
                 component={Link}

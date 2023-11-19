@@ -45,7 +45,7 @@ export const getTop5BookedActivities = async (req, res) => {
     // Populate the minimum price per pax for each activity
     for (const activity of topActivities) {
       activity.activityDetails.preSignedImages = await s3GetImages(
-        activity.activityDetails.images,
+        activity.activityDetails.images
       );
     }
 

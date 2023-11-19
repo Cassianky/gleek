@@ -156,7 +156,7 @@ const useVendorStore = create((set) => ({
       return response;
     } catch (error) {
       console.error(error);
-      alert(error.response.data);
+      throw error;
     }
   },
 }));

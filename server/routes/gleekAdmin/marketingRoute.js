@@ -6,45 +6,46 @@ import {
   getAllScheduledNewsletters,
   getPreview,
   saveScheduledNewsletter,
-  sendCustomEdm,
   testSendNewsletter,
   updateScheduledNewsletter,
 } from "../../controller/newsletterController.js";
 import { uploadS3NewsletterImage } from "../../middleware/multer.js";
+import { getMailingLists } from "../../controller/mailingListController.js";
 const router = express.Router();
 
 // /marketing/xxx
-router.post("/sendCustomEdm", adminAuth, sendCustomEdm);
 router.post(
   "/saveScheduledNewsletter",
   adminAuth,
   uploadS3NewsletterImage.single("image"),
-  saveScheduledNewsletter,
+  saveScheduledNewsletter
 );
 router.patch(
   "/updateScheduledNewsletter/:scheduledNewsletterId",
   adminAuth,
   uploadS3NewsletterImage.single("image"),
-  updateScheduledNewsletter,
+  updateScheduledNewsletter
 );
 router.delete(
   "/cancelScheduledNewsletter/:scheduledNewsletterId",
   adminAuth,
-  cancelScheduledNewsletter,
+  cancelScheduledNewsletter
 );
 router.get(
   "/getAllScheduledNewsletters",
   adminAuth,
-  getAllScheduledNewsletters,
+  getAllScheduledNewsletters
 );
 
 // router.get("/getNewsletterPreview", adminAuth, getPreview);
 router.get(
   "/getNewsletterPreview/:messageBody/:preSignedPhoto/:newsletterType",
   adminAuth,
-  getPreview,
+  getPreview
 );
 
 router.post("/testSendNewsletter", adminAuth, testSendNewsletter);
+
+router.get("/getMailingLists", adminAuth, getMailingLists);
 
 export default router;

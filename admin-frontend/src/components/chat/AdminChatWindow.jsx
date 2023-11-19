@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 import { useChatStore } from "../../zustand/GlobalStore";
-import { Box, CircularProgress, Typography, Input } from "@mui/material";
+import { Box, CircularProgress, Typography, TextField } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getSenderName } from "../../utils/AdminChatLogics";
 import AdminChatDisplay from "./AdminChatDisplay";
+import { useTheme } from "@mui/material/styles";
+import styled from "@emotion/styled";
+import SendIcon from "@mui/icons-material/Send";
+
+const StyledBox = styled(Box)`
+  padding: 20px;
+  padding-top: 6px;
+  border-radius: 10px;
+  border: 1px solid rgb(159, 145, 204);
+  box-shadow: 3px 3px 0px 0px rgb(159, 145, 204, 40%);
+`;
 
 const AdminChatWindow = ({ socket }) => {
   const {
@@ -16,6 +27,9 @@ const AdminChatWindow = ({ socket }) => {
     sendMessage,
   } = useChatStore();
   const [inputMessage, setInputMessage] = useState("");
+
+  const theme = useTheme();
+  const pale_grey = theme.palette.grey.pale_grey;
 
   const handleMessageInputChange = (event) => {
     setInputMessage(event.target.value);
@@ -48,7 +62,7 @@ const AdminChatWindow = ({ socket }) => {
   }, [selectedChat]);
 
   return (
-    <Box
+    <StyledBox
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDirection="column"
       alignItems="'flex-start'"
@@ -56,12 +70,19 @@ const AdminChatWindow = ({ socket }) => {
       bgcolor="white"
       width={{ md: "68.5%" }}
       height="75vh"
-      borderRadius="8px"
-      border="1px solid #000"
     >
       {selectedChat ? (
-        <>
-          <Typography variant="h4">
+        <Box height="100%" width="100%">
+          <Typography
+            variant="h6"
+            color="primary"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "left",
+              paddingTop: 8,
+            }}
+          >
             <ArrowBackIcon
               onClick={() => setSelectedChat(null)}
               sx={{
@@ -77,9 +98,6 @@ const AdminChatWindow = ({ socket }) => {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            padding={3}
-            bgcolor="#E8E8E8"
-            width={{ md: "95%" }}
             borderRadius="8px"
             marginTop={1}
             height="65vh"
@@ -92,9 +110,11 @@ const AdminChatWindow = ({ socket }) => {
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  scrollbarWidth: "none",
+                  overflowY: "auto",
                   width: "100%",
-                  height: "63vh",
+                  flex: 1,
+                  backgroundColor: pale_grey,
+                  borderRadius: "8px",
                 }}
               >
                 <AdminChatDisplay />
@@ -104,21 +124,37 @@ const AdminChatWindow = ({ socket }) => {
                 Start chatting with {getSenderName(selectedChat)}!
               </Typography>
             )}
-            <Input
-              style={{
-                marginTop: "5px",
-                border: "1px outset grey",
-                borderRadius: "8px",
-                padding: "2px",
-              }}
-              fullWidth
-              placeholder="Enter your message here..."
-              value={inputMessage}
-              onChange={handleMessageInputChange}
-              onKeyUp={handlePressEnter}
-            />
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              width="100%"
+              paddingX={3}
+            >
+              <TextField
+                style={{
+                  marginTop: "5px",
+                  borderRadius: "8px",
+                  padding: "4px",
+                  marginRight: "8px",
+                }}
+                fullWidth
+                placeholder="Enter your message here..."
+                value={inputMessage}
+                onChange={handleMessageInputChange}
+                onKeyUp={handlePressEnter}
+              />
+
+              <SendIcon
+                onClick={handleSendMessage}
+                color="primary"
+                style={{
+                  cursor: "pointer",
+                }}
+              />
+            </Box>
           </Box>
-        </>
+        </Box>
       ) : (
         // to get socket.io on same page
         <Box
@@ -133,7 +169,7 @@ const AdminChatWindow = ({ socket }) => {
           </Typography>
         </Box>
       )}
-    </Box>
+    </StyledBox>
   );
 };
 

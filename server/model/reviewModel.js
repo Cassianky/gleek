@@ -32,6 +32,10 @@ const reviewSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  reviewSentiment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ReviewSentiment",
+  },
 });
 
 const Review = mongoose.model("Review", reviewSchema);

@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import PriceFilter from "../../components/Filters/PriceFilter";
 import CheckBoxGroup from "../../components/Filters/CheckBoxGroup";
 import NestedCheckboxList from "../../components/Filters/NestedCheckBoxList";
+import RatingsFilter from "../../components/Filters/RatingsFilter";
 
 const ShopPage = (props) => {
   const navigate = useNavigate();
@@ -71,6 +72,7 @@ const ShopPage = (props) => {
       console.log("TEST1213");
       fetchData();
     }
+    console.log(themes);
   }, [getPriceInterval, getThemes]);
 
   const handlePageChange = (newPage) => {
@@ -82,15 +84,15 @@ const ShopPage = (props) => {
     let sortedActivities = [...activities];
     if (event.target.value === "Newest First") {
       sortedActivities = sortedActivities.sort(
-        (a, b) => new Date(b.createdDate) - new Date(a.createdDate),
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
       );
     } else if (event.target.value === "Price High to Low") {
       sortedActivities = sortedActivities.sort(
-        (a, b) => b.minimumPricePerPax - a.minimumPricePerPax,
+        (a, b) => b.minimumPricePerPax - a.minimumPricePerPax
       );
     } else if (event.target.value === "Price Low to High") {
       sortedActivities = sortedActivities.sort(
-        (a, b) => a.minimumPricePerPax - b.minimumPricePerPax,
+        (a, b) => a.minimumPricePerPax - b.minimumPricePerPax
       );
     }
 
@@ -106,6 +108,19 @@ const ShopPage = (props) => {
     setSliderValue(newValue);
   };
 
+  const [ratingValue, setRatingValue] = React.useState([0]);
+
+  const handleRatingValueChange = (event) => {
+    const { value } = event.target;
+    if (value < 0) {
+      setRatingValue(0);
+    } else if (value > 5) {
+      setRatingValue(5);
+    } else {
+      setRatingValue(value);
+    }
+  };
+
   useEffect(() => {
     setSliderValue([minPriceValue, maxPriceValue]);
   }, [minPriceValue, maxPriceValue]);
@@ -119,7 +134,7 @@ const ShopPage = (props) => {
   };
 
   const initialLocationState = Object.fromEntries(
-    Object.entries(Locations).map(([key, value]) => [value, false]),
+    Object.entries(Locations).map(([key, value]) => [value, false])
   );
 
   const [locationState, setLocationState] =
@@ -160,7 +175,7 @@ const ShopPage = (props) => {
     Object.entries(SustainableDevelopmentGoals).map(([key, value]) => [
       value,
       false,
-    ]),
+    ])
   );
 
   const [sgState, setSGState] = React.useState(initialSGState);
@@ -181,11 +196,11 @@ const ShopPage = (props) => {
     Object.entries(ActivityDayAvailability).map(([key, value]) => [
       value,
       false,
-    ]),
+    ])
   );
 
   const [daysAvailabilityState, setDaysAvailabilityState] = React.useState(
-    initialDaysAvailabilityState,
+    initialDaysAvailabilityState
   );
   const handleDaysAvailabilityChange = (event) => {
     setDaysAvailabilityState({
@@ -203,11 +218,11 @@ const ShopPage = (props) => {
   };
 
   const initialActivityTypeState = Object.fromEntries(
-    Object.entries(TYPE).map(([key, value]) => [value, false]),
+    Object.entries(TYPE).map(([key, value]) => [value, false])
   );
 
   const [activityTypeState, setActivityTypeState] = React.useState(
-    initialActivityTypeState,
+    initialActivityTypeState
   );
   const handleActivityTypeChange = (event) => {
     setActivityTypeState({
@@ -224,7 +239,7 @@ const ShopPage = (props) => {
   };
 
   const initialDurationState = Object.fromEntries(
-    Object.entries(durations).map(([key, value]) => [value, false]),
+    Object.entries(durations).map(([key, value]) => [value, false])
   );
 
   const [durationState, setDurationState] =
@@ -286,6 +301,10 @@ const ShopPage = (props) => {
     setFilter({ ...filter, priceRange: sliderValue });
   }, [sliderValue]);
 
+  useEffect(() => {
+    setFilter({ ...filter, minRatings: Number(ratingValue) });
+  }, [ratingValue]);
+
   const clearAllFilters = () => {
     setFilter({
       themes: [],
@@ -306,15 +325,20 @@ const ShopPage = (props) => {
     setSliderValue([minPriceValue, maxPriceValue]);
     setParentChecked([]);
     setChildChecked([]);
+    setRatingValue(0);
   };
   return (
-    <Grid container spacing={5} p={5}>
+    <Grid container spacing={5} px={5} mt={1}>
       {/* Left Column */}
       <Grid item xs={12} sm={12} md={12} lg={3}>
         <Button variant="contained" fullWidth onClick={clearAllFilters}>
           CLEAR ALL FILTERS
         </Button>
         <NestedCheckboxList title="Themes" themes={themes} />
+        <RatingsFilter
+          handleChange={handleRatingValueChange}
+          ratingValue={ratingValue}
+        />
         <CheckBoxGroup
           title="Activity Type"
           handleChange={handleActivityTypeChange}
@@ -414,7 +438,7 @@ const ShopPage = (props) => {
                   onClick={(event) => {
                     event.preventDefault();
                     const clickedActivity = activities.find(
-                      (item) => item._id.toString() === activity._id.toString(),
+                      (item) => item._id.toString() === activity._id.toString()
                     );
                     navigate(`/shop/activity/${activity._id.toString()}`);
                   }}

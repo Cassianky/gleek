@@ -20,6 +20,15 @@ const theme = createTheme({
     },
     grey: {
       pale_grey: "#FAFAFA",
+      200: "#EEEEEE",
+      100: "#F5F5F5",
+      300: "#E0E0E0",
+      400: "#BDBDBD",
+      500: "#9E9E9E",
+      600: "#757575",
+      700: "#616161",
+      800: "#424242",
+      900: "#212121",
     },
     error: {
       main: "#D32F2F",
@@ -32,7 +41,11 @@ const theme = createTheme({
       light: "#80af82",
       pastel: "#81c784",
     },
+    yellow: {
+      main: "#ffc65c",
+    },
   },
+
   typography: {
     fontFamily: "Fredoka",
   },

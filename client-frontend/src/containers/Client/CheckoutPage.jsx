@@ -187,8 +187,8 @@ const CheckoutPage = (props) => {
                 <b> Confirm Details</b>
               </Button>
             )}
-            {activeStep > 1 && (
-              !checkoutIsLoading ? (
+            {activeStep > 1 &&
+              (!checkoutIsLoading ? (
                 <Button
                   variant="contained"
                   color="primary"
@@ -200,8 +200,7 @@ const CheckoutPage = (props) => {
                 </Button>
               ) : (
                 <CircularProgress />
-              )
-            )}
+              ))}
           </Box>
         </Grid>
       )}

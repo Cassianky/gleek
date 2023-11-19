@@ -284,7 +284,7 @@ export const createCustomEdmMailOptions = (
   client,
   subject,
   messageBody,
-  preSignedUrl
+  preSignedUrl,
 ) => {
   try {
     const to = client.email;
@@ -328,7 +328,7 @@ export const createPersonalisedNewsletterMailOptions = (
   subject,
   messageBody,
   preSignedUrl,
-  activities
+  activities,
 ) => {
   try {
     const to = client.email;
@@ -479,7 +479,7 @@ export const clientBadgeMailOptions = (client, badge, imageUrl) => {
 export const BookingSummaryClientMailOptions = (
   client,
   imageUrl,
-  pdfFilePath
+  pdfFilePath,
 ) => {
   try {
     const text = `Hello, ${client.name}!`;
@@ -566,7 +566,7 @@ export const BookingSummaryClientMailOptions = (
 export const BookingSummaryVendorMailOptions = (
   vendor,
   imageUrl,
-  pdfFilePath
+  pdfFilePath,
 ) => {
   try {
     const text = `Hello, ${vendor.companyName}!`;

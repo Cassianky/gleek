@@ -32,7 +32,6 @@ export const convertISOtoTime = (value) => {
   return formattedTime;
 };
 
-
 export const convertISOto24 = (value) => {
   const date = new Date(value);
   const formattedTime = date

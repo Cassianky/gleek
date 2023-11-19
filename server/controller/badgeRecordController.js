@@ -50,7 +50,7 @@ export const getAllBadgeRecordsForClient = async (req, res) => {
 
     for (const badgeRecord of badgeRecords) {
       badgeRecord.badge.badgePreSignedImage = await s3GetImages(
-        badgeRecord.badge.badgeImage
+        badgeRecord.badge.badgeImage,
       );
     }
 
@@ -70,7 +70,7 @@ export const getClientProfile = async (req, res) => {
   try {
     console.log(req.params.id);
     const client = await ClientModel.findById(req.params.id).select(
-      "-password"
+      "-password",
     );
 
     if (client.photo) {
@@ -86,7 +86,7 @@ export const getClientProfile = async (req, res) => {
 
     for (const badgeRecord of badgeRecords) {
       badgeRecord.badge.badgePreSignedImage = await s3GetImages(
-        badgeRecord.badge.badgeImage
+        badgeRecord.badge.badgeImage,
       );
     }
 
@@ -111,7 +111,7 @@ export const updateAllBadgeRecords = async (req, res) => {
       }).populate("badge");
 
       badgeRecords = badgeRecords.filter(
-        (record) => record.isCompleted === false
+        (record) => record.isCompleted === false,
       );
       if (badgeRecords.length > 0) {
         const clientId = client._id;
@@ -141,7 +141,7 @@ export const updateAllBadgeRecords = async (req, res) => {
 
         for (const badgeRecord of badgeRecords) {
           const preSignedImage = await s3GetImages(
-            badgeRecord.badge.badgeImage
+            badgeRecord.badge.badgeImage,
           );
           if (
             badgeRecord.badge.sdgBadgeType === "GOLD" ||
@@ -154,8 +154,8 @@ export const updateAllBadgeRecords = async (req, res) => {
             // Add notifications and emails here
             if (sdgSet.size >= badgeRecord.badge.sdgThreshold) {
               badgeRecord.isCompleted = true;
-              await sendBadgeNotification(badgeRecord, session);
-              await sendBadgeMail(client, badgeRecord, preSignedImage);
+              // await sendBadgeNotification(badgeRecord);
+              // await sendBadgeMail(client, badgeRecord, preSignedImage);
             }
 
             badgeRecord.save();
@@ -168,8 +168,8 @@ export const updateAllBadgeRecords = async (req, res) => {
             if (sdgSet.has(badgeRecord.badge.sdg)) {
               badgeRecord.isCompleted = true;
               // console.log(badgeRecord);
-              await sendBadgeNotification(badgeRecord, session);
-              await sendBadgeMail(client, badgeRecord, preSignedImage);
+              // await sendBadgeNotification(badgeRecord);
+              // await sendBadgeMail(client, badgeRecord, preSignedImage);
             }
 
             badgeRecord.save();
@@ -179,11 +179,12 @@ export const updateAllBadgeRecords = async (req, res) => {
 
             // Badge is updated as completed
             // Add notifications and emails here
-            if (sdgSet.size >= badgeRecord.badge.sdgThreshold) {
+            if (
+              completedBookings.length >= badgeRecord.badge.bookingThreshold
+            ) {
               badgeRecord.isCompleted = true;
-              // console.log(badgeRecord);
-              await sendBadgeNotification(badgeRecord, session);
-              await sendBadgeMail(client, badgeRecord, preSignedImage);
+              // await sendBadgeNotification(badgeRecord);
+              // await sendBadgeMail(client, badgeRecord, preSignedImage);
             }
 
             badgeRecord.save();

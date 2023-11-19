@@ -28,7 +28,7 @@ import SubmittedSurveys from "./components/survey/SubmittedSurveys";
 import ActivityThemesPage from "./components/activitytheme/ActivityThemesPage";
 import ActivityReviews from "./components/review/ActivityReviews";
 import ManageReviewsForActivity from "./components/review/ManageReviewsForActivity";
-import AdminChatpage from "./components/Chat/AdminChatPage.jsx";
+import AdminChatpage from "./components/chat/AdminChatPage.jsx";
 import ManageTestimonials from "./components/testimonial/ManageTestimonials.jsx";
 import TestimonialDetails from "./components/testimonial/TestimonialDetails.jsx";
 import ManageNewsletters from "./components/marketing/ManageNewsletters";
@@ -39,7 +39,6 @@ import ManageFeaturedActivities from "./components/featured/ManageFeaturedActivi
 import EditFeaturedActivity from "./components/featured/EditFeaturedActivity.jsx";
 import DashboardPage from "./components/analytics/DashboardPage.jsx";
 import ScheduledTaskDemo from "./components/ScheduledTaskDemo";
-import BadgesDetails from "./components/badges/BadgesDetails.js";
 import BadgesDetails from "./components/badges/BadgesDetails.js";
 import VendorDetails from "./components/vendor/VendorDetails";
 

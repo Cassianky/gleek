@@ -41,7 +41,7 @@ function TestimonialMenuButton({ testimonial }) {
 
   const handleViewOriginalSurvey = () => {
     // Add your view original survey method logic here
-    console.log("view", testimonial)
+    console.log("view", testimonial);
     navigate(`/surveys/${testimonial?.survey?._id}`);
     handleClose();
   };

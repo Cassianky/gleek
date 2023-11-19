@@ -64,7 +64,7 @@ export const updateScheduledNewsletter = async (req, res) => {
     await ScheduledNewsletterModel.findByIdAndUpdate(
       scheduledNewsletterId,
       newsletterData,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
     return res.status(200).json({ message: "Scheduled newsletter updated!" });
   } catch (err) {
@@ -176,7 +176,7 @@ cron.schedule("* * * * *", async () => {
           scheduledNewsletter._id,
           {
             status: "SENT",
-          }
+          },
         );
         const mailingList =
           scheduledNewsletter.newsletterType === "CUSTOM"
@@ -194,7 +194,7 @@ cron.schedule("* * * * *", async () => {
           {
             status: "FAILED",
             errorLog: error.message,
-          }
+          },
         );
       }
     });

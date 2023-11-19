@@ -115,7 +115,7 @@ const ActivityDetailsPage = () => {
     const dayOfWeek = dayjs(date).day();
     const isPublicHoliday = hd.isHoliday(new Date(date));
     const conditionsToCheck = [];
-    const phEnabled = false;
+    let phEnabled = false;
     for (const dayAvailability of currentActivity?.dayAvailabilities) {
       if (
         dayAvailability.toLowerCase().includes("weekends") &&

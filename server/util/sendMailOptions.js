@@ -1,13 +1,14 @@
 import { NewsletterTemplate } from "../assets/templates/NewsletterTemplate.js";
 import { PersonalisedNewsletterTemplate } from "../assets/templates/PersonalisedNewsletterTemplate.js";
+import { s3GetImages } from "../service/s3ImageServices.js";
 
 export const createClientWelcomeMailOptions = (client) => {
-  try {
-    const text = `Hello, ${client.name}!`;
-    const subject = `${client.name}, welcome to Gleek!`;
-    const to = client.email;
+   try {
+      const text = `Hello, ${client.name}!`;
+      const subject = `${client.name}, welcome to Gleek!`;
+      const to = client.email;
 
-    const htmlContent = `
+      const htmlContent = `
     <html>
     <head>
       <style>
@@ -63,63 +64,63 @@ export const createClientWelcomeMailOptions = (client) => {
 
   `;
 
-    const options = {
-      subject,
-      html: htmlContent,
-      attachments: [
-        {
-          filename: "ClientWelcome.png",
-          path: "../server/assets/email/ClientWelcome.png",
-          cid: "welcome-client-image",
-        },
-      ],
-      to,
-    };
-    return options;
-  } catch (err) {
-    console.log(err);
-  }
+      const options = {
+         subject,
+         html: htmlContent,
+         attachments: [
+            {
+               filename: "ClientWelcome.png",
+               path: "../server/assets/email/ClientWelcome.png",
+               cid: "welcome-client-image",
+            },
+         ],
+         to,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
 };
 
 export const createVerifyEmailOptions = (client, token) => {
-  try {
-    const to = client.email;
-    const message = `You have registered with the email ${client.email} on Gleek.
+   try {
+      const to = client.email;
+      const message = `You have registered with the email ${client.email} on Gleek.
   Please verify your email by clicking on the link: http://localhost:3001/client/verifyEmail/${token}`;
-    const options = {
-      to: to,
-      subject: "Verify your Email on Gleek",
-      text: message,
-    };
-    return options;
-  } catch (err) {
-    console.log(err);
-  }
+      const options = {
+         to: to,
+         subject: "Verify your Email on Gleek",
+         text: message,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
 };
 
 export const createResendVerifyEmailOptions = (client, token) => {
-  try {
-    const message = `Hello ${client.email}, you have requested for the verification email to be resent.
+   try {
+      const message = `Hello ${client.email}, you have requested for the verification email to be resent.
     Please verify your email by clicking on the link: http://localhost:3001/client/verifyEmail/${token}`;
-    const options = {
-      to: client.email,
-      subject: "Resend: Verify your Email on Gleek",
-      text: message,
-    };
+      const options = {
+         to: client.email,
+         subject: "Resend: Verify your Email on Gleek",
+         text: message,
+      };
 
-    return options;
-  } catch (err) {
-    console.log(err);
-  }
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
 };
 
 export const createVendorWelcomeMailOptions = (vendor) => {
-  try {
-    const text = `Hello, ${vendor.companyName}!`;
-    const subject = `${vendor.companyName}, Welcome to Gleek As a Vendor Partner!`;
-    const to = vendor.companyEmail;
+   try {
+      const text = `Hello, ${vendor.companyName}!`;
+      const subject = `${vendor.companyName}, Welcome to Gleek As a Vendor Partner!`;
+      const to = vendor.companyEmail;
 
-    const htmlContent = `
+      const htmlContent = `
     <html>
     <head>
       <style>
@@ -173,226 +174,479 @@ export const createVendorWelcomeMailOptions = (vendor) => {
 
   `;
 
-    const options = {
-      subject,
-      html: htmlContent,
-      attachments: [
-        {
-          filename: "VendorWelcome.png",
-          path: "../server/assets/email/VendorWelcome.png",
-          cid: "welcome-vendor-image",
-        },
-      ],
-      to,
-    };
-    return options;
-  } catch (err) {
-    console.log(err);
-  }
+      const options = {
+         subject,
+         html: htmlContent,
+         attachments: [
+            {
+               filename: "VendorWelcome.png",
+               path: "../server/assets/email/VendorWelcome.png",
+               cid: "welcome-vendor-image",
+            },
+         ],
+         to,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
 };
 
 export const createVerifyEmailOptionsVendor = (vendor, token) => {
-  try {
-    const to = vendor.companyEmail;
-    const message = `You have registered with the company email ${vendor.companyEmail} on Gleek.
+   try {
+      const to = vendor.companyEmail;
+      const message = `You have registered with the company email ${vendor.companyEmail} on Gleek.
   Please verify your email by clicking on the link: http://localhost:3001/vendor/verifyEmail/${token}`;
-    const options = {
-      to: to,
-      subject: "Verify your Email on Gleek",
-      text: message,
-    };
-    return options;
-  } catch (err) {
-    console.log(err);
-  }
+      const options = {
+         to: to,
+         subject: "Verify your Email on Gleek",
+         text: message,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
 };
 
 export const createResendVerifyEmailOptionsVendor = (vendor, token) => {
-  try {
-    const message = `Hello ${vendor.email}, you have requested for the verification email to be resent.
+   try {
+      const message = `Hello ${vendor.email}, you have requested for the verification email to be resent.
     Please verify your email by clicking on the link: http://localhost:3001/vendor/verifyEmail/${token}`;
-    const options = {
-      to: vendor.companyEmail,
-      subject: "Resend: Verify your Email on Gleek",
-      text: message,
-    };
+      const options = {
+         to: vendor.companyEmail,
+         subject: "Resend: Verify your Email on Gleek",
+         text: message,
+      };
 
-    return options;
-  } catch (err) {
-    console.log(err);
-  }
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
 };
 
 export const createResetPasswordEmailOptions = (client, token) => {
-  const message = `Please add a new password for your account by clicking on the link: http://localhost:5000/gleek/auth/resetPassword/${token}`;
-  const options = {
-    to: client.email,
-    subject: "Gleek Client: Recover Password",
-    text: message,
-  };
-  return options;
+   const message = `Please add a new password for your account by clicking on the link: http://localhost:5000/gleek/auth/resetPassword/${token}`;
+   const options = {
+      to: client.email,
+      subject: "Gleek Client: Recover Password",
+      text: message,
+   };
+   return options;
 };
 
 export const createResetPasswordEmailOptionsVendor = (vendor, token) => {
-  const message = `Please add a new password for your account by clicking on the link: http://localhost:5000/gleek/vendor/resetPassword/${token}`;
-  const options = {
-    to: vendor.companyEmail,
-    subject: "Gleek Vendor: Recover Password",
-    text: message,
-  };
-  return options;
+   const message = `Please add a new password for your account by clicking on the link: http://localhost:5000/gleek/vendor/resetPassword/${token}`;
+   const options = {
+      to: vendor.companyEmail,
+      subject: "Gleek Vendor: Recover Password",
+      text: message,
+   };
+   return options;
 };
 
 // for when admin rejects client / vendor registration
 export const createRegistrationApprovalEmailOptions = (user) => {
-  console.log("reject called");
-  console.log(user.name ?? user.companyName);
-  console.log(user.email ?? user.companyEmail);
+   console.log("reject called");
+   console.log(user.name ?? user.companyName);
+   console.log(user.email ?? user.companyEmail);
 
-  const message = `Hi ${
-    user.name ?? user.companyName
-  }! Your registration for an account with Gleek has been ${
-    user.status === "APPROVED" ? "approved" : "rejected"
-  }.`;
-  const options = {
-    to: user.email ?? user.companyEmail,
-    subject: "Gleek: Registration",
-    text: message,
-  };
-  return options;
+   const message = `Hi ${
+      user.name ?? user.companyName
+   }! Your registration for an account with Gleek has been ${
+      user.status === "APPROVED" ? "approved" : "rejected"
+   }.`;
+   const options = {
+      to: user.email ?? user.companyEmail,
+      subject: "Gleek: Registration",
+      text: message,
+   };
+   return options;
 };
 
 // for when admin disables/enables client / vendor account
 export const createDisableOrEnableEmailOptions = (user, isDisabled) => {
-  console.log("disable/enabled called");
-  console.log(user.name ?? user.companyName);
-  console.log(user.email ?? user.companyEmail);
+   console.log("disable/enabled called");
+   console.log(user.name ?? user.companyName);
+   console.log(user.email ?? user.companyEmail);
 
-  const message = `Hi ${
-    user.name ?? user.companyName
-  }! Your account with Gleek has been ${isDisabled ? "disabled" : "enabled"}.`;
-  const options = {
-    to: user.email ?? user.companyEmail,
-    subject: "Gleek: Account Status Update",
-    text: message,
-  };
-  return options;
+   const message = `Hi ${
+      user.name ?? user.companyName
+   }! Your account with Gleek has been ${isDisabled ? "disabled" : "enabled"}.`;
+   const options = {
+      to: user.email ?? user.companyEmail,
+      subject: "Gleek: Account Status Update",
+      text: message,
+   };
+   return options;
 };
 
 export const createCustomEdmMailOptions = (
-  client,
-  subject,
-  messageBody,
-  preSignedUrl,
+   client,
+   subject,
+   messageBody,
+   preSignedUrl
 ) => {
-  try {
-    const to = client.email;
-    const htmlContent = NewsletterTemplate({
-      recipientName: client.name,
-      messageBody: messageBody,
-      forEmail: true,
-    });
+   try {
+      const to = client.email;
+      const htmlContent = NewsletterTemplate({
+         recipientName: client.name,
+         messageBody: messageBody,
+         forEmail: true,
+      });
 
-    const attachments = [];
-    if (preSignedUrl !== undefined) {
-      // If preSignedUrl is not null, attach the image using preSignedUrl
-      attachments.push({
-        filename: "NewsletterImage.png",
-        href: preSignedUrl,
-        cid: "newsletter-image",
-      });
-    } else {
-      // If preSignedUrl is null, attach an image from the file path
-      attachments.push({
-        filename: "DefaultNewsletterImage.jpg",
-        path: "../server/assets/email/DefaultNewsletterImage.jpg",
-        cid: "newsletter-image",
-      });
-    }
-    const options = {
-      subject,
-      html: htmlContent,
-      attachments,
-      to,
-    };
-    return options;
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
+      const attachments = [];
+      if (preSignedUrl !== undefined) {
+         // If preSignedUrl is not null, attach the image using preSignedUrl
+         attachments.push({
+            filename: "NewsletterImage.png",
+            href: preSignedUrl,
+            cid: "newsletter-image",
+         });
+      } else {
+         // If preSignedUrl is null, attach an image from the file path
+         attachments.push({
+            filename: "DefaultNewsletterImage.jpg",
+            path: "../server/assets/email/DefaultNewsletterImage.jpg",
+            cid: "newsletter-image",
+         });
+      }
+      const options = {
+         subject,
+         html: htmlContent,
+         attachments,
+         to,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+      return err;
+   }
 };
 
 export const createPersonalisedNewsletterMailOptions = (
-  client,
-  subject,
-  messageBody,
-  preSignedUrl,
-  activities,
+   client,
+   subject,
+   messageBody,
+   preSignedUrl,
+   activities
 ) => {
-  try {
-    const to = client.email;
-    const htmlContent = PersonalisedNewsletterTemplate({
-      recipientName: client.name,
-      messageBody: messageBody,
-      forEmail: true,
-      activities: activities,
-    });
-
-    const attachments = [];
-    if (preSignedUrl !== undefined) {
-      // If preSignedUrl is not null, attach the image using preSignedUrl
-      attachments.push({
-        filename: "NewsletterImage.png",
-        href: preSignedUrl,
-        cid: "newsletter-image",
+   try {
+      const to = client.email;
+      const htmlContent = PersonalisedNewsletterTemplate({
+         recipientName: client.name,
+         messageBody: messageBody,
+         forEmail: true,
+         activities: activities,
       });
-    } else {
-      // If preSignedUrl is null, attach an image from the file path
-      attachments.push({
-        filename: "DefaultNewsletterImage.jpg",
-        path: "../server/assets/email/DefaultNewsletterImage.jpg",
-        cid: "newsletter-image",
-      });
-    }
 
-    for (const activity of activities) {
-      if (activity.preSignedActivityImage) {
-        attachments.push({
-          filename: `${activity.title}_image.png`,
-          href: activity.preSignedActivityImage,
-          cid: `${activity._id}-image`,
-        });
+      const attachments = [];
+      if (preSignedUrl !== undefined) {
+         // If preSignedUrl is not null, attach the image using preSignedUrl
+         attachments.push({
+            filename: "NewsletterImage.png",
+            href: preSignedUrl,
+            cid: "newsletter-image",
+         });
       } else {
-        attachments.push({
-          filename: "ActivitySampleImage.jpg",
-          path: "../server/assets/email/ActivitySampleImage.jpg",
-          cid: `${activity._id}-image`,
-        });
+         // If preSignedUrl is null, attach an image from the file path
+         attachments.push({
+            filename: "DefaultNewsletterImage.jpg",
+            path: "../server/assets/email/DefaultNewsletterImage.jpg",
+            cid: "newsletter-image",
+         });
       }
-    }
-    const options = {
-      subject,
-      html: htmlContent,
-      attachments,
-      to,
-    };
-    return options;
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
+
+      for (const activity of activities) {
+         if (activity.preSignedActivityImage) {
+            attachments.push({
+               filename: `${activity.title}_image.png`,
+               href: activity.preSignedActivityImage,
+               cid: `${activity._id}-image`,
+            });
+         } else {
+            attachments.push({
+               filename: "ActivitySampleImage.jpg",
+               path: "../server/assets/email/ActivitySampleImage.jpg",
+               cid: `${activity._id}-image`,
+            });
+         }
+      }
+      const options = {
+         subject,
+         html: htmlContent,
+         attachments,
+         to,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+      return err;
+   }
 };
 
 export const sendVendorUnreadChatReminders = (vendorInfo) => {
-  //vendorInfo: {name:companyName, email:companyEmail}
-  const message = `Hello ${vendorInfo.name}! 
+   //vendorInfo: {name:companyName, email:companyEmail}
+   const message = `Hello ${vendorInfo.name}! 
   This is a gentle update that you have some unread messages from client(s), thank you!`;
 
-  const options = {
-    to: vendorInfo.email,
-    subject: "Gleek: You have unread chat messages from clients.",
-    text: message,
-  };
+   const options = {
+      to: vendorInfo.email,
+      subject: "Gleek: You have unread chat messages from clients.",
+      text: message,
+   };
 
-  return options;
+   return options;
+};
+
+export const clientBadgeMailOptions = (client, badge, imageUrl) => {
+   try {
+      const text = `Hello, ${client.name}!`;
+      const subject = `${client.name}, You have earned a new Badge!`;
+      const to = client.email;
+
+      const htmlContent = `
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          background-color: #5c4b99;
+          color: #ffffff;
+          padding: 10px;
+          text-align: center;
+          border-radius: 5px 5px 0 0;
+        }
+        .content {
+          padding: 20px;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+        p {
+          margin-bottom: 10px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Gleek</h1>
+        </div>
+        <div class="content">
+          <p>${text}</p>
+          <img src="cid:earned-badge-image" alt="New Badge!" />
+          <p>
+            Congratualions on earning a new Badge!
+          </p>
+        </div>
+      </div>
+    </body>
+  </html>
+
+
+  `;
+
+      const options = {
+         subject,
+         html: htmlContent,
+         attachments: [
+            {
+               filename: "badge.png",
+               path: imageUrl,
+               cid: "earned-badge-image",
+            },
+         ],
+         to,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+export const BookingSummaryClientMailOptions = (
+   client,
+   imageUrl,
+   pdfFilePath
+) => {
+   try {
+      const text = `Hello, ${client.name}!`;
+      const subject = `${client.name}, You have made a new Booking!`;
+      const to = client.email;
+
+      const htmlContent = `
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          background-color: #5c4b99;
+          color: #ffffff;
+          padding: 10px;
+          text-align: center;
+          border-radius: 5px 5px 0 0;
+        }
+        .content {
+          padding: 20px;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+        p {
+          margin-bottom: 10px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Gleek</h1>
+        </div>
+        <div class="content">
+          <p>${text}</p>
+          <img src="cid:activity-image" alt="New booking!" />
+          <p>
+            You have made a new booking! Your booking summary has been attached with this email.
+          </p>
+        </div>
+      </div>
+    </body>
+  </html>
+
+
+  `;
+
+      const options = {
+         subject,
+         html: htmlContent,
+         attachments: [
+            {
+               filename: "activity.png",
+               path: imageUrl,
+               cid: "activity-image",
+            },
+            {
+               filename: "BookingSummary.pdf",
+               path: pdfFilePath,
+               contentType: "application/pdf",
+            },
+         ],
+         to,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+export const BookingSummaryVendorMailOptions = (
+   vendor,
+   imageUrl,
+   pdfFilePath
+) => {
+   try {
+      const text = `Hello, ${vendor.companyName}!`;
+      const subject = `${vendor.companyName}, You have a new Booking!`;
+      const to = vendor.companyEmail;
+
+      const htmlContent = `
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          background-color: #5c4b99;
+          color: #ffffff;
+          padding: 10px;
+          text-align: center;
+          border-radius: 5px 5px 0 0;
+        }
+        .content {
+          padding: 20px;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+        p {
+          margin-bottom: 10px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Gleek</h1>
+        </div>
+        <div class="content">
+          <p>${text}</p>
+          <img src="cid:activity-image" alt="New booking!" />
+          <p>
+            You have a new booking! Your booking summary has been attached with this email.
+          </p>
+        </div>
+      </div>
+    </body>
+  </html>
+
+
+  `;
+
+      const options = {
+         subject,
+         html: htmlContent,
+         attachments: [
+            {
+               filename: "activity.png",
+               path: imageUrl,
+               cid: "activity-image",
+            },
+            {
+               filename: "BookingSummary.pdf",
+               path: pdfFilePath,
+               contentType: "application/pdf",
+            },
+         ],
+
+         to,
+      };
+      return options;
+   } catch (err) {
+      console.log(err);
+   }
 };

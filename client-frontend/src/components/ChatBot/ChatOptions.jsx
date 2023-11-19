@@ -52,7 +52,11 @@ const ChatOptions = {
         "2e": {
           label: "2e) What do the different booking statuses mean?",
           answers: [
-            "As this is a b2b platform, payments would be made offline",
+            "Pending Confirmation: Your booking is yet to be confirmed by the other party.",
+            "Upcoming: Your booking is confirmed and is scheduled in the future.",
+            "Cancelled/Rejected: For Cancelled, either you or the other party cancelled the booking. For Rejected, the other party rejected your booking.",
+            "Pending Payment: Your booking is awaiting payment. This will be conducted off-platform.",
+            "Paid: Your booking has been all paid and accounted for",
           ],
         },
         "2f": {
@@ -89,7 +93,9 @@ const ChatOptions = {
       options: {
         "2a": {
           label: "2a) Are my data and privacy secure on Gleek?",
-          answers: ["Yes! Gleek adopts the new and "],
+          answers: [
+            "Yes! Rest assured your data is kept safe and confidential on our platform.",
+          ],
         },
         "2b": {
           label: "2b) What types of content can I share on Gleek?",

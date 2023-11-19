@@ -114,17 +114,21 @@ const ViewActiveBookings = () => {
   }, [getAllBookings]);
 
   const getSortedBookings = (status) => {
-    const filteredBookings = bookings.filter((booking) => booking.status === status);
+    const filteredBookings = bookings.filter(
+      (booking) => booking.status === status,
+    );
     console.log(bookings);
 
-    
     // Sort the bookings based on the timestamp of the last action in actionHistory
     const sortedBookings = filteredBookings.sort((a, b) => {
       const lastActionA = a.actionHistory[a.actionHistory.length - 1];
       const lastActionB = b.actionHistory[b.actionHistory.length - 1];
-      return new Date(lastActionB?.actionTimestamp) - new Date(lastActionA?.actionTimestamp);
+      return (
+        new Date(lastActionB?.actionTimestamp) -
+        new Date(lastActionA?.actionTimestamp)
+      );
     });
-  
+
     return sortedBookings;
   };
 

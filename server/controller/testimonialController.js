@@ -145,7 +145,8 @@ export const updateTestimonialById = async (req, res) => {
   try {
     const testimonialId = req.params.testimonialId;
     const { testimonialBody, displayName, clientName, hidden } = req.body;
-    const foundTestimonial = await Testimonial.findById(testimonialId).populate("survey");
+    const foundTestimonial =
+      await Testimonial.findById(testimonialId).populate("survey");
 
     if (!foundTestimonial) {
       return res.status(404).json({ message: "Testimonial not found." });

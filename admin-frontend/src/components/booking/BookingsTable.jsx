@@ -11,10 +11,10 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
   const [selectedBooking, setSelectedBooking] = useState();
 
   const locationTypeMapping = {
-    "On-site (within the company premises)" : "Onsite",
-    "Off-site (external venues or outdoor locations)" : "Offsite",
-    "Virtual (online sessions)" : "Virtual",
-    "Hybrid (online + virtual at the same time)" : "Hybrid",
+    "On-site (within the company premises)": "Onsite",
+    "Off-site (external venues or outdoor locations)": "Offsite",
+    "Virtual (online sessions)": "Virtual",
+    "Hybrid (online + virtual at the same time)": "Hybrid",
   };
 
   useEffect(() => {
@@ -75,11 +75,14 @@ const BookingsTable = ({ bookings, status, additionalColumns }) => {
         );
       },
     },
-    { field: "eventLocationType", headerName: "Event Location Type", flex: 1,
-    valueGetter: (params) => {
-      return locationTypeMapping[params.value];
+    {
+      field: "eventLocationType",
+      headerName: "Event Location Type",
+      flex: 1,
+      valueGetter: (params) => {
+        return locationTypeMapping[params.value];
+      },
     },
-   },
     { field: "totalPax", headerName: "Total Pax", type: "number", flex: 1 },
     {
       field: "totalCost",

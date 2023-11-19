@@ -10,7 +10,7 @@ const useCartStore = create((set) => ({
   getCartItems: async () => {
     try {
       const response = await AxiosConnect.get(
-        `/gleek/cart/getCartItemsByClientId`
+        `/gleek/cart/getCartItemsByClientId`,
       );
       const data = response.data;
       const combinedDataArray = data.map((item) => ({
@@ -31,7 +31,7 @@ const useCartStore = create((set) => ({
       set({ addToCartLoading: false });
       const response = await AxiosConnect.post(
         `/gleek/cart/addCartItem`,
-        cartItemData
+        cartItemData,
       );
       console.log(response.data.data);
       set({ newCartItem: response.data.data });
@@ -46,7 +46,7 @@ const useCartStore = create((set) => ({
   deleteCartItem: async (cartId) => {
     try {
       const response = await AxiosConnect.delete(
-        `/gleek/cart/deleteCartItem/${cartId}`
+        `/gleek/cart/deleteCartItem/${cartId}`,
       );
       return true;
     } catch (error) {
@@ -61,7 +61,7 @@ const useCartStore = create((set) => ({
       set({ checkoutIsLoading: true });
       const response = await AxiosConnect.post(
         `/gleek/booking/createBookings`,
-        cartItemsToCheckOut
+        cartItemsToCheckOut,
       );
       // console.log(response.data.data);
       // set({ newCartItem: response.data.data });

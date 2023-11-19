@@ -6,6 +6,8 @@ export const NewsletterTemplate = ({
   preSignedPhoto,
   forEmail,
 }) => {
+  const BASE_URL = "http://localhost:3001";
+
   const greeting = `Hello, ${recipientName}!`;
   const signature = `Best Regards,<br/>Gleek Team`;
   const defaultImagePath = "../server/assets/email/DefaultNewsletterImage.jpg";

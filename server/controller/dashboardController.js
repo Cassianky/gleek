@@ -234,7 +234,6 @@ export const calculateAdminSurveyReviewSentiment = async (req, res) => {
   try {
     const vendors = await VendorModel.find({
       isDisabled: false,
-      approved: true,
     });
     let result = [];
     for (let vendor of vendors) {

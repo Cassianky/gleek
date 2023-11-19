@@ -140,8 +140,10 @@ export const getActivity = async (req, res) => {
     }
 
     for (const review of foundActivity.reviews) {
-      let preSignedPhoto = await s3GetImages(review.client.photo);
-      review.client.preSignedPhoto = preSignedPhoto;
+      if (review.client.photo !== undefined) {
+        let preSignedPhoto = await s3GetImages(review.client.photo);
+        review.client.preSignedPhoto = preSignedPhoto;
+      }
     }
 
     let preSignedUrlArr = await s3GetImages(foundActivity.images);

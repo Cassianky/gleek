@@ -15,7 +15,7 @@ function ReviewProfile({ client }) {
       }}
     >
       <Box display="flex" alignItems="center">
-        {client ? (
+        {client.preSignedPhoto ? (
           <Avatar
             sx={{ width: 30, height: 30 }}
             alt={client.name}

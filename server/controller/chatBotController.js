@@ -40,10 +40,12 @@ export const getTop5BookedActivities = async (req, res) => {
       },
     ]);
 
+    topActivities.filter((activity) => activity.approvalStatus === "Published");
+
     // Populate the minimum price per pax for each activity
     for (const activity of topActivities) {
       activity.activityDetails.preSignedImages = await s3GetImages(
-        activity.activityDetails.images
+        activity.activityDetails.images,
       );
     }
 
@@ -61,6 +63,11 @@ export const getTop5BookedActivities = async (req, res) => {
 export const get5MostRecentActivities = async (req, res) => {
   try {
     const recentActivities = await ActivityModel.aggregate([
+      {
+        $match: {
+          approvalStatus: "Published",
+        },
+      },
       {
         $sort: {
           creationDateTime: 1,
@@ -80,7 +87,7 @@ export const get5MostRecentActivities = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Top 5 booked activities fetched!",
+      message: "Top 5 recent activities fetched!",
       recentActivities: recentActivities,
     });
   } catch (error) {

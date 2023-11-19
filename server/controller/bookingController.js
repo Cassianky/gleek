@@ -26,6 +26,10 @@ import {
 import { createNotification } from "./notificationController.js";
 import { InvoiceTemplate } from "../assets/templates/InvoiceTemplate.js";
 import cron from "node-cron";
+import {
+  BookingSummaryVendorMailOptions,
+  BookingSummaryClientMailOptions,
+} from "../util/sendMailOptions.js";
 
 // GET /booking/getAllBookings
 export const getAllBookings = async (req, res) => {
@@ -136,7 +140,7 @@ function getTimeslotCapacities(
   capacity,
   bookings,
   blockedTimeslots,
-  duration,
+  duration
 ) {
   // Create a hashmap to store capacities for each starttime slot
   const capacities = new Map(startTimes.map((slot) => [slot, capacity]));
@@ -186,12 +190,12 @@ export function generateAllTimeslots(
   capacity,
   bookings,
   blockedTimeslots,
-  duration,
+  duration
 ) {
   const startTimes = generateStartTimes(
     earliestStartTime,
     latestStartTime,
-    interval,
+    interval
   );
 
   const timeslotCapacities = getTimeslotCapacities(
@@ -199,7 +203,7 @@ export function generateAllTimeslots(
     capacity,
     bookings,
     blockedTimeslots,
-    duration,
+    duration
   );
 
   const allTimeslots = startTimes.map((startTime, index) => {
@@ -275,7 +279,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
     const minDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() + daysInAdvance,
+      today.getDate() + daysInAdvance
     );
     if (dateParam < minDate) {
       return res.status(400).json({
@@ -294,24 +298,24 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.startTime.getHours(),
       activity.startTime.getMinutes(),
       0,
-      0,
+      0
     );
     const latestStartTime = new Date(dateParam);
     latestStartTime.setHours(
       activity.endTime.getHours(),
       activity.endTime.getMinutes(),
       0,
-      0,
+      0
     );
     console.log(
       "EARLIEST START TIME: ",
       earliestStartTime.toLocaleDateString(),
-      earliestStartTime.toLocaleTimeString(),
+      earliestStartTime.toLocaleTimeString()
     );
     console.log(
       "LATEST START TIME: ",
       latestStartTime.toLocaleDateString(),
-      latestStartTime.toLocaleTimeString(),
+      latestStartTime.toLocaleTimeString()
     );
 
     const interval = 30; // 30 minutes
@@ -347,7 +351,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.capacity,
       bookings,
       blockedTimeslots,
-      activity.duration,
+      activity.duration
     );
 
     res.status(200).json({
@@ -365,13 +369,13 @@ export const getAvailableBookingTimeslots = async (req, res) => {
 export function getTimeslotAvailability(
   allTimeslots,
   selectedStartDateTime,
-  selectedEndDateTime,
+  selectedEndDateTime
 ) {
   const timeslot = allTimeslots.find(
     (timeslot) =>
       timeslot.startTime.getTime() === selectedStartDateTime.getTime() &&
       timeslot.endTime.getTime() === selectedEndDateTime.getTime() &&
-      timeslot.isAvailable,
+      timeslot.isAvailable
   );
 
   return timeslot !== undefined;
@@ -555,7 +559,7 @@ export const confirmBooking = async (req, res) => {
       "CONFIRMED",
       "VENDOR",
       vendor?.companyName,
-      null,
+      null
     );
 
     await newBooking.populate([
@@ -619,7 +623,7 @@ export const rejectBooking = async (req, res) => {
       "REJECTED",
       "VENDOR",
       vendorName?.companyName,
-      rejectionReason,
+      rejectionReason
     );
 
     await newBooking.populate([
@@ -682,7 +686,7 @@ export const cancelBooking = async (req, res) => {
       "CANCELLED",
       "VENDOR",
       vendorName?.companyName,
-      cancelReason,
+      cancelReason
     );
 
     await newBooking.populate([
@@ -755,7 +759,7 @@ export const updateBookingStatus = async (req, res) => {
           },
         },
       },
-      { new: true },
+      { new: true }
     ).populate([
       {
         path: "activityId",
@@ -949,7 +953,10 @@ export const updateCompletedBookingsStatusFromConfirmedToPendingPayment =
       }
     } catch (error) {
       console.error("Error updating bookings:", error);
-      res.status(500).json({ error: "Server error", message: error.message });
+      res.status(500).json({
+        error: "Server error",
+        message: error.message,
+      });
     }
   };
 
@@ -958,27 +965,19 @@ export const sendBookingSummaryEmailClient = async (data, email) => {
   const pdfContent = BookingSummaryClient(data);
   const filename = "bookingSummary" + Date.now() + ".pdf";
   const pdfFilePath = path.join(process.cwd(), "temp", filename);
-
+  let imageUrl = await s3GetImages(data[0].activityId.images);
+  imageUrl = imageUrl.length > 0 ? imageUrl[0] : undefined;
   pdf.create(pdfContent, {}).toFile(pdfFilePath, (err) => {
     if (err) {
       // Handle errors appropriately
       console.error(err);
       res.status(500).send("Error generating PDF");
     }
-    const options = {
-      to: email,
-      subject: "Your Booking is Confirmed!",
-      text: "Your booking is confirmed",
-      attachments: [
-        {
-          filename: "BookingSummary.pdf",
-          path: pdfFilePath,
-          contentType: "application/pdf",
-        },
-      ],
-    };
 
-    sendMail(options).then(() => {
+    console.log(data[0].activityId);
+    sendMail(
+      BookingSummaryClientMailOptions(data[0].clientId, imageUrl, pdfFilePath)
+    ).then(() => {
       fs.access(pdfFilePath, fs.constants.F_OK, (err) => {
         if (err) {
           console.error("File does not exist or cannot be accessed:", err);
@@ -998,6 +997,8 @@ export const sendBookingSummaryEmailClient = async (data, email) => {
 
 //Generate the PDF for the vendor And send Email
 export const sendBookingSummaryEmailVendor = async (data) => {
+  let imageUrl = await s3GetImages(data[0].activityId.images);
+  imageUrl = imageUrl.length > 0 ? imageUrl[0] : undefined;
   data.forEach((booking) => {
     const pdfContent = BookingSummaryVendor(booking);
     const filename =
@@ -1010,20 +1011,10 @@ export const sendBookingSummaryEmailVendor = async (data) => {
         console.error(err);
         res.status(500).send("Error generating PDF");
       }
-      const options = {
-        to: booking.vendorId.companyEmail,
-        subject: "You have a New Booking!",
-        text: "You have a New Booking!",
-        attachments: [
-          {
-            filename: "BookingSummary.pdf",
-            path: pdfFilePath,
-            contentType: "application/pdf",
-          },
-        ],
-      };
 
-      sendMail(options).then(() => {
+      sendMail(
+        BookingSummaryVendorMailOptions(booking.vendorId, imageUrl, pdfFilePath)
+      ).then(() => {
         fs.access(pdfFilePath, fs.constants.F_OK, (err) => {
           if (err) {
             console.error("File does not exist or cannot be accessed:", err);
@@ -1129,7 +1120,7 @@ cron.schedule("0 0 0 * * *", async () => {
   try {
     await updateCompletedBookingsStatusFromConfirmedToPendingPayment();
     console.log(
-      "Scheduled daily task to update completed booking(s) status from Confirmed to Pending Payment",
+      "Scheduled daily task to update completed booking(s) status from Confirmed to Pending Payment"
     );
   } catch (error) {
     console.error("Error in scheduled task:", error);

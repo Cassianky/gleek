@@ -6,6 +6,8 @@ export const NewsletterTemplate = ({
   preSignedPhoto,
   forEmail,
 }) => {
+  const BASE_URL = "http://localhost:3001";
+
   const greeting = `Hello, ${recipientName}!`;
   const signature = `Best Regards,<br/>Gleek Team`;
   const defaultImagePath = "../server/assets/email/DefaultNewsletterImage.jpg";
@@ -86,7 +88,7 @@ export const NewsletterTemplate = ({
         <div class="footer">
           <p>
             If you no longer wish to receive emails from Gleek, you can
-            <a href="https://yourdomain.com/unsubscribe">unsubscribe here</a>.
+            <a href=${BASE_URL}/settings/privacy>unsubscribe here</a>.
           </p>
         </div>
       </div>

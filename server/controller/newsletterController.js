@@ -64,7 +64,7 @@ export const updateScheduledNewsletter = async (req, res) => {
     await ScheduledNewsletterModel.findByIdAndUpdate(
       scheduledNewsletterId,
       newsletterData,
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     );
     return res.status(200).json({ message: "Scheduled newsletter updated!" });
   } catch (err) {
@@ -172,6 +172,12 @@ cron.schedule("* * * * *", async () => {
     // Send the due emails
     scheduledNewslettersDue.forEach(async (scheduledNewsletter) => {
       try {
+        await ScheduledNewsletterModel.findByIdAndUpdate(
+          scheduledNewsletter._id,
+          {
+            status: "SENT",
+          }
+        );
         const mailingList =
           scheduledNewsletter.newsletterType === "CUSTOM"
             ? await getCustomNewslettersMailingList()
@@ -181,13 +187,6 @@ cron.schedule("* * * * *", async () => {
           const recipient = mailingList[i].client;
           await sendNewsletter(scheduledNewsletter, recipient);
         }
-
-        await ScheduledNewsletterModel.findByIdAndUpdate(
-          scheduledNewsletter._id,
-          {
-            status: "SENT",
-          },
-        );
       } catch (error) {
         console.error(`Error: ${error.message}`);
         await ScheduledNewsletterModel.findByIdAndUpdate(
@@ -195,7 +194,7 @@ cron.schedule("* * * * *", async () => {
           {
             status: "FAILED",
             errorLog: error.message,
-          },
+          }
         );
       }
     });

@@ -11,6 +11,11 @@ import {
 } from "../../zustand/GlobalStore";
 import MainBodyContainer from "../common/MainBodyContainer";
 import SubmittedSurveysTable from "./SubmittedSurveysTable";
+
+const StyledPage = styled("div")(({ theme }) => ({
+  backgroundColor: theme.palette.grey.pale_grey,
+}));
+
 function SubmittedSurveys() {
   const theme = useTheme();
   const { getSubmittedSurveys, surveys, isLoading } =
@@ -33,23 +38,25 @@ function SubmittedSurveys() {
     return <CircularProgress />;
   }
   return (
-    <MainBodyContainer
-      hasBackButton={false}
-      breadcrumbNames={[]}
-      breadcrumbLinks={[]}
-      currentBreadcrumbName={"All Submitted Surveys"}
-    >
-      <Typography
-        fontSize={25}
-        fontWeight={700}
-        noWrap
-        component="div"
-        color={theme.palette.primary.main}
+    <StyledPage>
+      <MainBodyContainer
+        hasBackButton={false}
+        breadcrumbNames={[]}
+        breadcrumbLinks={[]}
+        currentBreadcrumbName={"All Submitted Surveys"}
       >
-        Submitted Feedback Surveys
-      </Typography>
-      <SubmittedSurveysTable allSurveys={surveys} />
-    </MainBodyContainer>
+        <Typography
+          fontSize={25}
+          fontWeight={700}
+          noWrap
+          component="div"
+          color={theme.palette.primary.main}
+        >
+          Submitted Feedback Surveys
+        </Typography>
+        <SubmittedSurveysTable allSurveys={surveys} />
+      </MainBodyContainer>
+    </StyledPage>
   );
 }
 

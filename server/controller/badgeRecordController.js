@@ -2,7 +2,42 @@ import BadgeRecordModel from "../model/badgeRecordModel.js";
 import ClientModel from "../model/clientModel.js";
 import { s3GetImages } from "../service/s3ImageServices.js";
 import BookingModel from "../model/bookingModel.js";
+import {
+  NotificationAction,
+  NotificationEvent,
+} from "../util/notificationRelatedEnum.js";
+import { Role } from "../util/roleEnum.js";
+import { createNotification } from "./notificationController.js";
+import { clientBadgeMailOptions } from "../util/sendMailOptions.js";
 import { ObjectId } from "mongoose";
+
+const sendBadgeNotification = async (badgeRecord, session) => {
+  try {
+    const notificationReq = {
+      senderRole: Role.ADMIN,
+      recipientRole: Role.CLIENT,
+      recipient: clientId,
+      notificationEvent: NotificationEvent.NEWBADGE,
+      notificationAction: NotificationAction.APPROVE,
+      eventId: badgeRecord._id,
+      eventObj: badgeRecord,
+    };
+    await createNotification(notificationReq, session);
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
+const sendBadgeMail = async (client, badgeRecord, imageUrl) => {
+  try {
+    const options = clientBadgeMailOptions(client, badgeRecord, imageUrl[0]);
+    await sendMail(options);
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
 
 export const getAllBadgeRecordsForClient = async (req, res) => {
   try {
@@ -15,7 +50,7 @@ export const getAllBadgeRecordsForClient = async (req, res) => {
 
     for (const badgeRecord of badgeRecords) {
       badgeRecord.badge.badgePreSignedImage = await s3GetImages(
-        badgeRecord.badge.badgeImage,
+        badgeRecord.badge.badgeImage
       );
     }
 
@@ -35,7 +70,7 @@ export const getClientProfile = async (req, res) => {
   try {
     console.log(req.params.id);
     const client = await ClientModel.findById(req.params.id).select(
-      "-password",
+      "-password"
     );
 
     if (client.photo) {
@@ -51,7 +86,7 @@ export const getClientProfile = async (req, res) => {
 
     for (const badgeRecord of badgeRecords) {
       badgeRecord.badge.badgePreSignedImage = await s3GetImages(
-        badgeRecord.badge.badgeImage,
+        badgeRecord.badge.badgeImage
       );
     }
 
@@ -76,7 +111,7 @@ export const updateAllBadgeRecords = async (req, res) => {
       }).populate("badge");
 
       badgeRecords = badgeRecords.filter(
-        (record) => record.isCompleted === false,
+        (record) => record.isCompleted === false
       );
       if (badgeRecords.length > 0) {
         const clientId = client._id;
@@ -105,6 +140,9 @@ export const updateAllBadgeRecords = async (req, res) => {
         });
 
         for (const badgeRecord of badgeRecords) {
+          const preSignedImage = await s3GetImages(
+            badgeRecord.badge.badgeImage
+          );
           if (
             badgeRecord.badge.sdgBadgeType === "GOLD" ||
             badgeRecord.badge.sdgBadgeType === "SILVER"
@@ -116,7 +154,8 @@ export const updateAllBadgeRecords = async (req, res) => {
             // Add notifications and emails here
             if (sdgSet.size >= badgeRecord.badge.sdgThreshold) {
               badgeRecord.isCompleted = true;
-              // console.log(badgeRecord);
+              await sendBadgeNotification(badgeRecord, session);
+              await sendBadgeMail(client, badgeRecord, preSignedImage);
             }
 
             badgeRecord.save();
@@ -129,6 +168,8 @@ export const updateAllBadgeRecords = async (req, res) => {
             if (sdgSet.has(badgeRecord.badge.sdg)) {
               badgeRecord.isCompleted = true;
               // console.log(badgeRecord);
+              await sendBadgeNotification(badgeRecord, session);
+              await sendBadgeMail(client, badgeRecord, preSignedImage);
             }
 
             badgeRecord.save();
@@ -141,6 +182,8 @@ export const updateAllBadgeRecords = async (req, res) => {
             if (sdgSet.size >= badgeRecord.badge.sdgThreshold) {
               badgeRecord.isCompleted = true;
               // console.log(badgeRecord);
+              await sendBadgeNotification(badgeRecord, session);
+              await sendBadgeMail(client, badgeRecord, preSignedImage);
             }
 
             badgeRecord.save();

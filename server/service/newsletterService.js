@@ -121,12 +121,18 @@ export const getCustomNewslettersMailingList = async () => {
   try {
     const mailingList = await ConsentModel.find({
       receiveAdminNewsletters: true,
-    }).populate({
-      path: "client",
-      select: "name email preferredActivityTypes", // Specify the fields you want to include
-    });
+    })
+      .populate({
+        path: "client",
+        match: { status: "APPROVED" },
+        select: "name email preferredActivityTypes status",
+      })
+      .exec();
 
-    return mailingList;
+    // Filter out null clients after populating
+    const filteredMailingList = mailingList.filter((item) => item.client);
+
+    return filteredMailingList;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -136,12 +142,18 @@ export const getPersonalisedNewslettersMailingList = async () => {
   try {
     const mailingList = await ConsentModel.find({
       receivePersonalisedRecommendations: true,
-    }).populate({
-      path: "client",
-      select: "name email preferredActivityTypes", // Specify the fields you want to include
-    });
+    })
+      .populate({
+        path: "client",
+        match: { status: "APPROVED" },
+        select: "name email preferredActivityTypes status",
+      })
+      .exec();
 
-    return mailingList;
+    // Filter out null clients after populating
+    const filteredMailingList = mailingList.filter((item) => item.client);
+
+    return filteredMailingList;
   } catch (error) {
     throw new Error(error.message);
   }

@@ -1038,7 +1038,7 @@ export const useTestimonialStore = create((set) => ({
         testimonialId,
         updateData,
       );
-      console.log("updateTestimonialById", response.data);
+      console.log("updateTestimonialById!!!", response.data);
       set({
         testimonial: response.data.testimonial,
         isLoading: false,

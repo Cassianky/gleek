@@ -4,12 +4,12 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
 import PaidIcon from "@mui/icons-material/Paid";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import { Button, Stack, Typography, useTheme } from "@mui/material";
+import { Button, Stack, Typography, useTheme,Chip } from "@mui/material";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { convertISOtoShortDate } from "../../utils/TimeFormatter";
+import { convertISOto24, convertISOtoShortDate, convertISOtoTime } from "../../utils/TimeFormatter";
 
 const SubmittedSurveysTable = ({ allSurveys, openSnackbar }) => {
   const [surveys, setSurveys] = useState([]);
@@ -65,7 +65,7 @@ const SubmittedSurveysTable = ({ allSurveys, openSnackbar }) => {
             fontSize={"1rem"}
             sx={{ color: theme.palette.primary.main }}
           >
-            Client Company
+            Client
           </Typography>
         );
       },
@@ -98,11 +98,54 @@ const SubmittedSurveysTable = ({ allSurveys, openSnackbar }) => {
     },
     {
       field: "startDateTime",
-      headerName: "Event Date",
+      renderHeader: (params) => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.primary.main }}
+          >
+            Event Date
+          </Typography>
+        );
+      },
       type: "date",
       flex: 1,
       valueGetter: (params) => {
         return new Date(params.row.booking.startDateTime);
+      },
+    },
+    {
+      field: "time",
+      flex: 1,
+      renderHeader: (params) => {
+        return (
+          <Typography
+            fontSize={"1rem"}
+            sx={{ color: theme.palette.primary.main }}
+          >
+            Time Slot
+          </Typography>
+        );
+      },
+      renderCell: (params) => {
+        const startTime = params.row.booking.startDateTime;
+        const endTime = params.row.booking.endDateTime;
+        return (
+         
+            <Chip
+            
+              label={
+                <Typography fontSize={"0.7rem"}>
+                  {convertISOto24(startTime)} - {convertISOto24(endTime)}
+                </Typography>
+              }
+              // sx={{ backgroundColor: theme.palette.pale_purple.main }}
+            />
+        
+        );
+      },
+      valueGetter: (params) => {
+        return params.row.startDateTime;
       },
     },
     {

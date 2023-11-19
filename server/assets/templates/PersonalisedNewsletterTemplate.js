@@ -117,7 +117,7 @@ export const PersonalisedNewsletterTemplate = ({
         }
         .button {
           display: block;
-          margin: 0 50px;
+          margin: 20px 50px;
           text-decoration: none;
           background-color: #5c4b99;
           color: #ffffff;

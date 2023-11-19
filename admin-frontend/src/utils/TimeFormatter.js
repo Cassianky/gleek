@@ -31,3 +31,15 @@ export const convertISOtoTime = (value) => {
     .toUpperCase();
   return formattedTime;
 };
+
+
+export const convertISOto24 = (value) => {
+  const date = new Date(value);
+  const formattedTime = date
+    .toLocaleTimeString("en-SG", {
+      hour: "numeric",
+      minute: "numeric",
+    })
+    .toUpperCase();
+  return formattedTime;
+};

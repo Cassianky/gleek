@@ -1244,3 +1244,81 @@ export const useChatStore = create((set) => ({
     );
   },
 }));
+
+export const useBadgeStore = create((set) => ({
+  badges: [],
+  setBadges: (newBadges) => set({ badges: newBadges }),
+  currentBadge: null,
+  setCurrentBadge: (newCurrentBadge) => set({ currentBadge: newCurrentBadge }),
+  isLoadingBadges: true,
+  badgeRecords: [],
+  setBadgeRecords: (newBadgeRecords) => set({ badgeRecords: newBadgeRecords }),
+  isLoadingBadgeRecords: true,
+  createBadge: async (formDataN) => {
+    try {
+      const response = await AxiosConnect.postMultiPart(
+        "/badge/createBadge",
+        formDataN,
+      );
+      return true;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
+  getAllBadges: async () => {
+    try {
+      set({ isLoadingBadges: true });
+      const response = await AxiosConnect.get("/badge/getAllBadges");
+      set({
+        isLoadingBadges: false,
+        badges: response.data.badges,
+      });
+      return true;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
+  getAllBadgeRecords: async (badgeId) => {
+    try {
+      set({ isLoadingBadgeRecords: true });
+      const response = await AxiosConnect.get(
+        `/badge/getAllBadgeRecords/${badgeId}`,
+      );
+      set({
+        isLoadingBadgeRecords: false,
+        badgeRecords: response.data.badgeRecords,
+      });
+      return true;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
+  deleteBadge: async (badgeId) => {
+    try {
+      const response = await AxiosConnect.patch(
+        `/badge/deleteBadgeAndBadgeRecords`,
+        badgeId,
+      );
+      await useBadgeStore.getState().getAllBadges();
+      await useBadgeStore.getState().getAllBadgeRecords();
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
+  updateAllBadgeRecords: async () => {
+    try {
+      const response = await AxiosConnect.post("/badge/updateAllBadgeRecords");
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
+}));

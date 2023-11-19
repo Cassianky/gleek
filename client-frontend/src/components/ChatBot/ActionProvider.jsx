@@ -25,7 +25,7 @@ class ActionProvider {
 
   help = () => {
     const message = this.createChatBotMessage(
-      `I will be redirecting you to Admin chat for more assistance 😊`
+      `I will be redirecting you to Admin chat for more assistance 😊`,
     );
     this.setChatbotMessage(message);
     this.setDirectChatAccess(true);
@@ -38,7 +38,7 @@ class ActionProvider {
 
   else = () => {
     const message = this.createChatBotMessage(
-      `I did not understand you. Please choose one of the options provided. 😊`
+      `I did not understand you. Please choose one of the options provided. 😊`,
     );
     this.setChatbotMessage(message);
   };
@@ -49,7 +49,7 @@ class ActionProvider {
       {
         widget: "options0",
         delay: 1500,
-      }
+      },
     );
     this.setChatbotMessageForReturnMain(message);
   };
@@ -67,7 +67,7 @@ class ActionProvider {
       "Type 'return' for previous menu. Require more help? Type 'help' for chat with Admin.",
       {
         delay: 2500,
-      }
+      },
     );
     this.setChatbotMessage(message);
   };
@@ -77,7 +77,7 @@ class ActionProvider {
       "Type 'return' for previous menu. Type 'main menu' to return to Main Menu. Require more help? Type 'help' for chat with Admin.",
       {
         delay: 2500,
-      }
+      },
     );
     this.setChatbotMessage(message);
   };
@@ -85,7 +85,7 @@ class ActionProvider {
   step1 = (input) => {
     input = input.toLowerCase();
     const message = this.createChatBotMessage(
-      `Great! You have picked ${this.options[0][input].label}`
+      `Great! You have picked ${this.options[0][input].label}`,
     );
     this.setChatbotMessage(message);
   };
@@ -97,7 +97,7 @@ class ActionProvider {
       {
         widget: "options1",
         delay: 1500,
-      }
+      },
     );
     this.setChatbotMessage(message, input);
   };
@@ -116,7 +116,7 @@ class ActionProvider {
       }
     }
     const message = this.createChatBotMessage(
-      `Great! You have picked ${answers[input].label}`
+      `Great! You have picked ${answers[input].label}`,
     );
     this.setChatbotMessage(message, input);
   };
@@ -159,7 +159,7 @@ class ActionProvider {
       }
     }
     const message = this.createChatBotMessage(
-      `Great! You have picked ${answers[input].label}`
+      `Great! You have picked ${answers[input].label}`,
     );
     this.setChatbotMessage(message, input);
   };
@@ -171,7 +171,7 @@ class ActionProvider {
       {
         widget: "options2",
         delay: 1500,
-      }
+      },
     );
     this.setChatbotMessage(message, input);
   };
@@ -182,7 +182,7 @@ class ActionProvider {
       {
         widget: "topFiveActivities",
         delay: 1500,
-      }
+      },
     );
     this.setChatbotMessage(message, input);
   };
@@ -193,7 +193,7 @@ class ActionProvider {
       {
         widget: "recentFiveActivities",
         delay: 1500,
-      }
+      },
     );
     this.setChatbotMessage(message, input);
   };

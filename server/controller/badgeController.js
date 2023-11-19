@@ -39,7 +39,7 @@ export const createBadge = async (req, res) => {
       [{ ...newBadge, badgeImage: fileS3Location }],
       {
         session: session,
-      }
+      },
     );
 
     const createdBadge = await newBadgeCreated[0].save();
@@ -60,12 +60,12 @@ export const createBadge = async (req, res) => {
     const updatedBadge = await BadgeModel.findByIdAndUpdate(
       createdBadge._id,
       { images: imagesPathArr },
-      { new: true, session }
+      { new: true, session },
     );
 
     // Upon successful creation of badge, create a corresponding badge record for each client
     const clients = await ClientModel.find({ status: "APPROVED" }).session(
-      session
+      session,
     );
 
     for (const client of clients) {
@@ -113,7 +113,7 @@ export const createBadge = async (req, res) => {
             ],
             {
               session: session,
-            }
+            },
           );
 
           const createdBadgeRecord = await newBadgeRecord[0].save({ session });
@@ -142,7 +142,7 @@ export const createBadge = async (req, res) => {
             ],
             {
               session: session,
-            }
+            },
           );
 
           const createdBadgeRecord = await newBadgeRecord[0].save({ session });
@@ -166,7 +166,7 @@ export const createBadge = async (req, res) => {
                 bookingCount: completedBookingsCount,
               },
             ],
-            { session: session }
+            { session: session },
           );
 
           const createdBadgeRecord = await newBadgeRecord[0].save();
@@ -213,7 +213,7 @@ export const updateBadge = async (req, res) => {
     const updatedBadge = await BadgeModel.findByIdAndUpdate(
       badgeId,
       updatedBadgeData,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!updatedBadge) {
@@ -225,6 +225,54 @@ export const updateBadge = async (req, res) => {
     res.status(200).json({
       message: "Badge successfully updated!",
       badge: updatedBadge,
+    });
+  } catch (err) {
+    return res.status(500).json({ status: "error", msg: "Server Error" });
+  }
+};
+
+export const getAllBadges = async (req, res) => {
+  try {
+    let badges = [];
+    badges = await BadgeModel.find();
+
+    for (const badge of badges) {
+      const badgePreSignedImage = await s3GetImages(badge.badgeImage);
+      badge.badgePreSignedImage = badgePreSignedImage;
+    }
+    res.status(200).json({
+      message: "Badge successfully retrieved!",
+      badges: badges,
+    });
+  } catch (err) {
+    return res.status(500).json({ status: "error", msg: "Server Error" });
+  }
+};
+
+export const deleteBadgeAndBadgeRecords = async (req, res) => {
+  try {
+    if (req.params.id === undefined) {
+      return res.status(400).json({
+        msg: "Params is undefined!",
+      });
+    }
+    // Find the badge by ID
+    const badge = await BadgeModel.findById(req.params.id);
+
+    if (!badge) {
+      return res.status(400).json({
+        message: "Badge does not exist!",
+        badge: badge,
+      });
+    }
+    // Find and delete badge records associated with the badge
+    await BadgeRecordModel.deleteMany({ badge: req.params.id });
+
+    // Delete the badge itself
+    await badge.deleteOne();
+
+    res.status(200).json({
+      message: "Badge and badge records successfully deleted!",
     });
   } catch (err) {
     return res.status(500).json({ status: "error", msg: "Server Error" });

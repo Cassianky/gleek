@@ -73,13 +73,13 @@ const Layout = ({ children }) => {
         {
           widget: "options0",
           delay: 1500,
-        }
+        },
       ),
       createChatBotMessage(
         `Type option (e.g., 1a). Else type 'help' to be redirected to chat with an Admin.`,
         {
           delay: 2500,
-        }
+        },
       ),
     ],
     customStyles: {
@@ -102,7 +102,7 @@ const Layout = ({ children }) => {
         widgetFunc: (props) => <Options {...props} />,
         props: {
           options: Object.entries(options[0]).map(
-            ([key, value]) => value.label
+            ([key, value]) => value.label,
           ),
         },
       },

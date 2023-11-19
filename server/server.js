@@ -129,7 +129,7 @@ io.on("connection", (socket) => {
   socket.on("new message", (newMessageReceived) => {
     console.log(
       "socket on new message received::",
-      newMessageReceived.messageContent
+      newMessageReceived.messageContent,
     );
     let uniqueId;
     if (newMessageReceived.senderRole === "CLIENT") {

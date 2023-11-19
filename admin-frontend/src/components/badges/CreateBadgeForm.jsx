@@ -22,9 +22,10 @@ import {
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { useRef } from "react";
-import AxiosConnect from "../../utils/AxiosConnect";
 import ImageAndFileUpload from "./ImageAndFileUpload";
 import { ImageConfig } from "../../utils/ImageConfig";
+import { useSnackbarStore, useBadgeStore } from "../../zustand/GlobalStore";
+import { useNavigate } from "react-router-dom";
 
 const StyledContainer = styled(Paper)`
   padding: 20px;
@@ -59,10 +60,12 @@ const DeleteIconButton = styled(IconButton)`
 `;
 
 const CreateBadgeForm = (theme) => {
+  const { openSnackbar } = useSnackbarStore();
+  const { createBadge } = useBadgeStore();
   const inputRef = useRef(null);
   const [badgeImages, setBadgeImages] = useState([]);
   const [imageListToEdit, setImageListToEdit] = useState([]);
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     badgeType: "",
@@ -71,8 +74,7 @@ const CreateBadgeForm = (theme) => {
     sdgThreshold: "",
     bookingThreshold: "",
     sdg: "",
-    badgeImage: null,
-    image: null,
+    badgeImage: "",
   });
 
   const [errorData, setErrorData] = useState({
@@ -83,6 +85,7 @@ const CreateBadgeForm = (theme) => {
     sdgThreshold: "",
     bookingThreshold: "",
     sdg: "",
+    badgeImage: "",
   });
 
   // When a field loses focus, validate the field.
@@ -98,12 +101,6 @@ const CreateBadgeForm = (theme) => {
   const validator = (formData, fieldName) => {
     let errors = {};
     switch (fieldName) {
-      case "bookingThreshold":
-        validateIsRequired(formData[fieldName], errors, fieldName);
-        break;
-      case "sdgThreshold":
-        validateIsRequired(formData[fieldName], errors, fieldName);
-        break;
       case "name":
         validateIsRequired(formData[fieldName], errors, fieldName);
         break;
@@ -116,6 +113,33 @@ const CreateBadgeForm = (theme) => {
       case "description":
         validateIsRequired(formData[fieldName], errors, fieldName);
         break;
+      case "sdgThreshold":
+        validateIsRequiredBasedOnBadgeType(
+          formData["badgeType"],
+          formData[fieldName],
+          errors,
+          fieldName,
+        );
+        break;
+      case "bookingThreshold":
+        validateIsRequiredBasedOnBadgeType(
+          formData["badgeType"],
+          formData[fieldName],
+          errors,
+          fieldName,
+        );
+        break;
+      case "sdg":
+        validateIsRequiredBasedOnBadgeType(
+          formData["badgeType"],
+          formData[fieldName],
+          errors,
+          fieldName,
+        );
+        break;
+      case "badgeImage":
+        validateIsRequired(formData[fieldName], errors, fieldName);
+        break;
       default:
     }
     return errors;
@@ -123,6 +147,33 @@ const CreateBadgeForm = (theme) => {
   const validateIsRequired = (data, errors, fieldName) => {
     if (data === "") {
       errors[fieldName] = `${fieldName} is required`;
+    }
+  };
+
+  const validateIsRequiredBasedOnBadgeType = (
+    badgeType,
+    data,
+    errors,
+    fieldName,
+  ) => {
+    if (badgeType === "GOLD" || badgeType === "SILVER") {
+      if (data === "") {
+        errors["sdgThreshold"] = `SDG Threshold is required`;
+        errors["sdg"] = "";
+        errors["bookingThreshold"] = "";
+      }
+    } else if (badgeType === "BRONZE") {
+      if (data === "") {
+        errors["sdg"] = `SDG is required`;
+        errors["sdgThreshold"] = "";
+        errors["bookingThreshold"] = "";
+      }
+    } else if (badgeType === "OTHER") {
+      if (data === "") {
+        errors["bookingThreshold"] = `Booking Threshold is required`;
+        errors["sdg"] = "";
+        errors["sdgThreshold"] = "";
+      }
     }
   };
 
@@ -202,7 +253,7 @@ const CreateBadgeForm = (theme) => {
 
   const handleRemoveImage = (image) => {
     setImageListToEdit((oldState) =>
-      oldState.filter((item) => item.src !== image.src)
+      oldState.filter((item) => item.src !== image.src),
     );
     const updatedList = [...badgeImages];
     updatedList.splice(badgeImages.indexOf(image.file), 1);
@@ -263,20 +314,34 @@ const CreateBadgeForm = (theme) => {
     if (formData.badgeImage) {
       formDataN.append("image", formData.badgeImage);
     }
-
-    // if (!formData.badgeImage) {
-    //   console.error("No file has been attached");
-    //   return;
-    // }
     for (let i = 0; i < badgeImages.length; i++) {
       formDataN.append("images", badgeImages[i]);
     }
-    const responseStatus = await AxiosConnect.postMultiPart(
-      "/badge/createBadge",
-      formDataN
-    );
 
-    console.log(responseStatus);
+    for (const fieldName in formData) {
+      let errors = validator(formData, fieldName);
+      setErrorData((prevData) => ({
+        ...prevData,
+        [fieldName]: errors[fieldName] || "",
+      }));
+    }
+
+    if (!Object.values(errorData).every((error) => error === "")) {
+      openSnackbar("There are errors in your badge creation details.", "error");
+      return;
+    }
+
+    try {
+      const responseStatus = await createBadge(formDataN);
+
+      if (responseStatus) {
+        openSnackbar("Badge Creation was successful!", "success");
+        navigate(-1);
+      }
+    } catch (error) {
+      const errorMessage = error?.response?.data?.msg;
+      openSnackbar(errorMessage, "error");
+    }
   };
 
   return (
@@ -406,7 +471,7 @@ const CreateBadgeForm = (theme) => {
                         <MenuItem key={value} value={value}>
                           {value}
                         </MenuItem>
-                      )
+                      ),
                     )}
                   </Select>
                   {errorData.sdg && (
@@ -561,7 +626,7 @@ const CreateBadgeForm = (theme) => {
             </Grid>
           </Grid>
         </StyledContainer>
-        <StyledContainer elevation={3}>
+        {/* <StyledContainer elevation={3}>
           <Grid container spacing={2} alignItems="left" justifyContent="left">
             <Grid item xs={12}>
               <Typography
@@ -575,31 +640,6 @@ const CreateBadgeForm = (theme) => {
             </Grid>
             <Grid item xs={6}>
               <ImageList>
-                {/* {existingImageList?.map((image, index) => {
-                  return (
-                    <ImageListItem key={index}>
-                      <img src={image} loading="lazy" />
-                      <ImageListItemBar
-                        sx={{
-                          background: "none",
-                        }}
-                        position="top"
-                        actionIcon={
-                          <DeleteIconButton
-                            sx={{
-                              backgroundColor: "white",
-                              color: "#D32F2F",
-                            }}
-                            onClick={() => handleRemoveExistingImage(image)}
-                          >
-                            <DeleteIcon />
-                          </DeleteIconButton>
-                        }
-                        actionPosition="left"
-                      />
-                    </ImageListItem>
-                  );
-                })} */}
                 {imageListToEdit?.map((image, index) => {
                   return (
                     <ImageListItem key={index}>
@@ -636,7 +676,7 @@ const CreateBadgeForm = (theme) => {
               </FormGroup>
             </Grid>
           </Grid>
-        </StyledContainer>
+        </StyledContainer> */}
       </div>
 
       <Grid
@@ -658,7 +698,9 @@ const CreateBadgeForm = (theme) => {
         </Grid>
         <Grid item xs={2}>
           <Button
-            // onClick={handleCancel}
+            onClick={() => {
+              navigate(-1);
+            }}
             variant="outlined"
             fullWidth
             color="unselected"

@@ -12,30 +12,28 @@ import {
   Box,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import {
-  useActivityStore,
-  useAdminSurveyResponseStore,
-  useBookingStore,
-  useSnackbarStore,
-} from "../../zustand/GlobalStore";
+import { useBadgeStore, useSnackbarStore } from "../../zustand/GlobalStore";
 import MainBodyContainer from "../common/MainBodyContainer";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import AxiosConnect from "../../utils/AxiosConnect";
+import BadgesTable from "./BadgesTable";
 
 // import ReviewActivityTable from "./ReviewActivityTable";
 function Badges() {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { badges, getAllBadges, isLoadingBadges, updateAllBadgeRecords } =
+    useBadgeStore();
 
   const { openSnackbar } = useSnackbarStore();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     await getActivity();
-  //   };
-  //   fetchData();
-  // }, [getActivity]);
+  useEffect(() => {
+    const fetchData = async () => {
+      await getAllBadges();
+    };
+    fetchData();
+  }, [getAllBadges]);
 
   const handleCreateButtonClick = () => {
     navigate("/createBadge");
@@ -43,13 +41,23 @@ function Badges() {
 
   const handleUpdateAllBadgeRecords = async () => {
     const responseStatus = await AxiosConnect.post(
-      "/badge/updateAllBadgeRecords"
+      "/badge/updateAllBadgeRecords",
     );
+    try {
+      const responseStatus = await updateAllBadgeRecords();
+
+      if (responseStatus) {
+        openSnackbar("Badge Record Update was successful!", "success");
+      }
+    } catch (error) {
+      const errorMessage = error?.response?.data?.msg;
+      openSnackbar(errorMessage, "error");
+    }
   };
 
-  // if (isLoading) {
-  //   return <CircularProgress />;
-  // }
+  if (isLoadingBadges) {
+    return <CircularProgress />;
+  }
   return (
     <MainBodyContainer
       hasBackButton={false}
@@ -57,7 +65,12 @@ function Badges() {
       breadcrumbLinks={[]}
       currentBreadcrumbName={"Manage Badges"}
     >
-      <Box display="flex" flexDirection="row" justifyContent="space-between">
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="space-between"
+        mb={5}
+      >
         <Typography
           fontSize={25}
           fontWeight={700}
@@ -117,7 +130,7 @@ function Badges() {
           </Button>
         </Box>
       </Box>
-      {/* {activities && <ReviewActivityTable activities={activities} />} */}
+      {badges && <BadgesTable badges={badges} />}
     </MainBodyContainer>
   );
 }

@@ -31,15 +31,16 @@ import ManageReviewsForActivity from "./components/review/ManageReviewsForActivi
 import AdminChatpage from "./components/chat/AdminChatPage";
 import ManageTestimonials from "./components/testimonial/ManageTestimonials.jsx";
 import TestimonialDetails from "./components/testimonial/TestimonialDetails.jsx";
-import VendorDetails from "./components/vendor/VendorDetails";
 import ManageNewsletters from "./components/marketing/ManageNewsletters";
 import ViewMailingLists from "./components/marketing/ViewMailingLists";
 import Badges from "./components/badges/Badges.jsx";
 import CreateBadgePage from "./components/badges/CreateBadgePage.jsx";
 import ManageFeaturedActivities from "./components/featured/ManageFeaturedActivities.jsx";
 import EditFeaturedActivity from "./components/featured/EditFeaturedActivity.jsx";
+import DashboardPage from "./components/analytics/DashboardPage.jsx";
 import ScheduledTaskDemo from "./components/ScheduledTaskDemo";
 import BadgesDetails from "./components/badges/BadgesDetails.js";
+import VendorDetails from "./components/vendor/VendorDetails";
 
 function App() {
   return (
@@ -111,7 +112,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
+          <Route
             exact
             path="/viewVendor/:vendorId"
             element={
@@ -119,7 +120,7 @@ function App() {
                 <VendorDetails />
               </ProtectedRoute>
             }
-          /> */}
+          />
           <Route
             exact
             path="/addVendor"
@@ -343,6 +344,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <EditFeaturedActivity />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
               </ProtectedRoute>
             }
           />

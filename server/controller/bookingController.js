@@ -136,7 +136,7 @@ function getTimeslotCapacities(
   capacity,
   bookings,
   blockedTimeslots,
-  duration,
+  duration
 ) {
   // Create a hashmap to store capacities for each starttime slot
   const capacities = new Map(startTimes.map((slot) => [slot, capacity]));
@@ -186,12 +186,12 @@ export function generateAllTimeslots(
   capacity,
   bookings,
   blockedTimeslots,
-  duration,
+  duration
 ) {
   const startTimes = generateStartTimes(
     earliestStartTime,
     latestStartTime,
-    interval,
+    interval
   );
 
   const timeslotCapacities = getTimeslotCapacities(
@@ -199,7 +199,7 @@ export function generateAllTimeslots(
     capacity,
     bookings,
     blockedTimeslots,
-    duration,
+    duration
   );
 
   const allTimeslots = startTimes.map((startTime, index) => {
@@ -275,7 +275,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
     const minDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() + daysInAdvance,
+      today.getDate() + daysInAdvance
     );
     if (dateParam < minDate) {
       return res.status(400).json({
@@ -294,24 +294,24 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.startTime.getHours(),
       activity.startTime.getMinutes(),
       0,
-      0,
+      0
     );
     const latestStartTime = new Date(dateParam);
     latestStartTime.setHours(
       activity.endTime.getHours(),
       activity.endTime.getMinutes(),
       0,
-      0,
+      0
     );
     console.log(
       "EARLIEST START TIME: ",
       earliestStartTime.toLocaleDateString(),
-      earliestStartTime.toLocaleTimeString(),
+      earliestStartTime.toLocaleTimeString()
     );
     console.log(
       "LATEST START TIME: ",
       latestStartTime.toLocaleDateString(),
-      latestStartTime.toLocaleTimeString(),
+      latestStartTime.toLocaleTimeString()
     );
 
     const interval = 30; // 30 minutes
@@ -347,7 +347,7 @@ export const getAvailableBookingTimeslots = async (req, res) => {
       activity.capacity,
       bookings,
       blockedTimeslots,
-      activity.duration,
+      activity.duration
     );
 
     res.status(200).json({
@@ -365,13 +365,13 @@ export const getAvailableBookingTimeslots = async (req, res) => {
 export function getTimeslotAvailability(
   allTimeslots,
   selectedStartDateTime,
-  selectedEndDateTime,
+  selectedEndDateTime
 ) {
   const timeslot = allTimeslots.find(
     (timeslot) =>
       timeslot.startTime.getTime() === selectedStartDateTime.getTime() &&
       timeslot.endTime.getTime() === selectedEndDateTime.getTime() &&
-      timeslot.isAvailable,
+      timeslot.isAvailable
   );
 
   return timeslot !== undefined;
@@ -526,6 +526,7 @@ export const createBookings = async (req, res) => {
 // DELETE /booking/deleteBooking/:id
 export const deleteBooking = async (req, res) => {
   try {
+    console.log("In delete booking::");
     const booking = await BookingModel.findByIdAndDelete(req.params.id);
     if (!booking) {
       return res
@@ -545,6 +546,7 @@ export const deleteBooking = async (req, res) => {
 // PATCH /booking/confirmBooking/:id
 export const confirmBooking = async (req, res) => {
   try {
+    console.log("In confirm booking::");
     const bookingId = req.params.id;
     const vendorId = req.user;
     const vendor = await VendorModel.findById(vendorId);
@@ -553,7 +555,7 @@ export const confirmBooking = async (req, res) => {
       "CONFIRMED",
       "VENDOR",
       vendor?.companyName,
-      null,
+      null
     );
 
     await newBooking.populate([
@@ -607,6 +609,7 @@ export const confirmBooking = async (req, res) => {
 // PATCH /booking/rejectBooking/:id
 export const rejectBooking = async (req, res) => {
   try {
+    console.log("In reject booking::");
     const bookingId = req.params.id;
     const vendorId = req.user;
     const { rejectionReason } = req.body;
@@ -616,7 +619,7 @@ export const rejectBooking = async (req, res) => {
       "REJECTED",
       "VENDOR",
       vendorName?.companyName,
-      rejectionReason,
+      rejectionReason
     );
 
     await newBooking.populate([
@@ -669,6 +672,7 @@ export const rejectBooking = async (req, res) => {
 
 export const cancelBooking = async (req, res) => {
   try {
+    console.log("In cancel booking::");
     const bookingId = req.params.id;
     const vendorId = req.user;
     const { cancelReason } = req.body;
@@ -678,7 +682,7 @@ export const cancelBooking = async (req, res) => {
       "CANCELLED",
       "VENDOR",
       vendorName?.companyName,
-      cancelReason,
+      cancelReason
     );
 
     await newBooking.populate([
@@ -690,6 +694,7 @@ export const cancelBooking = async (req, res) => {
       { path: "clientId", populate: [{ path: "name" }] },
     ]);
 
+    console.log(newBooking);
     const notificationReq = {
       senderRole: Role.VENDOR,
       sender: newBooking.vendorId,
@@ -731,6 +736,7 @@ export const cancelBooking = async (req, res) => {
 
 export const updateBookingStatus = async (req, res) => {
   try {
+    console.log("In update booking status::");
     const bookingId = req.params.id;
     const user = req.user;
     const { newStatus, actionRemarks, actionByUserType } = req.body;
@@ -749,16 +755,24 @@ export const updateBookingStatus = async (req, res) => {
           },
         },
       },
-      { new: true },
-    );
+      { new: true }
+    ).populate([
+      {
+        path: "activityId",
+        populate: [{ path: "title" }, { path: "adminCreated" }],
+      },
+      { path: "vendorId", populate: [{ path: "companyName" }] },
+      { path: "clientId", populate: [{ path: "name" }] },
+    ]);
 
     if (newStatus === "CONFIRMED") {
+      console.log("in confirmed");
       const notificationReq = {
-        senderRole: Role.ADMIN,
+        senderRole: Role.VENDOR,
         recipientRole: Role.CLIENT,
         recipient: updatedBooking.clientId,
         notificationEvent: NotificationEvent.BOOKING,
-        notificationAction: NotificationAction.APPROVEBYADMIN,
+        notificationAction: NotificationAction.APPROVE,
         eventId: updatedBooking._id,
         eventObj: updatedBooking,
       };
@@ -767,12 +781,13 @@ export const updateBookingStatus = async (req, res) => {
     }
 
     if (newStatus === "REJECTED") {
+      console.log("in rejected");
       const notificationReq = {
         senderRole: Role.ADMIN,
         recipientRole: Role.CLIENT,
         recipient: updatedBooking.clientId,
         notificationEvent: NotificationEvent.BOOKING,
-        notificationAction: NotificationAction.REJECTBYADMIN,
+        notificationAction: NotificationAction.REJECT,
         eventId: updatedBooking._id,
         eventObj: updatedBooking,
       };
@@ -781,17 +796,53 @@ export const updateBookingStatus = async (req, res) => {
     }
 
     if (newStatus === "CANCELLED") {
-      const notificationReq = {
-        senderRole: Role.ADMIN,
-        recipientRole: Role.CLIENT,
-        recipient: updatedBooking.clientId,
-        notificationEvent: NotificationEvent.BOOKING,
-        notificationAction: NotificationAction.CANCELBYADMIN,
-        eventId: updatedBooking._id,
-        eventObj: updatedBooking,
-      };
+      console.log("in cancelled");
+      console.log(updatedBooking);
+      let notificationReq;
+      let adminNotificationReq;
+
+      if (actionByUserType === "VENDOR") {
+        notificationReq = {
+          senderRole: Role.VENDOR,
+          recipientRole: Role.CLIENT,
+          recipient: updatedBooking.clientId,
+          notificationEvent: NotificationEvent.BOOKING,
+          notificationAction: NotificationAction.CANCEL, //client triggered
+          eventId: updatedBooking._id,
+          eventObj: updatedBooking,
+        };
+        adminNotificationReq = {
+          senderRole: Role.VENDOR,
+          sender: updatedBooking.vendorId,
+          recipientRole: Role.ADMIN,
+          notificationEvent: NotificationEvent.BOOKING,
+          notificationAction: NotificationAction.CANCELUPDATEADMIN,
+          eventId: updatedBooking._id,
+          eventObj: updatedBooking,
+        };
+      } else {
+        notificationReq = {
+          senderRole: Role.CLIENT,
+          recipientRole: Role.VENDOR,
+          recipient: updatedBooking.vendorId,
+          notificationEvent: NotificationEvent.BOOKING,
+          notificationAction: NotificationAction.CANCEL, //client triggered
+          eventId: updatedBooking._id,
+          eventObj: updatedBooking,
+        };
+        adminNotificationReq = {
+          senderRole: Role.CLIENT,
+          sender: updatedBooking.clientId,
+          recipientRole: Role.ADMIN,
+          notificationEvent: NotificationEvent.BOOKING,
+          notificationAction: NotificationAction.CANCELUPDATEADMIN,
+          eventId: updatedBooking._id,
+          eventObj: updatedBooking,
+        };
+      }
 
       await createNotification(notificationReq);
+      await createNotification(adminNotificationReq);
     }
 
     res.status(200).json({
@@ -1078,7 +1129,7 @@ cron.schedule("0 0 0 * * *", async () => {
   try {
     await updateCompletedBookingsStatusFromConfirmedToPendingPayment();
     console.log(
-      "Scheduled daily task to update completed booking(s) status from Confirmed to Pending Payment",
+      "Scheduled daily task to update completed booking(s) status from Confirmed to Pending Payment"
     );
   } catch (error) {
     console.error("Error in scheduled task:", error);

@@ -118,7 +118,7 @@ const CreateBadgeForm = (theme) => {
           formData["badgeType"],
           formData[fieldName],
           errors,
-          fieldName,
+          fieldName
         );
         break;
       case "bookingThreshold":
@@ -126,7 +126,7 @@ const CreateBadgeForm = (theme) => {
           formData["badgeType"],
           formData[fieldName],
           errors,
-          fieldName,
+          fieldName
         );
         break;
       case "sdg":
@@ -134,7 +134,7 @@ const CreateBadgeForm = (theme) => {
           formData["badgeType"],
           formData[fieldName],
           errors,
-          fieldName,
+          fieldName
         );
         break;
       case "badgeImage":
@@ -154,7 +154,7 @@ const CreateBadgeForm = (theme) => {
     badgeType,
     data,
     errors,
-    fieldName,
+    fieldName
   ) => {
     if (badgeType === "GOLD" || badgeType === "SILVER") {
       if (data === "") {
@@ -253,7 +253,7 @@ const CreateBadgeForm = (theme) => {
 
   const handleRemoveImage = (image) => {
     setImageListToEdit((oldState) =>
-      oldState.filter((item) => item.src !== image.src),
+      oldState.filter((item) => item.src !== image.src)
     );
     const updatedList = [...badgeImages];
     updatedList.splice(badgeImages.indexOf(image.file), 1);
@@ -471,7 +471,7 @@ const CreateBadgeForm = (theme) => {
                         <MenuItem key={value} value={value}>
                           {value}
                         </MenuItem>
-                      ),
+                      )
                     )}
                   </Select>
                   {errorData.sdg && (

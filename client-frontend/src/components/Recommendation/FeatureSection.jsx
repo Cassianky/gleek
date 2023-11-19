@@ -39,11 +39,13 @@ function FeatureSection() {
   return (
     <Container
       maxWidth="xl"
+  
       sx={{
-        width: "100%",
+        width: "90%",
         maxWidth: "80vw",
         height: "100%",
         paddingTop: 5,
+      
       }}
     >
       <Typography

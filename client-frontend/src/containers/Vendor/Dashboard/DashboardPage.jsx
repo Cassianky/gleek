@@ -24,6 +24,7 @@ import BookingsChart from "./BookingsChart";
 import OverviewCard from "./OverviewCard";
 import RevenueChart from "./RevenueChart";
 import WordCloud from "./WordCloud";
+import ManageReviewsForActivityTable from "./ManageReviewsForActivityTable";
 
 const StyledPage = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.grey[50],
@@ -34,12 +35,18 @@ const lowBookingRatioText =
 
 const DashboardPage = () => {
   const theme = useTheme();
-  const { data, isLoading, getDashboard } = useAnalyticsStore();
+  const { data, isLoading, getDashboard, reviews } = useAnalyticsStore();
   const [open, setOpen] = useState(false);
   const [selectedActivity, setActivity] = useState();
+  const [activityReviews, setActivityReviews] = useState();
 
   const handleOpen = (activity) => {
+    const filteredReviews = reviews.filter(
+      (review) => review?.activity?._id === activity?.activity?._id
+    );
+    setActivityReviews(filteredReviews);
     setActivity(activity);
+    setOpen(false);
   };
 
   const openSuggestion = () => {
@@ -55,7 +62,7 @@ const DashboardPage = () => {
       const sortedKeys = Object.keys(rev.activityByRevenue).sort(
         (a, b) =>
           rev.activityByRevenue[b].totalBookings -
-          rev.activityByRevenue[a].totalBookings,
+          rev.activityByRevenue[a].totalBookings
       );
 
       if (sortedKeys.length > 0) {
@@ -75,7 +82,7 @@ const DashboardPage = () => {
       const sortedKeys = Object.keys(rev.activityByRevenue).sort(
         (a, b) =>
           rev.activityByRevenue[b].totalRevenue -
-          rev.activityByRevenue[a].totalRevenue,
+          rev.activityByRevenue[a].totalRevenue
       );
 
       if (sortedKeys.length > 0) {
@@ -126,14 +133,14 @@ const DashboardPage = () => {
             <Grid item xs={3} sx={{ paddingRight: 2 }}>
               <OverviewCard
                 difference={data?.confirmedPendingPaidBookingsRevenue?.difference?.toFixed(
-                  2,
+                  2
                 )}
                 positive={
                   data?.confirmedPendingPaidBookingsRevenue?.difference > 0
                 }
                 sx={{ height: "100%" }}
                 value={data?.confirmedPendingPaidBookingsRevenue?.value?.toFixed(
-                  2,
+                  2
                 )}
                 title="Revenue"
                 icon={<MonetizationOnIcon fontSize="medium" />}
@@ -264,7 +271,7 @@ const DashboardPage = () => {
                             name="rating"
                             value={selectedActivity.avgReviewRating}
                           />
-                          {selectedActivity.avgReviewRating.toFixed(1)}
+                          {selectedActivity.avgReviewRating?.toFixed(1)}
                         </div>
                       </CardContent>
                       <CardHeader
@@ -314,6 +321,16 @@ const DashboardPage = () => {
                         )}
                       </CardContent>
                     </Card>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography
+                      fontSize={"1.5rem"}
+                      color={theme.palette.primary.main}
+                      marginBottom={2}
+                    >
+                      All reviews for {selectedActivity.activity.title}
+                    </Typography>
+                    <ManageReviewsForActivityTable reviews={activityReviews} />
                   </Grid>
                 </Grid>
               </Grid>

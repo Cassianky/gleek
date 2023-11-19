@@ -1,5 +1,5 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { Box, Chip, Drawer, Typography, useTheme } from "@mui/material";
+import { Box, Chip, Drawer, Typography, useTheme, Alert } from "@mui/material";
 import { DataGrid, GridToolbarFilterButton } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
@@ -10,7 +10,12 @@ import {
   convertISOtoTime,
 } from "../../../utils/TimeFormatter.js";
 
-const BookingsTable = ({ allBookings, status, additionalColumns }) => {
+const BookingsTable = ({
+  allBookings,
+  status,
+  additionalColumns,
+  canCancel,
+}) => {
   const [bookings, setBookings] = useState([]);
   const theme = useTheme();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -20,7 +25,7 @@ const BookingsTable = ({ allBookings, status, additionalColumns }) => {
   useEffect(() => {
     setTimeout(() => {
       const formattedBookings = allBookings.filter((booking) =>
-        status.includes(booking.status),
+        status.includes(booking.status)
       );
       setBookings(formattedBookings);
       setIsLoading(false);
@@ -209,6 +214,14 @@ const BookingsTable = ({ allBookings, status, additionalColumns }) => {
 
   return (
     <div style={{ height: 500, width: "99%" }}>
+      {canCancel && (
+        <Box mt={2} mb={2} boxShadow={1}>
+          <Alert severity="info">
+            Cancellation is only enabled for activities with start date time at
+            least 14 days after
+          </Alert>
+        </Box>
+      )}
       <DataGrid
         loading={isLoading}
         initialState={{

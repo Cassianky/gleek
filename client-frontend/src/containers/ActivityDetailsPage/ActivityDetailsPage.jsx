@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
   FormControl,
-  FormHelperText,
+  Alert,
   Select,
   MenuItem,
   InputLabel,
@@ -184,8 +184,7 @@ const ActivityDetailsPage = () => {
   const calculateOnlineAddOn = (location, onlinePricing, totalBasePrice) => {
     if (
       onlinePricing.amount !== null &&
-      (location.toLowerCase().includes("off-site") ||
-        location.toLowerCase().includes("on-site"))
+      location.toLowerCase().includes("virtual")
     ) {
       if (onlinePricing.isDiscount) {
         return -(onlinePricing.amount / 100) * totalBasePrice;
@@ -199,7 +198,8 @@ const ActivityDetailsPage = () => {
   const calculateOfflineAddOn = (location, offlinePricing, totalBasePrice) => {
     if (
       offlinePricing.amount !== null &&
-      location.toLowerCase().includes("virtual")
+      (location.toLowerCase().includes("off-site") ||
+        location.toLowerCase().includes("on-site"))
     ) {
       if (offlinePricing.isDiscount) {
         return -(offlinePricing.amount / 100) * totalBasePrice;
@@ -351,6 +351,15 @@ const ActivityDetailsPage = () => {
 
   return (
     <Box>
+      {client?.status !== "APPROVED" && (
+        <Alert severity="warning">
+          Your account is pending review.
+          <p>
+            Booking functionality will be limited, but you can still browse
+            activities.
+          </p>
+        </Alert>
+      )}
       {currentActivityLoading && (
         <Box display="flex" justifyContent="center">
           <CircularProgress sx={{ margin: "auto" }} />
@@ -683,6 +692,7 @@ const ActivityDetailsPage = () => {
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
                                   2,
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>
@@ -788,7 +798,8 @@ const ActivityDetailsPage = () => {
                       selectedDate === null ||
                       pax.length === 0 ||
                       location.length === 0 ||
-                      time.length === 0
+                      time.length === 0 ||
+                      client.status !== "APPROVED"
                     }
                     color="secondary"
                     style={{ color: "white" }}

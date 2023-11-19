@@ -279,28 +279,32 @@ const DashboardPage = () => {
                         style={{ color: theme.palette.primary.main }}
                       />
                       <CardContent sx={{ paddingTop: 0 }}>
-                        {calculateBookingReviewRatio()}
-                        {calculateBookingReviewRatio() < 0.5 && (
-                          <Alert
-                            severity="warning"
-                            action={
-                              <Button
-                                color="inherit"
-                                size="small"
-                                onClick={openSuggestion}
-                              >
-                                View Suggestion
-                              </Button>
-                            }
-                          >
-                            Your booking to review ratio is low.
-                          </Alert>
-                        )}
-                        {calculateBookingReviewRatio() > 0.5 && (
-                          <Alert severity="warning">
-                            Your booking to review ratio is good.
-                          </Alert>
-                        )}
+                        {isNaN(calculateBookingReviewRatio())
+                          ? ""
+                          : calculateBookingReviewRatio()}
+                        {calculateBookingReviewRatio() < 0.5 &&
+                          !isNaN(calculateBookingReviewRatio()) && (
+                            <Alert
+                              severity="warning"
+                              action={
+                                <Button
+                                  color="inherit"
+                                  size="small"
+                                  onClick={openSuggestion}
+                                >
+                                  View Suggestion
+                                </Button>
+                              }
+                            >
+                              Your booking to review ratio is low.
+                            </Alert>
+                          )}
+                        {calculateBookingReviewRatio() > 0.5 &&
+                          !isNaN(calculateBookingReviewRatio()) && (
+                            <Alert severity="info">
+                              Your booking to review ratio is good.
+                            </Alert>
+                          )}
                         {open && (
                           <Box
                             sx={{

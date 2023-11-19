@@ -59,6 +59,21 @@ const ViewPastBookings = () => {
     fetchData();
   }, [getAllBookings]);
 
+  const getSortedBookings = (status) => {
+    const filteredBookings = bookings.filter((booking) => booking.status === status);
+    console.log(bookings);
+
+    
+    // Sort the bookings based on the timestamp of the last action in actionHistory
+    const sortedBookings = filteredBookings.sort((a, b) => {
+      const lastActionA = a.actionHistory[a.actionHistory.length - 1];
+      const lastActionB = b.actionHistory[b.actionHistory.length - 1];
+      return new Date(lastActionB?.actionTimestamp) - new Date(lastActionA?.actionTimestamp);
+    });
+  
+    return sortedBookings;
+  };
+
   const handleChange = (event, newVal) => {
     setCurrentTab(newVal);
   };
@@ -94,21 +109,21 @@ const ViewPastBookings = () => {
         <>
           {currentTab === "completedAndPaid" && (
             <BookingsTable
-              bookings={bookings}
+              bookings={getSortedBookings("PAID")}
               status="PAID"
               additionalColumns={completedAndPaidAdditionalColumns}
             />
           )}
           {currentTab === "rejected" && (
             <BookingsTable
-              bookings={bookings}
+              bookings={getSortedBookings("REJECTED")}
               status="REJECTED"
               additionalColumns={rejectedAdditionalColumns}
             />
           )}
           {currentTab === "cancelled" && (
             <BookingsTable
-              bookings={bookings}
+              bookings={getSortedBookings("CANCELLED")}
               status="CANCELLED"
               additionalColumns={cancelledAdditionalColumns}
             />

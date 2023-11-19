@@ -4,12 +4,18 @@ export const getMailingLists = async (req, res) => {
   try {
     const mailingLists = await ConsentModel.find({
       client: { $ne: null },
-    }).populate({
-      path: "client",
-      select: "name email companyName", // Specify the fields you want to include
-    });
+    })
+      .populate({
+        path: "client",
+        match: { status: "APPROVED" }, // Add this line to filter by client status
+        select: "name email companyName status", // Specify the fields you want to include
+      })
+      .exec();
 
-    return res.status(200).json(mailingLists);
+    // Filter out null clients after populating
+    const filteredMailingLists = mailingLists.filter((item) => item.client);
+
+    return res.status(200).json(filteredMailingLists);
   } catch (err) {
     console.log(err);
     return res.status(500).json({

@@ -11,7 +11,7 @@ import {
 export const sendNewsletter = async (newsletter, recipient) => {
   try {
     console.log(
-      "Sending newsletter to " + recipient.name + " at " + recipient.email,
+      "Sending newsletter to " + recipient.name + " at " + recipient.email
     );
     const preSignedUrl =
       newsletter.photo && (await s3GetImages(newsletter.photo));
@@ -25,7 +25,7 @@ export const sendNewsletter = async (newsletter, recipient) => {
         Object.values(recipient.preferredActivityTypes).some((value) => value)
       ) {
         const preferredActivityTypes = Object.keys(
-          recipient.preferredActivityTypes,
+          recipient.preferredActivityTypes
         )
           .filter((type) => recipient.preferredActivityTypes[type])
           .map((type) => {
@@ -96,8 +96,8 @@ export const sendNewsletter = async (newsletter, recipient) => {
           newsletter.subject,
           newsletter.messageBody,
           preSignedUrl,
-          activities,
-        ),
+          activities
+        )
       );
     } else {
       await sendMail(
@@ -108,8 +108,8 @@ export const sendNewsletter = async (newsletter, recipient) => {
           },
           newsletter.subject,
           newsletter.messageBody,
-          preSignedUrl,
-        ),
+          preSignedUrl
+        )
       );
     }
   } catch (error) {
@@ -121,12 +121,18 @@ export const getCustomNewslettersMailingList = async () => {
   try {
     const mailingList = await ConsentModel.find({
       receiveAdminNewsletters: true,
-    }).populate({
-      path: "client",
-      select: "name email preferredActivityTypes", // Specify the fields you want to include
-    });
+    })
+      .populate({
+        path: "client",
+        match: { status: "APPROVED" },
+        select: "name email preferredActivityTypes status",
+      })
+      .exec();
 
-    return mailingList;
+    // Filter out null clients after populating
+    const filteredMailingList = mailingList.filter((item) => item.client);
+
+    return filteredMailingList;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -136,12 +142,18 @@ export const getPersonalisedNewslettersMailingList = async () => {
   try {
     const mailingList = await ConsentModel.find({
       receivePersonalisedRecommendations: true,
-    }).populate({
-      path: "client",
-      select: "name email preferredActivityTypes", // Specify the fields you want to include
-    });
+    })
+      .populate({
+        path: "client",
+        match: { status: "APPROVED" },
+        select: "name email preferredActivityTypes status",
+      })
+      .exec();
 
-    return mailingList;
+    // Filter out null clients after populating
+    const filteredMailingList = mailingList.filter((item) => item.client);
+
+    return filteredMailingList;
   } catch (error) {
     throw new Error(error.message);
   }

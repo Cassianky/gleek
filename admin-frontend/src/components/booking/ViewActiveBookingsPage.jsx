@@ -113,6 +113,21 @@ const ViewActiveBookings = () => {
     fetchData();
   }, [getAllBookings]);
 
+  const getSortedBookings = (status) => {
+    const filteredBookings = bookings.filter((booking) => booking.status === status);
+    console.log(bookings);
+
+    
+    // Sort the bookings based on the timestamp of the last action in actionHistory
+    const sortedBookings = filteredBookings.sort((a, b) => {
+      const lastActionA = a.actionHistory[a.actionHistory.length - 1];
+      const lastActionB = b.actionHistory[b.actionHistory.length - 1];
+      return new Date(lastActionB?.actionTimestamp) - new Date(lastActionA?.actionTimestamp);
+    });
+  
+    return sortedBookings;
+  };
+
   const handleChange = (event, newVal) => {
     setCurrentTab(newVal);
   };
@@ -169,21 +184,21 @@ const ViewActiveBookings = () => {
           {currentTab === "calendar" && <div>cal</div>}
           {currentTab === "pendingConfirmation" && (
             <BookingsTable
-              bookings={bookings}
+              bookings={getSortedBookings("PENDING_CONFIRMATION")}
               status="PENDING_CONFIRMATION"
               additionalColumns={pendingConfirmationAdditionalColumns}
             />
           )}
           {currentTab === "confirmed" && (
             <BookingsTable
-              bookings={bookings}
+              bookings={getSortedBookings("CONFIRMED")}
               status="CONFIRMED"
               additionalColumns={confirmedAdditionalColumns}
             />
           )}
           {currentTab === "pendingPayment" && (
             <BookingsTable
-              bookings={bookings}
+              bookings={getSortedBookings("PENDING_PAYMENT")}
               status="PENDING_PAYMENT"
               additionalColumns={pendingPaymentAdditionalColumns}
             />

@@ -276,7 +276,7 @@ const ActivityDetailsQuickView = ({ activity, imgs, vendorProfile }) => {
                       </FormLabel>
                       <RadioGroup
                         aria-labelledby="demo-radio-buttons-group-label"
-                        defaultValue={activity.isFood.toString()}
+                        defaultValue={activity.isFood?.toString()}
                         name="radio-buttons-group"
                       >
                         <FormControlLabel
@@ -342,7 +342,7 @@ const ActivityDetailsQuickView = ({ activity, imgs, vendorProfile }) => {
                       aria-labelledby="demo-radio-buttons-group-label"
                       defaultValue="yes"
                       name="radio-buttons-group"
-                      value={activity.isFoodCertPending.toString()}
+                      value={activity.isFoodCertPending?.toString()}
                     >
                       <FormControlLabel
                         value="true"

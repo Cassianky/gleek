@@ -39,23 +39,23 @@ const BookingsPage = () => {
   const { openSnackbar } = useSnackbarStore();
 
   const pendingBookingBadgeNumber = bookings.filter(
-    (booking) => booking.status === "PENDING_CONFIRMATION"
+    (booking) => booking.status === "PENDING_CONFIRMATION",
   ).length;
 
   const completedAndPaidBadgeNumber = bookings.filter((booking) =>
-    ["PAID", "PENDING_PAYMENT"].includes(booking.status)
+    ["PAID", "PENDING_PAYMENT"].includes(booking.status),
   ).length;
 
   const confirmedBadgeNumber = bookings.filter(
-    (booking) => booking.status === "CONFIRMED"
+    (booking) => booking.status === "CONFIRMED",
   ).length;
 
   const cancelledBadgeNumber = bookings.filter(
-    (booking) => booking.status === "CANCELLED"
+    (booking) => booking.status === "CANCELLED",
   ).length;
 
   const rejectedBadgeNumber = bookings.filter(
-    (booking) => booking.status === "REJECTED"
+    (booking) => booking.status === "REJECTED",
   ).length;
 
   useEffect(() => {

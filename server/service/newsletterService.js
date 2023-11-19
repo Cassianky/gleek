@@ -11,7 +11,7 @@ import {
 export const sendNewsletter = async (newsletter, recipient) => {
   try {
     console.log(
-      "Sending newsletter to " + recipient.name + " at " + recipient.email
+      "Sending newsletter to " + recipient.name + " at " + recipient.email,
     );
     const preSignedUrl =
       newsletter.photo && (await s3GetImages(newsletter.photo));
@@ -25,7 +25,7 @@ export const sendNewsletter = async (newsletter, recipient) => {
         Object.values(recipient.preferredActivityTypes).some((value) => value)
       ) {
         const preferredActivityTypes = Object.keys(
-          recipient.preferredActivityTypes
+          recipient.preferredActivityTypes,
         )
           .filter((type) => recipient.preferredActivityTypes[type])
           .map((type) => {
@@ -96,8 +96,8 @@ export const sendNewsletter = async (newsletter, recipient) => {
           newsletter.subject,
           newsletter.messageBody,
           preSignedUrl,
-          activities
-        )
+          activities,
+        ),
       );
     } else {
       await sendMail(
@@ -108,8 +108,8 @@ export const sendNewsletter = async (newsletter, recipient) => {
           },
           newsletter.subject,
           newsletter.messageBody,
-          preSignedUrl
-        )
+          preSignedUrl,
+        ),
       );
     }
   } catch (error) {

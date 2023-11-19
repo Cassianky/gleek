@@ -23,21 +23,21 @@ export const getTotalRevenue = async (req, res) => {
   const thisMonthRev = await calculateVendorRevenue(
     currentYear,
     currentMonth,
-    vendorId
+    vendorId,
   );
   const lastMonthRev = await calculateVendorRevenue(
     previousYear,
     previousMonth,
-    vendorId
+    vendorId,
   );
 
   const revenueDiff = calculateDifference(
     thisMonthRev.revenue,
-    lastMonthRev.revenue
+    lastMonthRev.revenue,
   );
   const bookingsDiff = calculateDifference(
     thisMonthRev.count,
-    lastMonthRev.count
+    lastMonthRev.count,
   );
 
   for (let i = 0; i < 12; i++) {
@@ -57,7 +57,7 @@ export const getTotalRevenue = async (req, res) => {
             activityByRevenue[a].totalRevenue;
         } else {
           activityRevenue[activityByRevenue[a].activityTitle] = new Array(
-            12
+            12,
           ).fill(0);
           activityRevenue[activityByRevenue[a].activityTitle][i] =
             activityByRevenue[a].totalRevenue;
@@ -67,7 +67,7 @@ export const getTotalRevenue = async (req, res) => {
             activityByRevenue[a].totalBookings;
         } else {
           activityBookings[activityByRevenue[a].activityTitle] = new Array(
-            12
+            12,
           ).fill(0);
           activityBookings[activityByRevenue[a].activityTitle][i] =
             activityByRevenue[a].totalBookings;
@@ -104,7 +104,7 @@ export const getTotalRevenue = async (req, res) => {
 export const calculateVendorRevenue = async (
   currentYear,
   currentMonth,
-  vendorId
+  vendorId,
 ) => {
   const startOfMonth = new Date(currentYear, currentMonth, 1);
   const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
@@ -147,7 +147,7 @@ export const calculateVendorRevenue = async (
         acc[activityId].totalRevenue += totalVendorAmount;
         return acc;
       },
-      {}
+      {},
     );
 
     return {
@@ -157,7 +157,7 @@ export const calculateVendorRevenue = async (
     };
   } catch (error) {
     throw new Error(
-      "Server Error! Unable to retrieve dashboard." + error.message
+      "Server Error! Unable to retrieve dashboard." + error.message,
     );
   }
 };
@@ -201,20 +201,20 @@ export const calculateAdminProfit = async (req, res) => {
         acc[activityId._id].profit += totalCost - totalVendorAmount;
         return acc;
       },
-      {}
+      {},
     );
 
     const arr = Object.entries(activityByRevenue).map(
       ([activityId, activityDetails]) => ({
         activityId,
         ...activityDetails,
-      })
+      }),
     );
 
     const result = generateProfitPerMonth(
       startDate,
       endDate,
-      confirmedPendingPaidBookings
+      confirmedPendingPaidBookings,
     );
 
     res.status(200).json({
@@ -311,7 +311,7 @@ export const generateProfitPerMonth = (start, end, bookings) => {
         ([activityId, activityDetails]) => ({
           activityId,
           ...activityDetails,
-        })
+        }),
       );
 
       let entry = {};
@@ -339,7 +339,7 @@ export const generateProfitPerMonth = (start, end, bookings) => {
 export const calculateVendorRevenueAndClientCost = async (
   currentYear,
   currentMonth,
-  vendorId
+  vendorId,
 ) => {
   const startOfMonth = new Date(currentYear, currentMonth, 1);
   const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
@@ -389,7 +389,7 @@ export const calculateVendorRevenueAndClientCost = async (
         acc[activityId].totalClientCost += totalCost;
         return acc;
       },
-      {}
+      {},
     );
 
     return {
@@ -399,7 +399,7 @@ export const calculateVendorRevenueAndClientCost = async (
     };
   } catch (error) {
     throw new Error(
-      "Server Error! Unable to retrieve dashboard." + error.message
+      "Server Error! Unable to retrieve dashboard." + error.message,
     );
   }
 };
@@ -422,7 +422,7 @@ export const getActivitySentiment = async (vendorId) => {
         .populate("review")
         .then((sentiments) => {
           const filteredSentiments = sentiments.filter(
-            (sentiment) => sentiment.review?.hidden === false
+            (sentiment) => sentiment.review?.hidden === false,
           );
           return filteredSentiments;
         })
@@ -439,13 +439,13 @@ export const getActivitySentiment = async (vendorId) => {
       });
       const totalRecommendationScore = surveys.reduce(
         (total, s) => total + s.recommendationScore,
-        0
+        0,
       );
       const avgRecommendationScore = totalRecommendationScore / surveys.length;
 
       const totalRepeatActivityDifferentVendorScore = surveys.reduce(
         (total, s) => total + s.repeatActivityDifferentVendorScore,
-        0
+        0,
       );
 
       const avgRepeatActivityDifferentVendorScore =
@@ -453,7 +453,7 @@ export const getActivitySentiment = async (vendorId) => {
 
       const totalRepeatActivityScore = surveys.reduce(
         (total, s) => total + s.repeatActivityScore,
-        0
+        0,
       );
 
       const avgTotalRepeatActivityScore =
@@ -461,7 +461,7 @@ export const getActivitySentiment = async (vendorId) => {
 
       const totalSentiment = surveySentiments.reduce(
         (total, s) => total + s.overallSentiment,
-        0
+        0,
       );
 
       const reviews = await Review.find({
@@ -471,7 +471,7 @@ export const getActivitySentiment = async (vendorId) => {
 
       const totalRatingScore = reviews.reduce(
         (total, s) => total + s.rating,
-        0
+        0,
       );
       const avgReviewRating = totalRatingScore / reviews.length;
       let activityLiked = [];
@@ -489,7 +489,7 @@ export const getActivitySentiment = async (vendorId) => {
       });
       const reviewSentimentScore = reviewSentiments.reduce(
         (total, s) => total + s.overallSentiment,
-        0
+        0,
       );
       res.push({
         activity: activity,
@@ -516,4 +516,3 @@ export const getActivitySentiment = async (vendorId) => {
 export const calculateDifference = (currentRev, pastRev) => {
   return pastRev !== 0 ? ((currentRev - pastRev) * 100) / pastRev : 12;
 };
-

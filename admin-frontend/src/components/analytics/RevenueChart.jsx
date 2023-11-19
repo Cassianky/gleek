@@ -40,7 +40,7 @@ const RevenueChart = ({ data }) => {
         };
       }
       const monthIndex = predefinedMonthRange.findIndex(
-        ({ month, year }) => month === currentMonth && year === currentYear
+        ({ month, year }) => month === currentMonth && year === currentYear,
       );
       if (monthIndex !== -1) {
         activityIdProfitsMap[key].profits[monthIndex] = profit;
@@ -53,7 +53,7 @@ const RevenueChart = ({ data }) => {
       activityId,
       activityTitle,
       profits,
-    })
+    }),
   );
   const options = {
     toolbox: {

@@ -17,7 +17,7 @@ const useShopStore = create((set) => ({
     try {
       set({ currentActivityLoading: true });
       const response = await AxiosConnect.get(
-        `/gleek/shop/viewActivity/${activityId}`
+        `/gleek/shop/viewActivity/${activityId}`,
       );
       console.log(response.data.data);
       set({ currentActivity: response.data.data });
@@ -57,10 +57,10 @@ const useShopStore = create((set) => ({
         {
           filter: filter,
           searchValue: searchValue,
-        }
+        },
       );
       const sortedActivities = [...response.data.activities].sort(
-        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate),
       );
       set({ sortBy: "Newest First" });
       set({ activities: sortedActivities });
@@ -78,10 +78,10 @@ const useShopStore = create((set) => ({
         {
           filter: filter,
           searchValue,
-        }
+        },
       );
       const sortedActivities = [...response.data.activities].sort(
-        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate),
       );
       console.log(response.data.activities);
       set({ sortBy: "Newest First" });
@@ -99,7 +99,7 @@ const useShopStore = create((set) => ({
   getInitialSuggestions: async () => {
     try {
       const response = await AxiosConnect.get(
-        "/gleek/shop/getAllActivitiesNames"
+        "/gleek/shop/getAllActivitiesNames",
       );
       set({ initialSuggestions: response.data.data });
     } catch (error) {
@@ -121,7 +121,7 @@ const useShopStore = create((set) => ({
     set({ priceFilterLoading: true });
     try {
       const response = await AxiosConnect.get(
-        "/gleek/shop/getMinAndMaxPricePerPax"
+        "/gleek/shop/getMinAndMaxPricePerPax",
       );
 
       set({ minPriceValue: response.data.minPrice });
@@ -143,11 +143,11 @@ const useShopStore = create((set) => ({
     set({ timeSlotsLoading: true });
     try {
       const response = await AxiosConnect.get(
-        `/gleek/booking/getAvailableBookingTimeslots/${activityId}/${selectedDate}`
+        `/gleek/booking/getAvailableBookingTimeslots/${activityId}/${selectedDate}`,
       );
       set({
         timeSlots: response.data.allTimeslots.filter(
-          (timeslot) => timeslot.isAvailable === true
+          (timeslot) => timeslot.isAvailable === true,
         ),
       });
       set({ timeSlotsLoading: false });
@@ -164,10 +164,10 @@ const useShopStore = create((set) => ({
     try {
       const response = await AxiosConnect.post(
         "/gleek/shop/getQuotationPdfUrl",
-        bookingData
+        bookingData,
       );
       window.open(
-        `http://localhost:5000/gleek/shop/getQuotationPdf/${response.data}`
+        `http://localhost:5000/gleek/shop/getQuotationPdf/${response.data}`,
       );
       return;
     } catch (err) {

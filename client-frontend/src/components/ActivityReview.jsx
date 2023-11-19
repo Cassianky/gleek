@@ -39,7 +39,7 @@ const ActivityReview = ({ reviews, averageRating }) => {
     review.reviewSentiment.keywords
       .filter(
         (keyword) =>
-          keyword.sentiment === "POSITIVE" || keyword.sentiment === "NEGATIVE"
+          keyword.sentiment === "POSITIVE" || keyword.sentiment === "NEGATIVE",
       )
       .forEach(function (keyword) {
         if (chipMap.has(keyword)) {
@@ -72,7 +72,7 @@ const ActivityReview = ({ reviews, averageRating }) => {
     if (filter.rating > 0) {
       // Filter by rating
       tempFiltered = tempFiltered.filter(
-        (review) => review.rating >= filter.rating
+        (review) => review.rating >= filter.rating,
       );
     }
 
@@ -80,14 +80,14 @@ const ActivityReview = ({ reviews, averageRating }) => {
       // Filter by words
       tempFiltered = tempFiltered.filter((review) => {
         const keywords = review.reviewSentiment.keywords.map(
-          (keyword) => keyword.word
+          (keyword) => keyword.word,
         );
         return filter.words.some((word) => keywords.includes(word));
       });
     }
 
     tempFiltered = tempFiltered.sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
+      (a, b) => new Date(b.date) - new Date(a.date),
     );
     setSortBy("Most Recent");
 
@@ -123,7 +123,7 @@ const ActivityReview = ({ reviews, averageRating }) => {
   const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
   const currentReviews = filteredReviews.slice(
     indexOfFirstReview,
-    indexOfLastReview
+    indexOfLastReview,
   );
 
   const handleChange = (event) => {
@@ -131,11 +131,11 @@ const ActivityReview = ({ reviews, averageRating }) => {
     let sortedReviews = [...filteredReviews];
     if (event.target.value === "Most Recent") {
       sortedReviews = sortedReviews.sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
+        (a, b) => new Date(b.date) - new Date(a.date),
       );
     } else if (event.target.value === "Oldest") {
       sortedReviews = sortedReviews.sort(
-        (a, b) => new Date(a.date) - new Date(b.date)
+        (a, b) => new Date(a.date) - new Date(b.date),
       );
     } else if (event.target.value === "From Most Highly Rated") {
       sortedReviews = sortedReviews.sort((a, b) => b.rating - a.rating);

@@ -21,7 +21,7 @@ const ChatDisplay = () => {
   }, []);
 
   return (
-    <ScrollableFeed >
+    <ScrollableFeed>
       {currentChatroomMessages &&
         currentChatroomMessages.map((message, idx) => (
           <div

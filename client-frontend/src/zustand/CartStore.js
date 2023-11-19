@@ -2,6 +2,7 @@ import { create } from "zustand";
 import AxiosConnect from "../utils/AxiosConnect";
 
 const useCartStore = create((set) => ({
+  checkoutIsLoading: false,
   cartItems: [],
   setCartItems: (newCartItems) => set({ cartItems: newCartItems }),
   newCartItem: null,
@@ -9,7 +10,7 @@ const useCartStore = create((set) => ({
   getCartItems: async () => {
     try {
       const response = await AxiosConnect.get(
-        `/gleek/cart/getCartItemsByClientId`,
+        `/gleek/cart/getCartItemsByClientId`
       );
       const data = response.data;
       const combinedDataArray = data.map((item) => ({
@@ -30,7 +31,7 @@ const useCartStore = create((set) => ({
       set({ addToCartLoading: false });
       const response = await AxiosConnect.post(
         `/gleek/cart/addCartItem`,
-        cartItemData,
+        cartItemData
       );
       console.log(response.data.data);
       set({ newCartItem: response.data.data });
@@ -45,7 +46,7 @@ const useCartStore = create((set) => ({
   deleteCartItem: async (cartId) => {
     try {
       const response = await AxiosConnect.delete(
-        `/gleek/cart/deleteCartItem/${cartId}`,
+        `/gleek/cart/deleteCartItem/${cartId}`
       );
       return true;
     } catch (error) {
@@ -57,10 +58,10 @@ const useCartStore = create((set) => ({
     set({ cartItemsToCheckOut: newCartItemsToCheckOut }),
   checkout: async (cartItemsToCheckOut) => {
     try {
-      // set({ addToCartLoading: false });
+      set({ checkoutIsLoading: true });
       const response = await AxiosConnect.post(
         `/gleek/booking/createBookings`,
-        cartItemsToCheckOut,
+        cartItemsToCheckOut
       );
       // console.log(response.data.data);
       // set({ newCartItem: response.data.data });
@@ -68,8 +69,10 @@ const useCartStore = create((set) => ({
       //   set({ addToCartLoading: false });
       // }, 500);
       set({ cartItemsToCheckOut: [] });
+      set({ checkoutIsLoading: false });
       return true;
     } catch (error) {
+      set({ checkoutIsLoading: false });
       throw error;
     }
   },

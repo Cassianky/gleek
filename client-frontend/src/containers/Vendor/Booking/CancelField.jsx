@@ -53,7 +53,7 @@ const CancelField = ({ bookingData }) => {
     {
       label: "Timeslot",
       value: `${convertISOtoTime(
-        bookingData.startDateTime
+        bookingData.startDateTime,
       )} - ${convertISOtoTime(bookingData.endDateTime)}`,
     },
     { label: "Total Cost", value: `$${bookingData.totalCost}` },

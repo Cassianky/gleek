@@ -2,6 +2,7 @@ import BadgeRecordModel from "../model/badgeRecordModel.js";
 import ClientModel from "../model/clientModel.js";
 import { s3GetImages } from "../service/s3ImageServices.js";
 import BookingModel from "../model/bookingModel.js";
+import { ObjectId } from "mongoose";
 
 export const getAllBadgeRecordsForClient = async (req, res) => {
   try {
@@ -153,5 +154,32 @@ export const updateAllBadgeRecords = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     return res.status(500).json({ status: "error", msg: "Server Error" });
+  }
+};
+
+export const getAllBadgeRecords = async (req, res) => {
+  try {
+    if (req.params.id === undefined) {
+      return res.status(400).json({
+        msg: "Params is undefined!",
+      });
+    }
+    let badgeRecords = [];
+    badgeRecords = await BadgeRecordModel.find({
+      badge: req.params.id,
+    }).populate({
+      path: "client",
+    });
+
+    res.status(200).json({
+      message: "Badge Records successfully retrieved!",
+      badgeRecords: badgeRecords,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: "error",
+      msg: "Server Error! Unable to get badge records by client ID.",
+    });
   }
 };

@@ -48,7 +48,7 @@ const DashboardPage = () => {
   const [activityReviews, setActivityReviews] = useState();
   const handleOpen = (activity) => {
     const filteredReviews = reviews.filter(
-      (review) => review?.activity?._id === activity?._id
+      (review) => review?.activity?._id === activity?._id,
     );
     setActivityReviews(filteredReviews);
     setActivity(activity);
@@ -70,7 +70,7 @@ const DashboardPage = () => {
       avgReviewRating: sentiment.avgReviewRating,
       totalReviewSentiments: sentiment.totalReviewSentiments,
       reviewSentimentScore: sentiment.reviewSentimentScore,
-    }))
+    })),
   );
   const getDefaultStartDate = () => {
     const currentDate = new Date();
@@ -97,7 +97,7 @@ const DashboardPage = () => {
       setError("");
       await calculateAdminProfit(
         startDate.toISOString(),
-        endDate.toISOString()
+        endDate.toISOString(),
       );
     }
   };
@@ -127,7 +127,7 @@ const DashboardPage = () => {
       const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
       await calculateAdminProfit(
         startOfMonth.toISOString(),
-        endOfMonth.toISOString()
+        endOfMonth.toISOString(),
       );
     };
     fetchData();
@@ -183,7 +183,7 @@ const DashboardPage = () => {
                   sx={{
                     backgroundColor: alpha(
                       theme.palette.light_purple.main,
-                      0.5
+                      0.5,
                     ),
                     marginBottom: 2,
                   }}
@@ -230,7 +230,7 @@ const DashboardPage = () => {
                   sx={{
                     backgroundColor: alpha(
                       theme.palette.light_purple.main,
-                      0.5
+                      0.5,
                     ),
                     marginBottom: 2,
                   }}

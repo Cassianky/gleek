@@ -39,6 +39,7 @@ import ManageFeaturedActivities from "./components/featured/ManageFeaturedActivi
 import EditFeaturedActivity from "./components/featured/EditFeaturedActivity.jsx";
 import DashboardPage from "./components/analytics/DashboardPage.jsx";
 import ScheduledTaskDemo from "./components/ScheduledTaskDemo";
+import BadgesDetails from "./components/badges/BadgesDetails.js";
 import VendorDetails from "./components/vendor/VendorDetails";
 
 function App() {
@@ -361,6 +362,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <ScheduledTaskDemo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            exact
+            path="/badgeDetails/:badgeId"
+            element={
+              <ProtectedRoute>
+                <BadgesDetails />
               </ProtectedRoute>
             }
           />

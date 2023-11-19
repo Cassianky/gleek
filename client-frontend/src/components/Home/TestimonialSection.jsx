@@ -97,7 +97,6 @@ function TestimonialSection() {
   return (
     <Container
       maxWidth="xl"
-      
       sx={{
         width: "100%",
         maxWidth: "80vw",

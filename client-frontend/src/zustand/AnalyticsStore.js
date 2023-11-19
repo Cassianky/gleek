@@ -12,7 +12,7 @@ const useAnalyticsStore = create((set) => ({
       set({ isLoading: true });
       const response = await AxiosConnect.get("/gleekVendor/dashboard/view");
       const reviewResponse = await AxiosConnect.get(
-        "/gleekVendor/dashboard/bookingReviews"
+        "/gleekVendor/dashboard/bookingReviews",
       );
       set({
         data: response.data,

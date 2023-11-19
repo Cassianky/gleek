@@ -32,7 +32,7 @@ router.patch(
   "/updateProfilePicture",
   verifyToken,
   uploadS3ProfileImage.single("image"),
-  updateProfilePicture
+  updateProfilePicture,
 );
 
 // Verify Email
@@ -45,12 +45,12 @@ router.post("/resetPassword", verifyToken, postResetPassword);
 router.get(
   "/getPreferredActivityTypes",
   verifyToken,
-  getClientPreferredActivityTypes
+  getClientPreferredActivityTypes,
 );
 router.patch(
   "/updatePreferredActivityTypes",
   verifyToken,
-  updateClientPreferredActivityTypes
+  updateClientPreferredActivityTypes,
 );
 
 export default router;

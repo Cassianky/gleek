@@ -6,8 +6,9 @@ import {
   Paper,
   Chip,
   Button,
+  Modal,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useTheme, lighten } from "@mui/material/styles";
 import LinearProgress, {
   linearProgressClasses,
@@ -26,6 +27,15 @@ const BadgeCardItem = ({ badge }) => {
   const primary = theme.palette.accent.primary;
   const tertiary = theme.palette.tertiary.main;
   const tertiaryLighter = lighten(theme.palette.tertiary.main, 0.4);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,
@@ -142,6 +152,28 @@ const BadgeCardItem = ({ badge }) => {
       bgcolor={"grey.50"}
       sx={{ height: "100%", overflow: "hidden" }}
     >
+      <Modal open={isModalOpen} onClose={closeModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80%",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "25px",
+            p: 4,
+          }}
+        >
+          <Typography color="secondary" variant="h5" fontWeight={700}>
+            About this Badge
+          </Typography>
+          <Typography color="secondary" variant="subtitle1">
+            {badge.badge.description}
+          </Typography>
+        </Box>
+      </Modal>
       <Box
         display="flex"
         justifyContent="center"
@@ -173,7 +205,7 @@ const BadgeCardItem = ({ badge }) => {
             label={badge.isCompleted ? "COMPLETED" : "NOT COMPLETED"}
             color={badge.isCompleted ? "success" : "error"}
           />
-          <Button color="secondary" variant="outlined">
+          <Button color="secondary" variant="outlined" onClick={openModal}>
             View Badge Detail
           </Button>
         </Box>

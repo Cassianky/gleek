@@ -25,7 +25,7 @@ const BookingsTable = ({
   useEffect(() => {
     setTimeout(() => {
       const formattedBookings = allBookings.filter((booking) =>
-        status.includes(booking.status)
+        status.includes(booking.status),
       );
       setBookings(formattedBookings);
       setIsLoading(false);

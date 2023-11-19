@@ -166,7 +166,7 @@ const ActivityDetailsPage = () => {
   const calculateWeekendAddOn = (
     selectedDate,
     weekendPricing,
-    totalBasePrice
+    totalBasePrice,
   ) => {
     if (
       weekendPricing.amount !== null &&
@@ -217,19 +217,19 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-      totalBasePrice
+      totalBasePrice,
     );
 
     const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
 
     const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
 
     const totalPriceCalculated =
@@ -250,17 +250,17 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-      totalBasePrice
+      totalBasePrice,
     );
     const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
     const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
     let activityPricingRule;
     for (const pricingRule of currentActivity?.activityPricingRules) {
@@ -309,15 +309,15 @@ const ActivityDetailsPage = () => {
     try {
       const weekendAddOn = calculateWeekendAddOn(
         selectedDate,
-        currentActivity.weekendPricing
+        currentActivity.weekendPricing,
       );
       const onlineAddOn = calculateOnlineAddOn(
         location,
-        currentActivity.offlinePricing
+        currentActivity.offlinePricing,
       );
       const offlineAddOn = calculateOfflineAddOn(
         location,
-        currentActivity.onlinePricing
+        currentActivity.onlinePricing,
       );
 
       const bookingData = {
@@ -509,7 +509,7 @@ const ActivityDetailsPage = () => {
                           format="DD/MM/YYYY"
                           minDate={dayjs().add(
                             currentActivity?.bookingNotice,
-                            "days"
+                            "days",
                           )}
                           shouldDisableDate={shouldDisableDate}
                           sx={{ marginRight: "12px" }}
@@ -667,7 +667,7 @@ const ActivityDetailsPage = () => {
                                   ? "-"
                                   : ""}
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
-                                  2
+                                  2,
                                 )}
                                 %
                               </Typography>
@@ -690,7 +690,7 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
-                                  2
+                                  2,
                                 )}
                                 %
                               </Typography>
@@ -712,7 +712,7 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
-                                  2
+                                  2,
                                 )}
                                 %
                               </Typography>

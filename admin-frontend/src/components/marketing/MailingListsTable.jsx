@@ -6,16 +6,23 @@ const MailingListsTable = ({ mailingLists, receiveNewsletterType }) => {
 
   useEffect(() => {
     setFilteredMailingLists(
-      mailingLists.filter((subscriber) => receiveNewsletterType === "adminNewslettersMailingList" ? subscriber.receiveAdminNewsletters : subscriber.receivePersonalisedRecommendations),
+      mailingLists.filter((subscriber) =>
+        receiveNewsletterType === "adminNewslettersMailingList"
+          ? subscriber.receiveAdminNewsletters
+          : subscriber.receivePersonalisedRecommendations,
+      ),
     );
   }, [mailingLists]);
 
   const columns = [
-    { field: "name", headerName: "Client Name", flex: 1,
-    renderCell: (params) => {
-      return params.row.client?.name;
+    {
+      field: "name",
+      headerName: "Client Name",
+      flex: 1,
+      renderCell: (params) => {
+        return params.row.client?.name;
+      },
     },
-   },
     {
       field: "company",
       headerName: "Client Company",

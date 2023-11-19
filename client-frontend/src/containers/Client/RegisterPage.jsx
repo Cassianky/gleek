@@ -41,11 +41,11 @@ const RegisterPage = () => {
   const [showPasswordVerify, setShowPasswordVerify] = useState(false);
   const [preferredActivityTypes, setPreferredActivityTypes] = useState(
     Object.fromEntries(
-      Object.keys(ActivityTypeEnum).map((type) => [type, false])
-    )
+      Object.keys(ActivityTypeEnum).map((type) => [type, false]),
+    ),
   );
 
-  console.log(preferredActivityTypes)
+  console.log(preferredActivityTypes);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     password: "",
@@ -136,7 +136,7 @@ const RegisterPage = () => {
   const disableButton = () => {
     return (
       !Object.values(errorData).every((error) => error === "") ||
-      !formData.acceptTermsAndConditions  ||
+      !formData.acceptTermsAndConditions ||
       !Object.values(preferredActivityTypes).some((isSelected) => isSelected)
     );
   };
@@ -156,7 +156,6 @@ const RegisterPage = () => {
       return;
     }
     try {
-
       const formDataWithActivityTypes = {
         ...formData,
         preferredActivityTypes: preferredActivityTypes,
@@ -498,27 +497,31 @@ const RegisterPage = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12} md={12}>
-          <Box display="flex" flexDirection="column" p={3}
-        bgcolor={"grey.100"}
-        borderRadius={6}
-        boxShadow={1}>
-            <FormLabel>Activity Types You Are Interested In</FormLabel>
-            <Typography variant="caption" color="textSecondary">
-              You must select at least one.
-            </Typography>
-        {Object.keys(preferredActivityTypes).map((key) => (
-          <FormControlLabel
-            key={key}
-            control={
-              <Checkbox
-                checked={preferredActivityTypes[key]}
-                onChange={() => handleActivityTypeChange(key)}
-              />
-            }
-            label={ActivityTypeEnum[key]}
-          />
-        ))}
-      </Box>
+            <Box
+              display="flex"
+              flexDirection="column"
+              p={3}
+              bgcolor={"grey.100"}
+              borderRadius={6}
+              boxShadow={1}
+            >
+              <FormLabel>Activity Types You Are Interested In</FormLabel>
+              <Typography variant="caption" color="textSecondary">
+                You must select at least one.
+              </Typography>
+              {Object.keys(preferredActivityTypes).map((key) => (
+                <FormControlLabel
+                  key={key}
+                  control={
+                    <Checkbox
+                      checked={preferredActivityTypes[key]}
+                      onChange={() => handleActivityTypeChange(key)}
+                    />
+                  }
+                  label={ActivityTypeEnum[key]}
+                />
+              ))}
+            </Box>
           </Grid>
           <Grid item xs={12} md={12}>
             <Box display="flex" flexDirection="row">

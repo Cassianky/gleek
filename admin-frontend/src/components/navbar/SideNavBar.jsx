@@ -53,7 +53,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
   const navigate = useNavigate();
   const selectedItem = useSelectedNavItemStore((state) => state.selectedItem);
   const setSelectedItem = useSelectedNavItemStore(
-    (state) => state.setSelectedItem
+    (state) => state.setSelectedItem,
   );
   const handleItemClick = async (item, link) => {
     navigate(link);
@@ -95,7 +95,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
                     onClick={() =>
                       handleItemClick(
                         Object.keys(item)[0],
-                        item[Object.keys(item)[0]]
+                        item[Object.keys(item)[0]],
                       )
                     }
                   >
@@ -124,7 +124,7 @@ const SideNavBar = ({ isSidebarOpen }) => {
                     onClick={() =>
                       handleItemClick(
                         Object.keys(item)[0],
-                        item[Object.keys(item)[0]]
+                        item[Object.keys(item)[0]],
                       )
                     }
                   >

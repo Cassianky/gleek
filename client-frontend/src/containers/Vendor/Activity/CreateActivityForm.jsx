@@ -114,9 +114,9 @@ const CreateActivityForm = ({ themes, theme, activity }) => {
     activity?.activityType === null
       ? null
       : activity?.activityType === "Popups (Food)" ||
-        activity?.activityType === "Popups (Non-food)"
-      ? ActivityTypeEnum.POPUP
-      : activity?.activityType,
+          activity?.activityType === "Popups (Non-food)"
+        ? ActivityTypeEnum.POPUP
+        : activity?.activityType,
   );
   const [title, setTitle] = useState(activity?.title ?? null);
   const [description, setDescription] = useState(activity?.description ?? null);
@@ -200,8 +200,8 @@ const CreateActivityForm = ({ themes, theme, activity }) => {
       activity?.weekendPricing?.amount
       ? 2
       : activity?.activityPricingRules?.length > 0
-      ? 1
-      : 0,
+        ? 1
+        : 0,
   );
   const [bookingNotice, setBookingNotice] = useState(
     activity?.bookingNotice ?? null,

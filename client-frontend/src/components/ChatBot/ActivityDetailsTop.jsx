@@ -19,7 +19,7 @@ const ActivityDetailsTop = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await AxiosConnect.get(
-        "/gleek/chatbot/getTop5BookedActivities"
+        "/gleek/chatbot/getTop5BookedActivities",
       );
       setActivities(response.data.topActivities);
     };
@@ -47,7 +47,7 @@ const ActivityDetailsTop = () => {
             onClick={(event) => {
               event.preventDefault();
               navigate(
-                `/shop/activity/${activity.activityDetails._id.toString()}`
+                `/shop/activity/${activity.activityDetails._id.toString()}`,
               );
             }}
           >

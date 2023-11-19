@@ -50,9 +50,8 @@ const PreviewButton = ({ newsletterData }) => {
   };
 
   const handleDialogClose = () => {
-        setDialogOpen(false);
+    setDialogOpen(false);
   };
-
 
   const handleSendEmail = async () => {
     try {
@@ -92,21 +91,18 @@ const PreviewButton = ({ newsletterData }) => {
             alignItems="center"
             marginTop={4}
           >
-            {
-              isLoading ? (
-                <CircularProgress color="primary" />
-              ) : (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSendEmail}
-                  startIcon={<SendIcon />}
-                >
-                  Send Me
-                </Button>
-              )
-            }
-            
+            {isLoading ? (
+              <CircularProgress color="primary" />
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSendEmail}
+                startIcon={<SendIcon />}
+              >
+                Send Me
+              </Button>
+            )}
           </Box>
         </DialogContent>
         <DialogActions>

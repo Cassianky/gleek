@@ -309,3 +309,51 @@ export const updateBadge = async (req, res) => {
       return res.status(500).json({ status: "error", msg: "Server Error" });
    }
 };
+
+export const getAllBadges = async (req, res) => {
+  try {
+    let badges = [];
+    badges = await BadgeModel.find();
+
+    for (const badge of badges) {
+      const badgePreSignedImage = await s3GetImages(badge.badgeImage);
+      badge.badgePreSignedImage = badgePreSignedImage;
+    }
+    res.status(200).json({
+      message: "Badge successfully retrieved!",
+      badges: badges,
+    });
+  } catch (err) {
+    return res.status(500).json({ status: "error", msg: "Server Error" });
+  }
+};
+
+export const deleteBadgeAndBadgeRecords = async (req, res) => {
+  try {
+    if (req.params.id === undefined) {
+      return res.status(400).json({
+        msg: "Params is undefined!",
+      });
+    }
+    // Find the badge by ID
+    const badge = await BadgeModel.findById(req.params.id);
+
+    if (!badge) {
+      return res.status(400).json({
+        message: "Badge does not exist!",
+        badge: badge,
+      });
+    }
+    // Find and delete badge records associated with the badge
+    await BadgeRecordModel.deleteMany({ badge: req.params.id });
+
+    // Delete the badge itself
+    await badge.deleteOne();
+
+    res.status(200).json({
+      message: "Badge and badge records successfully deleted!",
+    });
+  } catch (err) {
+    return res.status(500).json({ status: "error", msg: "Server Error" });
+  }
+};

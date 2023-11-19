@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box,Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import ChatList from "../components/Chat/ChatList";
 import ChatWindow from "../components/Chat/ChatWindow";
 import useChatStore from "../zustand/ChatStore";
@@ -76,7 +76,7 @@ const Chatpage = () => {
           minHeight: "60rem",
           justifyContent: "space-between",
           paddingX: 8,
-          paddingTop: 8
+          paddingTop: 8,
         }}
       >
         <ChatList socket={socket} />

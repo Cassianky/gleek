@@ -115,7 +115,7 @@ const ActivityDetailsPage = () => {
     const dayOfWeek = dayjs(date).day();
     const isPublicHoliday = hd.isHoliday(new Date(date));
     const conditionsToCheck = [];
-    const phEnabled = false;
+    let phEnabled = false;
     for (const dayAvailability of currentActivity?.dayAvailabilities) {
       if (
         dayAvailability.toLowerCase().includes("weekends") &&
@@ -166,7 +166,7 @@ const ActivityDetailsPage = () => {
   const calculateWeekendAddOn = (
     selectedDate,
     weekendPricing,
-    totalBasePrice
+    totalBasePrice,
   ) => {
     if (
       weekendPricing.amount !== null &&
@@ -184,8 +184,7 @@ const ActivityDetailsPage = () => {
   const calculateOnlineAddOn = (location, onlinePricing, totalBasePrice) => {
     if (
       onlinePricing.amount !== null &&
-      (location.toLowerCase().includes("off-site") ||
-        location.toLowerCase().includes("on-site"))
+      location.toLowerCase().includes("virtual")
     ) {
       if (onlinePricing.isDiscount) {
         return -(onlinePricing.amount / 100) * totalBasePrice;
@@ -199,7 +198,8 @@ const ActivityDetailsPage = () => {
   const calculateOfflineAddOn = (location, offlinePricing, totalBasePrice) => {
     if (
       offlinePricing.amount !== null &&
-      location.toLowerCase().includes("virtual")
+      (location.toLowerCase().includes("off-site") ||
+        location.toLowerCase().includes("on-site"))
     ) {
       if (offlinePricing.isDiscount) {
         return -(offlinePricing.amount / 100) * totalBasePrice;
@@ -217,19 +217,19 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-      totalBasePrice
+      totalBasePrice,
     );
 
     const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
 
     const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
 
     const totalPriceCalculated =
@@ -250,17 +250,17 @@ const ActivityDetailsPage = () => {
     const weekendAddOn = calculateWeekendAddOn(
       selectedDate,
       currentActivity.weekendPricing,
-      totalBasePrice
+      totalBasePrice,
     );
     const offlineAddOn = calculateOfflineAddOn(
       location,
       currentActivity.offlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
     const onlineAddOn = calculateOnlineAddOn(
       location,
       currentActivity.onlinePricing,
-      totalBasePrice
+      totalBasePrice,
     );
     let activityPricingRule;
     for (const pricingRule of currentActivity?.activityPricingRules) {
@@ -309,15 +309,15 @@ const ActivityDetailsPage = () => {
     try {
       const weekendAddOn = calculateWeekendAddOn(
         selectedDate,
-        currentActivity.weekendPricing
+        currentActivity.weekendPricing,
       );
       const onlineAddOn = calculateOnlineAddOn(
         location,
-        currentActivity.offlinePricing
+        currentActivity.offlinePricing,
       );
       const offlineAddOn = calculateOfflineAddOn(
         location,
-        currentActivity.onlinePricing
+        currentActivity.onlinePricing,
       );
 
       const bookingData = {
@@ -352,14 +352,14 @@ const ActivityDetailsPage = () => {
   return (
     <Box>
       {client?.status !== "APPROVED" && (
-          <Alert severity="warning">
-            Your account is pending review.
-            <p>
-              Booking functionality will be limited, but you can still browse
-              activities.
-            </p>
-          </Alert>
-        )}
+        <Alert severity="warning">
+          Your account is pending review.
+          <p>
+            Booking functionality will be limited, but you can still browse
+            activities.
+          </p>
+        </Alert>
+      )}
       {currentActivityLoading && (
         <Box display="flex" justifyContent="center">
           <CircularProgress sx={{ margin: "auto" }} />
@@ -509,7 +509,7 @@ const ActivityDetailsPage = () => {
                           format="DD/MM/YYYY"
                           minDate={dayjs().add(
                             currentActivity?.bookingNotice,
-                            "days"
+                            "days",
                           )}
                           shouldDisableDate={shouldDisableDate}
                           sx={{ marginRight: "12px" }}
@@ -667,7 +667,7 @@ const ActivityDetailsPage = () => {
                                   ? "-"
                                   : ""}
                                 {currentActivity?.weekendPricing?.amount?.toFixed(
-                                  2
+                                  2,
                                 )}
                                 %
                               </Typography>
@@ -690,8 +690,9 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.offlinePricing?.amount?.toFixed(
-                                  2
+                                  2,
                                 )}
+                                %
                               </Typography>
                             </Box>
                           </Box>
@@ -711,7 +712,7 @@ const ActivityDetailsPage = () => {
                                   : "+"}
                                 {""}
                                 {currentActivity?.onlinePricing?.amount?.toFixed(
-                                  2
+                                  2,
                                 )}
                                 %
                               </Typography>

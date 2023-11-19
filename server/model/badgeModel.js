@@ -77,6 +77,10 @@ const badgeSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  creationDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
 const BadgeModel = mongoose.model("Badge", badgeSchema, "badges");
 export default BadgeModel;

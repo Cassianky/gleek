@@ -46,7 +46,9 @@ const ActivityDetailsTop = () => {
             underline="none"
             onClick={(event) => {
               event.preventDefault();
-              navigate(`/shop/activity/${activity._id.toString()}`);
+              navigate(
+                `/shop/activity/${activity.activityDetails._id.toString()}`,
+              );
             }}
           >
             <Paper>

@@ -18,30 +18,30 @@ router.post(
   "/saveScheduledNewsletter",
   adminAuth,
   uploadS3NewsletterImage.single("image"),
-  saveScheduledNewsletter
+  saveScheduledNewsletter,
 );
 router.patch(
   "/updateScheduledNewsletter/:scheduledNewsletterId",
   adminAuth,
   uploadS3NewsletterImage.single("image"),
-  updateScheduledNewsletter
+  updateScheduledNewsletter,
 );
 router.delete(
   "/cancelScheduledNewsletter/:scheduledNewsletterId",
   adminAuth,
-  cancelScheduledNewsletter
+  cancelScheduledNewsletter,
 );
 router.get(
   "/getAllScheduledNewsletters",
   adminAuth,
-  getAllScheduledNewsletters
+  getAllScheduledNewsletters,
 );
 
 // router.get("/getNewsletterPreview", adminAuth, getPreview);
 router.get(
   "/getNewsletterPreview/:messageBody/:preSignedPhoto/:newsletterType",
   adminAuth,
-  getPreview
+  getPreview,
 );
 
 router.post("/testSendNewsletter", adminAuth, testSendNewsletter);

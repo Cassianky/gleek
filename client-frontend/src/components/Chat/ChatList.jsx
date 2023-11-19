@@ -65,7 +65,6 @@ const ChatList = ({ socket }) => {
       width={{ md: "30.5%" }}
       height="90vh"
     >
-    
       <Box
         display="flex"
         flexDirection="column"
@@ -100,11 +99,11 @@ const ChatList = ({ socket }) => {
                   selectedChatroomId === chatroom._id
                     ? primary
                     : chatroom.latestMessage !== undefined &&
-                      chatroom.latestMessage.senderRole !==
-                        role.toUpperCase() &&
-                      chatroom.latestMessageRead === false
-                    ? "#CDCBCB"
-                    : "#E8E8E8"
+                        chatroom.latestMessage.senderRole !==
+                          role.toUpperCase() &&
+                        chatroom.latestMessageRead === false
+                      ? "#CDCBCB"
+                      : "#E8E8E8"
                 }
                 color={selectedChatroomId === chatroom.id ? "white" : "black"}
                 key={chatroom._id}
@@ -119,8 +118,8 @@ const ChatList = ({ socket }) => {
                         {chatroom.latestMessage.senderRole === "VENDOR"
                           ? chatroom.vendor.companyName
                           : chatroom.latestMessage.senderRole === "CLIENT"
-                          ? chatroom.client.name
-                          : "Admin"}
+                            ? chatroom.client.name
+                            : "Admin"}
                         {": "}
                       </b>
                       {chatroom.latestMessage.messageContent.length > 50

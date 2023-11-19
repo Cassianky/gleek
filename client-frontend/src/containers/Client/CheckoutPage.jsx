@@ -11,6 +11,7 @@ import {
   Stepper,
   Step,
   StepLabel,
+  CircularProgress,
 } from "@mui/material";
 import { lighten, useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +21,7 @@ const CheckoutPage = (props) => {
     "Confirm Billing & Cart Details",
     "Confirm Checkout",
   ];
-  const { cartItemsToCheckOut, checkout } = useCartStore();
+  const { cartItemsToCheckOut, checkout, checkoutIsLoading } = useCartStore();
   const { client } = useClientStore();
   const { openSnackbar } = useSnackbarStore();
   const theme = useTheme();
@@ -187,15 +188,19 @@ const CheckoutPage = (props) => {
               </Button>
             )}
             {activeStep > 1 && (
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ color: "#3D246C", height: "80%", paddingY: "10px" }}
-                onClick={handleCheckout}
-                disabled={cartItemsToCheckOut.length === 0}
-              >
-                <b> Checkout</b>
-              </Button>
+              !checkoutIsLoading ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ color: "#3D246C", height: "80%", paddingY: "10px" }}
+                  onClick={handleCheckout}
+                  disabled={cartItemsToCheckOut.length === 0}
+                >
+                  <b>Checkout</b>
+                </Button>
+              ) : (
+                <CircularProgress />
+              )
             )}
           </Box>
         </Grid>

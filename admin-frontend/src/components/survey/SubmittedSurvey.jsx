@@ -34,6 +34,7 @@ function SubmittedSurvey() {
           setTestimonial(testimonialData.testimonial);
         }
       } catch (err) {
+        console.error(err)
         openSnackbar("Error retrieving survey.", "error");
       }
     };

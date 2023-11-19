@@ -4,7 +4,7 @@ import VendorConsentModel from "../model/vendorConsentModel.js";
 export const createClientConsent = async (
   clientId,
   acceptTermsAndConditions,
-  session
+  session,
 ) => {
   const consentData = {
     client: clientId,
@@ -26,7 +26,7 @@ export const updateConsent = async (clientId, updateData) => {
     },
     {
       new: true,
-    }
+    },
   );
 
   return updatedConsent;
@@ -40,7 +40,7 @@ export const getClientConsent = async (clientId) => {
 export const createVendorConsent = async (
   vendorId,
   acceptTermsAndConditions,
-  session
+  session,
 ) => {
   const consentData = {
     vendor: vendorId,

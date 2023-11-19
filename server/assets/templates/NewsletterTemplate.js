@@ -86,7 +86,7 @@ export const NewsletterTemplate = ({
         <div class="footer">
           <p>
             If you no longer wish to receive emails from Gleek, you can
-            <a href="https://yourdomain.com/unsubscribe">unsubscribe here</a>.
+            <a href=${BASE_URL}/settings/privacy>unsubscribe here</a>.
           </p>
         </div>
       </div>

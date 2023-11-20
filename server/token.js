@@ -8,13 +8,13 @@ import fs from "fs";
 
 // Replace with the code you received from Google
 const code =
-  "4/0AfJohXln8NAQVxuEfNmuK4J-Fyjc2ikTwXQqxnKu_XGljmrnEGOy0eIdf0IeWpFxrPiy6g";
+  "4/0AfJohXmRAMv2uYoVekxnCWr5U5lMs-i8mjcJQFu_WosqFu1tAuf1P5FccTcmS4sG3iGkLg";
 
 const { client_secret, client_id, redirect_uris } = credentials.web;
 const oAuth2Client = new google.auth.OAuth2(
   client_id,
   client_secret,
-  redirect_uris[0],
+  redirect_uris[0]
 );
 
 oAuth2Client.getToken(code).then(({ tokens }) => {

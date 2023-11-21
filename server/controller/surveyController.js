@@ -188,51 +188,6 @@ export const submitSurveyForBooking = async (req, res) => {
   }
 };
 
-// export const getSurveysForClient = async (req, res) => {
-//   try {
-//     const client = req.user;
-//     const bookings = await Booking.find({
-//       clientId: client._id,
-//       status: { $in: ["PENDING_PAYMENT", "PAID"] },
-//     });
-
-//     const surveyResponses = [];
-
-//     for (const booking of bookings) {
-//       let survey = await SurveyResponse.findOne({ booking: booking._id })
-//         .populate("activity")
-//         .populate("booking");
-
-//       if (!survey) {
-//         const newSurvey = new SurveyResponse({
-//           booking: booking._id,
-//           activity: booking.activityId,
-//         });
-
-//         await newSurvey.save();
-
-//         booking.adminSurveyResponse = newSurvey._id;
-//         await booking.save();
-
-//         survey = await SurveyResponse.findById(newSurvey._id)
-//           .populate("activity")
-//           .populate("booking");
-
-//         surveyResponses.push(survey);
-//       } else {
-//         surveyResponses.push(survey);
-//       }
-//     }
-
-//     return res.status(200).json(surveyResponses);
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).json({ message: "Server error" });
-//   }
-//}
-
-// Using surveyId
-
 export const updateSurvey = async (req, res) => {
   try {
     const surveyId = req.params.surveyId;

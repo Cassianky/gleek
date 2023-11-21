@@ -257,5 +257,3 @@ export const adminDeleteNotification = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-export const updateAllNotificationsAsRead = async (req, res) => {};

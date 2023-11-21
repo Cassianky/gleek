@@ -98,10 +98,10 @@ const AdminChatList = ({ socket }) => {
                   selectedChatroomId === chatroom._id
                     ? primary
                     : chatroom.latestMessage !== undefined &&
-                        chatroom.latestMessage.senderRole !== "ADMIN" &&
-                        chatroom.latestMessageRead === false
-                      ? "#CDCBCB"
-                      : "#E8E8E8"
+                      chatroom.latestMessage.senderRole !== "ADMIN" &&
+                      chatroom.latestMessageRead === false
+                    ? "#CDCBCB"
+                    : "#E8E8E8"
                 }
                 color={selectedChatroomId === chatroom._id ? "white" : "black"}
                 key={chatroom._id}
@@ -113,8 +113,8 @@ const AdminChatList = ({ socket }) => {
                       {chatroom.latestMessage.senderRole === "VENDOR"
                         ? chatroom.vendor.companyName
                         : chatroom.latestMessage.senderRole === "CLIENT"
-                          ? chatroom.client.name
-                          : "Admin"}
+                        ? chatroom.client.name
+                        : "Admin"}
                       {": "}
                       {chatroom.latestMessage.messageContent.length > 50
                         ? chatroom.latestMessage.messageContent.substring(

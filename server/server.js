@@ -15,7 +15,6 @@ import bookingRoutes from "./routes/gleekAdmin/bookingRoute.js";
 import testimonialRoutes from "./routes/gleekAdmin/testimonialRoute.js";
 import badgeRoutes from "./routes/gleekAdmin/badgeRoute.js";
 import client from "./routes/gleekAdmin/client.js";
-import activityTestController from "./controller/activityTestController.js";
 import notificationRoutes from "./routes/notificationRoute.js";
 import chatroomRoutes from "./routes/chatroomRoute.js";
 import chatMessageRoutes from "./routes/chatMessageRoute.js";
@@ -73,8 +72,6 @@ app.use("/gleek", gleekRoutes);
  * For Vendor application
  */
 app.use("/gleekVendor", gleekVendorRoutes);
-//for activity image upload test
-app.use("/testActivity", activityTestController);
 app.use("/notification", notificationRoutes);
 app.use("/chatroom", chatroomRoutes);
 app.use("/chatMessage", chatMessageRoutes);

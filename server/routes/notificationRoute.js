@@ -3,7 +3,6 @@ import {
   getAdminNotifications,
   getNonAdminNotifications,
   updateNotificationAsRead,
-  updateAllNotificationsAsRead,
   deleteNotification,
   adminUpdateNotificationAsRead,
   adminDeleteNotification,

@@ -8,8 +8,8 @@ export const getSenderNameInChatWindow = (senderRole, message) => {
   return senderRole.toUpperCase() === "CLIENT"
     ? message.client.name
     : senderRole.toUpperCase() === "VENDOR"
-      ? message.vendor.companyName
-      : "Admin";
+    ? message.vendor.companyName
+    : "Admin";
 };
 
 export const isSameSender = (messages, message, idx, userRole) => {

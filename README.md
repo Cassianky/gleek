@@ -9,10 +9,10 @@ Material UI: https://mui.com/
 1. Install all packages by running the following command in the main folder "is4103_project":
 
 ```bash
-npm run setup
+npm run setup --legacy-peer-deps
 ```
 
-2. Start all projects(server, client-frontend, admin-frontend) by running the following command in the main folder "is4103_project":
+2. Start all projects(server, client-frontend, admin-frontend) by running the following command in the main folder "gleek":
 
 ```bash
 npm run dev
@@ -45,7 +45,7 @@ npm start
 
 <h3> Packages Installed for Respective Folder (Don't need to run) </h3>
 
-1. "is4103_project" folder
+1. "gleek" folder
 
    1. npm install concurrently (to run all projects at once)
    2. npm install --save-dev husky pretty-quick (auto format code when committing)

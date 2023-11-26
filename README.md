@@ -9,7 +9,7 @@ Material UI: https://mui.com/
 1. Install all packages by running the following command in the main folder "is4103_project":
 
 ```bash
-npm run setup --legacy-peer-deps
+npm run setup
 ```
 
 2. Start all projects(server, client-frontend, admin-frontend) by running the following command in the main folder "gleek":

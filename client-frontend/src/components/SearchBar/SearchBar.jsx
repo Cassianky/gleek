@@ -71,6 +71,7 @@ const SearchBar = (props) => {
         inputProps={inputProps}
         renderInputComponent={(inputProps) => (
           <TextField
+          name="gleekSearch"
             color="secondary"
             {...inputProps}
             size="small"

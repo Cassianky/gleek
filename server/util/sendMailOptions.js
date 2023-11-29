@@ -210,7 +210,7 @@ export const createVerifyEmailOptionsVendor = (vendor, token) => {
 
 export const createResendVerifyEmailOptionsVendor = (vendor, token) => {
   try {
-    const message = `Hello ${vendor.email}, you have requested for the verification email to be resent.
+    const message = `Hello ${vendor.companyEmail}, you have requested for the verification email to be resent.
     Please verify your email by clicking on the link: http://localhost:3001/vendor/verifyEmail/${token}`;
     const options = {
       to: vendor.companyEmail,
